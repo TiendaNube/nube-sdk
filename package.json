@@ -1,0 +1,16 @@
+{
+  "name": "nube-sdk",
+  "version": "0.0.0",
+  "description": "A set of packages to develop apps partner apps to Tiendanube/Nuvemshop",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TiendaNube/nube-sdk.git"
+  },
+  "workspaces": [],
+  "author": "Tiendanube / Nuvemshop",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TiendaNube/nube-sdk/issues"
+  },
+  "homepage": "https://www.tiendanube.com.br"
+}
