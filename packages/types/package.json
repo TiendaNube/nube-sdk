@@ -1,6 +1,6 @@
 {
   "name": "@tiendanube/nube-sdk-types",
-  "version": "0.1.0-alpha",
+  "version": "0.1.1-alpha",
   "description": "Type definition of NubeSDK",
   "type": "module",
   "main": "./src/index.ts",
@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/TiendaNube/nube-sdk/issues"
   },
-  "homepage": "https://www.tiendanube.com.br",
+  "homepage": "https://www.tiendanube.com",
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
     "typescript": "^5.6.2"
@@ -28,7 +28,7 @@
     "README.md",
     "CHANGELOG.md"
   ],
-  "tags": [
+  "keywords": [
     "tiendanube",
     "nuvemshop",
     "nube-sdk",
