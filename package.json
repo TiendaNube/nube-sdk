@@ -6,11 +6,17 @@
     "type": "git",
     "url": "git+https://github.com/TiendaNube/nube-sdk.git"
   },
-  "workspaces": [],
+  "workspaces": ["packages/types"],
   "author": "Tiendanube / Nuvemshop",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/TiendaNube/nube-sdk/issues"
   },
-  "homepage": "https://www.tiendanube.com.br"
+  "homepage": "https://www.tiendanube.com.br",
+  "scripts": {
+    "test": " npm run test --workspaces --if-present",
+    "build": " npm run build --workspaces --if-present",
+    "check": " npm run check --workspaces --if-present",
+    "fix": " npm run fix --workspaces --if-present"
+  }
 }
