@@ -21,6 +21,7 @@ export type Prices = {
 	discount_coupon: number;
 	discount_gateway: number;
 	discount_promotion: number;
+	shipping: number;
 	subtotal: number;
 	total: number;
 };
