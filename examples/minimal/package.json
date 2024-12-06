@@ -1,0 +1,13 @@
+{
+  "name": "minimal-app",
+  "version": "1.0.1",
+  "scripts": {
+    "build": "tsup"
+  },
+  "author": "Tiendanube / Nuvemshop",
+  "devDependencies": {
+    "@tiendanube/nube-sdk-types": "0.1.2-alpha",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.2"
+  }
+}
