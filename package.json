@@ -6,7 +6,10 @@
     "type": "git",
     "url": "git+https://github.com/TiendaNube/nube-sdk.git"
   },
-  "workspaces": ["packages/types"],
+  "workspaces": [
+    "packages/types",
+    "packages/ui"
+  ],
   "author": "Tiendanube / Nuvemshop",
   "license": "MIT",
   "bugs": {
