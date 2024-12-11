@@ -1,38 +1,33 @@
 {
-  "name": "@tiendanube/nube-sdk-ui",
-  "version": "0.1.0",
-  "description": "Library for building declarative interfaces for NubeSDK",
-  "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
-  "scripts": {
-    "check": "biome check src/*",
-    "check:fix": "biome check --write src/*"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/TiendaNube/nube-sdk.git"
-  },
-  "author": "Tiendanube / Nuvemshop",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/TiendaNube/nube-sdk/issues"
-  },
-  "homepage": "https://www.tiendanube.com",
-  "devDependencies": {
-    "@biomejs/biome": "1.8.3",
-    "typescript": "^5.6.2"
-  },
-  "files": [
-    "./src",
-    "README.md",
-    "CHANGELOG.md"
-  ],
-  "keywords": [
-    "tiendanube",
-    "nuvemshop",
-    "nube-sdk",
-    "ecommerce",
-    "sdk"
-  ]
+	"name": "@tiendanube/nube-sdk-ui",
+	"version": "0.1.0",
+	"description": "Library for building declarative interfaces for NubeSDK",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"build": "tsup",
+		"check": "biome check src/*",
+		"check:fix": "biome check --write src/*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/TiendaNube/nube-sdk.git"
+	},
+	"author": "Tiendanube / Nuvemshop",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/TiendaNube/nube-sdk/issues"
+	},
+	"homepage": "https://www.tiendanube.com",
+	"devDependencies": {
+		"@biomejs/biome": "1.8.3",
+		"tsup": "^8.3.5",
+		"typescript": "^5.6.2"
+	},
+	"peerDependencies": {
+		"@tiendanube/nube-sdk-types": "*"
+	},
+	"files": ["./src", "README.md", "CHANGELOG.md"],
+	"keywords": ["tiendanube", "nuvemshop", "nube-sdk", "ecommerce", "sdk"]
 }
