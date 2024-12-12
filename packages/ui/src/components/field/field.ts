@@ -23,9 +23,11 @@ export const field = (props: FieldProps): NubeComponent => {
 	const app = self.__APP_DATA__.id;
 	const sdk = self.__SDK_INSTANCE__;
 	const prefix: NubeSDKSendableEvent = `custom:${app}:field:${id}`;
-	const { onchange, onblur, onfocus } = props;
+	const { onchange, onblur, onfocus, ...opts } = props;
+	const events = { onchange: false, onblur: false, onfocus: false };
 
 	if (onchange && typeof onchange === "function") {
+		events.onchange = true;
 		const event: NubeSDKSendableEvent = `${prefix}:change`;
 		sdk.on(event, (state) =>
 			onchange({ type: "change", value: state.ui.values[id], state }),
@@ -33,6 +35,7 @@ export const field = (props: FieldProps): NubeComponent => {
 	}
 
 	if (onblur && typeof onblur === "function") {
+		events.onblur = true;
 		const event: NubeSDKSendableEvent = `${prefix}:blur`;
 		sdk.on(event, (state) =>
 			onblur({ type: "blur", value: state.ui.values[id], state }),
@@ -40,6 +43,7 @@ export const field = (props: FieldProps): NubeComponent => {
 	}
 
 	if (onfocus && typeof onfocus === "function") {
+		events.onfocus = true;
 		const event: NubeSDKSendableEvent = `${prefix}:focus`;
 		sdk.on(event, (state) =>
 			onfocus({ type: "focus", value: state.ui.values[id], state }),
@@ -47,8 +51,9 @@ export const field = (props: FieldProps): NubeComponent => {
 	}
 
 	return {
+		...opts,
 		type: "field",
-		...props,
+		events,
 		id,
 	};
 };
