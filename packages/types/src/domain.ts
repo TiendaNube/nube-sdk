@@ -73,3 +73,18 @@ export type AppLocation = {
 export type AppConfig = {
 	has_cart_validation: boolean;
 };
+
+export type NubeComponent = {
+	type: string;
+	[key: string]: unknown;
+};
+
+export type UISlot =
+	| "before_main_content"
+	| "after_main_content"
+	| "before_line_items"
+	| "after_line_items";
+
+export type UIRender = Record<UISlot, NubeComponent>;
+export type UIValue = Record<string, string>;
+export type UI = UIRender & { values: UIValue };

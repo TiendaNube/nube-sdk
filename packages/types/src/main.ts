@@ -1,4 +1,4 @@
-import type { AppConfig, AppLocation, Cart, Store } from "./domain";
+import type { AppConfig, AppLocation, Cart, Store, UI } from "./domain";
 import type { DeepPartial } from "./utility";
 
 export type NubeSDKState = {
@@ -6,6 +6,7 @@ export type NubeSDKState = {
 	config: AppConfig; // Represents App config
 	location: AppLocation; // Represents the user's current location in the app
 	store: Store; // Contains information about the current store
+	ui: UI;
 };
 
 export type NubeSDKSendableEvent =
@@ -36,3 +37,11 @@ export type NubeSDK = {
 };
 
 export type NubeApp = (nube: NubeSDK) => void;
+
+declare global {
+	export interface Window {
+		__APP_DATA__: Readonly<{ id: string; script: string }>;
+		__INITIAL_STATE__: Readonly<NubeSDKState>;
+		__SDK_INSTANCE__: Readonly<NubeSDK>;
+	}
+}
