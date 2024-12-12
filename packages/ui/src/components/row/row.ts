@@ -4,6 +4,6 @@ import type { NubeComponent } from "../types";
 export type RowProps = Omit<BoxProps, "direction">;
 
 export const row = (props: RowProps): NubeComponent => ({
-  type: "row",
-  ...props,
+	type: "row",
+	...props,
 });
