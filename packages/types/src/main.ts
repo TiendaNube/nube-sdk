@@ -1,4 +1,5 @@
-import type { AppConfig, AppLocation, Cart, Store, UI } from "./domain";
+import type { UI } from "./components";
+import type { AppConfig, AppLocation, Cart, Store } from "./domain";
 import type { DeepPartial } from "./utility";
 
 export type NubeSDKState = {
@@ -6,7 +7,7 @@ export type NubeSDKState = {
 	config: AppConfig; // Represents App config
 	location: AppLocation; // Represents the user's current location in the app
 	store: Store; // Contains information about the current store
-	ui: UI;
+	ui: UI; // Contains UI configuration
 };
 
 export type NubeSDKSendableEvent =
