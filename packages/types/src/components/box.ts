@@ -1,8 +1,4 @@
-import type {
-	ChildrenProps,
-	NubeComponent,
-	NubeComponentProps,
-} from "../types";
+import type { ChildrenProps, NubeComponent, NubeComponentProps } from "./types";
 
 export type SizeUnit = "em" | "rem" | "px" | "%";
 export type Size = `${number}${SizeUnit}` | number | "auto";
@@ -25,7 +21,7 @@ export type TxtModifier =
 	| "uppercase"
 	| "capitalize";
 
-export type BoxProps = NubeComponentProps &
+export type NubeComponentBoxProps = NubeComponentProps &
 	ChildrenProps & {
 		width?: Size;
 		height?: Size;
@@ -43,7 +39,7 @@ export type BoxProps = NubeComponentProps &
 		borderRadius?: Size;
 	};
 
-export type Box = NubeComponent &
-	BoxProps & {
+export type NubeComponentBox = NubeComponent &
+	NubeComponentBoxProps & {
 		type: "box";
 	};
