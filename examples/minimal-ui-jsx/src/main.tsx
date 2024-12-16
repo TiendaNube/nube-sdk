@@ -34,7 +34,15 @@ console.log("TestBoxNested inside Fragment", <>
 		<TestBoxNested/>
 	</>);
 
-console.log("Field", <field name="Something" label="Label" />);
+console.log("Field", 
+	<field 
+		name="Something" 
+		label="Label" 
+		onchange={(e) => console.log(e)}
+		onblur={(e) => console.log(e)}
+		onfocus={(e) => console.log(e)}
+	/>
+);
 
 const compA = <TestBox/>;
 const compB = <TestBox/>;
