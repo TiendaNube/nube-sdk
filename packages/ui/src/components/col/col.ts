@@ -1,9 +1,6 @@
-import type { BoxProps } from "../box/box";
-import type { NubeComponent } from "../types";
+import { Col, ColProps } from "@tiendanube/nube-sdk-types";
 
-export type ColProps = Omit<BoxProps, "direction">;
-
-export const col = (props: ColProps): NubeComponent => ({
+export const col = (props: ColProps): Col => ({
 	type: "col",
 	...props,
 });

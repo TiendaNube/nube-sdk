@@ -1,9 +1,6 @@
-import type { BoxProps } from "../box/box";
-import type { NubeComponent } from "../types";
+import { Row, RowProps } from "@tiendanube/nube-sdk-types";
 
-export type RowProps = Omit<BoxProps, "direction">;
-
-export const row = (props: RowProps): NubeComponent => ({
+export const row = (props: RowProps): Row => ({
 	type: "row",
 	...props,
 });
