@@ -13,6 +13,7 @@ export type NubeSDKState = {
 export type NubeSDKSendableEvent =
 	| "cart:validate"
 	| "config:set"
+	| "ui:slot:set"
 	| `custom:${string}:${string}`;
 
 export type NubeSDKListenableEvent =
