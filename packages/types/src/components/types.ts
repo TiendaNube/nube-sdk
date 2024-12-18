@@ -2,6 +2,8 @@ export type NubeComponentId = string;
 
 export type NubeComponentProps = {
 	id?: NubeComponentId;
+	// DON'T USE THIS, USED INTERNALLY BY THE SDK, ANY VALUE PASSED HERE WILL BE OVERWRITTEN
+	__internalId?: NubeComponentId;
 };
 
 export type ChildrenProps = {
