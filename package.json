@@ -6,7 +6,10 @@
     "type": "git",
     "url": "git+https://github.com/TiendaNube/nube-sdk.git"
   },
-  "workspaces": ["packages/types"],
+  "workspaces": [
+    "packages/types",
+    "packages/ui"
+  ],
   "author": "Tiendanube / Nuvemshop",
   "license": "MIT",
   "bugs": {
@@ -17,6 +20,6 @@
     "test": " npm run test --workspaces --if-present",
     "build": " npm run build --workspaces --if-present",
     "check": " npm run check --workspaces --if-present",
-    "fix": " npm run fix --workspaces --if-present"
+    "fix": " npm run check:fix --workspaces --if-present"
   }
 }
