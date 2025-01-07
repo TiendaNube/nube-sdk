@@ -14,9 +14,9 @@ export type NubeComponentFieldEventHandler = (data: {
 export type NubeComponentFieldProps = NubeComponentProps & {
 	name: string;
 	label: string;
-	onchange?: NubeComponentFieldEventHandler;
-	onblur?: NubeComponentFieldEventHandler;
-	onfocus?: NubeComponentFieldEventHandler;
+	onChange?: NubeComponentFieldEventHandler;
+	onBlur?: NubeComponentFieldEventHandler;
+	onFocus?: NubeComponentFieldEventHandler;
 };
 
 export type NubeComponentField = NubeComponent &
