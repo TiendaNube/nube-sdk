@@ -113,6 +113,11 @@ export type NubeComponent =
 	| NubeComponentRow
 	| NubeComponentField;
 
+export type NubeComponentWithChildren =
+	| NubeComponentBox
+	| NubeComponentCol
+	| NubeComponentRow;
+
 export type UISlot =
 	| "before_main_content"
 	| "after_main_content"
