@@ -1,3 +1,98 @@
+import type { NubeSDKState } from "../main";
+
+// ----------------------------
+// ---- Box Component ---------
+// ----------------------------
+export type SizeUnit = "em" | "rem" | "px" | "%";
+export type Size = `${number}${SizeUnit}` | number | "auto";
+export type SecurityURL = `https://${string}`;
+export type FlexContent =
+	| "start"
+	| "center"
+	| "space-between"
+	| "space-around"
+	| "space-evenly";
+
+export type FlexItems = "start" | "center" | "end" | "stretch";
+
+export type TxtModifier =
+	| "bold"
+	| "italic"
+	| "underline"
+	| "strike"
+	| "lowercase"
+	| "uppercase"
+	| "capitalize";
+
+export type NubeComponentBoxProps = NubeComponentProps &
+	ChildrenProps & {
+		width?: Size;
+		height?: Size;
+		margin?: Size;
+		padding?: Size;
+		gap?: Size;
+		direction?: "row" | "col";
+		reverse?: boolean;
+		background?: string;
+		color?: string;
+		justifyContent?: FlexContent;
+		justifyItems?: FlexItems;
+		alignItems?: FlexItems;
+		alignContent?: FlexContent;
+		borderRadius?: Size;
+	};
+
+export type NubeComponentBox = NubeComponentBase &
+	NubeComponentBoxProps & {
+		type: "box";
+	};
+
+// ----------------------------
+// ---- Col Component ---------
+// ----------------------------
+export type NubeComponentColProps = Omit<NubeComponentBoxProps, "direction">;
+
+export type NubeComponentCol = NubeComponentBase &
+	NubeComponentColProps & {
+		type: "col";
+	};
+
+// ----------------------------
+// ---- Row Component ---------
+// ----------------------------
+export type NubeComponentRowProps = Omit<NubeComponentBoxProps, "direction">;
+
+export type NubeComponentRow = NubeComponentBase &
+	NubeComponentRowProps & {
+		type: "row";
+	};
+
+// ----------------------------
+// ---- Field Component -------
+// ----------------------------
+export type NubeComponentFieldEventHandler = (data: {
+	type: "change" | "blur" | "focus";
+	state: NubeSDKState;
+	value?: UIValue;
+}) => void;
+
+export type NubeComponentFieldProps = NubeComponentBase & {
+	name: string;
+	label: string;
+	onChange?: NubeComponentFieldEventHandler;
+	onBlur?: NubeComponentFieldEventHandler;
+	onFocus?: NubeComponentFieldEventHandler;
+};
+
+export type NubeComponentField = NubeComponentBase &
+	NubeComponentFieldProps & {
+		type: "field";
+	};
+
+// ----------------------------
+// ---- Basic Definitions -----
+// ----------------------------
+
 export type NubeComponentId = string;
 
 export type NubeComponentProps = {
@@ -6,14 +101,17 @@ export type NubeComponentProps = {
 	__internalId?: NubeComponentId;
 };
 
+export type NubeComponentBase = NubeComponentProps;
+
 export type ChildrenProps = {
 	children: NubeComponent[];
 };
 
-export type NubeComponent = NubeComponentProps & {
-	type: string;
-	[key: string]: unknown;
-};
+export type NubeComponent =
+	| NubeComponentBox
+	| NubeComponentCol
+	| NubeComponentRow
+	| NubeComponentField;
 
 export type UISlot =
 	| "before_main_content"
