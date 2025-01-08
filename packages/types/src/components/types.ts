@@ -22,7 +22,7 @@ export type UISlot =
 	| "after_line_items";
 
 export type UIValue = string;
-export type UISlots = Record<UISlot, NubeComponent>;
+export type UISlots = Partial<Record<UISlot, NubeComponent>>;
 export type UIValues = Record<NubeComponentId, UIValue>;
 
 export type UI = {
