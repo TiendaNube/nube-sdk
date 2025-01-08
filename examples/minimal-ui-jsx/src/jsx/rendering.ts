@@ -1,6 +1,7 @@
-import { box, col, row, field, FieldProps, RowProps, ColProps, BoxProps } from "@tiendanube/nube-sdk-ui";
+import { box, col, row, field } from "@tiendanube/nube-sdk-ui";
 import { JSX } from "./jsx-runtime";
 import { FunctionComponent } from "./types";
+import { NubeComponentBoxProps, NubeComponentColProps, NubeComponentFieldProps, NubeComponentRowProps } from "@tiendanube/nube-sdk-types";
 
 export function renderJSX<K extends keyof JSX.IntrinsicElements>(
   tag: K | FunctionComponent | undefined,
@@ -39,13 +40,13 @@ export function renderFragment(
 function renderTag<K extends keyof JSX.IntrinsicElements>(tag: K, props: JSX.IntrinsicElements[K]): JSX.Element {
   switch (tag) {
     case "box":
-      return box(props as BoxProps);
+      return box(props as NubeComponentBoxProps);
     case "col":
-      return col(props as ColProps);
+      return col(props as NubeComponentColProps);
     case "row":
-      return row(props as RowProps);
+      return row(props as NubeComponentRowProps);
     case "field":
-      return field(props as FieldProps);
+      return field(props as NubeComponentFieldProps);
   }
 
   return box({});

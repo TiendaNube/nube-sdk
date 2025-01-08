@@ -1,5 +1,9 @@
-import { BoxProps, ColProps, FieldProps, NubeComponent, RowProps } from "@tiendanube/nube-sdk-ui";
+import { NubeComponentBoxProps } from "@tiendanube/nube-sdk-types";
 import { renderJSX, renderFragment } from "./rendering";
+import { NubeComponentColProps } from "@tiendanube/nube-sdk-types";
+import { NubeComponentRowProps } from "@tiendanube/nube-sdk-types";
+import { NubeComponentFieldProps } from "@tiendanube/nube-sdk-types";
+import { NubeComponent } from "@tiendanube/nube-sdk-types";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace JSX {
@@ -12,10 +16,10 @@ namespace JSX {
   }
 
   export interface IntrinsicElements {
-    box: BoxProps & Key;
-    col: ColProps & Key;
-    row: RowProps & Key;
-    field: FieldProps & Key;
+    box: NubeComponentBoxProps & Key;
+    col: NubeComponentColProps & Key;
+    row: NubeComponentRowProps & Key;
+    field: NubeComponentFieldProps & Key;
   };
 
   // Declare the shape of JSX rendering result
