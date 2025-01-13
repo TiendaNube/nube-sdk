@@ -38,9 +38,9 @@ console.log("Field",
 	<field 
 		name="Something" 
 		label="Label" 
-		onchange={(e) => console.log(e)}
-		onblur={(e) => console.log(e)}
-		onfocus={(e) => console.log(e)}
+		onChange={(e) => console.log(e)}
+		onBlur={(e) => console.log(e)}
+		onFocus={(e) => console.log(e)}
 	/>
 );
 
@@ -53,4 +53,23 @@ export function App(nube: NubeSDK) {
 	nube.on("cart:update", ({ cart }) => {
 		console.log(cart);
 	});
+
+	nube.send("ui:slot:set", () => ({
+		ui: {
+			slots: {
+				"after_line_items": 
+					<box width={100} height={200}>
+						<field 
+							id="myField" 
+							label="myLabel" 
+							name="nameless" 
+							onChange={(e) => {
+								console.log(e.value)
+							}
+						}/>
+					</box>
+			}
+		}
+
+	}))
 }
