@@ -104,7 +104,7 @@ export type NubeComponentProps = {
 export type NubeComponentBase = NubeComponentProps;
 
 export type ChildrenProps = {
-	children?: NubeComponent[];
+	children?: string | NubeComponent | NubeComponent[];
 };
 
 export type NubeComponent =
