@@ -104,10 +104,11 @@ export type NubeComponentProps = {
 export type NubeComponentBase = NubeComponentProps;
 
 export type ChildrenProps = {
-	children?: string | NubeComponent | NubeComponent[];
+	children?: NubeComponent | NubeComponent[];
 };
 
 export type NubeComponent =
+	string
 	| NubeComponentBox
 	| NubeComponentCol
 	| NubeComponentRow
