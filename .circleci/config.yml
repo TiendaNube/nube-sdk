@@ -1,0 +1,122 @@
+version: 2.1
+
+executors:
+  default:
+    docker:
+      - image: cimg/node:20.17.0
+        environment:
+          TZ: "America/Sao_Paulo"
+    resource_class: small
+
+##### Jobs
+jobs:
+  install_dependencies:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-
+      - run:
+          name: Install Dependencies
+          command: npm ci
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
+
+  check_style:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Check Code Style
+          command: npm run check
+
+  run_tests:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Run Unit Tests
+          command: npm run test
+
+  build:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Build Packages
+          command: npm run build
+
+  publish-types:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Publish @tiendanube/nube-sdk-types
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm publish --workspace packages/types --access public --tag alpha
+
+  publish-ui:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Publish @tiendanube/nube-sdk-ui
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm publish --workspace packages/ui --access public --tag alpha
+
+##### Workflows
+workflows:
+  version: 2
+  build-and-publish:
+    jobs:
+      - install_dependencies:
+          context: microservices
+      - check_style:
+          context: microservices
+          requires:
+            - install_dependencies
+      - run_tests:
+          context: microservices
+          requires:
+            - check_style
+      - build:
+          context: microservices
+          requires:
+            - run_tests
+      - approval-publish-types:
+          type: approval
+          requires:
+            - build
+      - approval-publish-ui:
+          type: approval
+          requires:
+            - build
+      - publish-types:
+          context: NPM_TOKEN_SDK
+          requires:
+            - approval-publish-types
+      - publish-ui:
+          context: NPM_TOKEN_SDK
+          requires:
+            - approval-publish-ui
