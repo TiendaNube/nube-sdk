@@ -1,4 +1,4 @@
-import type { NubeSDK } from "@tiendanube/nube-sdk-types";
+import type { NubeComponentField, NubeSDK } from "@tiendanube/nube-sdk-types";
 import { field, box, row, col } from "@tiendanube/nube-sdk-ui";
 
 console.log(
@@ -16,7 +16,15 @@ field({
 	onChange: (e) => console.log(e.value) }
 );
 
-const myField2 = <field name = "Something 2" label = "My Label" onChange={(e) => console.log(e)} />;
+const myField2: NubeComponentField = {
+	type: "field",
+	id: "myField",
+	name: "field",
+	label: "User Name",
+	onChange: (e) => console.log(e.value),
+	onFocus: (e) => console.log("focus gained"),
+	onBlur: (e) => console.log("focus lost"),
+}
 
 const myBox = col({ 
 	width: 100, 

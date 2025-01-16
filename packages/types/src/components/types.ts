@@ -12,34 +12,23 @@ export type FlexContent =
 	| "space-between"
 	| "space-around"
 	| "space-evenly";
-
 export type FlexItems = "start" | "center" | "end" | "stretch";
-
-export type TxtModifier =
-	| "bold"
-	| "italic"
-	| "underline"
-	| "strike"
-	| "lowercase"
-	| "uppercase"
-	| "capitalize";
 
 export type NubeComponentBoxProps = NubeComponentProps &
 	ChildrenProps & {
-		width?: Size;
-		height?: Size;
-		margin?: Size;
-		padding?: Size;
-		gap?: Size;
-		direction?: "row" | "col";
-		reverse?: boolean;
-		background?: string;
-		color?: string;
-		justifyContent?: FlexContent;
-		justifyItems?: FlexItems;
-		alignItems?: FlexItems;
-		alignContent?: FlexContent;
-		borderRadius?: Size;
+		width: Size;
+		height: Size;
+		margin: Size;
+		padding: Size;
+		gap: Size;
+		direction: "row" | "col";
+		reverse: boolean;
+		background: string;
+		color: string;
+		justifyContent: FlexContent;
+		alignItems: FlexItems;
+		alignContent: FlexContent;
+		borderRadius: Size;
 	};
 
 export type NubeComponentBox = NubeComponentBase &
@@ -90,9 +79,56 @@ export type NubeComponentField = NubeComponentBase &
 	};
 
 // ----------------------------
+// ---- Image Component -------
+// ----------------------------
+export type ImageSource = {
+	src: string;
+	media?: string;
+};
+
+export type NubeComponentImgProps = NubeComponentBase & {
+	src: string;
+	alt: string;
+	sources?: ImageSource[];
+	width?: Size;
+	height?: Size;
+};
+
+export type NubeComponentImg = NubeComponentBase &
+	NubeComponentImgProps & {
+		type: "img";
+	};
+
+// ----------------------------
+// ---- Txt Component -------
+// ----------------------------
+export type TxtModifier =
+	| "bold"
+	| "italic"
+	| "underline"
+	| "strike"
+	| "lowercase"
+	| "uppercase"
+	| "capitalize";
+
+export type NubeComponentTxtProps = NubeComponentBase &
+	ChildrenProps & {
+		color?: string;
+		background?: string;
+		heading?: 1 | 2 | 3 | 4 | 5 | 6;
+		modifiers?: TxtModifier[];
+		inline?: boolean;
+		children: string;
+	};
+
+export type NubeComponentTxt = NubeComponentBase &
+	NubeComponentTxtProps & {
+		type: "txt";
+	};
+
+// ----------------------------
 // ---- Basic Definitions -----
 // ----------------------------
-
 export type NubeComponentId = string;
 
 export type NubeComponentProps = {
@@ -108,11 +144,13 @@ export type ChildrenProps = {
 };
 
 export type NubeComponent =
-	string
+	| string
 	| NubeComponentBox
 	| NubeComponentCol
 	| NubeComponentRow
-	| NubeComponentField;
+	| NubeComponentField
+	| NubeComponentImg
+	| NubeComponentTxt;
 
 export type NubeComponentWithChildren =
 	| NubeComponentBox
