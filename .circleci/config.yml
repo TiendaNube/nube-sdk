@@ -104,19 +104,19 @@ workflows:
           context: microservices
           requires:
             - run_tests
-      - publish-types-approval:
+      - approval-publish-types:
+          type: approval
+          requires:
+            - build
+      - approval-publish-ui:
           type: approval
           requires:
             - build
       - publish-types:
           context: NPM_TOKEN_SDK
           requires:
-            - publish-types-approval
-      - publish-ui-approval:
-          type: approval
-          requires:
-            - publish-types
+            - approval-publish-types
       - publish-ui:
           context: NPM_TOKEN_SDK
           requires:
-            - publish-ui-approval
+            - approval-publish-ui
