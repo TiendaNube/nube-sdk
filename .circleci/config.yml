@@ -105,10 +105,10 @@ workflows:
           requires:
             - run_tests
       - publish-types:
-          context: microservices
+          context: NPM_TOKEN_SDK
           requires:
             - build
       - publish-ui:
-          context: microservices
+          context: NPM_TOKEN_SDK
           requires:
             - publish-types
