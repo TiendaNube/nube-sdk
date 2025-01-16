@@ -8,11 +8,6 @@ executors:
           TZ: "America/Sao_Paulo"
     resource_class: small
 
-filter-prd: &filter-prd
-  branches:
-    only: /main/
-    ignore:
-      - /.*/
 ##### Jobs
 jobs:
   install_dependencies:
@@ -92,39 +87,52 @@ jobs:
 
 ##### Workflows
 workflows:
-  build-and-publish: 
+  version: 2
+  build-and-publish:
     jobs:
       - install_dependencies:
           context: microservices
-      - check_style:
+      - approve_install_dependencies:
+          type: approval
           requires:
             - install_dependencies
+      - check_style:
           context: microservices
-      - run_tests:
+          requires:
+            - approve_install_dependencies
+      - approve_check_style:
+          type: approval
           requires:
             - check_style
+      - run_tests:
           context: microservices
-      - build:
+          requires:
+            - approve_check_style
+      - approve_run_tests:
+          type: approval
           requires:
             - run_tests
+      - build:
           context: microservices
-      - approve-publish-types:
+          requires:
+            - approve_run_tests
+      - approve_build:
           type: approval
-          name: Approve Publish @tiendanube/nube-sdk-types
-          context: microservices
           requires:
             - build
       - publish-types:
           context: microservices
           requires:
-            - approve-publish-types
-      - approve-publish-ui:
+            - approve_build
+      - approve_publish_types:
           type: approval
-          name: Approve Publish @tiendanube/nube-sdk-ui
-          context: microservices
           requires:
-            - build
+            - publish-types
       - publish-ui:
           context: microservices
           requires:
-            - approve-publish-ui
+            - approve_publish_types
+      - approve_publish_ui:
+          type: approval
+          requires:
+            - publish-ui
