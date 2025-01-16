@@ -69,7 +69,7 @@ jobs:
       - run:
           name: Publish @tiendanube/nube-sdk-types
           command: |
-            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
             npm publish --workspace packages/types --access public --tag alpha
 
   publish-ui:
@@ -82,7 +82,7 @@ jobs:
       - run:
           name: Publish @tiendanube/nube-sdk-ui
           command: |
-            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
             npm publish --workspace packages/ui --access public --tag alpha
 
 ##### Workflows
@@ -105,7 +105,7 @@ workflows:
           requires:
             - run_tests
       - publish-types:
-          # context: microservices
+          context: microservices
           requires:
             - build
       - publish-ui:
