@@ -1,7 +1,7 @@
 import type { Nullable } from "./utility";
 
 export type Product = {
-	// keep compatibility with api responde
+	// keep compatibility with api response
 	id: number;
 	name: string;
 	price: string;
