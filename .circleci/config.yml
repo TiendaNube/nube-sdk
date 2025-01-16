@@ -92,47 +92,23 @@ workflows:
     jobs:
       - install_dependencies:
           context: microservices
-      - approve_install_dependencies:
-          type: approval
-          requires:
-            - install_dependencies
       - check_style:
           context: microservices
           requires:
-            - approve_install_dependencies
-      - approve_check_style:
-          type: approval
-          requires:
-            - check_style
+            - install_dependencies
       - run_tests:
           context: microservices
           requires:
-            - approve_check_style
-      - approve_run_tests:
-          type: approval
-          requires:
-            - run_tests
+            - check_style
       - build:
           context: microservices
           requires:
-            - approve_run_tests
-      - approve_build:
-          type: approval
-          requires:
-            - build
+            - run_tests
       - publish-types:
           context: microservices
           requires:
-            - approve_build
-      - approve_publish_types:
-          type: approval
-          requires:
-            - publish-types
+            - build
       - publish-ui:
           context: microservices
           requires:
-            - approve_publish_types
-      - approve_publish_ui:
-          type: approval
-          requires:
-            - publish-ui
+            - publish-types
