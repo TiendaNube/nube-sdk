@@ -1,16 +1,17 @@
 {
   "name": "minimal-ui-app",
   "version": "1.0.1",
+  "type": "module",
   "scripts": {
     "build": "tsup",
     "test-node": "npm run build && node dist/main.min.js"
   },
   "author": "Tiendanube / Nuvemshop",
   "dependencies": {
-    "@tiendanube/nube-sdk-ui": "file://../../packages/ui"
+    "@tiendanube/nube-sdk-ui": "0.1.0-alpha"
   },
   "devDependencies": {
-    "@tiendanube/nube-sdk-types": "0.2.0-alpha",
+    "@tiendanube/nube-sdk-types": "0.2.3-alpha",
     "tsup": "^8.3.0",
     "typescript": "^5.6.2"
   }

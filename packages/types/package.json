@@ -1,6 +1,6 @@
 {
 	"name": "@tiendanube/nube-sdk-types",
-	"version": "0.2.2-alpha",
+	"version": "0.2.3-alpha",
 	"description": "Type definition of NubeSDK",
 	"type": "module",
 	"main": "./src/index.ts",

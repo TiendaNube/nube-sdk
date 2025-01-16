@@ -15,7 +15,8 @@ export type FlexContent =
 export type FlexItems = "start" | "center" | "end" | "stretch";
 
 export type NubeComponentBoxProps = NubeComponentProps &
-	ChildrenProps & {
+	ChildrenProps &
+	Partial<{
 		width: Size;
 		height: Size;
 		margin: Size;
@@ -29,7 +30,7 @@ export type NubeComponentBoxProps = NubeComponentProps &
 		alignItems: FlexItems;
 		alignContent: FlexContent;
 		borderRadius: Size;
-	};
+	}>;
 
 export type NubeComponentBox = NubeComponentBase &
 	NubeComponentBoxProps & {
