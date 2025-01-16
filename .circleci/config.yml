@@ -1,0 +1,130 @@
+version: 2.1
+
+executors:
+  default:
+    docker:
+      - image: cimg/node:20.17.0
+        environment:
+          TZ: "America/Sao_Paulo"
+    resource_class: small
+
+filter-prd: &filter-prd
+  branches:
+    only: /main/
+    ignore:
+      - /.*/
+##### Jobs
+jobs:
+  install_dependencies:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-
+      - run:
+          name: Install Dependencies
+          command: npm ci
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
+
+  check_style:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Check Code Style
+          command: npm run check
+
+  run_tests:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Run Unit Tests
+          command: npm run test
+
+  build:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Build Packages
+          command: npm run build
+
+  publish-types:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Publish @tiendanube/nube-sdk-types
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+            npm publish --workspace packages/types --access public --tag alpha
+
+  publish-ui:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Publish @tiendanube/nube-sdk-ui
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+            npm publish --workspace packages/ui --access public --tag alpha
+
+##### Workflows
+workflows:
+  build-and-publish: 
+    jobs:
+      - install_dependencies:
+          context: microservices
+      - check_style:
+          requires:
+            - install_dependencies
+          context: microservices
+      - run_tests:
+          requires:
+            - check_style
+          context: microservices
+      - build:
+          requires:
+            - run_tests
+          context: microservices
+      - approve-publish-types:
+          type: approval
+          name: Approve Publish @tiendanube/nube-sdk-types
+          context: microservices
+          requires:
+            - build
+      - publish-types:
+          context: microservices
+          requires:
+            - approve-publish-types
+      - approve-publish-ui:
+          type: approval
+          name: Approve Publish @tiendanube/nube-sdk-ui
+          context: microservices
+          requires:
+            - build
+      - publish-ui:
+          context: microservices
+          requires:
+            - approve-publish-ui
