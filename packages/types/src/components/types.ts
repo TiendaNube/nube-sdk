@@ -162,7 +162,10 @@ export type UISlot =
 	| "before_main_content"
 	| "after_main_content"
 	| "before_line_items"
-	| "after_line_items";
+	| "after_line_items"
+	| "after_contact_form"
+	| "after_address_form"
+	| "after_billing_form";
 
 export type UIValue = string;
 export type UISlots = Partial<Record<UISlot, NubeComponent>>;
