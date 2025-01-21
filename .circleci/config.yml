@@ -8,6 +8,13 @@ executors:
           TZ: "America/Sao_Paulo"
     resource_class: small
 
+#### Filters
+filter-prd: &filter-prd
+  branches:
+    only: /main/
+    ignore:
+      - /.*/
+
 ##### Jobs
 jobs:
   install_dependencies:
@@ -83,7 +90,7 @@ jobs:
           name: Publish @tiendanube/nube-sdk-ui
           command: |
             npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
-            npm publish --workspace packages/ui --access public --tag alpha
+            npm run build --workspace packages/ui && npm publish --workspace packages/ui --access public --tag alpha
 
 ##### Workflows
 workflows:
@@ -108,10 +115,14 @@ workflows:
           type: approval
           requires:
             - build
+          filters:
+            <<: *filter-prd
       - approval-publish-ui:
           type: approval
           requires:
             - build
+          filters:
+            <<: *filter-prd
       - publish-types:
           context: NPM_TOKEN_SDK
           requires:
