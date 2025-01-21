@@ -128,6 +128,17 @@ export type NubeComponentTxt = NubeComponentBase &
 	};
 
 // ----------------------------
+// --- Fragment Component -----
+// ----------------------------
+
+export type NubeComponentFragmentProps = NubeComponentBase & ChildrenProps;
+
+export type NubeComponentFragment = NubeComponentBase &
+	NubeComponentFragmentProps & {
+		type: "fragment";
+	};
+
+// ----------------------------
 // ---- Basic Definitions -----
 // ----------------------------
 export type NubeComponentId = string;
