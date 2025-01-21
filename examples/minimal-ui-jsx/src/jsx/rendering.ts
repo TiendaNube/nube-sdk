@@ -39,14 +39,10 @@ export function renderFragment(
 
 function renderTag<K extends keyof JSX.IntrinsicElements>(tag: K, props: JSX.IntrinsicElements[K]): JSX.Element {
   switch (tag) {
-    case "box":
-      return box(props as NubeComponentBoxProps);
     case "col":
       return col(props as NubeComponentColProps);
     case "row":
       return row(props as NubeComponentRowProps);
-    case "field":
-      return field(props as NubeComponentFieldProps);
     case "img":
       return img(props as NubeComponentImgProps);
     case "txt":

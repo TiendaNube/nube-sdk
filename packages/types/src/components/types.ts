@@ -1,4 +1,6 @@
 import type { NubeSDKState } from "../main";
+// biome-ignore lint/style/useImportType: <explanation>
+import { Prettify } from "../utility";
 
 // ----------------------------
 // ---- Box Component ---------
@@ -112,15 +114,16 @@ export type TxtModifier =
 	| "uppercase"
 	| "capitalize";
 
-export type NubeComponentTxtProps = NubeComponentBase &
-	ChildrenProps & {
+export type NubeComponentTxtProps = Prettify<
+	NubeComponentBase & {
 		color?: string;
 		background?: string;
 		heading?: 1 | 2 | 3 | 4 | 5 | 6;
 		modifiers?: TxtModifier[];
 		inline?: boolean;
-		children: string;
-	};
+		children?: ChildrenProps["children"] | string;
+	}
+>;
 
 export type NubeComponentTxt = NubeComponentBase &
 	NubeComponentTxtProps & {
