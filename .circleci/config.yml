@@ -92,6 +92,19 @@ jobs:
             npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
             npm run build --workspace packages/ui && npm publish --workspace packages/ui --access public --tag alpha
 
+  publish-jsx:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Publish @tiendanube/nube-sdk-jsx
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm run build --workspace packages/jsx && npm publish --workspace packages/jsx --access public --tag alpha
+
 ##### Workflows
 workflows:
   version: 2
@@ -123,6 +136,12 @@ workflows:
             - build
           filters:
             <<: *filter-prd
+      - approval-publish-jsx:
+          type: approval
+          requires:
+            - build
+          filters:
+            <<: *filter-prd
       - publish-types:
           context: NPM_TOKEN_SDK
           requires:
@@ -131,3 +150,7 @@ workflows:
           context: NPM_TOKEN_SDK
           requires:
             - approval-publish-ui
+      - publish-jsx:
+          context: NPM_TOKEN_SDK
+          requires:
+            - approval-publish-jsx

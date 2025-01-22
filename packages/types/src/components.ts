@@ -1,6 +1,5 @@
-import type { NubeSDKState } from "../main";
-// biome-ignore lint/style/useImportType: <explanation>
-import { Prettify } from "../utility";
+import type { NubeSDKState } from "./main";
+import type { Prettify } from "./utility";
 
 // ----------------------------
 // ---- Box Component ---------
@@ -16,48 +15,56 @@ export type FlexContent =
 	| "space-evenly";
 export type FlexItems = "start" | "center" | "end" | "stretch";
 
-export type NubeComponentBoxProps = NubeComponentProps &
-	ChildrenProps &
-	Partial<{
-		width: Size;
-		height: Size;
-		margin: Size;
-		padding: Size;
-		gap: Size;
-		direction: "row" | "col";
-		reverse: boolean;
-		background: string;
-		color: string;
-		justifyContent: FlexContent;
-		alignItems: FlexItems;
-		alignContent: FlexContent;
-		borderRadius: Size;
-	}>;
+export type NubeComponentBoxProps = Prettify<
+	NubeComponentProps &
+		ChildrenProps &
+		Partial<{
+			width: Size;
+			height: Size;
+			margin: Size;
+			padding: Size;
+			gap: Size;
+			direction: "row" | "col";
+			reverse: boolean;
+			background: string;
+			color: string;
+			justifyContent: FlexContent;
+			alignItems: FlexItems;
+			alignContent: FlexContent;
+			borderRadius: Size;
+		}>
+>;
 
-export type NubeComponentBox = NubeComponentBase &
-	NubeComponentBoxProps & {
-		type: "box";
-	};
+export type NubeComponentBox = Prettify<
+	NubeComponentBase &
+		NubeComponentBoxProps & {
+			type: "box";
+		}
+>;
 
 // ----------------------------
 // ---- Col Component ---------
 // ----------------------------
 export type NubeComponentColProps = Omit<NubeComponentBoxProps, "direction">;
 
-export type NubeComponentCol = NubeComponentBase &
-	NubeComponentColProps & {
-		type: "col";
-	};
+export type NubeComponentCol = Prettify<
+	NubeComponentBase &
+		NubeComponentColProps & {
+			type: "col";
+		}
+>;
 
 // ----------------------------
 // ---- Row Component ---------
 // ----------------------------
 export type NubeComponentRowProps = Omit<NubeComponentBoxProps, "direction">;
 
-export type NubeComponentRow = NubeComponentBase &
-	NubeComponentRowProps & {
-		type: "row";
-	};
+export type NubeComponentRow = Prettify<
+	NubeComponentBase &
+		NubeComponentRowProps & {
+			type: "row";
+		}
+>;
 
 // ----------------------------
 // ---- Field Component -------
@@ -68,18 +75,22 @@ export type NubeComponentFieldEventHandler = (data: {
 	value?: UIValue;
 }) => void;
 
-export type NubeComponentFieldProps = NubeComponentBase & {
-	name: string;
-	label: string;
-	onChange?: NubeComponentFieldEventHandler;
-	onBlur?: NubeComponentFieldEventHandler;
-	onFocus?: NubeComponentFieldEventHandler;
-};
+export type NubeComponentFieldProps = Prettify<
+	NubeComponentBase & {
+		name: string;
+		label: string;
+		onChange?: NubeComponentFieldEventHandler;
+		onBlur?: NubeComponentFieldEventHandler;
+		onFocus?: NubeComponentFieldEventHandler;
+	}
+>;
 
-export type NubeComponentField = NubeComponentBase &
-	NubeComponentFieldProps & {
-		type: "field";
-	};
+export type NubeComponentField = Prettify<
+	NubeComponentBase &
+		NubeComponentFieldProps & {
+			type: "field";
+		}
+>;
 
 // ----------------------------
 // ---- Image Component -------
@@ -89,18 +100,22 @@ export type ImageSource = {
 	media?: string;
 };
 
-export type NubeComponentImgProps = NubeComponentBase & {
-	src: string;
-	alt: string;
-	sources?: ImageSource[];
-	width?: Size;
-	height?: Size;
-};
+export type NubeComponentImgProps = Prettify<
+	NubeComponentBase & {
+		src: string;
+		alt: string;
+		sources?: ImageSource[];
+		width?: Size;
+		height?: Size;
+	}
+>;
 
-export type NubeComponentImg = NubeComponentBase &
-	NubeComponentImgProps & {
-		type: "img";
-	};
+export type NubeComponentImg = Prettify<
+	NubeComponentBase &
+		NubeComponentImgProps & {
+			type: "img";
+		}
+>;
 
 // ----------------------------
 // ---- Txt Component -------
@@ -121,25 +136,30 @@ export type NubeComponentTxtProps = Prettify<
 		heading?: 1 | 2 | 3 | 4 | 5 | 6;
 		modifiers?: TxtModifier[];
 		inline?: boolean;
-		children?: ChildrenProps["children"] | string;
+		children?: NubeComponent | NubeComponent[] | string;
 	}
 >;
 
-export type NubeComponentTxt = NubeComponentBase &
-	NubeComponentTxtProps & {
-		type: "txt";
-	};
+export type NubeComponentTxt = Prettify<
+	NubeComponentBase &
+		NubeComponentTxtProps & {
+			type: "txt";
+		}
+>;
 
 // ----------------------------
 // --- Fragment Component -----
 // ----------------------------
 
-export type NubeComponentFragmentProps = NubeComponentBase & ChildrenProps;
+export type NubeComponentFragmentProps = Prettify<
+	NubeComponentBase & ChildrenProps
+>;
 
-export type NubeComponentFragment = NubeComponentBase &
+export type NubeComponentFragment = Prettify<
 	NubeComponentFragmentProps & {
 		type: "fragment";
-	};
+	}
+>;
 
 // ----------------------------
 // ---- Basic Definitions -----
@@ -164,6 +184,7 @@ export type NubeComponent =
 	| NubeComponentCol
 	| NubeComponentRow
 	| NubeComponentField
+	| NubeComponentFragment
 	| NubeComponentImg
 	| NubeComponentTxt;
 

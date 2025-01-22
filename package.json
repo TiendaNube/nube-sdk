@@ -8,7 +8,8 @@
   },
   "workspaces": [
     "packages/types",
-    "packages/ui"
+    "packages/ui",
+    "packages/jsx"
   ],
   "author": "Tiendanube / Nuvemshop",
   "license": "MIT",
