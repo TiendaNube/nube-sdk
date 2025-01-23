@@ -1,58 +1,46 @@
 {
-  "name": "@tiendanube/nube-sdk-jsx",
-  "version": "0.1.0-alpha",
-  "description": "Library for building JSX interfaces for NubeSDK",
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": "./dist/index.cjs"
-    },
-    "./jsx-runtime": {
-      "import": "./dist/jsx-runtime.ts"
-    }
-  },
-  "scripts": {
-    "build": "tsup",
-    "check": "biome check src/*",
-    "check:fix": "biome check --write src/*"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/TiendaNube/nube-sdk.git"
-  },
-  "author": "Tiendanube / Nuvemshop",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/TiendaNube/nube-sdk/issues"
-  },
-  "homepage": "https://www.tiendanube.com",
-  "devDependencies": {
-    "@biomejs/biome": "1.8.3",
-    "tsup": "^8.3.5",
-    "typescript": "^5.6.2"
-  },
-  "peerDependencies": {
-    "@tiendanube/nube-sdk-types": "*",
-    "@tiendanube/nube-sdk-ui": "*"
-  },
-  "files": [
-    "./dist",
-    "README.md",
-    "CHANGELOG.md",
-    "LICENSE"
-  ],
-  "keywords": [
-    "tiendanube",
-    "nuvemshop",
-    "nube-sdk",
-    "ecommerce",
-    "sdk",
-    "jsx"
-  ]
+	"name": "@tiendanube/nube-sdk-jsx",
+	"version": "0.1.0-alpha",
+	"description": "Library for building JSX interfaces for NubeSDK",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			},
+			"require": "./dist/index.cjs"
+		},
+		"./jsx-runtime": {
+			"import": "./dist/jsx-runtime.ts"
+		}
+	},
+	"scripts": {
+		"build": "tsup",
+		"check": "biome check src/*",
+		"check:fix": "biome check --write src/*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/TiendaNube/nube-sdk.git"
+	},
+	"author": "Tiendanube / Nuvemshop",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/TiendaNube/nube-sdk/issues"
+	},
+	"homepage": "https://www.tiendanube.com",
+	"devDependencies": {
+		"@biomejs/biome": "1.8.3",
+		"tsup": "^8.3.5",
+		"typescript": "^5.6.2"
+	},
+	"peerDependencies": {
+		"@tiendanube/nube-sdk-types": "*",
+		"@tiendanube/nube-sdk-ui": "*"
+	},
+	"files": ["./dist", "README.md", "CHANGELOG.md", "LICENSE"],
+	"keywords": ["tiendanube", "nuvemshop", "nube-sdk", "ecommerce", "sdk", "jsx"]
 }

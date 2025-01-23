@@ -103,7 +103,8 @@ jobs:
           name: Publish @tiendanube/nube-sdk-jsx
           command: |
             npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
-            npm run build --workspace packages/jsx && npm publish --workspace packages/jsx --access public --tag alpha
+            npm run build
+            npm publish --workspace packages/jsx --access public --tag alpha
 
 ##### Workflows
 workflows:
