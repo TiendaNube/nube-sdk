@@ -31,8 +31,10 @@ export interface NubeLocalStorage {
 	// Sets the value associated with the given key, with an optional expiration date.
 	// If no expiration date is specified, then the value will be stored indefinitely.
 	// The expiration date is in number of seconds since the UNIX epoch.
+	//TODO: Make async
 	setItem(key: string, value: string, expirationDate?: number): void;
 
 	// Removes the value associated with the given key from the storage.
+	//TODO: Make async
 	removeItem(key: string): void;
 }
