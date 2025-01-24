@@ -4,10 +4,12 @@ export const NubeLocalStorageSetEvent = "localstorage:set";
 export const NubeLocalStorageRemoveEvent = "localstorage:remove";
 
 export type NubeLocalStorageGetEventData = {
+	requestId: number;
 	key: string;
 };
 
 export type NubeLocalStorageGetResponseEventData = {
+	requestId: number;
 	key: string;
 	value: string | null;
 };
