@@ -1,18 +1,21 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["./src/main.tsx"],
-  clean: true,
+  entry: ["src/main.tsx"],
   format: ["esm"],
-  dts: false,
-  outDir: "./dist",
+  target: "esnext",
+  clean: true,
   minify: true,
+  bundle: true,
   sourcemap: false,
-  noExternal: [
-    "@tiendanube/nube-sdk-ui",
-  ],
+  splitting: false,
+  skipNodeModulesBundle: false,
+  esbuildOptions(options) {
+    options.alias = {
+      "@tiendanube/nube-sdk-jsx/dist/jsx-runtime": "@tiendanube/nube-sdk-jsx/jsx-runtime",
+    };
+  },
   outExtension: ({ options }) => ({
     js: options.minify ? ".min.js" : ".js"
   })
 });
-
