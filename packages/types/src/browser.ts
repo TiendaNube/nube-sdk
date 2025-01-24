@@ -1,6 +1,6 @@
-import type { NubeStorage } from "./storage";
+import type { AsyncNubeStorage } from "./storage";
 
 export type NubeBrowserAPIs = {
-	localStorage: NubeStorage;
-	sessionStorage: NubeStorage;
+	asyncLocalStorage: AsyncNubeStorage;
+	asyncSessionStorage: AsyncNubeStorage;
 };
