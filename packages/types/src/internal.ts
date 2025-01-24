@@ -1,29 +1,11 @@
-import {
-	NubeLocalStorageGetEvent,
-	type NubeLocalStorageGetEventData,
-	NubeLocalStorageGetResponseEvent,
-	type NubeLocalStorageGetResponseEventData,
-	NubeLocalStorageRemoveEvent,
-	type NubeLocalStorageRemoveEventData,
-	NubeLocalStorageSetEvent,
-	type NubeLocalStorageSetEventData,
-} from "./localstorage";
+import type { NubeStorageEvent, NubeStorageEventData } from "./storage";
 
-export type NubeSdkInternalEvent =
-	| typeof NubeLocalStorageGetEvent
-	| typeof NubeLocalStorageGetResponseEvent
-	| typeof NubeLocalStorageSetEvent
-	| typeof NubeLocalStorageRemoveEvent;
+export type NubeSdkInternalEvent = NubeStorageEvent;
 
-export type NubeSdkInternalEventData =
-	| NubeLocalStorageGetEventData
-	| NubeLocalStorageGetResponseEventData
-	| NubeLocalStorageSetEventData
-	| NubeLocalStorageRemoveEventData;
+export type NubeSdkInternalEventData = NubeStorageEventData;
 
-export const NubeSdkInternalEventIds = [
-	NubeLocalStorageGetEvent,
-	NubeLocalStorageGetResponseEvent,
-	NubeLocalStorageSetEvent,
-	NubeLocalStorageRemoveEvent,
-];
+export const NubeSdkInternalEventPrefix = "internal:";
+
+export function isInternalEvent(event: string): event is NubeSdkInternalEvent {
+	return event.startsWith(NubeSdkInternalEventPrefix);
+}

@@ -1,6 +1,6 @@
+import type { NubeBrowserAPIs } from "./browser";
 import type { UI } from "./components";
 import type { AppConfig, AppLocation, Cart, Store } from "./domain";
-import type { NubeLocalStorage } from "./localstorage";
 import type { DeepPartial } from "./utility";
 
 export type NubeSDKState = {
@@ -37,7 +37,7 @@ export type NubeSDK = {
 	off(event: NubeSDKListenableEvent, listener: NubeSDKListener): void;
 	send(event: NubeSDKSendableEvent, modifier?: NubeSDKStateModifier): void;
 	getState(): Readonly<NubeSDKState>;
-	getLocalStorage(): NubeLocalStorage;
+	getBrowserAPIs(): NubeBrowserAPIs;
 };
 
 export type NubeApp = (nube: NubeSDK) => void;
