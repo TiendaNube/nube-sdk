@@ -2,42 +2,123 @@ import type { UI } from "./components";
 import type { AppConfig, AppLocation, Cart, Store } from "./domain";
 import type { DeepPartial } from "./utility";
 
+/**
+ * Represents the current state of the NubeSDK.
+ * This state is immutable and contains all relevant application data.
+ */
 export type NubeSDKState = {
-	cart: Cart; // Holds the current cart state and related details
-	config: AppConfig; // Represents App config
-	location: AppLocation; // Represents the user's current location in the app
-	store: Store; // Contains information about the current store
-	ui: UI; // Contains UI configuration
+	/**
+	 * The current cart state, containing products, pricing, and validation status.
+	 */
+	cart: Cart;
+
+	/**
+	 * Application-wide configuration settings, including cart validation rules.
+	 */
+	config: AppConfig;
+
+	/**
+	 * The user's current location within the application, including the page type and URL.
+	 */
+	location: AppLocation;
+
+	/**
+	 * Information about the current store, such as its domain, currency, and language.
+	 */
+	store: Store;
+
+	/**
+	 * Represents UI-related state, including dynamically injected components and their values.
+	 */
+	ui: UI;
 };
 
+/**
+ * Represents the possible events that can be sent within NubeSDK.
+ * These events trigger specific actions within the SDK.
+ */
 export type NubeSDKSendableEvent =
-	| "cart:validate"
-	| "config:set"
-	| "ui:slot:set"
-	| `custom:${string}:${string}`;
+	| "cart:validate" // Triggered to validate the current cart state.
+	| "config:set" // Used to update the SDK configuration.
+	| "ui:slot:set" // Updates a UI slot with new content.
+	| `custom:${string}:${string}`; // Custom events with a specific namespace and identifier.
 
+/**
+ * Represents the possible events that can be listened to within NubeSDK.
+ * These events notify the application about changes in state or actions.
+ */
 export type NubeSDKListenableEvent =
-	| "*"
-	| "cart:update"
-	| "checkout:ready"
-	| "checkout:success"
-	| NubeSDKSendableEvent;
+	| "*" // Wildcard listener for all events.
+	| "cart:update" // Fired when the cart state is updated.
+	| "checkout:ready" // Triggered when checkout is fully initialized.
+	| "checkout:success" // Fired upon successful checkout completion.
+	| NubeSDKSendableEvent; // Includes all sendable events.
 
+/**
+ * Represents a listener function that responds to SDK events.
+ *
+ * @param state - The current immutable state of the SDK.
+ * @param event - The event that was triggered.
+ */
 export type NubeSDKListener = (
 	state: Readonly<NubeSDKState>,
 	event: NubeSDKSendableEvent,
 ) => void;
+
+/**
+ * Represents a function that modifies the SDK state.
+ * It receives the current state and returns a partial update.
+ *
+ * @param state - The current immutable state of the SDK.
+ * @returns A partial update of the SDK state.
+ */
 export type NubeSDKStateModifier = (
 	state: Readonly<NubeSDKState>,
 ) => DeepPartial<NubeSDKState>;
 
+/**
+ * Represents the main interface for interacting with NubeSDK.
+ * Provides methods to listen to events, send events, and retrieve state.
+ */
 export type NubeSDK = {
+	/**
+	 * Registers an event listener.
+	 *
+	 * @param event - The event type to listen for.
+	 * @param listener - The function to execute when the event occurs.
+	 */
 	on(event: NubeSDKListenableEvent, listener: NubeSDKListener): void;
+
+	/**
+	 * Removes a registered event listener.
+	 *
+	 * @param event - The event type to stop listening for.
+	 * @param listener - The function that was previously registered.
+	 */
 	off(event: NubeSDKListenableEvent, listener: NubeSDKListener): void;
+
+	/**
+	 * Sends an event to the SDK, optionally modifying the state.
+	 *
+	 * @param event - The event type to send.
+	 * @param modifier - An optional function to modify the SDK state.
+	 */
 	send(event: NubeSDKSendableEvent, modifier?: NubeSDKStateModifier): void;
+
+	/**
+	 * Retrieves the current immutable state of the SDK.
+	 *
+	 * @returns The current state of NubeSDK.
+	 */
 	getState(): Readonly<NubeSDKState>;
 };
 
+/**
+ * Represents a Nube application, which is a function that receives
+ * an instance of `NubeSDK` to interact with.
+ *
+ * @param nube - The NubeSDK instance provided to the application.
+ */
 export type NubeApp = (nube: NubeSDK) => void;
 
 declare global {

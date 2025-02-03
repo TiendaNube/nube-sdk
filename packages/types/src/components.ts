@@ -1,20 +1,48 @@
 import type { NubeSDKState } from "./main";
 import type { Prettify } from "./utility";
 
-// ----------------------------
-// ---- Box Component ---------
-// ----------------------------
+/* -------------------------------------------------------------------------- */
+/*                               Utility Types                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Defines units for size measurements.
+ */
 export type SizeUnit = "em" | "rem" | "px" | "%";
+
+/**
+ * Represents a flexible size definition.
+ * It can be a number, a string with a unit, or "auto".
+ */
 export type Size = `${number}${SizeUnit}` | number | "auto";
+
+/**
+ * Ensures URLs are secure by enforcing "https://".
+ */
 export type SecurityURL = `https://${string}`;
+
+/**
+ * Defines possible alignment values for flex container content.
+ */
 export type FlexContent =
 	| "start"
 	| "center"
 	| "space-between"
 	| "space-around"
 	| "space-evenly";
+
+/**
+ * Defines possible alignment values for flex items.
+ */
 export type FlexItems = "start" | "center" | "end" | "stretch";
 
+/* -------------------------------------------------------------------------- */
+/*                            Box Component                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `box` component.
+ */
 export type NubeComponentBoxProps = Prettify<
 	NubeComponentProps &
 		ChildrenProps &
@@ -35,6 +63,9 @@ export type NubeComponentBoxProps = Prettify<
 		}>
 >;
 
+/**
+ * Represents a `box` component, used as a layout container.
+ */
 export type NubeComponentBox = Prettify<
 	NubeComponentBase &
 		NubeComponentBoxProps & {
@@ -42,11 +73,19 @@ export type NubeComponentBox = Prettify<
 		}
 >;
 
-// ----------------------------
-// ---- Col Component ---------
-// ----------------------------
+/* -------------------------------------------------------------------------- */
+/*                            Col Component                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `col` component.
+ * Inherits properties from `box`, excluding `direction`.
+ */
 export type NubeComponentColProps = Omit<NubeComponentBoxProps, "direction">;
 
+/**
+ * Represents a `col` component, used for column-based layouts.
+ */
 export type NubeComponentCol = Prettify<
 	NubeComponentBase &
 		NubeComponentColProps & {
@@ -54,11 +93,19 @@ export type NubeComponentCol = Prettify<
 		}
 >;
 
-// ----------------------------
-// ---- Row Component ---------
-// ----------------------------
+/* -------------------------------------------------------------------------- */
+/*                            Row Component                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `row` component.
+ * Inherits properties from `box`, excluding `direction`.
+ */
 export type NubeComponentRowProps = Omit<NubeComponentBoxProps, "direction">;
 
+/**
+ * Represents a `row` component, used for row-based layouts.
+ */
 export type NubeComponentRow = Prettify<
 	NubeComponentBase &
 		NubeComponentRowProps & {
@@ -66,15 +113,22 @@ export type NubeComponentRow = Prettify<
 		}
 >;
 
-// ----------------------------
-// ---- Field Component -------
-// ----------------------------
+/* -------------------------------------------------------------------------- */
+/*                           Field Component                                  */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Defines a handler for field-related events.
+ */
 export type NubeComponentFieldEventHandler = (data: {
 	type: "change" | "blur" | "focus";
 	state: NubeSDKState;
 	value?: UIValue;
 }) => void;
 
+/**
+ * Represents the properties available for a `field` component.
+ */
 export type NubeComponentFieldProps = Prettify<
 	NubeComponentBase & {
 		name: string;
@@ -85,6 +139,9 @@ export type NubeComponentFieldProps = Prettify<
 	}
 >;
 
+/**
+ * Represents a `field` component, used for form inputs.
+ */
 export type NubeComponentField = Prettify<
 	NubeComponentBase &
 		NubeComponentFieldProps & {
@@ -92,14 +149,21 @@ export type NubeComponentField = Prettify<
 		}
 >;
 
-// ----------------------------
-// ---- Image Component -------
-// ----------------------------
+/* -------------------------------------------------------------------------- */
+/*                           Image Component                                  */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents an image source with optional media conditions.
+ */
 export type ImageSource = {
 	src: string;
 	media?: string;
 };
 
+/**
+ * Represents the properties available for an `img` component.
+ */
 export type NubeComponentImgProps = Prettify<
 	NubeComponentBase & {
 		src: string;
@@ -110,6 +174,9 @@ export type NubeComponentImgProps = Prettify<
 	}
 >;
 
+/**
+ * Represents an `img` component, used to display images.
+ */
 export type NubeComponentImg = Prettify<
 	NubeComponentBase &
 		NubeComponentImgProps & {
@@ -117,9 +184,13 @@ export type NubeComponentImg = Prettify<
 		}
 >;
 
-// ----------------------------
-// ---- Txt Component -------
-// ----------------------------
+/* -------------------------------------------------------------------------- */
+/*                           Txt Component                                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Defines possible text formatting modifiers.
+ */
 export type TxtModifier =
 	| "bold"
 	| "italic"
@@ -129,6 +200,9 @@ export type TxtModifier =
 	| "uppercase"
 	| "capitalize";
 
+/**
+ * Represents the properties available for a `txt` component.
+ */
 export type NubeComponentTxtProps = Prettify<
 	NubeComponentBase & {
 		color?: string;
@@ -140,6 +214,9 @@ export type NubeComponentTxtProps = Prettify<
 	}
 >;
 
+/**
+ * Represents a `txt` component, used for displaying text with formatting options.
+ */
 export type NubeComponentTxt = Prettify<
 	NubeComponentBase &
 		NubeComponentTxtProps & {
@@ -147,37 +224,59 @@ export type NubeComponentTxt = Prettify<
 		}
 >;
 
-// ----------------------------
-// --- Fragment Component -----
-// ----------------------------
+/* -------------------------------------------------------------------------- */
+/*                          Fragment Component                                */
+/* -------------------------------------------------------------------------- */
 
+/**
+ * Represents the properties available for a `fragment` component.
+ */
 export type NubeComponentFragmentProps = Prettify<
 	NubeComponentBase & ChildrenProps
 >;
 
+/**
+ * Represents a `fragment` component, used as a logical grouping element.
+ */
 export type NubeComponentFragment = Prettify<
 	NubeComponentFragmentProps & {
 		type: "fragment";
 	}
 >;
 
-// ----------------------------
-// ---- Basic Definitions -----
-// ----------------------------
+/* -------------------------------------------------------------------------- */
+/*                         Basic Definitions                                  */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents a unique identifier for a UI component.
+ */
 export type NubeComponentId = string;
 
+/**
+ * Defines basic properties for all UI components.
+ */
 export type NubeComponentProps = {
 	id?: NubeComponentId;
 	// DON'T USE THIS, USED INTERNALLY BY THE SDK, ANY VALUE PASSED HERE WILL BE OVERWRITTEN
 	__internalId?: NubeComponentId;
 };
 
+/**
+ * Defines the base structure for all UI components.
+ */
 export type NubeComponentBase = NubeComponentProps;
 
+/**
+ * Defines components that can have child elements.
+ */
 export type ChildrenProps = {
 	children?: NubeComponent | NubeComponent[];
 };
 
+/**
+ * Represents any valid Nube component type.
+ */
 export type NubeComponent =
 	| string
 	| NubeComponentBox
@@ -188,25 +287,52 @@ export type NubeComponent =
 	| NubeComponentImg
 	| NubeComponentTxt;
 
+/**
+ * Represents components that can contain other components as children.
+ */
 export type NubeComponentWithChildren =
 	| NubeComponentBox
 	| NubeComponentCol
 	| NubeComponentRow;
 
+/**
+ * Represents a UI slot where components can be dynamically injected.
+ */
 export type UISlot =
-	| "before_main_content"
-	| "after_main_content"
-	| "before_line_items"
-	| "after_line_items"
-	| "after_contact_form"
-	| "after_address_form"
-	| "after_billing_form";
+	| "before_main_content" // Before the main checkout content.
+	| "after_main_content" // After the main checkout content.
+	| "before_line_items" // Before the list of items in the cart.
+	| "after_line_items" // After the list of items in the cart.
+	| "after_contact_form" // After the contact form in checkout.
+	| "after_address_form" // After the address form in checkout.
+	| "after_billing_form"; // After the billing form in checkout.
 
+/**
+ * Represents the value of a UI component, typically used for form inputs.
+ */
 export type UIValue = string;
+
+/**
+ * Represents a mapping of UI slots to their respective components.
+ */
 export type UISlots = Partial<Record<UISlot, NubeComponent>>;
+
+/**
+ * Represents a mapping of UI component IDs to their respective values.
+ */
 export type UIValues = Record<NubeComponentId, UIValue>;
 
+/**
+ * Represents the UI state, including dynamically injected components and their values.
+ */
 export type UI = {
+	/**
+	 * Contains dynamically injected components into specific UI slots.
+	 */
 	slots: UISlots;
+
+	/**
+	 * Stores values associated with specific UI components, typically form inputs.
+	 */
 	values: UIValues;
 };
