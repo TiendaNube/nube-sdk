@@ -27,7 +27,7 @@ npm install @tiendanube/nube-sdk-jsx @tiendanube/nube-sdk-ui @tiendanube/nube-sd
 ## Example Usage
 
 ```tsx
-import type { NubeApp } from "@tiendanube/nube-types";
+import type { NubeApp } from "@tiendanube/nube-sdk-types";
 import { Box, Row, Col, Txt, Field } from "@tiendanube/nube-sdk-jsx";
 
 const Component = () => (
