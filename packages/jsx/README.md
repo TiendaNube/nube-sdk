@@ -39,7 +39,7 @@ function MyComponent() {
           console.log(`User last name: ${e.value}`);
         }}
       />
-    <>
+    </>
   );
 }
 
