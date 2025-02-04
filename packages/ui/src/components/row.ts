@@ -3,6 +3,15 @@ import type {
 	NubeComponentRowProps,
 } from "@tiendanube/nube-sdk-types";
 
+/**
+ * Creates a `row` component.
+ *
+ * A `row` is a flexible container used for structuring layouts in a horizontal direction.
+ * It inherits most properties from `box`, except for the `direction` property.
+ *
+ * @param props - The properties for configuring the row component.
+ * @returns A `NubeComponentRow` object representing the row component.
+ */
 export const row = (props: NubeComponentRowProps): NubeComponentRow => ({
 	type: "row",
 	...props,
