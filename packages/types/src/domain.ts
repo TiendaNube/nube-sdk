@@ -194,3 +194,80 @@ export type AppConfig = {
 	/** Determines whether cart validation is enabled. */
 	has_cart_validation: boolean;
 };
+/**
+ * Represents a shipping option available in checkout.
+ */
+export type ShippingOption = {
+	/** Unique identifier for the shipping option. */
+	id: string;
+	original_name: Nullable<string>;
+	name: Nullable<string>;
+	code: Nullable<string>;
+	reference: Nullable<string>;
+	type: Nullable<string>;
+	price: number;
+	price_merchant: number;
+	/** Currency of the shipping cost. */
+	currency: string;
+	/** Estimated minimum delivery date. */
+	min_delivery_date: Nullable<string>;
+	/** Estimated maximum delivery date. */
+	max_delivery_date: Nullable<string>;
+	/** Indicates whether a phone number is required for shipping. */
+	phone_required: boolean;
+	/** Indicates whether an ID is required for shipping. */
+	id_required: boolean;
+	accepts_cod: boolean;
+	/** Indicates eligibility for free shipping. */
+	free_shipping_eligible: boolean;
+	/** Extra shipping details. */
+	extra: {
+		show_time: boolean;
+		warning: {
+			enable: boolean;
+		};
+		assigned_location_id: Nullable<string>;
+		free_shipping: Nullable<number>;
+		free_shipping_min_value: Nullable<string>;
+		free_shipping_price_merchant: Nullable<number>;
+		free_shipping_methods: Nullable<string[]>;
+		free_shipping_combines_with_other_discounts: boolean;
+	};
+	method: Nullable<string>;
+	app_id: Nullable<string>;
+	hidden: boolean;
+	priority: Nullable<number>;
+	shippable: boolean;
+	shipping_internal_option_code: Nullable<string>;
+	sign_key: Nullable<string>;
+	smart_date: {
+		translate_old_string: Nullable<string>;
+		translate_string: Nullable<string>;
+		total_old_time: Nullable<string>;
+		total_exact_time: Nullable<string>;
+		final_time: Nullable<string>;
+		show_time: boolean;
+		days: Nullable<string>;
+		from_week_day: Nullable<string>;
+		from_date: Nullable<string>;
+		to_week_day: Nullable<string>;
+		to_date: Nullable<string>;
+		from: Nullable<number>;
+		to: Nullable<number>;
+		min_days: Nullable<number>;
+		max_days: Nullable<number>;
+		extra_days: unknown;
+	};
+};
+
+/**
+ * Represents shipping information in checkout.
+ */
+export type Shipping = {
+	/** Selected shipping option ID. */
+	selected: Nullable<string>;
+	/** List of available shipping options. */
+	options: ShippingOption[];
+	/** Custom labels assigned to shipping options. */
+	custom_labels: Record<string, string>;
+};

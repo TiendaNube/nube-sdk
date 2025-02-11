@@ -32,3 +32,15 @@ export type DeepNullable<T> = {
 export type DeepPartial<T> = {
 	[K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
 };
+
+/**
+ * Extracts values from an object as a union type.
+ *
+ * @template T - The object from which to extract values.
+ * @example
+ * ```ts
+ * const Obj = { FOO: 'foo', BAR: 'bar' } as const;
+ * type Values = ObjectValues<typeof Obj>; // "foo" | "bar"
+ * ```
+ */
+export type ObjectValues<T> = T[keyof T];
