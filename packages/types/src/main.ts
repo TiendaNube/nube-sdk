@@ -1,6 +1,7 @@
 import type { UI } from "./components";
-import type { AppConfig, AppLocation, Cart, Store } from "./domain";
-import type { DeepPartial } from "./utility";
+import type { AppConfig, AppLocation, Cart, Shipping, Store } from "./domain";
+import type { NubeSDKListenableEvent, NubeSDKSendableEvent } from "./events";
+import type { DeepPartial, Nullable } from "./utility";
 
 /**
  * Represents the current state of the NubeSDK.
@@ -31,28 +32,13 @@ export type NubeSDKState = {
 	 * Represents UI-related state, including dynamically injected components and their values.
 	 */
 	ui: UI;
+
+	/**
+	 * Informaion about shipping, such as avaliable options, selected option and custom labels.
+	 * This property may be null depending on the page it is accessed from.
+	 */
+	shipping: Nullable<Shipping>;
 };
-
-/**
- * Represents the possible events that can be sent within NubeSDK.
- * These events trigger specific actions within the SDK.
- */
-export type NubeSDKSendableEvent =
-	| "cart:validate" // Triggered to validate the current cart state.
-	| "config:set" // Used to update the SDK configuration.
-	| "ui:slot:set" // Updates a UI slot with new content.
-	| `custom:${string}:${string}`; // Custom events with a specific namespace and identifier.
-
-/**
- * Represents the possible events that can be listened to within NubeSDK.
- * These events notify the application about changes in state or actions.
- */
-export type NubeSDKListenableEvent =
-	| "*" // Wildcard listener for all events.
-	| "cart:update" // Fired when the cart state is updated.
-	| "checkout:ready" // Triggered when checkout is fully initialized.
-	| "checkout:success" // Fired upon successful checkout completion.
-	| NubeSDKSendableEvent; // Includes all sendable events.
 
 /**
  * Represents a listener function that responds to SDK events.
