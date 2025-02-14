@@ -49,6 +49,7 @@ export type NubeStorageQueryResponseEventData =
 export type NubeStorageEventData =
 	| NubeStorageQueryEventData
 	| NubeStorageQueryResponseEventData;
+
 export interface AsyncNubeStorage {
 	// Returns the value associated with the given key, or null if the key does not exist in the storage.
 	getItem(key: string): Promise<string | null>;
