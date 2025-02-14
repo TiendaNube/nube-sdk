@@ -36,14 +36,19 @@ export type NubeStorageRemoveEventData = NubeStorageEventDataBase & {
 
 export type NubeStorageRemoveResponseEventData = NubeStorageEventDataBase;
 
-export type NubeStorageEventData =
+export type NubeStorageQueryEventData =
 	| NubeStorageGetEventData
-	| NubeStorageGetResponseEventData
 	| NubeStorageSetEventData
+	| NubeStorageRemoveEventData;
+
+export type NubeStorageQueryResponseEventData =
+	| NubeStorageGetResponseEventData
 	| NubeStorageSetResponseEventData
-	| NubeStorageRemoveEventData
 	| NubeStorageRemoveResponseEventData;
 
+export type NubeStorageEventData =
+	| NubeStorageQueryEventData
+	| NubeStorageQueryResponseEventData;
 export interface AsyncNubeStorage {
 	// Returns the value associated with the given key, or null if the key does not exist in the storage.
 	getItem(key: string): Promise<string | null>;
