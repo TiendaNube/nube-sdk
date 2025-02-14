@@ -98,6 +98,12 @@ export type NubeSDK = {
 	 * @returns The current state of NubeSDK.
 	 */
 	getState(): Readonly<NubeSDKState>;
+
+	/**
+	 * Returns the browser APIs that can be used in the web worker.
+	 *
+	 * @returns The available browser APIs.
+	 */
 	getBrowserAPIs(): NubeBrowserAPIs;
 };
 

@@ -51,14 +51,24 @@ export type NubeStorageEventData =
 	| NubeStorageQueryResponseEventData;
 
 export interface AsyncNubeStorage {
-	// Returns the value associated with the given key, or null if the key does not exist in the storage.
+	/**
+	 * Returns the value associated with the given key, or null if the key does not exist in the storage.
+	 * @param key Key to retrieve the value for.
+	 */
 	getItem(key: string): Promise<string | null>;
 
-	// Sets the value associated with the given key, with an optional expiration date.
-	// If no expiration date is specified, then the value will be stored indefinitely.
-	// The expiration date is in number of seconds since the UNIX epoch.
+	/**
+	 * Sets the value associated with the given key, with an optional expiration date.
+	 * If no expiration date is specified, then the value will be stored indefinitely.
+	 * @param key Key to store the value for.
+	 * @param value Value to store.
+	 * @param expirationDate Optional expiration date, in number of seconds since the UNIX epoch.
+	 */
 	setItem(key: string, value: string, expirationDate?: number): Promise<void>;
 
-	// Removes the value associated with the given key from the storage.
+	/**
+	 * Removes the value associated with the given key from the storage.
+	 * @param key Key to remove the value for.
+	 */
 	removeItem(key: string): Promise<void>;
 }
