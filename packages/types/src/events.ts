@@ -53,7 +53,7 @@ export const EVENT = {
 	CART_UPDATE: "cart:update",
 	CHECKOUT_READY: "checkout:ready",
 	CHECKOUT_SUCCESS: "checkout:success",
-	SHIPPING_UPDATE: "shipping:update:",
+	SHIPPING_UPDATE: "shipping:update",
 	...SENDABLE_EVENT,
 } as const;
 

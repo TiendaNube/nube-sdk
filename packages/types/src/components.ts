@@ -150,6 +150,61 @@ export type NubeComponentField = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                            Check Component                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `check` component.
+ */
+export type NubeComponentCheckProps = Prettify<
+	NubeComponentBase & {
+		name: string;
+		label: string;
+		checked: boolean;
+		onChange?: NubeComponentFieldEventHandler;
+	}
+>;
+
+/**
+ * Represents a `check` component, used for checkboxs.
+ */
+export type NubeComponentCheck = Prettify<
+	NubeComponentBase &
+		NubeComponentCheckProps & {
+			type: "check";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                          TxtArea Component                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `txtarea` component.
+ */
+export type NubeComponentTxtAreaProps = Prettify<
+	NubeComponentBase & {
+		name: string;
+		label: string;
+		maxLength?: number;
+		row?: number;
+		onChange?: NubeComponentFieldEventHandler;
+		onBlur?: NubeComponentFieldEventHandler;
+		onFocus?: NubeComponentFieldEventHandler;
+	}
+>;
+
+/**
+ * Represents a `txtarea` component, used for textareas.
+ */
+export type NubeComponentTxtArea = Prettify<
+	NubeComponentBase &
+		NubeComponentTxtAreaProps & {
+			type: "txtarea";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                           Image Component                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -285,7 +340,9 @@ export type NubeComponent =
 	| NubeComponentField
 	| NubeComponentFragment
 	| NubeComponentImg
-	| NubeComponentTxt;
+	| NubeComponentTxt
+	| NubeComponentCheck
+	| NubeComponentTxtArea;
 
 /**
  * Represents components that can contain other components as children.
