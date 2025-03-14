@@ -1,6 +1,6 @@
 import type {
-    NubeComponentCheck,
-    NubeComponentCheckProps,
+	NubeComponentCheck,
+	NubeComponentCheckProps,
 } from "@tiendanube/nube-sdk-types";
 
 /**
@@ -14,6 +14,6 @@ import type {
  * @returns A `NubeComponentCheck` object representing the checkbox.
  */
 export const check = (props: NubeComponentCheckProps): NubeComponentCheck => ({
-    type: "check",
-    ...props,
+	type: "check",
+	...props,
 });

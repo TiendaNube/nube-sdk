@@ -150,11 +150,11 @@ export type NubeComponentField = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
-/*                          Checkbox Component                                */
+/*                            Check Component                                 */
 /* -------------------------------------------------------------------------- */
 
 /**
- * Represents the properties available for a `checkbox` component.
+ * Represents the properties available for a `check` component.
  */
 export type NubeComponentCheckProps = Prettify<
 	NubeComponentBase & {
@@ -166,12 +166,41 @@ export type NubeComponentCheckProps = Prettify<
 >;
 
 /**
- * Represents the properties available for a `checkbox` component.
+ * Represents a `check` component, used for checkboxs.
  */
 export type NubeComponentCheck = Prettify<
 	NubeComponentBase &
 		NubeComponentCheckProps & {
 			type: "check";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                          TxtArea Component                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `txtarea` component.
+ */
+export type NubeComponentTxtAreaProps = Prettify<
+	NubeComponentBase & {
+		name: string;
+		label: string;
+		maxLength?: number;
+		row?: number;
+		onChange?: NubeComponentFieldEventHandler;
+		onBlur?: NubeComponentFieldEventHandler;
+		onFocus?: NubeComponentFieldEventHandler;
+	}
+>;
+
+/**
+ * Represents a `txtarea` component, used for textareas.
+ */
+export type NubeComponentTxtArea = Prettify<
+	NubeComponentBase &
+		NubeComponentTxtAreaProps & {
+			type: "txtarea";
 		}
 >;
 
@@ -312,7 +341,8 @@ export type NubeComponent =
 	| NubeComponentFragment
 	| NubeComponentImg
 	| NubeComponentTxt
-	| NubeComponentCheck;
+	| NubeComponentCheck
+	| NubeComponentTxtArea;
 
 /**
  * Represents components that can contain other components as children.
