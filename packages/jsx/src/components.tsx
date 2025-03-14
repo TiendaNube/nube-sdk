@@ -13,6 +13,8 @@ import type {
 	NubeComponentRowProps,
 	NubeComponentTxt,
 	NubeComponentTxtProps,
+	NubeComponentCheck,
+	NubeComponentCheckProps,
 } from "@tiendanube/nube-sdk-types";
 import {
 	box,
@@ -22,6 +24,7 @@ import {
 	img,
 	row,
 	txt,
+	check,
 } from "@tiendanube/nube-sdk-ui";
 
 /**
@@ -103,6 +106,20 @@ export function Fragment(
  */
 export function Txt(props: NubeComponentTxtProps): NubeComponentTxt {
 	return txt(props);
+}
+
+/**
+ * Creates a `Check` component.
+ *
+ * A `Check` represents a selectable field that can be toggled between checked and unchecked states.
+ * It is typically used to allow users to select one or more options.
+ * It supports properties such as `name`, `label`, `checked`, and event handlers (`onChange`).
+ *
+ * @param props - The properties for configuring the checkbox component.
+ * @returns A `NubeComponentCheck` object representing the checkbox.
+ */
+export function Check(props: NubeComponentCheckProps): NubeComponentCheck {
+	return check(props);
 }
 
 /**

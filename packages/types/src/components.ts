@@ -150,6 +150,32 @@ export type NubeComponentField = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                          Checkbox Component                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `checkbox` component.
+ */
+export type NubeComponentCheckProps = Prettify<
+	NubeComponentBase & {
+		name: string;
+		label: string;
+		checked: boolean;
+		onChange?: NubeComponentFieldEventHandler;
+	}
+>;
+
+/**
+ * Represents the properties available for a `checkbox` component.
+ */
+export type NubeComponentCheck = Prettify<
+	NubeComponentBase &
+		NubeComponentCheckProps & {
+			type: "check";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                           Image Component                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -285,7 +311,8 @@ export type NubeComponent =
 	| NubeComponentField
 	| NubeComponentFragment
 	| NubeComponentImg
-	| NubeComponentTxt;
+	| NubeComponentTxt
+	| NubeComponentCheck;
 
 /**
  * Represents components that can contain other components as children.
