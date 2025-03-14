@@ -193,6 +193,8 @@ export type AppLocation = {
 export type AppConfig = {
 	/** Determines whether cart validation is enabled. */
 	has_cart_validation: boolean;
+	/** Determines whether the user can select a shipping option. */
+	disable_shipping_more_options: boolean;
 };
 /**
  * Represents a shipping option available in checkout.
