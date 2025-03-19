@@ -118,14 +118,24 @@ export type NubeComponentRow = Prettify<
 /* -------------------------------------------------------------------------- */
 
 /**
- * Defines a handler for field-related events.
+ * Defines a handler for components with events.
  */
-export type NubeComponentFieldEventHandler = (data: {
-	type: "change" | "blur" | "focus";
+export type NubeComponentEventHandler<
+	Events extends string,
+	Value = string,
+> = (data: {
+	type: Events;
 	state: NubeSDKState;
-	value?: UIValue;
+	value?: Value;
 }) => void;
 
+/**
+ * Defines a handler for field-related events.
+ */
+export type NubeComponentFieldEventHandler = NubeComponentEventHandler<
+	"change" | "focus" | "blur",
+	string
+>;
 /**
  * Represents the properties available for a `field` component.
  */
@@ -154,6 +164,14 @@ export type NubeComponentField = Prettify<
 /* -------------------------------------------------------------------------- */
 
 /**
+ * Represents the event handler for Check component
+ */
+export type NubeComponentCheckEventHandler = NubeComponentEventHandler<
+	"change",
+	boolean
+>;
+
+/**
  * Represents the properties available for a `check` component.
  */
 export type NubeComponentCheckProps = Prettify<
@@ -161,7 +179,7 @@ export type NubeComponentCheckProps = Prettify<
 		name: string;
 		label: string;
 		checked: boolean;
-		onChange?: NubeComponentFieldEventHandler;
+		onChange?: NubeComponentCheckEventHandler;
 	}
 >;
 
@@ -179,6 +197,11 @@ export type NubeComponentCheck = Prettify<
 /*                          TxtArea Component                                */
 /* -------------------------------------------------------------------------- */
 
+export type NubeComponentTxtAreaEventHandler = NubeComponentEventHandler<
+	"change" | "focus" | "blur",
+	string
+>;
+
 /**
  * Represents the properties available for a `txtarea` component.
  */
@@ -188,9 +211,9 @@ export type NubeComponentTxtAreaProps = Prettify<
 		label: string;
 		maxLength?: number;
 		row?: number;
-		onChange?: NubeComponentFieldEventHandler;
-		onBlur?: NubeComponentFieldEventHandler;
-		onFocus?: NubeComponentFieldEventHandler;
+		onChange?: NubeComponentTxtAreaEventHandler;
+		onBlur?: NubeComponentTxtAreaEventHandler;
+		onFocus?: NubeComponentTxtAreaEventHandler;
 	}
 >;
 
