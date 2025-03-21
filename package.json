@@ -9,7 +9,8 @@
   "workspaces": [
     "packages/types",
     "packages/ui",
-    "packages/jsx"
+    "packages/jsx",
+    "packages/create-nube-app"
   ],
   "author": "Tiendanube / Nuvemshop",
   "license": "MIT",

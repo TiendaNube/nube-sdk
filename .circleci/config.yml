@@ -107,6 +107,20 @@ jobs:
             npm run build
             npm publish --workspace packages/jsx --access public
 
+  publish-create-nube-app:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Publish create-nube-app
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm run build
+            npm publish --workspace packages/create-nube-app --access public
+
 ##### Workflows
 workflows:
   version: 2
@@ -144,6 +158,12 @@ workflows:
             - build
           filters:
             <<: *filter-prd
+      - approval-publish-create-nube-app:
+          type: approval
+          requires:
+            - build
+          filters:
+            <<: *filter-prd
       - publish-types:
           context: NPM_TOKEN_SDK
           requires:
@@ -156,3 +176,7 @@ workflows:
           context: NPM_TOKEN_SDK
           requires:
             - approval-publish-jsx
+      - publish-create-nube-app:
+          context: NPM_TOKEN_SDK
+          requires:
+            - approval-publish-create-nube-app
