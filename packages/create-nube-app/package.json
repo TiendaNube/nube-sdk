@@ -3,7 +3,7 @@
     "description": "Create Nube App",
     "author": "Tiendanube / Nuvemshop",
 	"license": "MIT",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "bin": {
         "create-nube-app": "index.js"
     },
@@ -12,7 +12,6 @@
         "check": "biome check src/*",
 		"check:fix": "biome check --write src/*"
     },
-    "private": true,
     "type": "module",
     "devDependencies": {
         "@clack/prompts": "^0.10.0",
