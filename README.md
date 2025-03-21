@@ -15,13 +15,18 @@ This monorepo contains several key packages that facilitate different aspects of
 - [`@tiendanube/nube-sdk-types`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/types) →  TypeScript definitions for NubeSDK.
 - [`@tiendanube/nube-sdk-ui`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/ui) → Functions for building declarative UI components.
 - [`@tiendanube/nube-sdk-jsx`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/jsx) → JSX runtime for writing UI components using JSX/TSX.
+- [`create-nube-app`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app) → CLI tool for scaffolding and setting up new Nube applications.
 
 ## Installation
 
-Each package can be installed separately based on your project requirements. For example, to use UI components with JSX support:
+To quickly create a new Nube application, you can use the CLI tool create-nube-app. Simply run the command below, which will scaffold a complete project with all the necessary dependencies:
 
 ```sh
-npm install @tiendanube/nube-sdk-jsx @tiendanube/nube-sdk-ui @tiendanube/nube-sdk-types
+npm create nube-app
+```
+or
+```sh
+yarn create nube-app
 ```
 
 ## Example Usage
@@ -56,9 +61,9 @@ export const App: NubeApp = (nube) => {
 
 This repository includes example projects to help you get started quickly:
 
-- **Minimal app setup:** [`examples/minimal`](https://github.com/TiendaNube/nube-sdk/tree/main/examples/minimal)
-- **Minimal with UI:** [`examples/minimal-ui`](https://github.com/TiendaNube/nube-sdk/tree/main/examples/minimal-ui)
-- **Minimal with UI in JSX:** [`examples/minimal-ui-jsx`](https://github.com/TiendaNube/nube-sdk/tree/main/examples/minimal-ui-jsx)
+- **Minimal app setup:** [`examples/minimal`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app/templates/minimal)
+- **Minimal with UI:** [`examples/minimal-ui`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app/templates/minimal-ui)
+- **Minimal with UI in JSX:** [`examples/minimal-ui-jsx`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app/templates/minimal-ui-jsx)
 
 These examples include **pre-configured build setups**, ensuring a seamless development experience.
 
