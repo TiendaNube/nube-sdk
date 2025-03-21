@@ -45,9 +45,9 @@ async function main(): Promise<void> {
 	const templateName = await prompts.select({
 		message: "Select a template:",
 		options: [
-			{ label: "minimal", value: "minimal" },
-			{ label: "minimal-ui", value: "minimal-ui" },
-			{ label: "minimal-ui-jsx", value: "minimal-ui-jsx" },
+			{ label: "Minimal", value: "minimal" },
+			{ label: "Minimal with UI", value: "minimal-ui" },
+			{ label: "Minimal with UI in JSX", value: "minimal-ui-jsx" },
 		],
 	});
 	if (prompts.isCancel(templateName)) return cancel();
