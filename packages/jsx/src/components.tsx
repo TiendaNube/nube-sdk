@@ -1,6 +1,8 @@
 import type {
 	NubeComponentBox,
 	NubeComponentBoxProps,
+	NubeComponentCheck,
+	NubeComponentCheckProps,
 	NubeComponentCol,
 	NubeComponentColProps,
 	NubeComponentField,
@@ -12,16 +14,20 @@ import type {
 	NubeComponentRow,
 	NubeComponentRowProps,
 	NubeComponentTxt,
+	NubeComponentTxtArea,
+	NubeComponentTxtAreaProps,
 	NubeComponentTxtProps,
 } from "@tiendanube/nube-sdk-types";
 import {
 	box,
+	check,
 	col,
 	field,
 	fragment,
 	img,
 	row,
 	txt,
+	txtarea,
 } from "@tiendanube/nube-sdk-ui";
 
 /**
@@ -103,6 +109,35 @@ export function Fragment(
  */
 export function Txt(props: NubeComponentTxtProps): NubeComponentTxt {
 	return txt(props);
+}
+
+/**
+ * Creates a `Check` component.
+ *
+ * A `Check` represents a selectable field that can be toggled between checked and unchecked states.
+ * It is typically used to allow users to select one or more options.
+ * It supports properties such as `name`, `label`, `checked`, and event handlers (`onChange`).
+ *
+ * @param props - The properties for configuring the check component.
+ * @returns A `NubeComponentCheck` object representing the check component.
+ */
+export function Check(props: NubeComponentCheckProps): NubeComponentCheck {
+	return check(props);
+}
+
+/**
+ * Creates a `TxtArea` component.
+ *
+ * A `TxtArea` represents a multi-line text input field that allows users to enter longer texts.
+ * It supports properties such as `name`, `value`, and event handlers (`onChange`, `onBlur`, `onFocus`).
+ *
+ * @param props - The properties for configuring the txtarea component.
+ * @returns A `NubeComponentTxtArea` object representing the txtarea component.
+ */
+export function TxtArea(
+	props: NubeComponentTxtAreaProps,
+): NubeComponentTxtArea {
+	return txtarea(props);
 }
 
 /**
