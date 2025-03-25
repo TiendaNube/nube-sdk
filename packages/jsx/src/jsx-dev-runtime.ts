@@ -33,6 +33,8 @@ export function jsxDEV(
 		Object.defineProperty(component, "__source", {
 			value: source,
 			enumerable: false,
+			writable: true,
+			configurable: true,
 		});
 	}
 

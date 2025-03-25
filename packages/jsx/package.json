@@ -18,6 +18,9 @@
 		},
 		"./jsx-dev-runtime": {
 			"import": "./dist/jsx-dev-runtime.ts"
+		},
+		"./dist/jsx-dev-runtime": {
+			"import": "./dist/jsx-dev-runtime.ts"
 		}
 	},
 	"scripts": {
