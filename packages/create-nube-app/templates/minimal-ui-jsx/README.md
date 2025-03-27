@@ -1,12 +1,25 @@
-# Minimum setup for UI app development with NubeSDK using JSX
+# JSX App
 
-This project uses the type package in version `0.1.2-alpha` and `tsup` to compile typescript to javascript
+This is a template project to develop custom apps for Tiendanube using JSX components
 
-# How to use
+## Available Scripts
 
-- install the development dependencies with the `npm install` command.
-- Then start the development changing the `src/main.tsx` file.
-- To compile the project use the `npm run build` command.
-- The contents of the `src/jsx` is required for JSX support, in the future we will provide a new `npm` package with the JSX support embedded.
+### Development
 
-The final script is created in the `dist` folder.
+- `npm run dev` - Starts local development server
+- `npm run build` - Builds the project using tsup
+- `npm test` - Runs unit tests
+- `npm run test:watch` - Runs tests in watch mode (automatically re-runs when changes are detected)
+- `npm run test:coverage` - Runs tests and generates a coverage report
+
+### Code Quality
+
+- `npm run format` - Formats all project files using Biome
+- `npm run lint` - Runs linting on all project files using Biome
+
+## Technologies Used
+
+- [TypeScript](https://www.typescriptlang.org/)
+- [Vitest](https://vitest.dev/) for testing
+- [Biome](https://biomejs.dev/) for formatting and linting
+- [tsup](https://tsup.egoist.dev/) for building

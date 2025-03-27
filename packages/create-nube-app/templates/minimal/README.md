@@ -1,11 +1,25 @@
-# Minimum setup for app development with NubeSDK
+# Minimal App
 
-This project uses the type package in version `0.1.2-alpha` and `tsup` to compile typescript to javascript
+This is a minimalist project using TypeScript and Tiendanube tools.
 
-# How to use
+## Available Scripts
 
-- install the development dependencies with the `npm install` command.
-- Then start the development changing the `src/main.ts` file.
-- To compile the project use the `npm run build` command.
+### Development
 
-The final script is created in the `dist` folder.
+- `npm run dev` - Starts local development server
+- `npm run build` - Builds the project using tsup
+- `npm test` - Runs unit tests
+- `npm run test:watch` - Runs tests in watch mode (automatically re-runs when changes are detected)
+- `npm run test:coverage` - Runs tests and generates a coverage report
+
+### Code Quality
+
+- `npm run format` - Formats all project files using Biome
+- `npm run lint` - Runs linting on all project files using Biome
+
+## Technologies Used
+
+- [TypeScript](https://www.typescriptlang.org/)
+- [Vitest](https://vitest.dev/) for testing
+- [Biome](https://biomejs.dev/) for formatting and linting
+- [tsup](https://tsup.egoist.dev/) for building
