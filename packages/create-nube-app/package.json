@@ -1,35 +1,29 @@
 {
-    "name": "create-nube-app",
-    "description": "Create Nube App",
-    "author": "Tiendanube / Nuvemshop",
-    "license": "MIT",
-    "version": "0.1.0",
-    "bin": {
-        "create-nube-app": "dist/index.js"
-    },
-    "scripts": {
-        "build": "tsup",
-        "check": "biome check src/*",
-        "check:fix": "biome check --write src/*"
-    },
-    "type": "module",
-    "dependencies": {
-        "@clack/prompts": "^0.10.0",
-        "fs-extra": "^11.1.1"
-    },
-    "devDependencies": {
-        "@biomejs/biome": "1.8.3",
-        "@types/fs-extra": "^11.0.4",
-        "@types/node": "^22.13.11",
-        "@types/prompts": "^2.4.9",
-        "tsup": "^8.4.0",
-        "typescript": "^5.6.2"
-    },
-    "files": [
-        "./dist",
-        "README.md",
-        "CHANGELOG.md",
-        "LICENSE",
-        "./templates"
-    ]
+	"name": "create-nube-app",
+	"description": "Create Nube App",
+	"author": "Tiendanube / Nuvemshop",
+	"license": "MIT",
+	"version": "0.1.1",
+	"bin": {
+		"create-nube-app": "dist/index.js"
+	},
+	"scripts": {
+		"build": "tsup",
+		"check": "biome check src/*",
+		"check:fix": "biome check --write src/*"
+	},
+	"type": "module",
+	"dependencies": {
+		"@clack/prompts": "^0.10.0",
+		"fs-extra": "^11.1.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.8.3",
+		"@types/fs-extra": "^11.0.4",
+		"@types/node": "^22.13.11",
+		"@types/prompts": "^2.4.9",
+		"tsup": "^8.4.0",
+		"typescript": "^5.6.2"
+	},
+	"files": ["./dist", "README.md", "CHANGELOG.md", "LICENSE", "./templates"]
 }
