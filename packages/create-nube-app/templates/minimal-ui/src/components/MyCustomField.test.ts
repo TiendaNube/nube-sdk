@@ -1,11 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
-import { MyCustomField } from "./MyCustomField";
 import type {
 	NubeComponent,
 	NubeComponentBox,
 	NubeComponentField,
 	NubeSDKState,
 } from "@tiendanube/nube-sdk-types";
+import { describe, expect, it, vi } from "vitest";
+import { MyCustomField } from "./MyCustomField";
 
 describe("MyCustomField", () => {
 	it("should render a Box with correct dimensions", () => {

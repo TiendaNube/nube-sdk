@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
-import { App } from "./main";
 import type { NubeSDK, NubeSDKState } from "@tiendanube/nube-sdk-types";
+import { describe, expect, it, vi } from "vitest";
+import { App } from "./main";
 
 // Mock do componente MyCustomField
 vi.mock("./components/MyCustomField", () => ({
