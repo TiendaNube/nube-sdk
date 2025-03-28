@@ -1,6 +1,6 @@
 {
 	"name": "template-minimal-app",
-	"version": "1.1.0",
+	"version": "0.1.0",
 	"scripts": {
 		"dev": "concurrently -k -n BUILD,SERVE -c blue,green \"tsup --sourcemap inline --watch\" \"serve dist -l 8080 --cors\"",
 		"build": "tsup",
