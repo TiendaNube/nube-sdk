@@ -1,6 +1,6 @@
 {
 	"name": "template-minimal-ui-app",
-	"version": "1.1.0",
+	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
 		"dev": "concurrently -k -n BUILD,SERVE -c blue,green \"tsup --sourcemap inline --watch\" \"serve dist -l 8080 --cors\"",
@@ -8,8 +8,8 @@
 		"test": "vitest run",
 		"test:watch": "vitest watch",
 		"test:coverage": "vitest run --coverage",
-		"format": "biome format --write ./src",
-		"lint": "biome lint ./src"
+		"format": "biome check --write ./src",
+		"lint": "biome check ./src"
 	},
 	"author": "Tiendanube / Nuvemshop",
 	"devDependencies": {

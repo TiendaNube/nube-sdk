@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
-import { App } from "./main";
 import type { NubeSDK } from "@tiendanube/nube-sdk-types";
+import { describe, expect, it, vi } from "vitest";
+import { App } from "./main";
 
 describe("App", () => {
 	it("should register cart:update event handler", () => {
