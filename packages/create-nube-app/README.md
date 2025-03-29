@@ -17,7 +17,7 @@
 With NPM:
 
 ```sh
-npm create nube-app
+npm create nube-app@latest
 ```
 
 With Yarn:
@@ -41,7 +41,7 @@ After running the command, you'll be guided through an interactive process that 
 ### Usage Example
 
 ```
-$ npm create nube-app
+$ npm create nube-app@latest
 What is the project's name?
 Select a template:
     Minimal
@@ -68,6 +68,7 @@ my-nube-app/
 The created project includes the following scripts:
 
 - `npm run build` → Builds the project using tsup
+- `npm run dev` → Starts the project in development mode, enabling features like hot reloading and source map support for easier debugging.
 
 ## Official Documentation
 
