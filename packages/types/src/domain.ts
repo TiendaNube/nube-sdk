@@ -334,3 +334,45 @@ export type Customer = {
 	shipping_address: ShippingAddress;
 	billing_address: BillingAddress;
 };
+
+/**
+ * Represents the payment status information in checkout.
+ */
+export type PaymentStatus =
+	| "pending"
+	| "paid"
+	| "voided"
+	| "open"
+	| "abandoned"
+	| "authorized"
+	| "refunded"
+	| "recovered"
+	| "partially_paid";
+
+/**
+ * Represents the selected payment method in checkout.
+ * This type includes various properties related to the payment method.
+ */
+export type SelectedPayment = {
+	id: Nullable<string>;
+	app_id: Nullable<number>;
+	payment_provider_id: Nullable<string>;
+	method_name: Nullable<string>;
+	type: Nullable<string>;
+	method_type: Nullable<string>;
+	bypass_gateway: Nullable<boolean>;
+	render_gateway_name: Nullable<boolean>;
+	method: Nullable<string>;
+	template: Nullable<string>;
+	name: Nullable<string>;
+	category: Nullable<string>;
+	billing_address: Nullable<boolean>;
+};
+
+/**
+ * Represents the payment information in checkout.
+ */
+export type Payment = {
+	status: Nullable<PaymentStatus>;
+	selected: Nullable<SelectedPayment>;
+};

@@ -47,6 +47,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"checkout:success"} CHECKOUT_SUCCESS - Fired upon successful checkout completion.
  * @property {"shipping:update"} SHIPPING_UPDATE - Fired when a non-custom shipping data change occurs.
  * @property {"customer:update"} CUSTOMER_UPDATE - Fired when the customer data is updated.
+ * @property {"payment:update"} PAYMENT_UPDATE - Fired when the payment data is updated.
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
 export const EVENT = {
@@ -56,6 +57,7 @@ export const EVENT = {
 	CHECKOUT_SUCCESS: "checkout:success",
 	SHIPPING_UPDATE: "shipping:update",
 	CUSTOMER_UPDATE: "customer:update",
+	PAYMENT_UPDATE: "payment:update",
 	...SENDABLE_EVENT,
 } as const;
 

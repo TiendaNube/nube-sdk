@@ -5,6 +5,7 @@ import type {
 	AppLocation,
 	Cart,
 	Customer,
+	Payment,
 	Shipping,
 	Store,
 } from "./domain";
@@ -51,6 +52,11 @@ export type NubeSDKState = {
 	 * Details about the customer, including identification, contact information, and address.
 	 */
 	customer: Nullable<Customer>;
+
+	/**
+	 * Information about the payment method, including type, status, and selected option.
+	 */
+	payment: Nullable<Payment>;
 };
 
 /**
