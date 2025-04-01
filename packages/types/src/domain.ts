@@ -1,4 +1,4 @@
-import type { Nullable } from "./utility";
+import type { Nullable, Prettify } from "./utility";
 
 /**
  * Represents a product in the cart.
@@ -272,4 +272,65 @@ export type Shipping = {
 	options: ShippingOption[];
 	/** Custom labels assigned to shipping options. */
 	custom_labels: Record<string, string>;
+};
+
+/**
+ * Represents a address in checkout.
+ */
+export type Address = {
+	zipcode: string;
+	first_name: Nullable<string>;
+	last_name: Nullable<string>;
+	address: Nullable<string>;
+	number: Nullable<string>;
+	floor: Nullable<string>;
+	locality: Nullable<string>;
+	city: Nullable<string>;
+	state: Nullable<string>;
+	country: Nullable<string>;
+	phone: Nullable<string>;
+};
+
+/**
+ * Represents a shipping address in checkout.
+ * This type extends the Address type with additional properties.
+ */
+export type ShippingAddress = Prettify<
+	Address & {
+		between_street: Nullable<string>;
+		reference: Nullable<string>;
+	}
+>;
+
+/**
+ * Represents a billing address in checkout.
+ * This type extends the Address type with additional properties.
+ */
+export type BillingAddress = Prettify<
+	Address & {
+		id_number: Nullable<string>;
+		customer_type: Nullable<string>;
+		business_name: Nullable<string>;
+		trade_name: Nullable<string>;
+		state_registration: Nullable<string>;
+		fiscal_regime: Nullable<string>;
+		invoice_use: Nullable<string>;
+		document_type: Nullable<string>;
+		business_activity: Nullable<string>;
+	}
+>;
+
+/**
+ * Represents a customer in the checkout process.
+ */
+export type Customer = {
+	contact: {
+		email: Nullable<string>;
+		name: Nullable<string>;
+		phone: Nullable<string>;
+		accepts_marketing: Nullable<boolean>;
+		accepts_marketing_updated_at: Nullable<string>;
+	};
+	shipping_address: ShippingAddress;
+	billing_address: BillingAddress;
 };

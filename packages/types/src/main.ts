@@ -1,6 +1,13 @@
 import type { NubeBrowserAPIs } from "./browser";
 import type { UI } from "./components";
-import type { AppConfig, AppLocation, Cart, Shipping, Store } from "./domain";
+import type {
+	AppConfig,
+	AppLocation,
+	Cart,
+	Customer,
+	Shipping,
+	Store,
+} from "./domain";
 import type { NubeSDKListenableEvent, NubeSDKSendableEvent } from "./events";
 import type { DeepPartial, Nullable } from "./utility";
 
@@ -39,6 +46,11 @@ export type NubeSDKState = {
 	 * This property may be null depending on the page it is accessed from.
 	 */
 	shipping: Nullable<Shipping>;
+
+	/**
+	 * Details about the customer, including identification, contact information, and address.
+	 */
+	customer: Nullable<Customer>;
 };
 
 /**

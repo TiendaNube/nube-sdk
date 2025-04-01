@@ -45,7 +45,8 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"cart:update"} CART_UPDATE - Fired when the cart state is updated.
  * @property {"checkout:ready"} CHECKOUT_READY - Triggered when checkout is fully initialized.
  * @property {"checkout:success"} CHECKOUT_SUCCESS - Fired upon successful checkout completion.
- * @property {"shipping:update:"} SHIPPING_UPDATE - Fired when a non-custom shipping data change occurs.
+ * @property {"shipping:update"} SHIPPING_UPDATE - Fired when a non-custom shipping data change occurs.
+ * @property {"customer:update"} CUSTOMER_UPDATE - Fired when the customer data is updated.
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
 export const EVENT = {
@@ -54,6 +55,7 @@ export const EVENT = {
 	CHECKOUT_READY: "checkout:ready",
 	CHECKOUT_SUCCESS: "checkout:success",
 	SHIPPING_UPDATE: "shipping:update",
+	CUSTOMER_UPDATE: "customer:update",
 	...SENDABLE_EVENT,
 } as const;
 
