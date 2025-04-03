@@ -185,6 +185,14 @@ export type AppLocation = {
 
 	/** The current page type and its associated data. */
 	page: Page;
+
+	/**
+	 * Query parameters extracted from the URL.
+	 *
+	 * Each key represents the name of a query parameter, and its corresponding
+	 * value represents the value of that query parameter.
+	 */
+	queries: Record<string, string>;
 };
 
 /**
