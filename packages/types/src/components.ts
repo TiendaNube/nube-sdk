@@ -74,6 +74,48 @@ export type NubeComponentBox = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                            Dialog Component                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Defines a handler for field-related events.
+ */
+export type NubeComponentDialogEventHandler = NubeComponentEventHandler<
+	"click",
+	string
+>;
+
+/**
+ * Represents the properties available for a `dialog` component.
+ */
+export type NubeComponentDialogProps = Prettify<
+	NubeComponentProps &
+		ChildrenProps &
+		Partial<{
+			open: boolean;
+			onClose: NubeComponentDialogEventHandler;
+			background: string;
+			padding: Size;
+			width: Size;
+			height: Size;
+			borderRadius: Size;
+			top: Size;
+			left: Size;
+			transform: string;
+		}>
+>;
+
+/**
+ * Represents a `dialog` component, used as a layout container.
+ */
+export type NubeComponentDialog = Prettify<
+	NubeComponentBase &
+		NubeComponentDialogProps & {
+			type: "dialog";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                            Col Component                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -136,6 +178,7 @@ export type NubeComponentFieldEventHandler = NubeComponentEventHandler<
 	"change" | "focus" | "blur",
 	string
 >;
+
 /**
  * Represents the properties available for a `field` component.
  */
@@ -365,7 +408,8 @@ export type NubeComponent =
 	| NubeComponentImg
 	| NubeComponentTxt
 	| NubeComponentCheck
-	| NubeComponentTxtArea;
+	| NubeComponentTxtArea
+	| NubeComponentDialog;
 
 /**
  * Represents components that can contain other components as children.
