@@ -1,6 +1,8 @@
 import type {
 	NubeComponentBox,
 	NubeComponentBoxProps,
+	NubeComponentButton,
+	NubeComponentButtonProps,
 	NubeComponentCheck,
 	NubeComponentCheckProps,
 	NubeComponentCol,
@@ -22,6 +24,7 @@ import type {
 } from "@tiendanube/nube-sdk-types";
 import {
 	box,
+	button,
 	check,
 	col,
 	dialog,
@@ -83,6 +86,19 @@ export function Row(props: NubeComponentRowProps): NubeComponentRow {
  */
 export function Field(props: NubeComponentFieldProps): NubeComponentField {
 	return field(props);
+}
+
+/**
+ * Creates a `Button` component.
+ *
+ * The `Button` component represents a clickable element typically used to trigger an action or submit a form.
+ * It supports properties like `text` and event handlers (e.g., `onClick`).
+ *
+ * @param props - The properties for configuring the button component.
+ * @returns A `NubeComponentButton` object representing the button component.
+ */
+export function Button(props: NubeComponentButtonProps): NubeComponentButton {
+	return button(props);
 }
 
 /**
