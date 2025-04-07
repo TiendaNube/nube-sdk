@@ -203,6 +203,40 @@ export type NubeComponentField = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                          Button Component                                */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentButtonEventHandler = NubeComponentEventHandler<
+	"click",
+	string
+>;
+
+/**
+ * Represents the properties available for a `button` component.
+ */
+export type NubeComponentButtonProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			children: string;
+			disabled: boolean;
+			variant: "primary" | "secondary" | "transparent" | "link";
+			width: Size;
+			height: Size;
+			onClick: NubeComponentButtonEventHandler;
+		}>
+>;
+
+/**
+ * Represents a `button` component.
+ */
+export type NubeComponentButton = Prettify<
+	NubeComponentBase &
+		NubeComponentButtonProps & {
+			type: "button";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                            Check Component                                 */
 /* -------------------------------------------------------------------------- */
 
@@ -409,7 +443,8 @@ export type NubeComponent =
 	| NubeComponentTxt
 	| NubeComponentCheck
 	| NubeComponentTxtArea
-	| NubeComponentDialog;
+	| NubeComponentDialog
+	| NubeComponentButton;
 
 /**
  * Represents components that can contain other components as children.
