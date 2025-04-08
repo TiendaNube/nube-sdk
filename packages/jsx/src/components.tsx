@@ -7,8 +7,6 @@ import type {
 	NubeComponentCheckProps,
 	NubeComponentCol,
 	NubeComponentColProps,
-	NubeComponentDialog,
-	NubeComponentDialogProps,
 	NubeComponentField,
 	NubeComponentFieldProps,
 	NubeComponentFragment,
@@ -27,7 +25,6 @@ import {
 	button,
 	check,
 	col,
-	dialog,
 	field,
 	fragment,
 	img,
@@ -170,17 +167,4 @@ export function TxtArea(
  */
 export function Img(props: NubeComponentImgProps): NubeComponentImg {
 	return img(props);
-}
-
-/**
- * Creates a `Dialog` component.
- *
- * The `Dialog` component is a modal container used for displaying messages,
- * interactive content, and specific actions.
- *
- * @param props - The properties for configuring the dialog component.
- * @returns A `NubeComponentDialog` object representing the dialog component.
- */
-export function Dialog(props: NubeComponentDialogProps): NubeComponentDialog {
-	return dialog(props);
 }

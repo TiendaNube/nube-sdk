@@ -7,5 +7,4 @@ export * from "./components/img";
 export * from "./components/txt";
 export * from "./components/check";
 export * from "./components/txtarea";
-export * from "./components/dialog";
 export * from "./components/button";
