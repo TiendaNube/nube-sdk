@@ -92,8 +92,10 @@ async function main(): Promise<void> {
 		placeholder: defaultValue,
 		validate: validateProjectName,
 	});
-	const projectName = formatProjectName(promptProjectName as string);
-	if (prompts.isCancel(projectName)) return cancel();
+	const projectName = formatProjectName(
+		typeof promptProjectName === "string" ? promptProjectName : "",
+	);
+	if (prompts.isCancel(promptProjectName)) return cancel();
 
 	const promptTemplateName = await prompts.select({
 		message: "Select a template:",
@@ -104,7 +106,7 @@ async function main(): Promise<void> {
 		],
 	});
 	const templateName = promptTemplateName as string;
-	if (prompts.isCancel(templateName)) return cancel();
+	if (prompts.isCancel(promptTemplateName)) return cancel();
 
 	const dest = path.resolve(process.cwd(), projectName);
 	const src = path.join(__dirname, `../templates/${templateName}`);
