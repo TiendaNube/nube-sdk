@@ -1,6 +1,6 @@
 import type {
-	NubeComponentTxt,
-	NubeComponentTxtProps,
+	NubeComponentText,
+	NubeComponentTextProps,
 } from "@tiendanube/nube-sdk-types";
 
 /**
@@ -13,7 +13,15 @@ import type {
  * @param props - The properties for configuring the text component.
  * @returns A `NubeComponentTxt` object representing the text component.
  */
-export const txt = (props: NubeComponentTxtProps): NubeComponentTxt => ({
+export const text = (props: NubeComponentTextProps): NubeComponentText => ({
+	type: "txt",
+	...props,
+});
+
+/**
+ * @deprecated This component has been deprecated since version `0.8.0`. Please use the `text` component instead.
+ */
+export const txt = (props: NubeComponentTextProps): NubeComponentText => ({
 	type: "txt",
 	...props,
 });

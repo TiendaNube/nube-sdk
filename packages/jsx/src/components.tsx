@@ -3,34 +3,34 @@ import type {
 	NubeComponentBoxProps,
 	NubeComponentButton,
 	NubeComponentButtonProps,
-	NubeComponentCheck,
-	NubeComponentCheckProps,
-	NubeComponentCol,
-	NubeComponentColProps,
+	NubeComponentCheckbox,
+	NubeComponentCheckboxProps,
+	NubeComponentColumn,
+	NubeComponentColumnProps,
 	NubeComponentField,
 	NubeComponentFieldProps,
 	NubeComponentFragment,
 	NubeComponentFragmentProps,
-	NubeComponentImg,
-	NubeComponentImgProps,
+	NubeComponentImage,
+	NubeComponentImageProps,
 	NubeComponentRow,
 	NubeComponentRowProps,
-	NubeComponentTxt,
-	NubeComponentTxtArea,
-	NubeComponentTxtAreaProps,
-	NubeComponentTxtProps,
+	NubeComponentText,
+	NubeComponentTextProps,
+	NubeComponentTextarea,
+	NubeComponentTextareaProps,
 } from "@tiendanube/nube-sdk-types";
 import {
 	box,
 	button,
-	check,
-	col,
+	checkbox,
+	column,
 	field,
 	fragment,
-	img,
+	image,
 	row,
-	txt,
-	txtarea,
+	text,
+	textarea,
 } from "@tiendanube/nube-sdk-ui";
 
 /**
@@ -47,16 +47,23 @@ export function Box(props: NubeComponentBoxProps): NubeComponentBox {
 }
 
 /**
+ * @deprecated This component has been deprecated since version `0.8.0`. Please use the `Column` component instead.
+ */
+export function Col(props: NubeComponentColumnProps): NubeComponentColumn {
+	return column(props);
+}
+
+/**
  * Creates a `Col` (column) component.
  *
  * The `Col` component is a flexible column container used for structuring layouts.
  * It inherits most properties from `Box`, except for the `direction` property.
  *
  * @param props - The properties for configuring the column component.
- * @returns A `NubeComponentCol` object representing the column component.
+ * @returns A `NubeComponentColumn` object representing the column component.
  */
-export function Col(props: NubeComponentColProps): NubeComponentCol {
-	return col(props);
+export function Column(props: NubeComponentColumnProps): NubeComponentColumn {
+	return column(props);
 }
 
 /**
@@ -114,46 +121,80 @@ export function Fragment(
 }
 
 /**
- * Creates a `Txt` (text) component.
+ * @deprecated This component has been deprecated since version `0.8.0`. Please use the `Text` component instead.
+ */
+export function Txt(props: NubeComponentTextProps): NubeComponentText {
+	return text(props);
+}
+
+/**
+ * Creates a `Text` (text) component.
  *
- * The `Txt` component is used to render text with optional styling.
+ * The `Text` component is used to render text with optional styling.
  * It supports properties such as `color`, `background`, `heading` levels (h1-h6),
  * text formatting `modifiers` (bold, italic, etc.), and inline display.
  *
  * @param props - The properties for configuring the text component.
- * @returns A `NubeComponentTxt` object representing the text component.
+ * @returns A `NubeComponentText` object representing the text component.
  */
-export function Txt(props: NubeComponentTxtProps): NubeComponentTxt {
-	return txt(props);
+export function Text(props: NubeComponentTextProps): NubeComponentText {
+	return text(props);
 }
 
 /**
- * Creates a `Check` component.
+ * @deprecated This component has been deprecated since version `0.8.0`. Please use the `Checkbox` component instead.
+ */
+export function Check(
+	props: NubeComponentCheckboxProps,
+): NubeComponentCheckbox {
+	return checkbox(props);
+}
+
+/**
+ * Creates a `Checkbox` component.
  *
  * A `Check` represents a selectable field that can be toggled between checked and unchecked states.
  * It is typically used to allow users to select one or more options.
  * It supports properties such as `name`, `label`, `checked`, and event handlers (`onChange`).
  *
  * @param props - The properties for configuring the check component.
- * @returns A `NubeComponentCheck` object representing the check component.
+ * @returns A `NubeComponentCheckbox` object representing the check component.
  */
-export function Check(props: NubeComponentCheckProps): NubeComponentCheck {
-	return check(props);
+export function Checkbox(
+	props: NubeComponentCheckboxProps,
+): NubeComponentCheckbox {
+	return checkbox(props);
 }
 
 /**
- * Creates a `TxtArea` component.
+ * @deprecated This component has been deprecated since version `0.8.0`. Please use the `Textarea` component instead.
+ */
+export function Txtarea(
+	props: NubeComponentTextareaProps,
+): NubeComponentTextarea {
+	return textarea(props);
+}
+
+/**
+ * Creates a `Textarea` component.
  *
- * A `TxtArea` represents a multi-line text input field that allows users to enter longer texts.
+ * A `Textarea` represents a multi-line text input field that allows users to enter longer texts.
  * It supports properties such as `name`, `value`, and event handlers (`onChange`, `onBlur`, `onFocus`).
  *
- * @param props - The properties for configuring the txtarea component.
- * @returns A `NubeComponentTxtArea` object representing the txtarea component.
+ * @param props - The properties for configuring the textarea component.
+ * @returns A `NubeComponentTextarea` object representing the textarea component.
  */
-export function TxtArea(
-	props: NubeComponentTxtAreaProps,
-): NubeComponentTxtArea {
-	return txtarea(props);
+export function Textarea(
+	props: NubeComponentTextareaProps,
+): NubeComponentTextarea {
+	return textarea(props);
+}
+
+/**
+ * @deprecated This component has been deprecated since version `0.8.0`. Please use the `Image` component instead.
+ */
+export function Img(props: NubeComponentImageProps): NubeComponentImage {
+	return image(props);
 }
 
 /**
@@ -165,6 +206,6 @@ export function TxtArea(
  * @param props - The properties for configuring the image component.
  * @returns A `NubeComponentImg` object representing the image component.
  */
-export function Img(props: NubeComponentImgProps): NubeComponentImg {
-	return img(props);
+export function Image(props: NubeComponentImageProps): NubeComponentImage {
+	return image(props);
 }
