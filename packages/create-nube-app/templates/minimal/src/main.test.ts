@@ -37,6 +37,6 @@ describe("App", () => {
 		App(mockNube as NubeSDK);
 
 		// Verify if console.log was called with cart data
-		expect(consoleSpy).toHaveBeenCalledWith({ id: "123", total: 100 });
+		expect(consoleSpy).toHaveBeenCalledWith({ id: "123", total: 100 }, "cart");
 	});
 });

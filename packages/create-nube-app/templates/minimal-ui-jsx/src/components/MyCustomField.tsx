@@ -1,9 +1,9 @@
-import { Box, Field, Txt } from "@tiendanube/nube-sdk-jsx";
+import { Box, Field, Text } from "@tiendanube/nube-sdk-jsx";
 
 export function MyCustomField() {
 	return (
 		<Box width={100} height={200}>
-			<Txt>Hello!!</Txt>
+			<Text>Hello World!</Text>
 			<Field
 				id="my-custom-field"
 				label="Name"
