@@ -25,7 +25,7 @@ describe("MyCustomField", () => {
 
 		expect(children[0]).toEqual({
 			type: "txt",
-			children: "Hello!!",
+			children: "Hello World!",
 		});
 	});
 
