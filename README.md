@@ -22,25 +22,33 @@ This monorepo contains several key packages that facilitate different aspects of
 To quickly create a new Nube application, you can use the CLI tool create-nube-app. Simply run the command below, which will scaffold a complete project with all the necessary dependencies:
 
 ```sh
-npm create nube-app
+npm create nube-app@latest
 ```
-or
+
 ```sh
 yarn create nube-app
+```
+
+```sh
+pnpm create nube-app
+```
+
+```sh
+bun create nube-app
 ```
 
 ## Example Usage
 
 ```tsx
 import type { NubeApp } from "@tiendanube/nube-sdk-types";
-import { Box, Row, Col, Txt, Field } from "@tiendanube/nube-sdk-jsx";
+import { Box, Row, Column, Text, Field } from "@tiendanube/nube-sdk-jsx";
 
 const Component = () => (
   <Box>
     <Row>
-      <Col>
-        <Txt>Hello, NubeSDK!</Txt>
-      </Col>
+      <Column>
+        <Text>Hello, NubeSDK!</Text>
+      </Column>
     </Row>
     <Field name="email" label="Email" />
   </Box>
