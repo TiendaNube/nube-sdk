@@ -53,25 +53,11 @@ web_modules/
 .env.local
 
 # generate output
-.nuxt
 dist
 
+# vitepress cache
+packages/doc/.vitepress/cache
 
-# vuepress build output
-.vuepress/dist
-
-# vuepress v2.x temp and cache directory
-.temp
-.cache
-
-# Docusaurus cache and generated files
-.docusaurus
-
-# Serverless directories
-.serverless/
-
-# TernJS port file
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
+# Operating system
+.DS_Store
+Thumbs.db
