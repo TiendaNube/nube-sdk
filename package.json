@@ -10,7 +10,8 @@
     "packages/types",
     "packages/ui",
     "packages/jsx",
-    "packages/create-nube-app"
+    "packages/create-nube-app",
+    "packages/doc"
   ],
   "author": "Tiendanube / Nuvemshop",
   "license": "MIT",
@@ -19,9 +20,9 @@
   },
   "homepage": "https://www.tiendanube.com.br",
   "scripts": {
-    "test": " npm run test --workspaces --if-present",
-    "build": " npm run build --workspaces --if-present",
-    "check": " npm run check --workspaces --if-present",
-    "fix": " npm run check:fix --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "check": "npm run check --workspaces --if-present",
+    "fix": "npm run check:fix --workspaces --if-present"
   }
 }
