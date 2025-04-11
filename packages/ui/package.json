@@ -7,8 +7,11 @@
 	"types": "./dist/index.d.ts",
 	"scripts": {
 		"build": "tsup",
-		"check": "biome check src/*",
-		"check:fix": "biome check --write src/*"
+		"lint": "biome check src/*",
+		"format": "biome check --write src/*",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage"
 	},
 	"repository": {
 		"type": "git",
@@ -22,12 +25,26 @@
 	"homepage": "https://www.tiendanube.com",
 	"devDependencies": {
 		"@biomejs/biome": "1.8.3",
+		"@vitest/coverage-v8": "^3.1.1",
+		"csstype": "^3.1.3",
 		"tsup": "^8.3.5",
-		"typescript": "^5.6.2"
+		"typescript": "^5.6.2",
+		"vitest": "^3.1.1"
 	},
 	"peerDependencies": {
 		"@tiendanube/nube-sdk-types": "*"
 	},
-	"files": ["./dist", "README.md", "CHANGELOG.md", "LICENSE"],
-	"keywords": ["tiendanube", "nuvemshop", "nube-sdk", "ecommerce", "sdk"]
+	"files": [
+		"./dist",
+		"README.md",
+		"CHANGELOG.md",
+		"LICENSE"
+	],
+	"keywords": [
+		"tiendanube",
+		"nuvemshop",
+		"nube-sdk",
+		"ecommerce",
+		"sdk"
+	]
 }
