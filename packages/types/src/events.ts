@@ -14,12 +14,16 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  * @constant
  *
  * @property {"cart:validate"} CART_VALIDATE - Triggered to validate the current cart state.
+ * @property {"cart:add"} CART_ADD - Used to add a cart item.
+ * @property {"cart:remove"} CART_REMOVE - Used to remove a cart item.
  * @property {"config:set"} CONFIG_SET - Used to update the SDK configuration.
- * @property {"ui:slot:set"} UI_SLOT_SET - Updates a UI slot with new content.
- * @property {"shipping:update:label"} SHIPPING_UPDATE_LABEL - Updates custom labels for shipping options.
+ * @property {"ui:slot:set"} UI_SLOT_SET - Used to update a UI slot with new content.
+ * @property {"shipping:update:label"} SHIPPING_UPDATE_LABEL - Used to update custom labels for shipping options.
  */
 export const SENDABLE_EVENT = {
 	CART_VALIDATE: "cart:validate",
+	CART_ADD: "cart:add",
+	CART_REMOVE: "cart:remove",
 	CONFIG_SET: "config:set",
 	UI_SLOT_SET: "ui:slot:set",
 	SHIPPING_UPDATE_LABEL: "shipping:update:label",
@@ -43,6 +47,10 @@ export type NubeSDKSendableEvent = Prettify<
  *
  * @property {"*"} ALL - Wildcard listener for all events.
  * @property {"cart:update"} CART_UPDATE - Fired when the cart state is updated.
+ * @property {"cart:add:success"} CART_ADD_SUCCESS - Fired when a cart item is added successfully.
+ * @property {"cart:add:fail"} CART_ADD_FAIL - Fired when a cart item is added unsuccessfully.
+ * @property {"cart:remove:success"} CART_REMOVE_SUCCESS - Fired when a cart item is removed successfully.
+ * @property {"cart:remove:fail"} CART_REMOVE_FAIL - Fired when a cart item is removed unsuccessfully.
  * @property {"checkout:ready"} CHECKOUT_READY - Triggered when checkout is fully initialized.
  * @property {"checkout:success"} CHECKOUT_SUCCESS - Fired upon successful checkout completion.
  * @property {"shipping:update"} SHIPPING_UPDATE - Fired when a non-custom shipping data change occurs.
@@ -53,6 +61,10 @@ export type NubeSDKSendableEvent = Prettify<
 export const EVENT = {
 	ALL: "*",
 	CART_UPDATE: "cart:update",
+	CART_ADD_SUCCESS: "cart:add:success",
+	CART_REMOVE_SUCCESS: "cart:remove:success",
+	CART_ADD_FAIL: "cart:add:fail",
+	CART_REMOVE_FAIL: "cart:remove:fail",
 	CHECKOUT_READY: "checkout:ready",
 	CHECKOUT_SUCCESS: "checkout:success",
 	SHIPPING_UPDATE: "shipping:update",
