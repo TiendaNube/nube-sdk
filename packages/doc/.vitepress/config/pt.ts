@@ -77,7 +77,7 @@ export const pt = defineConfig({
 				collapsed: true,
 				items: [
 					{
-						text: "App de Confirmação de Idade",
+						text: "Confirmação de Idade",
 						link: "/pt/docs/examples/age-confirmation",
 					},
 				],

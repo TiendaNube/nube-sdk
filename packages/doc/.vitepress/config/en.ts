@@ -74,7 +74,7 @@ export const en = defineConfig({
 				collapsed: true,
 				items: [
 					{
-						text: "Age confirmation App",
+						text: "Age confirmation",
 						link: "/docs/examples/age-confirmation",
 					},
 				],

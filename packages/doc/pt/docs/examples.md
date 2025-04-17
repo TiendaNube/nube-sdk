@@ -1,9 +1,12 @@
-# Exemplos
+---
+title: Exemplos
+cards:
+  - title: Confirmação de idade
+    link: /pt/docs/examples/age-confirmation
+    description: Este aplicativo adiciona um checkbox no checkout para confirmação de idade.
+---
 
-::: info
-Este documento está em desenvolvimento. Em breve teremos o conteúdo completo.
-:::
+# Examples
 
-## Aplicativos de Exemplo
 
-Explore exemplos práticos de aplicativos construídos com o NubeSDK. 
+<CardGrid :items="$frontmatter.cards" />
