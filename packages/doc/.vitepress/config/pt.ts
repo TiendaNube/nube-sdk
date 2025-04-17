@@ -33,7 +33,7 @@ export const pt = defineConfig({
 				collapsed: false,
 				items: [
 					{ text: "Criando um novo App", link: "/pt/docs/getting-started" },
-					{ text: "O Estado do App", link: "/pt/docs/state" },
+					{ text: "Estado do App", link: "/pt/docs/state" },
 					{ text: "Eventos", link: "/pt/docs/events" },
 					{ text: "APIs do Navegador", link: "/pt/docs/browser-apis" },
 					{ text: "Slots de UI", link: "/pt/docs/ui-slots" },

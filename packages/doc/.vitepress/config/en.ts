@@ -30,7 +30,7 @@ export const en = defineConfig({
 				collapsed: false,
 				items: [
 					{ text: "Creating a new App", link: "/docs/getting-started" },
-					{ text: "The App State", link: "/docs/state" },
+					{ text: "App State", link: "/docs/state" },
 					{ text: "Events", link: "/docs/events" },
 					{ text: "Browser API's", link: "/docs/browser-apis" },
 					{ text: "UI Slots", link: "/docs/ui-slots" },

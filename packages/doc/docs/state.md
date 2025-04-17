@@ -1,6 +1,6 @@
-# The App State
+# App State
 
-The type `NubeSDKState`, represents the complete state of a Nuvemshop / Tiendanube application, providing access to all available data and configurations. This state object is passed to various SDK functions, allowing developers to access and react to the current application state.
+The type `NubeSDKState`, represents the complete state of a NubeSDK app, providing access to all available data and configurations. This state object is passed to various SDK functions, allowing developers to access and react to the current application state.
 
 The type definition could be found in the `@tiendanube/nube-sdk-types` package.
 
@@ -55,7 +55,7 @@ When an event is sent, a modified function can be defined as the second paramete
 
 ```tsx
 import type { NubeSDK, NubeSDKState } from "@tiendanube/nube-sdk-types";
-import { Txt } from "@tiendanube/nube-sdk-jsx";
+import { Text } from "@tiendanube/nube-sdk-jsx";
 
 export function App(nube: NubeSDK) {
   // Send events with state modifications
@@ -65,7 +65,7 @@ export function App(nube: NubeSDK) {
     return {
       ui: {
         slots: {
-          before_main_content: <Txt>{`Hello ${storeName}!`}</Txt>,
+          before_main_content: <Text>{`Hello ${storeName}!`}</Text>,
         },
       },
     };
@@ -73,7 +73,7 @@ export function App(nube: NubeSDK) {
 }
 ```
 
-## Properties
+## `NubeSDKState`
 
 Below you will find the complete definition of the `NubeSDKState` type.
 
@@ -122,7 +122,7 @@ export type NubeSDKState = {
 };
 ```
 
-### `cart: Cart`
+## `cart`
 
 The current cart state, containing products, pricing, and validation status.
 
@@ -227,7 +227,7 @@ type CartValidationPending = { status: "pending" };
 type CartValidationFail = { status: "fail"; reason: string };
 ```
 
-### `config: AppConfig`
+## `config`
 
 Application-wide configuration settings, including cart validation rules.
 
@@ -241,7 +241,7 @@ type AppConfig = {
 };
 ```
 
-### `location: AppLocation`
+## `location`
 
 The user's current location within the application, including the page type and URL.
 
@@ -280,7 +280,7 @@ type Category = {
 };
 ```
 
-### `store: Store`
+## `store`
 
 Information about the current store, such as its domain, currency, and language.
 
@@ -293,7 +293,7 @@ type Store = {
 };
 ```
 
-### `ui: UI`
+## `ui`
 
 Represents UI-related state, including dynamically injected components and their values.
 
@@ -351,7 +351,7 @@ type UIValue = string;
 type NubeComponentId = string;
 ```
 
-### `shipping: Nullable<Shipping>`
+## `shipping`
 
 Information about shipping, such as available options, selected option and custom labels.
 This property may be null depending on the page it is accessed from.
@@ -471,7 +471,7 @@ type ShippingOption = {
 };
 ```
 
-### `customer: Nullable<Customer>`
+## `customer`
 
 Details about the customer, including identification, contact information, and address.
 This property may be null depending on the page it is accessed from.
@@ -576,7 +576,7 @@ type BillingAddress = Address & {
 };
 ```
 
-### `payment: Nullable<Payment>`
+## `payment`
 
 Information about the payment method, including type, status, and selected option.
 This property may be null depending on the page it is accessed from.
