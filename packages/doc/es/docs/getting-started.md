@@ -36,7 +36,7 @@ NubeSDK requiere Node >=v16.0.0
 
 El CLI ofrece 3 templates diferentes para adaptarse a cada tipo de proyecto.
 
-![create-nube-app output](/create-nube-app.png)
+![create-nube-app output](/images/create-nube-app.png)
 
 - `Minimal` - Ideal para apps sin UI que manejan eventos e integran con servicios externos.
 - `Minimal with UI` - Creá interfaces de manera declarativa, perfecto si querés controlar la UI desde la API.
@@ -236,7 +236,7 @@ El archivo generado estará en `./dist/main.min.js`.
 
 Agregar el script sigue el mismo proceso de cualquier otro. La diferencia es que tenés que activar la bandera "Usa NubeSDK" al crear el script. Si no, será cargado como un script clásico y fallará.
 
-![NubeSDK Flag](https://dev.tiendanube.com/assets/images/nube-sdk-flag-8a3ffa9b1883833c23c08aadca011586.png)
+![NubeSDK Flag](/images/nube-sdk-flag.png)
 
 --
 

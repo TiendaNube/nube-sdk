@@ -7,8 +7,8 @@ hero:
   text: "The fastest way to create your app on Nuvemshop"
   tagline: Your app available to over 150,000 stores
   image:
-    src: /logo.png
-    alt: code example
+    src: /images/logo.png
+    alt: Logo Nuvemshop
   actions:
     - theme: brand
       text: Get Started

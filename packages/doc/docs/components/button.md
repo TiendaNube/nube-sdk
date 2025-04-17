@@ -75,19 +75,19 @@ button({
 
 ## Properties
 
-| Property | Type                                                | Required | Description                                  |
-| -------- | --------------------------------------------------- | -------- | -------------------------------------------- |
-| children | string                                              | No       | Text or content of the button.               |
-| disabled | boolean                                             | No       | Whether the button is disabled.              |
-| variant  | "primary" \| "secondary" \| "transparent" \| "link" | No       | Button style variant.                        |
-| width    | Size                                                | No       | Width of the button (e.g., "100%", "200px"). |
-| height   | Size                                                | No       | Height of the button.                        |
-| onClick  | NubeComponentButtonEventHandler                     | No       | Function called when the button is clicked.  |
+| Property | Type                                                   | Required | Description                                  |
+| -------- | ------------------------------------------------------ | -------- | -------------------------------------------- |
+| children | string                                                 | No       | Text or content of the button.               |
+| disabled | boolean                                                | No       | Whether the button is disabled.              |
+| variant  | "primary"<br/>"secondary"<br/>"transparent"<br/>"link" | No       | Button style variant.                        |
+| width    | Size                                                   | No       | Width of the button (e.g., "100%", "200px"). |
+| height   | Size                                                   | No       | Height of the button.                        |
+| onClick  | NubeComponentButtonEventHandler                        | No       | Function called when the button is clicked.  |
 
 ### Property values
 
 | Type                            | Value                                                   | Description                                                                              |
 | ------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Size                            | `${number}${SizeUnit}` \| number \| "auto"              | Represents a flexible size definition. Can be a number, a string with a unit, or "auto". |
-| SizeUnit                        | "em" \| "rem" \| "px" \| "%"                            | Defines units for size measurements.                                                     |
-| NubeComponentButtonEventHandler | (data: { type: "click"; state: NubeSDKState; }) => void | Button event handler function.                                                           |
+| Size                            | `${number}${SizeUnit}`<br/>number<br/>"auto"              | Represents a flexible size definition. Can be a number, a string with a unit, or "auto". |
+| SizeUnit                        | "em"<br/>"rem"<br/>"px"<br/>"%"                            | Defines units for size measurements.                                                     |
+| NubeComponentButtonEventHandler | (data: {<br/>type: "click";<br/>state: NubeSDKState;<br/>}) => void | Button event handler function.                                                           |

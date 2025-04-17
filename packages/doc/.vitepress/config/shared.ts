@@ -4,10 +4,8 @@ export const shared = defineConfig({
 	title: "NubeSDK",
 
 	themeConfig: {
-		socialLinks: [
-			{ icon: "github", link: "https://github.com/tiendanube" },
-		],
+		socialLinks: [{ icon: "github", link: "https://github.com/tiendanube" }],
 
-		logo: "/nuvemshop.png",
+		logo: "/images/nuvemshop.png",
 	},
 });

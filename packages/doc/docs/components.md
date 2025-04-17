@@ -7,7 +7,7 @@ cards:
   - title: Button
     link: /docs/components/button
     description: A clickable element typically used to trigger an action or submit a form. It supports properties such as `text`, `onClick`, and style configurations.
-  - title: Check
+  - title: Checkbox
     link: /docs/components/checkbox
     description: A selectable field that can be toggled between checked and unchecked states. It is typically used to allow users to select one or more options.
   - title: Column

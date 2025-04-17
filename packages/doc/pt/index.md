@@ -6,8 +6,8 @@ hero:
   text: "A forma mais rápida de criar seu app na Nuvemshop"
   tagline: Seu app disponível para mais de 150.000 lojas
   image:
-    src: /logo.png
-    alt: exemplo de código
+    src: /images/logo.png
+    alt: Nuvemshop
   actions:
     - theme: brand
       text: Comece agora
