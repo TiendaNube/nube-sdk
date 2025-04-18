@@ -5,7 +5,7 @@ title: Button Component
 # Button
 
 A `button` is a clickable element used to trigger actions.
-It supports properties such as text, onClick, and style configurations.
+It supports properties such as `children`, `variant`, `onClick`, and style configurations.
 
 ## Usage
 

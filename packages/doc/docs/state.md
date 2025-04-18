@@ -26,7 +26,7 @@ export function App(nube: NubeSDK) {
   // Access state properties
   const cartTotal = currentState.cart.total;
   const storeCurrency = currentState.store.currency;
-  const currentPage = currentState.location.pageType;
+  const currentPage = currentState.location.page.type;
 }
 ```
 
@@ -105,7 +105,7 @@ export type NubeSDKState = {
   ui: UI;
 
   /**
-   * Informaion about shipping, such as avaliable options, selected option and custom labels.
+   * Information about shipping, such as available options, selected option and custom labels.
    * This property may be null depending on the page it is accessed from.
    */
   shipping: Nullable<Shipping>;

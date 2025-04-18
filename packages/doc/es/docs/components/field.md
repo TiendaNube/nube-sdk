@@ -4,10 +4,10 @@ title: Field Component
 
 # Field
 
-Un `field` representa un elemento de entrada de texto en un formulario.
+El componente `Field` representa un elemento de entrada de texto en un formulario.
 Soporta propiedades como `name`, `label` y manejadores de eventos (`onChange`, `onBlur`, `onFocus`).
 
-## Usage
+## Uso
 
 ::: code-group
 
@@ -37,7 +37,7 @@ field({
 
 :::
 
-### Event Handlers
+### Manejadores de Eventos
 
 El componente field soporta tres manejadores de eventos que reciben un objeto con las siguientes propiedades:
 
@@ -61,7 +61,7 @@ onFocus: (data: {
 }) => void
 ```
 
-Example usage:
+Ejemplo de uso:
 
 ::: code-group
 
@@ -103,18 +103,18 @@ field({
 
 :::
 
-## Properties
+## Propiedades
 
-| Property | Type                           | Required | Description                                                   |
-| -------- | ------------------------------ | -------- | ------------------------------------------------------------- |
-| name     | string                         | Yes      | El nombre del campo, usado para identificarlo en formularios. |
-| label    | string                         | Yes      | El texto de la etiqueta mostrado encima del campo.            |
-| onChange | NubeComponentFieldEventHandler | No       | Función llamada cuando el valor del campo cambia.             |
-| onBlur   | NubeComponentFieldEventHandler | No       | Función llamada cuando el campo pierde el foco.               |
-| onFocus  | NubeComponentFieldEventHandler | No       | Función llamada cuando el campo recibe el foco.               |
+| Propiedad | Tipo                          | Obligatorio | Descripción                                                   |
+| --------- | ------------------------------ | ---------- | ------------------------------------------------------------- |
+| name      | string                         | Si         | El nombre del campo, usado para identificarlo en formularios. |
+| label     | string                         | Si         | El texto de la etiqueta mostrado encima del campo.            |
+| onChange  | NubeComponentFieldEventHandler | No         | Función llamada cuando el valor del campo cambia.             |
+| onBlur    | NubeComponentFieldEventHandler | No         | Función llamada cuando el campo pierde el foco.               |
+| onFocus   | NubeComponentFieldEventHandler | No         | Función llamada cuando el campo recibe el foco.               |
 
 ### Property values
 
-| Type                           | Value                                                                                                     | Description                              |
+| Tipo                           | Valor                                                                                                     | Descripción                              |
 | ------------------------------ | --------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
 | NubeComponentFieldEventHandler | (data: {<br/>type: "change" \| "blur" \| "focus"; state: NubeSDKState;<br/>value?: string;<br/>}) => void | Función manejadora de eventos del campo. |

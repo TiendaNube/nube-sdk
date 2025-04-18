@@ -4,31 +4,9 @@ title: Image Component
 
 # Image
 
-:::info
-Este documento está en desarrollo
-:::
-
-## Visión General
-
 El componente `Image` permite mostrar imágenes en tu aplicación. Soporta diferentes formatos de imagen y ofrece opciones para controlar el tamaño y el estilo.
 
-## Uso Básico
-
-```tsx
-<Image src="https://example.com/image.jpg" alt="Descripción de la imagen" />
-```
-
-## Props
-
-| Prop | Tipo | Descripción |
-|------|------|-------------|
-| src | string | URL de la imagen |
-| alt | string | Texto alternativo para accesibilidad |
-| width | number | Ancho de la imagen |
-| height | number | Alto de la imagen |
-| loading | 'eager' \| 'lazy' | Estrategia de carga de la imagen |
-
-## Usage
+## Uso
 
 ::: code-group
 
@@ -118,6 +96,9 @@ function logo() {
 | src      | string | Yes      | The alternative image source URL (https only). |
 | media    | string | No       | Optional media query to match this source.     |
 
-:::tip
-The `Size` type accept some units like `em`, `rem` `px`, `%`, a number or `"auto"`
-:::
+### Property values
+
+| Type     | Value                                        | Description                                                                                            |
+| -------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| SizeUnit | "em"<br/>"rem"<br/>"px"<br/>"%"              | Define las unidades para mediciones de tamaño.                                                         |
+| Size     | `${number}${SizeUnit}`<br/>number<br/>"auto" | Representa una definición de tamaño flexible.<br/>Puede ser un número, una cadena con unidad o "auto". |

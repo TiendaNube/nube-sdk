@@ -14,12 +14,12 @@ This event-driven approach allows the application to respond in real-time to sta
 
 Dispatched by `app` to setup initial configuration
 
-```typescript title="Example"
-nube.send("config:set", () => {
+```typescript
+nube.send("config:set", () => ({
   config: {
     has_cart_validation: true
   },
-});
+}));
 ```
 
 ### AppConfig
@@ -33,9 +33,9 @@ nube.send("config:set", () => {
 
 Dispatched by `store` when the cart content changes
 
-```typescript title="Example"
+```typescript
 nube.on("cart:update", ({ cart }) => {
-  if (cart.items > 5) {
+  if (cart.items.length > 5) {
     console.log("Purchased more than 5 different items");
   }
 });
@@ -71,7 +71,7 @@ nube.on("cart:update", ({ cart }) => {
   nube.send("cart:validate", () => ({
     cart: { validation: { status: "success" } },
   }));
-}
+});
 ```
 
 ## `shipping:update`

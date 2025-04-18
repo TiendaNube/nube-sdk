@@ -7,7 +7,7 @@ title: Box Component
 Um `box` é um container flexível que pode ser usado para fins de layout.
 Ele suporta propriedades como largura, altura, preenchimento, margem e alinhamento baseado em flex.
 
-## Usage
+## Uso
 
 ::: code-group
 
@@ -34,34 +34,29 @@ box({
 
 :::
 
-## Properties
+## Propriedades
 
-| Property | Type                         | Required | Description                                                    |
-| -------- | ---------------------------- | -------- | -------------------------------------------------------------- |
-| children | NubeComponent[]              | No       | Os componentes filhos que serão renderizados dentro do box.    |
-| gap      | string                       | No       | O espaçamento entre os elementos filhos.                       |
-| padding  | string                       | No       | O preenchimento interno do box.                                |
-| margin   | string                       | No       | A margem externa do box.                                       |
-| width    | string                       | No       | A largura do box.                                              |
-| height   | string                       | No       | A altura do box.                                               |
-| align    | "start" \| "center" \| "end" | No       | O alinhamento dos elementos filhos.                            |
-| direction| "row" \| "column"            | No       | A direção do layout flexível (horizontal ou vertical).         |
+| Propriedade    | Tipo                           | Obrigatório | Descrição                                                                                            |
+| -------------- | ------------------------------ | ----------- | ---------------------------------------------------------------------------------------------------- |
+| children       | NubeComponent[]                | Não         | Os componentes filhos que serão renderizados dentro do box.                                          |
+| gap            | string                         | Não         | O espaçamento entre os elementos filhos.                                                             |
+| padding        | string                         | Não         | O preenchimento interno do box.                                                                      |
+| margin         | string                         | Não         | A margem externa do box.                                                                             |
+| width          | string                         | Não         | A largura do box.                                                                                    |
+| height         | string                         | Não         | A altura do box.                                                                                     |
+| align          | "start"<br/>"center"<br/>"end" | Não         | O alinhamento dos elementos filhos.                                                                  |
+| direction      | "row"<br/>"column"             | Não         | A direção do layout flexível (horizontal ou vertical).                                               |
+| reverse        | boolean                        | Não         | Whether children should wrap to the next line when space runs out.                                   |
+| background     | string                         | Não         | Background color (can be CSS variable like "var(--primary-color)").                                  |
+| color          | string                         | Não         | Content color (can be CSS variable like "var(--primary-color)").                                     |
+| alignItems     | FlexItems                      | Não         | The CSS property [align-items](https://developer.mozilla.org/en-US/docs/Web/CSS/align-items)         |
+| alignContent   | FlexContent                    | Não         | The CSS property [align-content](https://developer.mozilla.org/en-US/docs/Web/CSS/align-content)     |
+| justifyContent | FlexContent                    | Não         | The CSS property [justify-content](https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content) |
+| id             | string                         | Não         | Optional unique identifier for the component.                                                        |
 
-## Additional Properties
+### Valores das propriedades
 
-| Property       | Type                  | Required | Description                                                                                          |
-| -------------- | --------------------- | -------- | ---------------------------------------------------------------------------------------------------- |
-| reverse        | boolean               | No       | Whether children should wrap to the next line when space runs out.                                   |
-| background     | string                | No       | Background color (can be CSS variable like "var(--primary-color)").                                  |
-| color          | string                | No       | Content color (can be CSS variable like "var(--primary-color)").                                     |
-| alignItems     | FlexItems             | No       | The CSS property [align-items](https://developer.mozilla.org/en-US/docs/Web/CSS/align-items)         |
-| alignContent   | FlexContent           | No       | The CSS property [align-content](https://developer.mozilla.org/en-US/docs/Web/CSS/align-content)     |
-| justifyContent | FlexContent           | No       | The CSS property [justify-content](https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content) |
-| id             | string                | No       | Optional unique identifier for the component.                                                        |
-
-### Property values
-
-| Type                  | Value                                                                          | Description                                                                                     |
+| Tipo                  | Valor                                                                          | Descrição                                                                                       |
 | --------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
 | NubeChildrenComponent | NubeComponent<br/>NubeComponent[]                                              | Defines possible alignment values for flex container content.                                   |
 | FlexContent           | "start"<br/>"center"<br/>"space-between"<br/>"space-around"<br/>"space-evenly" | Defines possible alignment values for flex container content.                                   |

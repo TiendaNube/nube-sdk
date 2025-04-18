@@ -16,7 +16,7 @@ El SDK ofrece herramientas y APIs alineadas con las prácticas modernas — incl
 
 ### Consistencia de diseño
 
-La estilización en NubeSDK se basa en un modelo **declarativo**, con el enfoque **CSS-in-JS**. Los componentes se integran de forma nativa al tema de la tienda, lo que garantiza una experiencia visual consistente **sin requerir ningún esfuerzo adicional por parte del desarrollador**. Cuando sea necesario, los estilos pueden personalizarse utilizando **objetos de estilo reutilizables** y **variables de tema expuestas por la plataforma**, manteniendo la coherencia visual y la flexibilidad del app.
+La estilización en NubeSDK se basa en un modelo **declarativo**, con el enfoque **CSS-in-JS**. Los componentes se integran de forma nativa al tema de la tienda, lo que garantiza una experiencia visual consistente **sin requerir ningún esfuerzo adicional por parte del desarrollador**. Cuando sea necesario, los estilos pueden personalizarse utilizando **objetos de estilo reutilizables** y **variables de tema expuestas por la plataforma**, manteniendo la coherencia visual y la flexibilidad de la app.
 
 ---
 

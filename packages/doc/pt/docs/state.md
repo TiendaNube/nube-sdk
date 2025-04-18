@@ -26,7 +26,7 @@ export function App(nube: NubeSDK) {
   // Acessar propriedades do estado
   const cartTotal = currentState.cart.total;
   const storeCurrency = currentState.store.currency;
-  const currentPage = currentState.location.pageType;
+  const currentPage = currentState.location.page.type;
 }
 ```
 
@@ -669,7 +669,7 @@ type PaymentOption = {
 ## Notas
 
 - As propriedades marcadas como `Nullable<T>` podem ser `null` dependendo do contexto ou página da qual são acessadas
-- A propriedade `UI` contém componentes injetados dinamicamente e seus valores
+- A propriedade `UI` contém componentes injetados dinamicamente e seus valores associados.
 - A propriedade `location` ajuda a determinar o contexto atual da aplicação
 - Todos os valores monetários na propriedade `cart` estão na moeda base da loja
 - O estado é imutável e só pode ser modificado através do método `send` do `NubeSDK` 
