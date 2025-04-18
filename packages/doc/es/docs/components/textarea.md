@@ -7,7 +7,7 @@ title: Textarea Component
 Un `textarea` representa un campo de entrada de texto multilínea que permite a los usuarios ingresar textos más largos.
 Soporta propiedades como `name`, `label` y manejadores de eventos (`onChange`, `onBlur`, `onFocus`).
 
-## Usage
+## Uso
 
 ::: code-group
 
@@ -41,7 +41,7 @@ textarea({
 
 :::
 
-### Event Handlers
+### Manejadores de eventos
 
 El componente textarea soporta tres manejadores de eventos que reciben un objeto con las siguientes propiedades:
 
@@ -65,7 +65,7 @@ onFocus: (data: {
 }) => void
 ```
 
-Example usage:
+Ejemplo de uso:
 
 ::: code-group
 
@@ -111,20 +111,20 @@ textarea({
 
 :::
 
-## Properties
+## Propiedad
 
-| Property  | Type                              | Required | Description                                                      |
-| --------- | --------------------------------- | -------- | ---------------------------------------------------------------- |
-| name      | string                            | Yes      | El nombre del textarea, usado para identificarlo en formularios. |
-| label     | string                            | Yes      | El texto de la etiqueta mostrado encima del textarea.            |
-| maxLength | number                            | No       | El número máximo de caracteres permitidos en el textarea.        |
-| rows      | number                            | No       | El número de líneas de texto visibles en el textarea.            |
-| onChange  | NubeComponentTextareaEventHandler | No       | Función llamada cuando el valor del textarea cambia.             |
-| onBlur    | NubeComponentTextareaEventHandler | No       | Función llamada cuando el textarea pierde el foco.               |
-| onFocus   | NubeComponentTextareaEventHandler | No       | Función llamada cuando el textarea recibe el foco.               |
+| Propiedad  | Tipo                              | Obligatorio | Descripción                                                      |
+| ---------- | --------------------------------- | ----------- | ---------------------------------------------------------------- |
+| name       | string                            | Si          | El nombre del textarea, usado para identificarlo en formularios. |
+| label      | string                            | Si          | El texto de la etiqueta mostrado encima del textarea.            |
+| maxLength  | number                            | No          | El número máximo de caracteres permitidos en el textarea.        |
+| rows       | number                            | No          | El número de líneas de texto visibles en el textarea.            |
+| onChange   | NubeComponentTextareaEventHandler | No          | Función llamada cuando el valor del textarea cambia.             |
+| onBlur     | NubeComponentTextareaEventHandler | No          | Función llamada cuando el textarea pierde el foco.               |
+| onFocus    | NubeComponentTextareaEventHandler | No          | Función llamada cuando el textarea recibe el foco.               |
 
-### Property values
+### Valores de propiedad
 
-| Type                              | Value                                                                                                         | Description                                 |
+| Tipo                              | Valor                                                                                                         | Descripción                                 |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
 | NubeComponentTextareaEventHandler | (data: {<br/>type: "change" \| "blur" \| "focus";<br/>state: NubeSDKState;<br/>value?: string;<br/>}) => void | Función manejadora de eventos del textarea. |

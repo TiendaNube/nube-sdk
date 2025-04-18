@@ -15,11 +15,11 @@ Esta abordagem baseada em eventos permite que a aplicação responda em tempo re
 Disparado pelo `app` para definir a configuração inicial
 
 ```typescript title="Example"
-nube.send("config:set", () => {
+nube.send("config:set", () => ({
   config: {
     has_cart_validation: true
   },
-});
+}));
 ```
 
 ### AppConfig
@@ -33,9 +33,9 @@ nube.send("config:set", () => {
 
 Disparado pela `loja` quando o conteúdo do carrinho muda
 
-```typescript title="Example"
+```typescript
 nube.on("cart:update", ({ cart }) => {
-  if (cart.items > 5) {
+  if (cart.items.length > 5) {
     console.log("Comprou mais de 5 itens diferentes");
   }
 });
@@ -71,7 +71,7 @@ nube.on("cart:update", ({ cart }) => {
   nube.send("cart:validate", () => ({
     cart: { validation: { status: "success" } },
   }));
-}
+});
 ```
 
 ## `shipping:update`

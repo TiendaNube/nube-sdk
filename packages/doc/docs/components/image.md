@@ -96,6 +96,9 @@ function logo() {
 | src      | string | Yes      | The alternative image source URL (https only). |
 | media    | string | No       | Optional media query to match this source.     |
 
-:::tip
-The `Size` type accept some units like `em`, `rem` `px`, `%`, a number or `"auto"`
-:::
+### Property values
+
+| Type     | Value                                        | Description                                                                                     |
+| -------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| SizeUnit | "em"<br/>"rem"<br/>"px"<br/>"%"              | Defines units for size measurements.                                                            |
+| Size     | `${number}${SizeUnit}`<br/>number<br/>"auto" | Represents a flexible size definition.<br/>It can be a number, a string with a unit, or "auto". |

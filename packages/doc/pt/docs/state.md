@@ -26,7 +26,7 @@ export function App(nube: NubeSDK) {
   // Acessar propriedades do estado
   const cartTotal = currentState.cart.total;
   const storeCurrency = currentState.store.currency;
-  const currentPage = currentState.location.pageType;
+  const currentPage = currentState.location.page.type;
 }
 ```
 

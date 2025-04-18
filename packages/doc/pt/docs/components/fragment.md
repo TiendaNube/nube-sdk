@@ -9,7 +9,7 @@ Ele permite que múltiplos componentes sejam agrupados sem introduzir um nó DOM
 Isso é particularmente útil quando você precisa retornar múltiplos elementos de um componente
 sem adicionar elementos de encapsulamento desnecessários ao DOM.
 
-## Usage
+## Uso
 
 ::: code-group
 
@@ -41,11 +41,11 @@ fragment({
 
 :::
 
-## Properties
+## Propriedades
 
-| Property | Type              | Required | Description                                                   |
-| -------- | ----------------- | -------- | ------------------------------------------------------------- |
-| children | NubeComponent[]   | No       | Os componentes filhos a serem agrupados.                      |
+| Propriedade | Tipo            | Obrigatório | Descrição                                |
+| ----------- | --------------- | ----------- | ---------------------------------------- |
+| children    | NubeComponent[] | Não         | Os componentes filhos a serem agrupados. |
 
 ## Quando Usar
 

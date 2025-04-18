@@ -1,5 +1,5 @@
 ---
-title: Componentes
+title: Components
 cards:
   - title: Box
     link: /docs/components/box
@@ -18,7 +18,7 @@ cards:
     description: An input element in a form, such as text fields, dropdowns, or checkboxes. It supports properties like `name`, `label`, and event handlers (`onChange`, `onBlur`, `onFocus`).
   - title: Fragment
     link: /docs/components/fragment
-    description: A logical grouping element that allows multiple children to be wrapped without introducing an additional components.
+    description: A logical grouping element that allows multiple children to be wrapped without introducing an additional component.
   - title: Image
     link: /docs/components/image
     description: Used to display images. It supports properties such as `src`, `alt`, `width`, `height`, and responsive `sources` for different screen sizes.
@@ -29,11 +29,11 @@ cards:
     link: /docs/components/text
     description: Used to render text with optional styling. It supports properties such as `color`, `background`, `heading` levels (h1-h6), text formatting `modifiers` (bold, italic, etc.), and inline display.
   - title: Textarea
-    link: /docs/components/Textarea
+    link: /docs/components/textarea
     description: A multi-line text input field that allows users to enter longer texts. It supports properties such as `name`, `value`, and event handlers (`onChange`, `onBlur`, `onFocus`).
 ---
 
-# Componentes
+# Components
 
 User interfaces of apps created with `NubeSDK` are made from components that adapt to the store theme automatically, maintaining the design consistency. Can be developed with JSX or declarative functions.
 

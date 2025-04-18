@@ -4,7 +4,7 @@ Neste exemplo vamos criar um aplicativo que adiciona um [checkbox](/pt/docs/comp
 
 ## Setup do projeto
 
-Certifique-se de ter o [Node.js®](https://nodejs.org/pt]) na versão 16 ou superior instalado em seu computador.
+Certifique-se de ter o [Node.js®](https://nodejs.org/pt) na versão 16 ou superior instalado em seu computador.
 
 Vamos começar criando estrutura inicial do projeto com o CLI do NubeSDK, fazer isso execute o comando:
 
@@ -55,7 +55,7 @@ export function App(nube: NubeSDK) {
 
 ## Bloqueio do checkout
 
-Para garantir que o usuário só possa prossguir com a compra depois de confirmar a idade, assim que o checkout iniciar vamos marcar o carrinho como "invalido".
+Para garantir que o usuário só possa prosseguir com a compra depois de confirmar a idade, assim que o checkout iniciar vamos marcar o carrinho como "invalido".
 
 Primeiro vamos criar uma validação para garantir que o cliente está na pagina inicial do checkout, vou criar um arquivo em `src/utils/page.ts` para essa função.
 
@@ -133,7 +133,7 @@ export function AgeConfirmation({ nube }:AgeConfirmationProps) { // [!code focus
     <Checkbox
       id="age-confirmation"
       name="age-confirmation"
-      label="Tenho mais de 18 ano"
+      label="Tenho mais de 18 anos"
       checked={false}
     />
   );
@@ -146,14 +146,14 @@ Então criamos uma função para lidar com evento de seleção do checkbox.
 import { Checkbox } from "@tiendanube/nube-sdk-jsx";
 import type { NubeSDK } from "@tiendanube/nube-sdk-types";
 
-export type AgeConfirmationProps = { nube: NubeSDL };
+export type AgeConfirmationProps = { nube: NubeSDK };
 
 export function AgeConfirmation({ nube }:AgeConfirmationProps) {
   return (
     <Checkbox
       id="age-confirmation"
       name="age-confirmation"
-      label="Tenho mais de 18 ano"
+      label="Tenho mais de 18 anos"
       checked={false}
       onChange={({ value }) => {  // [!code focus]
         if (value) {  // [!code focus]

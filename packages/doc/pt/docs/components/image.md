@@ -4,31 +4,9 @@ title: Image Component
 
 # Image
 
-:::info
-Este documento está em desenvolvimento
-:::
-
-## Visão Geral
-
 O componente `Image` permite exibir imagens em sua aplicação. Ele suporta diferentes formatos de imagem e fornece opções para controlar o tamanho e o estilo.
 
-## Uso Básico
-
-```tsx
-<Image src="https://example.com/image.jpg" alt="Descrição da imagem" />
-```
-
-## Props
-
-| Prop | Tipo | Descrição |
-|------|------|-----------|
-| src | string | URL da imagem |
-| alt | string | Texto alternativo para acessibilidade |
-| width | number | Largura da imagem |
-| height | number | Altura da imagem |
-| loading | 'eager' \| 'lazy' | Estratégia de carregamento da imagem |
-
-## Usage
+## Uso
 
 ::: code-group
 
@@ -100,24 +78,28 @@ function logo() {
 
 :::
 
-## Properties
+## Propriedades
 
-| Property | Type          | Required | Description                                                     |
-| -------- | ------------- | -------- | --------------------------------------------------------------- |
-| src      | string        | Yes      | URL of the image to display. Must use "https://".               |
-| alt      | string        | Yes      | Alternative text for the image, used for accessibility.         |
-| sources  | ImageSource[] | No       | Array of alternative image sources with optional media queries. |
-| width    | Size          | No       | Width of the image (e.g., "100px", "50%", "auto", 100).         |
-| height   | Size          | No       | Height of the image (same format as width).                     |
-| id       | string        | No       | Optional unique identifier for the component.                   |
+| Propriedade | Tipo          | Obrigatório | Descrição                                                       |
+| ----------- | ------------- | ----------- | --------------------------------------------------------------- |
+| src         | string        | Sim         | URL of the image to display. Must use "https://".               |
+| alt         | string        | Sim         | Alternative text for the image, used for accessibility.         |
+| sources     | ImageSource[] | Não         | Array of alternative image sources with optional media queries. |
+| width       | Size          | Não         | Width of the image (e.g., "100px", "50%", "auto", 100).         |
+| height      | Size          | Não         | Height of the image (same format as width).                     |
+| id          | string        | Não         | Optional unique identifier for the component.                   |
 
 ### ImageSource
 
-| Property | Type   | Required | Description                                    |
-| -------- | ------ | -------- | ---------------------------------------------- |
-| src      | string | Yes      | The alternative image source URL (https only). |
-| media    | string | No       | Optional media query to match this source.     |
+| Propriedade | Tipo   | Obrigatório | Descrição                                      |
+| ----------- | ------ | ----------- | ---------------------------------------------- |
+| src         | string | Sim         | The alternative image source URL (https only). |
+| media       | string | Não         | Optional media query to match this source.     |
 
-:::tip
-The `Size` type accept some units like `em`, `rem` `px`, `%`, a number or `"auto"`
-:::
+### Valores das propriedades
+
+| Tipo     | Valor                                        | Descrição                                                                                       |
+| -------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Size     | `${number}${SizeUnit}`<br/>number<br/>"auto" | Represents a flexible size definition.<br/>It can be a number, a string with a unit, or "auto". |
+| SizeUnit | "em"<br/>"rem"<br/>"px"<br/>"%"              | Defines units for size measurements.                                                            |
+

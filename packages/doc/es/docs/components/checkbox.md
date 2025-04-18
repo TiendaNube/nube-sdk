@@ -8,7 +8,7 @@ Un `checkbox` representa un campo seleccionable que puede alternar entre estados
 Se utiliza típicamente para permitir que los usuarios seleccionen una o más opciones.
 Soporta propiedades como `name`, `label`, `checked` y manejadores de eventos (`onChange`).
 
-## Usage
+## Uso
 
 ::: code-group
 
@@ -36,7 +36,7 @@ checkbox({
 
 :::
 
-### Event Handlers
+### Manejadores de Eventos
 
 El componente checkbox soporta un manejador de eventos que recibe un objeto con las siguientes propiedades:
 

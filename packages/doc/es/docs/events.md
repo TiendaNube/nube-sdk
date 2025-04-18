@@ -5,7 +5,7 @@ La comunicación entre la página principal y las apps se maneja a través de ev
 - **Eventos Disparados por la Tienda:**  
   Cuando ocurren cambios significativos—como una actualización en el carrito de compras—la tienda dispara eventos (por ejemplo, `cart:update`) para notificar a los scripts que ha ocurrido un cambio.
 
-- **Eventos Disparados por los Apps:**  
+- **Eventos Disparados por las Apps:**  
   Por otro lado, los apps pueden emitir eventos (como `cart:validate`) para informar sobre la validez del contenido del carrito o para señalar que pueden ser necesarias acciones adicionales.
 
 Este enfoque basado en eventos permite que la aplicación responda en tiempo real a los cambios de estado, simplificando el mantenimiento y mejorando la escalabilidad.
@@ -14,12 +14,12 @@ Este enfoque basado en eventos permite que la aplicación responda en tiempo rea
 
 Disparado por la `app` para definir la configuración inicial
 
-```typescript title="Example"
-nube.send("config:set", () => {
+```typescript
+nube.send("config:set", () => ({
   config: {
     has_cart_validation: true
   },
-});
+}));
 ```
 
 ### AppConfig
@@ -33,9 +33,9 @@ nube.send("config:set", () => {
 
 Disparado por la `tienda` cuando el contenido del carrito cambia
 
-```typescript title="Example"
+```typescript
 nube.on("cart:update", ({ cart }) => {
-  if (cart.items > 5) {
+  if (cart.items.length > 5) {
     console.log("Compró más de 5 artículos diferentes");
   }
 });
@@ -71,7 +71,7 @@ nube.on("cart:update", ({ cart }) => {
   nube.send("cart:validate", () => ({
     cart: { validation: { status: "success" } },
   }));
-}
+});
 ```
 
 ## `shipping:update`

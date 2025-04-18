@@ -4,10 +4,10 @@ title: Column Component
 
 # Column
 
-Una `column` es un contenedor de columna flexible que se puede utilizar para estructurar layouts.
+Una `column` es un contenedor vertical flexible que se puede utilizar para estructurar layouts.
 Hereda la mayoría de las propiedades de `box`, excepto la propiedad `direction`.
 
-## Usage
+## Uso
 
 ::: code-group
 
@@ -36,19 +36,14 @@ column({
 
 ## Properties
 
-| Property | Type                         | Required | Description                                                     |
-| -------- | ---------------------------- | -------- | --------------------------------------------------------------- |
+| Property       | Type                  | Required | Description                                                                                          |
+| -------------- | --------------------- | -------- | ---------------------------------------------------------------------------------------------------- |
 | children | NubeComponent[]              | No       | Los componentes hijos que se renderizarán dentro de la columna. |
 | gap      | string                       | No       | El espaciado entre los elementos hijos.                         |
 | padding  | string                       | No       | El relleno interno de la columna.                               |
 | width    | string                       | No       | El ancho de la columna.                                         |
 | height   | string                       | No       | La altura de la columna.                                        |
-| align    | "start" \| "center" \| "end" | No       | La alineación vertical de los elementos hijos.                  |
-
-## Additional Properties
-
-| Property       | Type                  | Required | Description                                                                                          |
-| -------------- | --------------------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| align    | "start"<br/>"center"<br/>"end" | No       | La alineación vertical de los elementos hijos.                  |
 | reverse        | boolean               | No       | Si los hijos deben envolver a la siguiente línea cuando se acabe el espacio.                         |
 | background     | string                | No       | Color de fondo (puede ser una variable CSS como "var(--primary-color)").                            |
 | color          | string                | No       | Color del contenido (puede ser una variable CSS como "var(--primary-color)").                       |

@@ -16,7 +16,7 @@ Recursos adicionales del navegador se introducirán con el tiempo, siempre sigui
 
 Las APIs [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) y [sessionStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) son parte del contexto `window` del hilo principal y no están disponibles nativamente dentro de Web Workers.
 
-Para proporcionar acceso a estos mecanismos de almacenamiento de forma segura y compatible, NubeSDK expone `asyncLocalStorage` y `asyncSessionStorage` a través del método `getBrowserAPIs()`. Estas interfaces devuelven `promises` y están diseñadas para siguir el modelo de ejecución asincrónico del SDK.
+Para proporcionar acceso a estos mecanismos de almacenamiento de forma segura y compatible, NubeSDK expone `asyncLocalStorage` y `asyncSessionStorage` a través del método `getBrowserAPIs()`. Estas interfaces devuelven `promises` y están diseñadas para seguir el modelo de ejecución asincrónico del SDK.
 
 ### Cómo Usar
 

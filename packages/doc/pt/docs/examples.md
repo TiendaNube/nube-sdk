@@ -6,7 +6,7 @@ cards:
     description: Este aplicativo adiciona um checkbox no checkout para confirmação de idade.
 ---
 
-# Examples
+# Exemplos
 
 
 <CardGrid :items="$frontmatter.cards" />

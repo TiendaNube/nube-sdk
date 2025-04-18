@@ -4,7 +4,7 @@ title: Column Component
 
 # Column
 
-A `column` is a flexible horizontal container used to align child components in a column.
+A `column` is a flexible vertical container used to align child components in a column.
 It inherits all the capabilities of the [box component](/docs/components/box), with the direction property preset to `"column"`.
 
 ## Usage
