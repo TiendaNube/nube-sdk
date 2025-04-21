@@ -173,16 +173,13 @@ export const handleDevToolsEvents = ({
 };
 
 export const handleDevToolsInjectWindowVariable = (tabId: number) => {
-	chrome.scripting.executeScript(
-		{
-			target: { tabId },
-			world: "MAIN",
-			func: () => {
-				window.__NUBE_DEVTOOLS_EXTENSION__ = !!window.nubeSDK;
-			},
+	chrome.scripting.executeScript({
+		target: { tabId },
+		world: "MAIN",
+		func: () => {
+			window.__NUBE_DEVTOOLS_EXTENSION__ = !!window.nubeSDK;
 		},
-		() => {},
-	);
+	});
 };
 
 export const handleDevToolsGetApps = ({
@@ -278,7 +275,7 @@ export const handleDevToolsResendEvent = (
 		},
 		(results) => {
 			const success = results?.[0]?.result === true;
-      sendResponse({ status: success });
+			sendResponse({ status: success });
 		},
 	);
 };

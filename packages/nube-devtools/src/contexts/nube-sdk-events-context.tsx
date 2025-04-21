@@ -46,8 +46,8 @@ export const NubeSDKEventsProvider = ({ children }: { children: ReactNode }) => 
             data: message.payload as NubeSDKEventData,
           }]
         })
-        sendResponse()
-        return true
+        // sendResponse()
+        return false
       }
       return false
     }
