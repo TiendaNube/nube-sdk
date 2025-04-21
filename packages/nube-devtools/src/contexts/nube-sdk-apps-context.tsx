@@ -1,6 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
-import { v4 as uuidv4 } from 'uuid'
 
 export interface NubeSDKEvent {
   id: string
@@ -13,55 +12,16 @@ export interface NubeSDKEvent {
 
 type NubeSDKAppsContextType = {
   apps: NubeSDKEvent[]
-  getApps: () => void
-  isLoading: boolean
-}
-
-type NubeSDKAppsResponse = {
-  status: boolean
-  apps: {
-    [key: string]: NubeSDKEvent['data']
-  }
+  setApps: (apps: NubeSDKEvent[]) => void
 }
 
 const NubeSDKAppsContext = createContext<NubeSDKAppsContextType | undefined>(undefined)
 
 export const NubeSDKAppsProvider = ({ children }: { children: ReactNode }) => {
   const [apps, setApps] = useState<NubeSDKEvent[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-
-  const getApps = useCallback(() => {
-    setIsLoading(true)
-    chrome.runtime.sendMessage(
-      {
-        action: 'nube-devtools-get-apps',
-        payload: {
-          tabId: chrome.devtools.inspectedWindow.tabId,
-        }
-      },
-      (response: NubeSDKAppsResponse) => {
-        if (response.status && response.apps) {
-          const apps = Object.keys(response.apps).map((key) => {
-            return {
-              id: uuidv4(),
-              data: response.apps[key],
-            }
-          })
-          setApps(apps)
-        } else {
-          setApps([])
-        }
-        setIsLoading(false)
-      },
-    )
-  }, [])
-
-  useEffect(() => {
-    getApps()
-  }, [getApps])
 
   return (
-    <NubeSDKAppsContext.Provider value={{ apps, getApps, isLoading }}>{children}</NubeSDKAppsContext.Provider>
+    <NubeSDKAppsContext.Provider value={{ apps, setApps }}>{children}</NubeSDKAppsContext.Provider>
   )
 }
 

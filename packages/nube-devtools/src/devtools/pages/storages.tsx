@@ -5,7 +5,7 @@ import {
 	ResizableHandle,
 } from "@/components/ui/resizable";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { NubeSDKEvent } from "@/contexts/nube-sdk-storage-context";
+import type { NubeSDKEvent, NubeSDKStorageEvent } from "@/contexts/nube-sdk-storage-context";
 import { useNubeSDKStorage } from "@/contexts/nube-sdk-storage-context";
 import { Table, TableBody, TableRow } from "@/components/ui/table";
 import { TableRowItem } from "../components/table-row-item";
@@ -13,13 +13,43 @@ import { JsonViewer } from "../components/json-viewer";
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { v4 as uuidv4 } from 'uuid'
 
 const STORAGE_KEY = "nube-devtools-storages-page-width";
 
+type MessageType = {
+  action: string
+  payload: NubeSDKStorageEvent
+}
+
 export function Storages() {
 	const [selectedEvent, setSelectedEvent] = useState<NubeSDKEvent | null>(null);
-	const { events, cleanup } = useNubeSDKStorage();
+	const { events, setEvents, cleanup } = useNubeSDKStorage();
 	const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const listener = (
+      message: MessageType,
+      _: chrome.runtime.MessageSender,
+      sendResponse: () => void
+    ) => {
+      if (message.action === 'nube-devtools-storage-events' && message.payload) {
+        setEvents((prevEvents) => [...prevEvents, {
+          id: uuidv4(),
+          data: message.payload,
+        }])
+        sendResponse()
+        return true
+      }
+      return false
+    }
+
+    chrome.runtime.onMessage.addListener(listener)
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(listener)
+    }
+  }, [setEvents])
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {

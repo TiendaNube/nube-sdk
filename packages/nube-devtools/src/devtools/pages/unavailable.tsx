@@ -11,13 +11,13 @@ export const Unavailable = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-red-400">Unavailable</CardTitle>
-            <CardDescription className="text-gray-300">
+            <CardDescription>
               The "NubeSDK" is not available here—it's exclusive to{' '}
               <a
                 href="https://www.nuvemshop.com.br"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-300 hover:text-gray-400 font-bold"
+                className="font-bold"
               >
                 Nuvemshop
               </a>{' '}

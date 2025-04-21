@@ -1,34 +1,49 @@
-# nube-devtools
+## Nube DevTools
 
-> A chrome extension tools built with Vite + React, and Manifest v3
+Nube DevTools is a Chrome extension that provides development tools to help you build and debug apps built with Nube SDK.
 
-## Installing
+## Features
 
-1. Check if your `Node.js` version is >= **14**.
-2. Change or configurate the name of your extension on `src/manifest`.
-3. Run `npm install` to install the dependencies.
+- Modern development stack with Vite and React
+- Chrome Extension Manifest v3 compliant
+- Hot module replacement for faster development
+- Optimized production builds
 
-## Developing
+## Prerequisites
 
-run the command
+- Node.js >= 14
+- Chrome browser (for development and testing)
 
-```shell
-$ cd nube-devtools
+## Installation
 
-$ npm run dev
+1. Clone the repository
+2. Navigate to the project directory:
+   ```bash
+   cd packages/nube-devtools
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+## Development
+
+1. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+2. Load the extension in Chrome:
+   - Open Chrome and navigate to `chrome://extensions/`
+   - Enable "Developer mode" in the top right corner
+   - Click "Load unpacked" and select the `packages/nube-devtools/build` directory
+
+## Building for Production
+
+To create a production-ready build:
+
+```bash
+npm run build
 ```
 
-### Chrome Extension Developer Mode
-
-1. set your Chrome browser 'Developer mode' up
-2. click 'Load unpacked', and select `nube-devtools/build` folder
-
-## Packing
-
-After the development of your extension run the command
-
-```shell
-$ npm run build
-```
-
-Now, the content of the `build` folder will be the extension ready to be submitted to the Chrome Web Store. Just take a look at the [official guide](https://developer.chrome.com/webstore/publish) for more info about publishing.
+The build output will be available in the `build` directory, ready for submission to the Chrome Web Store.

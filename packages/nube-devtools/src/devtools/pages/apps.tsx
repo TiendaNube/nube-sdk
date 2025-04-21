@@ -4,18 +4,54 @@ import Layout from '@/devtools/components/layout'
 import type { NubeSDKEvent } from '@/contexts/nube-sdk-apps-context'
 import { useNubeSDKAppsContext } from '@/contexts/nube-sdk-apps-context'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2 } from 'lucide-react'
 import { TableRowItem } from '../components/table-row-item'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { v4 as uuidv4 } from 'uuid'
 
 const STORAGE_KEY = 'nube-devtools-apps-panel-size'
 
+type NubeSDKAppsResponse = {
+  status: boolean
+  apps: {
+    [key: string]: NubeSDKEvent['data']
+  }
+}
+
 export function Apps() {
-  const { apps, getApps, isLoading } = useNubeSDKAppsContext()
+  const { apps, setApps } = useNubeSDKAppsContext()
   const [selectedApp, setSelectedApp] = useState<NubeSDKEvent | null>(null)
+
+  const getApps = useCallback(() => {
+    chrome.runtime.sendMessage(
+      {
+        action: 'nube-devtools-get-apps',
+        payload: {
+          tabId: chrome.devtools.inspectedWindow.tabId,
+        }
+      },
+      (response: NubeSDKAppsResponse) => {
+        if (response.status && response.apps) {
+          const apps = Object.keys(response.apps).map((key) => {
+            return {
+              id: uuidv4(),
+              data: response.apps[key],
+            }
+          })
+          setApps(apps)
+        } else {
+          setApps([])
+        }
+      },
+    )
+  }, [setApps])
+
+  useEffect(() => {
+    getApps()
+  }, [getApps])
 
   const handleOnSelect = (event: NubeSDKEvent) => {
     setSelectedApp(event)
@@ -37,12 +73,7 @@ export function Apps() {
               {apps.length} {apps.length === 1 ? 'app' : 'apps'}
             </span>
           </nav>
-          {isLoading ? (
-            <div className="flex h-full flex-col items-center justify-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <p className="text-sm">Loading apps...</p>
-            </div>
-          ) : apps.length === 0 ? (
+          {apps.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-2">
               <p className="text-sm">No apps found</p>
               <Button

@@ -1,12 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { NubeSDKState } from '@tiendanube/nube-sdk-types'
-import { v4 as uuidv4 } from 'uuid'
-
-type MessageType = {
-  action: string
-  payload?: NubeSDKEventData
-}
 
 export type NubeSDKEventData = [
   data: NubeSDKState,
@@ -21,6 +15,7 @@ export type NubeSDKEvent = {
 
 interface NubeSDKEventsContextType {
   events: NubeSDKEvent[]
+  setEvents: React.Dispatch<React.SetStateAction<NubeSDKEvent[]>>
   clearEvents: () => void
 }
 
@@ -33,34 +28,8 @@ export const NubeSDKEventsProvider = ({ children }: { children: ReactNode }) => 
     setEvents([])
   }
 
-  useEffect(() => {
-    const listener = (
-      message: MessageType,
-      _: chrome.runtime.MessageSender,
-      sendResponse: () => void
-    ) => {
-      if (message.action === 'nube-devtools-events' && message.payload) {
-        setEvents((prevEvents) => {
-          return [...prevEvents, {
-            id: uuidv4(),
-            data: message.payload as NubeSDKEventData,
-          }]
-        })
-        // sendResponse()
-        return false
-      }
-      return false
-    }
-
-    chrome.runtime.onMessage.addListener(listener)
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(listener)
-    }
-  }, [])
-
   return (
-    <NubeSDKEventsContext.Provider value={{ events, clearEvents }}>
+    <NubeSDKEventsContext.Provider value={{ events, setEvents, clearEvents }}>
       {children}
     </NubeSDKEventsContext.Provider>
   )

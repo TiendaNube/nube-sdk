@@ -11,13 +11,43 @@ import type { NubeSDKEvent, NubeSDKEventData } from '@/contexts/nube-sdk-events-
 import { Button } from '@/components/ui/button'
 import { JsonViewer } from '@/devtools/components/json-viewer'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { v4 as uuidv4 } from 'uuid'
 
 const STORAGE_KEY = 'nube-devtools-events-page-width'
 
+type MessageType = {
+  action: string
+  payload?: NubeSDKEventData
+}
+
 export function Events() {
   const [selectedEvent, setSelectedEvent] = useState<NubeSDKEvent | null>(null)
-  const { events, clearEvents } = useNubeSDKEventsContext()
+  const { events, setEvents, clearEvents } = useNubeSDKEventsContext()
   const tableContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const listener = (
+      message: MessageType,
+      _: chrome.runtime.MessageSender,
+    ) => {
+      if (message.action === 'nube-devtools-events' && message.payload) {
+        setEvents((prevEvents) => {
+          return [...prevEvents, {
+            id: uuidv4(),
+            data: message.payload as NubeSDKEventData,
+          }]
+        })
+        return false
+      }
+      return false
+    }
+
+    chrome.runtime.onMessage.addListener(listener)
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(listener)
+    }
+  }, [setEvents])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
