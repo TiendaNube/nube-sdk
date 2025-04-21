@@ -207,7 +207,7 @@ export const handleDevToolsGetApps = ({
 			},
 		},
 		(results) => {
-			const apps = results[0].result;
+			const apps = results?.[0]?.result;
 			if (apps) {
 				sendResponse({ status: true, apps });
 			} else {
@@ -236,8 +236,10 @@ export const handleDevToolsGetComponents = ({
 			func: () => {
 				if (window.nubeSDK) {
 					const apps = window.nubeSDK.getState().apps;
-					return Object.keys(apps).reduce<Record<string, Record<string, NubeSDKComponent>>>((acc, appId) => {
-            acc[appId] = apps[appId].ui.slots;
+					return Object.keys(apps).reduce<
+						Record<string, Record<string, NubeSDKComponent>>
+					>((acc, appId) => {
+						acc[appId] = apps[appId].ui.slots;
 						return acc;
 					}, {});
 				}
@@ -264,6 +266,9 @@ export const handleDevToolsResendEvent = (
 			target: { tabId },
 			world: "MAIN",
 			func: (appId, state, event) => {
+				if (!window.nubeSDK) {
+					return false;
+				}
 				window.nubeSDK.send(appId, event, () => ({
 					...(state as NubeSDKState),
 				}));
@@ -271,12 +276,9 @@ export const handleDevToolsResendEvent = (
 			},
 			args: [appId, state, event],
 		},
-		() => {
-			try {
-				sendResponse({ status: true });
-			} catch (error) {
-				sendResponse({ status: false });
-			}
+		(results) => {
+			const success = results?.[0]?.result === true;
+      sendResponse({ status: success });
 		},
 	);
 };
