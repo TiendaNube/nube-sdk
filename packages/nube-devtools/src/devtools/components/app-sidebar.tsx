@@ -21,6 +21,11 @@ const menu: { title: string; page: Page; icon: React.ElementType }[] = [
 		page: "apps",
 		icon: ComponentIcon,
 	},
+  {
+		title: "Components",
+		page: "components",
+		icon: ComponentIcon,
+	},
 	{
 		title: "Events",
 		page: "events",

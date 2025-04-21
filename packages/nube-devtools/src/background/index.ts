@@ -4,14 +4,17 @@ import {
   handleDevToolsResendEvent,
   handleDevToolsEvents,
   handleDevToolsGetApps,
+  handleDevToolsHighlightElement,
+  handleDevToolsScrollToElement,
+  handleDevToolsGetComponents,
 } from './nube-dev-tools'
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'nube-devtools-inject-window-variable') {
     if (sender.tab?.id !== undefined) {
       handleDevToolsInjectWindowVariable(sender.tab.id)
-      return true
     }
+    return true
   }
 
   if (message.action === 'nube-devtools-verify-nube-sdk-status') {
@@ -25,13 +28,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'nube-devtools-events-listener') {
     if (sender.tab?.id !== undefined) {
       handleDevToolsEvents({
-        sendResponse,
         tabId: sender.tab.id,
       })
-      return true
     }
-
-    return true
+    return false
   }
 
   if (message.action === 'nube-devtools-resend-event') {
@@ -45,5 +45,32 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse,
     })
     return true
+  }
+
+  if (message.action === 'nube-devtools-get-components') {
+    handleDevToolsGetComponents({
+      tabId: message.payload.tabId,
+      sendResponse,
+    })
+    return true
+  }
+
+  if (message.action === 'nube-devtools-highlight-element') {
+    handleDevToolsHighlightElement({
+      tabId: message.payload.tabId,
+      id: message.payload.id,
+      type: message.payload.type,
+      color: message.payload.color,
+      sendResponse,
+    })
+    return true
+  }
+
+  if (message.action === 'nube-devtools-scroll-to-element') {
+    handleDevToolsScrollToElement({
+      tabId: message.payload.tabId,
+      id: message.payload.id,
+      sendResponse,
+    })
   }
 })

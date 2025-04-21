@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2 } from 'lucide-react'
 import { TableRowItem } from '../components/table-row-item'
+import { SidebarTrigger } from '@/components/ui/sidebar'
 
 const STORAGE_KEY = 'nube-devtools-apps-panel-size'
 
@@ -29,6 +30,9 @@ export function Apps() {
       <ResizablePanelGroup autoSaveId={STORAGE_KEY} storage={localStorage} direction="horizontal">
         <ResizablePanel defaultSize={40}>
           <nav className="flex items-center justify-between px-1.5 py-1 border-b h-[33px]">
+            <div className="flex items-center">
+              <SidebarTrigger />
+            </div>
             <span className="text-xs">
               {apps.length} {apps.length === 1 ? 'app' : 'apps'}
             </span>

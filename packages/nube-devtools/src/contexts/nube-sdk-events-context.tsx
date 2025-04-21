@@ -37,7 +37,7 @@ export const NubeSDKEventsProvider = ({ children }: { children: ReactNode }) => 
     const listener = (
       message: MessageType,
       _: chrome.runtime.MessageSender,
-      sendResponse: (response?: { status: boolean }) => void
+      sendResponse: () => void
     ) => {
       if (message.action === 'nube-devtools-events' && message.payload) {
         setEvents((prevEvents) => {
@@ -46,8 +46,10 @@ export const NubeSDKEventsProvider = ({ children }: { children: ReactNode }) => 
             data: message.payload as NubeSDKEventData,
           }]
         })
-        sendResponse({ status: true });
+        sendResponse()
+        return true
       }
+      return false
     }
 
     chrome.runtime.onMessage.addListener(listener)

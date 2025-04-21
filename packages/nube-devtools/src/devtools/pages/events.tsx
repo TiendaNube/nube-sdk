@@ -10,6 +10,7 @@ import { useNubeSDKEventsContext } from '@/contexts/nube-sdk-events-context'
 import type { NubeSDKEvent, NubeSDKEventData } from '@/contexts/nube-sdk-events-context'
 import { Button } from '@/components/ui/button'
 import { JsonViewer } from '@/devtools/components/json-viewer'
+import { SidebarTrigger } from '@/components/ui/sidebar'
 
 const STORAGE_KEY = 'nube-devtools-events-page-width'
 
@@ -57,10 +58,10 @@ export function Events() {
       <ResizablePanelGroup autoSaveId={STORAGE_KEY} storage={localStorage} direction="horizontal">
         <ResizablePanel defaultSize={40}>
           <nav className="flex items-center justify-between px-1.5 py-1 border-b">
-            <span className="text-xs">
-              {events.length} {events.length === 1 ? 'event' : 'events'}
-            </span>
-            <Button
+            <div className="flex items-center">
+              <SidebarTrigger />
+              <div className="h-4 w-px bg-neutral-600 mx-2" />
+              <Button
               disabled={events.length === 0}
               variant="ghost"
               size="icon"
@@ -69,6 +70,10 @@ export function Events() {
             >
               <TrashIcon className="size-3" />
             </Button>
+            </div>
+            <span className="text-xs">
+              {events.length} {events.length === 1 ? 'event' : 'events'}
+            </span>
           </nav>
           <div
             ref={tableContainerRef}

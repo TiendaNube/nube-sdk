@@ -16,7 +16,7 @@ window.addEventListener('DOMContentLoaded', () => {
       console.error('Error sending nube-devtools-events-listener message:', chrome.runtime.lastError);
     }
   });
-  return true
+  return false
 })
 
 interface NubeSDKEventDetail {
@@ -29,7 +29,6 @@ window.addEventListener('NubeSDKEvents', ((event) => {
     { action: 'nube-devtools-events', payload: payload.detail },
     () => {},
   )
-  return true
 }) as EventListener)
 
 window.addEventListener('NubeSDKStorageEvents', ((event: Event) => {
@@ -38,5 +37,4 @@ window.addEventListener('NubeSDKStorageEvents', ((event: Event) => {
     { action: 'nube-devtools-storage-events', payload: customEvent.detail },
     () => {},
   )
-  return true
 }) as EventListener)

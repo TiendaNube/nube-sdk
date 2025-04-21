@@ -8,6 +8,7 @@ import { Events } from './pages/events'
 import { Unavailable } from './pages/unavailable'
 import { Storages } from './pages/storages'
 import { Apps } from './pages/apps'
+import { Components } from './pages/components'
 import { NubeSDKAppsProvider } from '@/contexts/nube-sdk-apps-context'
 
 const AppContent = () => {
@@ -21,6 +22,8 @@ const AppContent = () => {
   switch (currentPage) {
     case 'apps':
       return <Apps />
+    case 'components':
+      return <Components />
     case 'events':
       return <Events />
     case 'storages':

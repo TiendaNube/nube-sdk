@@ -37,16 +37,17 @@ export const NubeSDKStorageProvider = ({ children }: { children: ReactNode }) =>
     const listener = (
       message: MessageType,
       _: chrome.runtime.MessageSender,
-      sendResponse: (response?: { status: boolean }) => void,
+      sendResponse: () => void
     ) => {
       if (message.action === 'nube-devtools-storage-events' && message.payload) {
         setEvents((prevEvents) => [...prevEvents, {
           id: uuidv4(),
           data: message.payload,
         }])
+        sendResponse()
+        return true
       }
-      sendResponse({ status: true })
-      return true
+      return false
     }
 
     chrome.runtime.onMessage.addListener(listener)

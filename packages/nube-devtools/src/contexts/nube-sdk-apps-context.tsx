@@ -11,13 +11,13 @@ export interface NubeSDKEvent {
   }
 }
 
-interface NubeSDKAppsContextType {
+type NubeSDKAppsContextType = {
   apps: NubeSDKEvent[]
   getApps: () => void
   isLoading: boolean
 }
 
-interface NubeSDKAppsResponse {
+type NubeSDKAppsResponse = {
   status: boolean
   apps: {
     [key: string]: NubeSDKEvent['data']

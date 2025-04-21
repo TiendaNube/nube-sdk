@@ -5,11 +5,11 @@ import { App } from './app'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <DevToolsThemeProvider>
       <App />
     </DevToolsThemeProvider>
-  </React.StrictMode>,
+  // </React.StrictMode>,
 )
 
 chrome.devtools.panels.create('NubeSDK', '', '../../devtools.html', () => {

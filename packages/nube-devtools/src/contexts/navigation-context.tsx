@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
 
-export type Page = 'events' | 'storages' | 'apps'
+export type Page = 'events' | 'storages' | 'apps' | 'components'
 
 type NavigationContextType = {
   currentPage: Page
