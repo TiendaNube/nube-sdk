@@ -426,7 +426,8 @@ export type UISlot =
 	| "before_address_form" // Before the address form in checkout.
 	| "before_billing_form" // Before the billing form in checkout.
 	| "before_contact_form" // Before the contact form in checkout.
-	| "modal_content"; // Content of a modal dialog in checkout.
+	| "modal_content" // Content of a modal dialog in checkout.
+	| "after_line_items_price"; // After the price of the line items in checkout.
 
 /**
  * Represents the value of a UI component, typically used for form inputs.
