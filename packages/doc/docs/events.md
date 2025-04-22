@@ -1,25 +1,25 @@
 # Events
 
-The communication between the main page and the scripts is handled through events, ensuring a reactive and flexible integration where each component operates independently without direct calls.
+The communication between the main page and the apps is handled through events, ensuring a reactive and flexible integration where each component operates independently without direct calls.
 
-- **Events Dispatched by the Main Page:**  
-  When significant changes occur—such as an update to the shopping cart—the main page dispatches events (e.g., `cart_updated`) to notify scripts that a change has occurred.
+- **Events Dispatched by the Store:**  
+  When significant changes occur—such as an update to the shopping cart—the store dispatches events (e.g., `cart:update`) to notify scripts that a change has occurred.
 
-- **Events Dispatched by the Scripts:**  
-  Conversely, the scripts can emit events (like `cart:validate`) to report on the validity of the cart contents or to signal that additional actions might be required.
+- **Events Dispatched by the Apps:**  
+  Conversely, the apps can emit events (like `cart:validate`) to report on the validity of the cart contents or to signal that additional actions might be required.
 
 This event-driven approach allows the application to respond in real-time to state changes, simplifying maintenance and enhancing scalability.
 
 ## `config:set`
 
-Dispatched by `script` to setup initial script configuration
+Dispatched by `app` to setup initial configuration
 
-```typescript title="Example"
-nube.send("config:set", () => {
+```typescript
+nube.send("config:set", () => ({
   config: {
     has_cart_validation: true
   },
-});
+}));
 ```
 
 ### AppConfig
@@ -31,11 +31,11 @@ nube.send("config:set", () => {
 
 ## `cart:update`
 
-Dispatched by `checkout` when the cart content changes
+Dispatched by `store` when the cart content changes
 
-```typescript title="Example"
+```typescript
 nube.on("cart:update", ({ cart }) => {
-  if (cart.items > 5) {
+  if (cart.items.length > 5) {
     console.log("Purchased more than 5 different items");
   }
 });
@@ -43,7 +43,7 @@ nube.on("cart:update", ({ cart }) => {
 
 ## `cart:validate`
 
-Dispatched by `script` to signal if the content of the cart is valid or not. Requires `has_cart_validation: true` in the script configuration to work, otherwise cart validation events are ignored.
+Dispatched by `app` to signal if the content of the cart is valid or not. Requires `has_cart_validation: true` in the script configuration to work, otherwise cart validation events are ignored.
 
 ```typescript title="Example"
 // Tell NubeSDK that this script wants to validate the content of the cart
@@ -65,24 +65,20 @@ nube.on("cart:update", ({ cart }) => {
         },
       },
     }));
-  } else {
-    // Dispatch a successful `cart:validate` event
-    nube.send("cart:validate", () => ({
-      cart: {
-        validation: {
-          status: "success",
-        },
-      },
-    }));
+    return;
   }
-}
+  // Dispatch a successful `cart:validate` event
+  nube.send("cart:validate", () => ({
+    cart: { validation: { status: "success" } },
+  }));
+});
 ```
 
 ## `shipping:update`
 
-Dispatched by `checkout` when the shipping method changes.
+Dispatched by `store` when the shipping method changes.
 
-```typescript title="Example"
+```typescript
 nube.on("shipping:update", ({ shipping }) => {
   if (shipping?.selected) {
     console.log(
@@ -94,9 +90,9 @@ nube.on("shipping:update", ({ shipping }) => {
 
 ## `customer:update`
 
-Dispatched by `checkout` when the customer data changes.
+Dispatched by `store` when the customer data changes.
 
-```typescript title="Example"
+```typescript
 nube.on("customer:update", ({ customer }) => {
   console.log(`Customer name has changed to: ${customer?.contact?.name}`);
 });
@@ -104,9 +100,9 @@ nube.on("customer:update", ({ customer }) => {
 
 ## `payment:update`
 
-Dispatched by `checkout` when the payment method changes.
+Dispatched by `store` when the payment method changes.
 
-```typescript title="Example"
+```typescript
 nube.on("payment:update", ({ payment }) => {
   console.log(`payment method has changed to: ${payment?.selected}`);
 });
@@ -114,32 +110,30 @@ nube.on("payment:update", ({ payment }) => {
 
 ## `shipping:update:label`
 
-Dispatched by `script` to change checkout shipping method label.
+Dispatched by `app` to change checkout shipping method label.
 
-```typescript title="Example"
+```typescript
 nube.send("shipping:update:label", () => ({
   shipping: {
-    selected: null,
     custom_labels: {
       "ne-correios-sedex": "My custom label",
     },
-    options: [],
   },
 }));
 ```
 
 ## `ui:slot:set`
 
-Dispatched by `script` to setup the content of a ui slot.
+Dispatched by `app` to setup the content of a ui slot.
 
-```typescript title="Example"
+```tsx
 import type { NubeSDK } from "@tiendanube/nube-sdk-types";
-import { Row, Txt } from "@tiendanube/nube-sdk-jsx";
+import { Row, Text } from "@tiendanube/nube-sdk-jsx";
 
 function MyComponent() {
   return (
     <Row>
-      <Txt>Hello!</Txt>
+      <Text>Hello!</Text>
     </Row>
   );
 }

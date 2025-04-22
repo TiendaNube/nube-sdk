@@ -21,25 +21,23 @@ import { Text } from "@tiendanube/nube-sdk-jsx";
 ```typescript [Declarative]
 import { text } from "@tiendanube/nube-sdk-ui";
 
-text({
-  text: "Olá Mundo",
-});
+text({ children: "Olá Mundo" });
 ```
 
 :::
 
-## Properties
+## Propriedades
 
-| Property   | Type                         | Required | Description                                                             |
-| ---------- | ---------------------------- | -------- | ----------------------------------------------------------------------- |
-| text       | string                       | Yes      | O conteúdo de texto a ser exibido.                                      |
-| color      | string                       | No       | A cor do texto (pode ser uma variável CSS como "var(--primary-color)"). |
-| background | string                       | No       | A cor de fundo (pode ser uma variável CSS como "var(--primary-color)"). |
-| heading    | 1\|2\|3\|4\|5\|6             | No       | O nível do cabeçalho (h1-h6).                                           |
-| modifiers  | TxtModifier[]                | No       | Array de modificadores de formatação de texto.                          |
-| inline     | boolean                      | No       | Se o texto deve ser exibido em linha.                                   |
+| Propriedade | Tipo                         | Obrigatório | Descrição                                                               |
+| ----------- | ---------------------------- | ----------- | ----------------------------------------------------------------------- |
+| children    | string                       | Sim         | O conteúdo de texto a ser exibido.                                      |
+| color       | string                       | Não         | A cor do texto (pode ser uma variável CSS como "var(--primary-color)"). |
+| background  | string                       | Não         | A cor de fundo (pode ser uma variável CSS como "var(--primary-color)"). |
+| heading     | 1\|2\|3\|4\|5\|6             | Não         | O nível do cabeçalho (h1-h6).                                           |
+| modifiers   | TxtModifier[]                | Não         | Array de modificadores de formatação de texto.                          |
+| inline      | boolean                      | Não         | Se o texto deve ser exibido em linha.                                   |
 
-### Property values
+### Valores das propriedades
 
 | Type        | Value                                                                                             | Description                                               |
 | ----------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |

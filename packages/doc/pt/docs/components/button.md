@@ -31,14 +31,14 @@ button({
 
 :::
 
-### Manipulador onClick
+### Manipulador de Eventos
 
 O manipulador `onClick` recebe um objeto com as seguintes propriedades:
 
 ```typescript
 onClick: (data: {
-  type: "click";           // O tipo do evento
-  state: NubeSDKState;     // O estado atual do SDK
+  type: "click";       // O tipo do evento
+  state: NubeSDKState; // O estado atual do SDK
 }) => void
 ```
 
@@ -86,8 +86,8 @@ button({
 
 ### Valores das propriedades
 
-| Tipo                            | Valor                                                   | Descrição                                                                              |
-| ------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Tipo                            | Valor                                                   | Descrição                                                                                           |
+| ------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | Size                            | `${number}${SizeUnit}` \| number \| "auto"              | Representa uma definição de tamanho flexível. Pode ser um número, uma string com unidade ou "auto". |
-| SizeUnit                        | "em" \| "rem" \| "px" \| "%"                            | Define unidades para medidas de tamanho.                                               |
-| NubeComponentButtonEventHandler | (data: { type: "click"; state: NubeSDKState; }) => void | Função de manipulação de eventos do botão.                                             |
+| SizeUnit                        | "em" \| "rem" \| "px" \| "%"                            | Define unidades para medidas de tamanho.                                                            |
+| NubeComponentButtonEventHandler | (data: { type: "click"; state: NubeSDKState; }) => void | Função de manipulação de eventos do botão.                                                          |

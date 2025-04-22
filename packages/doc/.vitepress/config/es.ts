@@ -34,7 +34,7 @@ export const es = defineConfig({
 				items: [
 					{ text: "Creando una nueva App", link: "/es/docs/getting-started" },
 					{ text: "DevTools", link: "/es/docs/devtools" },
-					{ text: "El Estado de la App", link: "/es/docs/state" },
+					{ text: "Estado de la App", link: "/es/docs/state" },
 					{ text: "Eventos", link: "/es/docs/events" },
 					{ text: "APIs del Navegador", link: "/es/docs/browser-apis" },
 					{ text: "Slots de UI", link: "/es/docs/ui-slots" },
@@ -78,7 +78,7 @@ export const es = defineConfig({
 				collapsed: true,
 				items: [
 					{
-						text: "App de Confirmación de Edad",
+						text: "Confirmación de Edad",
 						link: "/es/docs/examples/age-confirmation",
 					},
 				],

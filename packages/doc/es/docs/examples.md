@@ -1,9 +1,11 @@
+---
+title: Ejemplos
+cards:
+  - title: Confirmación de edad
+    link: /es/docs/examples/age-confirmation
+    description: Esta app agrega un checkbox de verificación para confirmar la edad en el momento del pago.
+---
+
 # Ejemplos
 
-::: info
-Este documento está en desarrollo. Pronto tendremos el contenido completo.
-:::
-
-## Aplicaciones de Ejemplo
-
-Explora ejemplos prácticos de aplicaciones construidas con NubeSDK. 
+<CardGrid :items="$frontmatter.cards" />

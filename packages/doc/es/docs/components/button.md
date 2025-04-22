@@ -4,7 +4,7 @@ title: Button Component
 
 # Button
 
-Un `button` es un elemento clickeable usado para activar acciones.
+Un `button` es un elemento clicable usado para activar acciones.
 Soporta propiedades como texto, onClick y configuraciones de estilo.
 
 ## Uso
@@ -31,7 +31,7 @@ button({
 
 :::
 
-### Manejador onClick
+### Manejadores de Eventos
 
 El manejador `onClick` recibe un objeto con las siguientes propiedades:
 

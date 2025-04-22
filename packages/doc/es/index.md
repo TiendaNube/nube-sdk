@@ -6,8 +6,8 @@ hero:
   text: "La forma más rápida de crear tu app en Tiendanube"
   tagline: Tu app disponible para más de 150.000 tiendas
   image:
-    src: /logo.png
-    alt: ejemplo de código
+    src: /images/logo.png
+    alt: Tiendanube
   actions:
     - theme: brand
       text: Empezar ahora

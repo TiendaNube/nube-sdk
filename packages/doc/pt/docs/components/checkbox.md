@@ -8,7 +8,7 @@ Um `checkbox` representa um campo selecionável que pode ser alternado entre est
 É tipicamente usado para permitir que os usuários selecionem uma ou mais opções.
 Suporta propriedades como `name`, `label`, `checked` e manipuladores de eventos (`onChange`).
 
-## Usage
+## Uso
 
 ::: code-group
 
@@ -36,7 +36,7 @@ checkbox({
 
 :::
 
-### Event Handlers
+### Manipulador de Eventos
 
 O componente checkbox suporta um manipulador de eventos que recebe um objeto com as seguintes propriedades:
 
@@ -48,7 +48,7 @@ onChange: (data: {
 }) => void
 ```
 
-Example usage:
+Exemplo de uso:
 
 ::: code-group
 
@@ -88,17 +88,17 @@ checkbox({
 
 :::
 
-## Properties
+## Propriedades
 
-| Property | Type                           | Required | Description                                                   |
-| -------- | ------------------------------ | -------- | ------------------------------------------------------------- |
-| name     | string                         | Yes      | O nome do checkbox, usado para identificá-lo em formulários.  |
-| label    | string                         | Yes      | O texto do rótulo exibido ao lado do checkbox.                |
-| checked  | boolean                        | Yes      | O estado atual marcado do checkbox.                           |
-| onChange | NubeComponentCheckEventHandler | No       | Função chamada quando o estado do checkbox muda.              |
+| Propriedade | Tipo                           | Obrigatório | Descrição                                                     |
+| ----------- | ------------------------------ | ----------- | ------------------------------------------------------------- |
+| name        | string                         | Sim         | O nome do checkbox, usado para identificá-lo em formulários.  |
+| label       | string                         | Sim         | O texto do rótulo exibido ao lado do checkbox.                |
+| checked     | boolean                        | Sim         | O estado atual marcado do checkbox.                           |
+| onChange    | NubeComponentCheckEventHandler | Não         | Função chamada quando o estado do checkbox muda.              |
 
-### Property values
+### Valores das propriedades
 
-| Type                           | Value                                                                                 | Description                                 |
+| Tipo                           | Valor                                                                                 | Descrição                                   |
 | ------------------------------ | ------------------------------------------------------------------------------------- | ------------------------------------------- |
 | NubeComponentCheckEventHandler | (data: {<br/>type: "change"; state: NubeSDKState;<br/>value?: boolean;<br/>}) => void | Função manipuladora de eventos do checkbox. |
