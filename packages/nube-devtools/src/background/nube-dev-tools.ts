@@ -58,6 +58,10 @@ export const handleDevToolsEvents = ({
 			target: { tabId },
 			world: "MAIN",
 			func: () => {
+				if (window.__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__) {
+					return;
+				}
+
 				if (window.nubeSDK) {
 					window.nubeSDK.on("*", async (...state: NubeSDKState[]) => {
 						window.dispatchEvent(
@@ -166,6 +170,8 @@ export const handleDevToolsEvents = ({
 					writable: true,
 					configurable: true,
 				});
+
+				window.__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__ = true;
 			},
 		},
 		() => {},

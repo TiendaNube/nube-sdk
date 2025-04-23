@@ -50,7 +50,7 @@
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.26",
     "@tailwindcss/postcss": "^4.1.3",
-    "@tiendanube/nube-sdk-types": "^0.8.0",
+    "@tiendanube/nube-sdk-types": "^0.9.0",
     "@types/chrome": "^0.0.246",
     "@types/react": "^18.2.28",
     "@types/react-dom": "^18.2.13",
