@@ -33,6 +33,7 @@ export const es = defineConfig({
 				collapsed: false,
 				items: [
 					{ text: "Creando una nueva App", link: "/es/docs/getting-started" },
+					{ text: "DevTools", link: "/es/docs/devtools" },
 					{ text: "Estado de la App", link: "/es/docs/state" },
 					{ text: "Eventos", link: "/es/docs/events" },
 					{ text: "APIs del Navegador", link: "/es/docs/browser-apis" },
