@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Button } from '../../components/ui/button'
 
@@ -77,12 +77,17 @@ const TreeNode: FC<{
     setIsExpanded(!isExpanded)
   }
 
+  const title = useMemo(() => {
+    return componentNames[node.type as keyof typeof componentNames] || node.type
+  }, [node.type])
+
   const handleHighlight = (type: 'enter' | 'leave') => {
     chrome.runtime.sendMessage({
       action: 'nube-devtools-highlight-element',
       payload: {
         tabId: chrome.devtools.inspectedWindow.tabId,
         id: node.__internalId,
+        title,
         type,
         color: 'blue',
       },
@@ -111,7 +116,7 @@ const TreeNode: FC<{
         onMouseLeave={() => handleHighlight('leave')}
       >
         <span style={{ paddingLeft: `${index * 12 + 16}px` }} className="text-[12px]">
-          {componentNames[node.type as keyof typeof componentNames] || node.type}
+          {title}
         </span>
       </CustomButton>
     )
@@ -208,6 +213,7 @@ export const TreeView: FC<TreeViewProps> = ({ data, onSelectNode }) => {
       payload: {
         tabId: chrome.devtools.inspectedWindow.tabId,
         id: `nube-sdk-slot-${slot}`,
+        title: slot,
         type,
         color: 'green',
       },

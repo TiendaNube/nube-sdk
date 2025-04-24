@@ -21,7 +21,7 @@ const menu: { title: string; page: Page; icon: React.ElementType }[] = [
 		page: "apps",
 		icon: ComponentIcon,
 	},
-  {
+	{
 		title: "Components",
 		page: "components",
 		icon: ComponentIcon,
@@ -65,7 +65,7 @@ export function AppSidebar() {
 									<SidebarMenuButton asChild>
 										<Button
 											className={`cursor-pointer rounded-none justify-start text-[13px] ${currentPage === item.page ? "shadow-[inset_2px_0_0_0_rgb(180,83,9)]" : ""}`}
-                      variant="ghost"
+											variant="ghost"
 											onClick={() => {
 												navigate(item.page);
 											}}

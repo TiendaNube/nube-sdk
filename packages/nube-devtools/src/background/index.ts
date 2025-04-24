@@ -59,6 +59,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     handleDevToolsHighlightElement({
       tabId: message.payload.tabId,
       id: message.payload.id,
+      title: message.payload.title,
       type: message.payload.type,
       color: message.payload.color,
       sendResponse,

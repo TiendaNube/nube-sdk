@@ -287,12 +287,14 @@ export const handleDevToolsResendEvent = (
 export const handleDevToolsHighlightElement = ({
 	tabId,
 	id,
+	title,
 	type,
 	color,
 	sendResponse,
 }: {
 	tabId: number;
 	id: string;
+  title: string;
 	type: "enter" | "leave";
 	color: "green" | "blue";
 	sendResponse: (response: { status: boolean }) => void;
@@ -301,7 +303,7 @@ export const handleDevToolsHighlightElement = ({
 		{
 			target: { tabId },
 			world: "MAIN",
-			func: (id: string, type: "enter" | "leave", color: "green" | "blue") => {
+			func: (id: string, type: "enter" | "leave", color: "green" | "blue", title: string) => {
 				const element = document.getElementById(id);
 				if (element) {
 					const overlay = document.createElement("div");
@@ -316,7 +318,7 @@ export const handleDevToolsHighlightElement = ({
 						const absoluteLeft = rect.left + scrollLeft;
 						const absoluteTop = rect.top + scrollTop;
 
-						overlay.style.position = "absolute";
+            overlay.style.position = "absolute";
 						overlay.style.top = `${absoluteTop}px`;
 						overlay.style.left = `${absoluteLeft}px`;
 						overlay.style.width = `${rect.width}px`;
@@ -331,6 +333,34 @@ export const handleDevToolsHighlightElement = ({
 								: "rgba(111, 168, 220, 0.15)";
 						overlay.style.pointerEvents = "none";
 
+            const box = document.createElement("div");
+            box.id = "nube-devtools-box";
+            box.style.position = "absolute";
+            box.style.display = "flex";
+            box.style.alignItems = "center";
+            box.style.justifyContent = "center";
+            box.style.top = `calc(${absoluteTop}px - 10px)`;
+            box.style.backgroundColor = "#4f4f4f";
+            box.style.padding = "4px 8px";
+            box.style.borderRadius = "2px";
+            overlay.appendChild(box)
+
+            const span1 = document.createElement("span");
+            span1.textContent = `${title}`
+            span1.style.color = "white";
+            span1.style.fontSize = "11px";
+            span1.style.fontWeight = "bold";
+            span1.style.borderRadius = "8px";
+
+            const span2 = document.createElement("span");
+            span2.textContent = `#${id}`
+            span2.style.color = "white";
+            span2.style.fontSize = "11px";
+            span2.style.fontWeight = "normal";
+            span2.style.borderRadius = "8px";
+
+            box.appendChild(span1)
+            box.appendChild(span2)
 						document.body.appendChild(overlay);
 					} else {
 						const overlay = document.getElementById("nube-devtools-highlight");
@@ -341,7 +371,7 @@ export const handleDevToolsHighlightElement = ({
 				}
 				return true;
 			},
-			args: [id, type, color],
+			args: [id, type, color, title],
 		},
 		() => {
 			try {
