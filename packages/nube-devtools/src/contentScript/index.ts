@@ -28,17 +28,17 @@ interface NubeSDKEventDetail {
 }
 
 window.addEventListener("NubeSDKEvents", ((event) => {
+	const port = chrome.runtime.connect({ name: "nube-devtools-events" });
 	const payload = event as CustomEvent<NubeSDKEventDetail>;
-	chrome.runtime.sendMessage({
-		action: "nube-devtools-events",
+	port.postMessage({
 		payload: payload.detail,
 	});
 }) as EventListener);
 
 window.addEventListener("NubeSDKStorageEvents", ((event: Event) => {
-	const customEvent = event as CustomEvent<NubeSDKStorageEvent>;
-	chrome.runtime.sendMessage({
-		action: "nube-devtools-storage-events",
-		payload: customEvent.detail,
+	const payload = event as CustomEvent<NubeSDKStorageEvent>;
+  const port = chrome.runtime.connect({ name: "nube-devtools-storage-events" });
+	port.postMessage({
+		payload: payload.detail,
 	});
 }) as EventListener);

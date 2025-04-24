@@ -58,19 +58,17 @@ export const handleDevToolsEvents = ({
 			target: { tabId },
 			world: "MAIN",
 			func: () => {
-				if (window.__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__) {
+				if (window.__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__ || !window.nubeSDK) {
 					return;
 				}
 
-				if (window.nubeSDK) {
-					window.nubeSDK.on("*", async (...state: NubeSDKState[]) => {
-						window.dispatchEvent(
-							new CustomEvent("NubeSDKEvents", {
-								detail: state,
-							}),
-						);
-					});
-				}
+        window.nubeSDK.on("*", async (...state: NubeSDKState[]) => {
+          window.dispatchEvent(
+            new CustomEvent("NubeSDKEvents", {
+              detail: state,
+            }),
+          );
+        });
 
 				const getStorageProxy = (type: "localStorage" | "sessionStorage") =>
 					new Proxy(window[type], {
