@@ -7,7 +7,7 @@ export const useNubeStatus = () => {
 		const checkNubeStatus = () => {
 			chrome.runtime.sendMessage(
 				{
-					action: "nube-devtools-verify-nube-sdk-status",
+					action: "nube-devtools-check-nube-status",
 					payload: { tabId: chrome.devtools.inspectedWindow.tabId },
 				},
 				(response) => {

@@ -24,7 +24,7 @@ export function Components() {
   const getComponents = useCallback(() => {
     chrome.runtime.sendMessage(
       {
-        action: 'nube-devtools-get-components',
+        action: 'nube-devtools-fetch-components',
         payload: {
           tabId: chrome.devtools.inspectedWindow.tabId,
         },

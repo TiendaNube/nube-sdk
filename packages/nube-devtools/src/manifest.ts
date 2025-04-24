@@ -1,9 +1,6 @@
 import { defineManifest } from '@crxjs/vite-plugin'
 import packageData from '../package.json'
 
-//@ts-ignore
-const isDev = process.env.NODE_ENV == 'development'
-
 export default defineManifest({
   name: 'NubeSDK DevTools',
   description: packageData.description,
@@ -33,6 +30,6 @@ export default defineManifest({
       matches: [],
     },
   ],
-  permissions: ['scripting', 'activeTab', 'tabs'],
+  permissions: ['scripting', 'activeTab'],
   host_permissions: ['http://*/*', 'https://*/*'],
 })

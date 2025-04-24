@@ -2,19 +2,19 @@ import type { NubeSDKStorageEvent } from "@/contexts/nube-sdk-storage-context";
 
 window.addEventListener("load", () => {
 	chrome.runtime.sendMessage({
-		action: "nube-devtools-inject-window-variable",
+		action: "nube-devtools-initialize-sdk",
 	});
 });
 
 window.addEventListener("DOMContentLoaded", () => {
 	chrome.runtime.sendMessage(
 		{
-			action: "nube-devtools-events-listener",
+			action: "nube-devtools-monitor-events",
 		},
 		() => {
 			if (chrome.runtime.lastError) {
 				console.error(
-					"Error sending nube-devtools-events-listener message:",
+					"Error sending nube-devtools-monitor-events message:",
 					chrome.runtime.lastError,
 				);
 			}
@@ -37,7 +37,7 @@ window.addEventListener("NubeSDKEvents", ((event) => {
 
 window.addEventListener("NubeSDKStorageEvents", ((event: Event) => {
 	const payload = event as CustomEvent<NubeSDKStorageEvent>;
-  const port = chrome.runtime.connect({ name: "nube-devtools-storage-events" });
+	const port = chrome.runtime.connect({ name: "nube-devtools-storage-events" });
 	port.postMessage({
 		payload: payload.detail,
 	});

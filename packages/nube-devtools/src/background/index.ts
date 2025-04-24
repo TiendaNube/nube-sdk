@@ -10,14 +10,14 @@ import {
 } from './nube-dev-tools'
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'nube-devtools-inject-window-variable') {
+  if (message.action === 'nube-devtools-initialize-sdk') {
     if (sender.tab?.id !== undefined) {
       handleDevToolsInjectWindowVariable(sender.tab.id)
     }
     return true
   }
 
-  if (message.action === 'nube-devtools-verify-nube-sdk-status') {
+  if (message.action === 'nube-devtools-check-nube-status') {
     handleDevToolsVerifyNubeSdkStatus({
       sendResponse,
       tabId: message.payload.tabId,
@@ -25,7 +25,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true
   }
 
-  if (message.action === 'nube-devtools-events-listener') {
+  if (message.action === 'nube-devtools-monitor-events') {
     if (sender.tab?.id !== undefined) {
       handleDevToolsEvents({
         tabId: sender.tab.id,
@@ -34,12 +34,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return false
   }
 
-  if (message.action === 'nube-devtools-resend-event') {
+  if (message.action === 'nube-devtools-replay-event') {
     handleDevToolsResendEvent(sendResponse, message.payload)
     return true
   }
 
-  if (message.action === 'nube-devtools-get-apps') {
+  if (message.action === 'nube-devtools-fetch-apps') {
     handleDevToolsGetApps({
       tabId: message.payload.tabId,
       sendResponse,
@@ -47,7 +47,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true
   }
 
-  if (message.action === 'nube-devtools-get-components') {
+  if (message.action === 'nube-devtools-fetch-components') {
     handleDevToolsGetComponents({
       tabId: message.payload.tabId,
       sendResponse,

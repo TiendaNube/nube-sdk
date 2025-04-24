@@ -39,7 +39,7 @@ export function Events() {
 							];
 						});
 
-            port.disconnect();
+						port.disconnect();
 					}
 				});
 			}
@@ -66,26 +66,26 @@ export function Events() {
 		clearEvents();
 	};
 
-  const handleResend = (event: NubeSDKEventData) => {
-    chrome.runtime.sendMessage(
-      {
-        action: 'nube-devtools-resend-event',
-        payload: {
-          tabId: chrome.devtools.inspectedWindow.tabId,
-          state: event[0],
-          event: event[1],
-          appId: event[2],
-        },
-      },
-      (response: { status: boolean }) => {
-        if (response.status) {
-          toast.success('Event resent successfully')
-        } else {
-          toast.error('Failed to resend event')
-        }
-      },
-    )
-  }
+	const handleReplayEvent = (event: NubeSDKEventData) => {
+		chrome.runtime.sendMessage(
+			{
+				action: "nube-devtools-replay-event",
+				payload: {
+					tabId: chrome.devtools.inspectedWindow.tabId,
+					state: event[0],
+					event: event[1],
+					appId: event[2],
+				},
+			},
+			(response: { status: boolean }) => {
+				if (response.status) {
+					toast.success("Event resent successfully");
+				} else {
+					toast.error("Failed to resend event");
+				}
+			},
+		);
+	};
 
 	return (
 		<Layout>
@@ -140,7 +140,7 @@ export function Events() {
 												<TableRowItem
 													isSelected={event.id === selectedEvent?.id}
 													title={event.data[1]}
-													onResend={(data) => handleResend(data.data)}
+													onResend={(data) => handleReplayEvent(data.data)}
 													event={event}
 													onSelect={setSelectedEvent}
 												/>

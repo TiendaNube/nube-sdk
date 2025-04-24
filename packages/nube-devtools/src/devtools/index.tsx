@@ -13,5 +13,7 @@ ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
 )
 
 chrome.devtools.panels.create('NubeSDK', '', '../../devtools.html', () => {
-  console.log('devtools panel create')
+  chrome.devtools.network.onNavigated.addListener((url: string) => {
+    window.location.reload();
+  });
 })

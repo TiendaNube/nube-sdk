@@ -3,7 +3,7 @@
   "displayName": "nube-devtools",
   "version": "0.0.1",
   "author": "Tiendanube / Nuvemshop",
-  "description": "Chrome DevTools extension for debugging and testing Nube SDK applications with real-time insights.",
+  "description": "Chrome DevTools extension for debugging and testing NubeSDK apps with real-time insights.",
   "type": "module",
   "license": "MIT",
   "keywords": [
