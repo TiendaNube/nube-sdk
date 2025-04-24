@@ -1,8 +1,8 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TableCell } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
 import { Repeat } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type Event<T> = {
 	id: string;

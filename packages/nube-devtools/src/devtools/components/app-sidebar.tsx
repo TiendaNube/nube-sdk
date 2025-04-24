@@ -1,5 +1,7 @@
-import { ChartNoAxesGantt, Box, ComponentIcon } from "lucide-react";
+import { Box, ChartNoAxesGantt, ComponentIcon } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
 	Sidebar,
 	SidebarContent,
@@ -10,10 +12,8 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Badge } from "@/components/ui/badge";
 import type { Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
-import { Button } from "@/components/ui/button";
 
 const menu: { title: string; page: Page; icon: React.ElementType }[] = [
 	{

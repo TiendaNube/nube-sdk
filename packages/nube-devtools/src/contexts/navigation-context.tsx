@@ -1,33 +1,35 @@
-import { createContext, useContext, useState } from 'react'
-import type { ReactNode } from 'react'
+import { createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
 
-export type Page = 'events' | 'storages' | 'apps' | 'components'
+export type Page = "events" | "storages" | "apps" | "components";
 
 type NavigationContextType = {
-  currentPage: Page
-  navigate: (page: Page) => void
-}
+	currentPage: Page;
+	navigate: (page: Page) => void;
+};
 
-const NavigationContext = createContext<NavigationContextType | undefined>(undefined)
+const NavigationContext = createContext<NavigationContextType | undefined>(
+	undefined,
+);
 
 export function NavigationProvider({ children }: { children: ReactNode }) {
-  const [currentPage, setCurrentPage] = useState<Page>('apps')
+	const [currentPage, setCurrentPage] = useState<Page>("apps");
 
-  const navigate = (page: Page) => {
-    setCurrentPage(page)
-  }
+	const navigate = (page: Page) => {
+		setCurrentPage(page);
+	};
 
-  return (
-    <NavigationContext.Provider value={{ currentPage, navigate }}>
-      {children}
-    </NavigationContext.Provider>
-  )
+	return (
+		<NavigationContext.Provider value={{ currentPage, navigate }}>
+			{children}
+		</NavigationContext.Provider>
+	);
 }
 
 export function useNavigation() {
-  const context = useContext(NavigationContext)
-  if (context === undefined) {
-    throw new Error('useNavigation must be used within a NavigationProvider')
-  }
-  return context
+	const context = useContext(NavigationContext);
+	if (context === undefined) {
+		throw new Error("useNavigation must be used within a NavigationProvider");
+	}
+	return context;
 }

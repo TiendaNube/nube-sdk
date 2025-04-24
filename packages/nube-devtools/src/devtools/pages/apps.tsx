@@ -1,20 +1,20 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Table, TableBody, TableRow } from "@/components/ui/table";
-import Layout from "@/devtools/components/layout";
+import { Textarea } from "@/components/ui/textarea";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import { useNubeSDKAppsContext } from "@/contexts/nube-sdk-apps-context";
-import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import Layout from "@/devtools/components/layout";
 import { Loader2 } from "lucide-react";
-import { TableRowItem } from "../components/table-row-item";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { TableRowItem } from "../components/table-row-item";
 
 const STORAGE_KEY = "nube-devtools-apps-panel-size";
 
@@ -48,10 +48,10 @@ export function Apps() {
 					});
 					setApps(apps);
 				} else {
-          setApps([]);
+					setApps([]);
 					const timeout = setTimeout(() => {
 						fetchApps();
-            clearTimeout(timeout);
+						clearTimeout(timeout);
 					}, 3000);
 				}
 			},

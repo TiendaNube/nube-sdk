@@ -1,5 +1,5 @@
-import ReactJsonView from "@microlink/react-json-view";
 import { useDevToolsTheme } from "@/contexts/devtools-theme-context";
+import ReactJsonView from "@microlink/react-json-view";
 
 interface JsonViewerProps {
 	data: object;

@@ -20,7 +20,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{tsx,ts,json,css,scss,md}'",
-    "zip": "npm run build && node src/zip.js"
+    "zip": "npm run build && node src/zip.js",
+    "check": "biome check src/*",
+		"check:fix": "biome check --write src/*"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -48,6 +50,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
     "@crxjs/vite-plugin": "^2.0.0-beta.26",
     "@tailwindcss/postcss": "^4.1.3",
     "@tiendanube/nube-sdk-types": "^0.9.0",

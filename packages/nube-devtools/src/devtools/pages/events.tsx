@@ -1,19 +1,19 @@
-import { useState, useRef, useEffect } from "react";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { ResizablePanelGroup } from "@/components/ui/resizable";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Table, TableBody, TableRow } from "@/components/ui/table";
-import { TrashIcon } from "lucide-react";
-import { TableRowItem } from "@/devtools/components/table-row-item";
-import Layout from "@/devtools/components/layout";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
 import type {
 	NubeSDKEvent,
 	NubeSDKEventData,
 } from "@/contexts/nube-sdk-events-context";
-import { Button } from "@/components/ui/button";
 import { JsonViewer } from "@/devtools/components/json-viewer";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import Layout from "@/devtools/components/layout";
+import { TableRowItem } from "@/devtools/components/table-row-item";
+import { TrashIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
 const STORAGE_KEY = "nube-devtools-events-page-width";

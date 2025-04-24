@@ -1,21 +1,19 @@
-import Layout from "@/devtools/components/layout";
-import {
-	ResizablePanelGroup,
-	ResizablePanel,
-	ResizableHandle,
-} from "@/components/ui/resizable";
-import { useEffect, useMemo, useRef, useState } from "react";
-import type {
-	NubeSDKEvent,
-} from "@/contexts/nube-sdk-storage-context";
-import { useNubeSDKStorage } from "@/contexts/nube-sdk-storage-context";
-import { Table, TableBody, TableRow } from "@/components/ui/table";
-import { TableRowItem } from "../components/table-row-item";
-import { JsonViewer } from "../components/json-viewer";
 import { Button } from "@/components/ui/button";
-import { TrashIcon } from "lucide-react";
+import {
+	ResizableHandle,
+	ResizablePanel,
+	ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Table, TableBody, TableRow } from "@/components/ui/table";
+import type { NubeSDKEvent } from "@/contexts/nube-sdk-storage-context";
+import { useNubeSDKStorage } from "@/contexts/nube-sdk-storage-context";
+import Layout from "@/devtools/components/layout";
+import { TrashIcon } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { JsonViewer } from "../components/json-viewer";
+import { TableRowItem } from "../components/table-row-item";
 
 const STORAGE_KEY = "nube-devtools-storages-page-width";
 
@@ -36,7 +34,7 @@ export function Storages() {
 								data: message.payload,
 							},
 						]);
-            port.disconnect();
+						port.disconnect();
 					}
 				});
 			}
