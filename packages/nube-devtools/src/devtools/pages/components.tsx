@@ -1,4 +1,4 @@
-import type { NubeSDKComponent } from "@/background/nube-dev-tools";
+import type { NubeSDKComponent } from "@/background/types";
 import { Button } from "@/components/ui/button";
 import {
 	Select,

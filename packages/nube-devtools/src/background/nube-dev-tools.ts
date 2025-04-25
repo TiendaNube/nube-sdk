@@ -1,19 +1,12 @@
-type NubeSDKApp = {
-	id: string;
-	registered: boolean;
-	script: string;
-};
-
-export type NubeSDKComponent = {
-	type: string;
-	children?: Array<NubeSDKComponent> | NubeSDKComponent;
-	__internalId?: string;
-	props: Record<string, unknown>;
-};
-
-type NubeSDKState = {
-	[key: string]: unknown;
-};
+import {
+	getApps,
+	handleEvents,
+	highlightElement,
+	injectWindowVariable,
+	resendEvent,
+	scrollToElement,
+} from "./scripts";
+import type { NubeSDKApp, NubeSDKComponent, NubeSDKState } from "./types";
 
 type HandleDevToolsResendEventParams = {
 	state: NubeSDKState;
@@ -48,132 +41,12 @@ export const handleDevToolsVerifyNubeSdkStatus = ({
 	);
 };
 
-export const handleDevToolsEvents = ({
-	tabId,
-}: {
-	tabId: number;
-}) => {
+export const handleDevToolsEvents = ({ tabId }: { tabId: number }) => {
 	chrome.scripting.executeScript(
 		{
 			target: { tabId },
 			world: "MAIN",
-			func: () => {
-				if (
-					window.__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__ ||
-					!window.nubeSDK
-				) {
-					return;
-				}
-
-				window.nubeSDK.on("*", async (...state: NubeSDKState[]) => {
-					window.dispatchEvent(
-						new CustomEvent("NubeSDKEvents", {
-							detail: state,
-						}),
-					);
-				});
-
-				const getStorageProxy = (type: "localStorage" | "sessionStorage") =>
-					new Proxy(window[type], {
-						get(target, prop: string | symbol) {
-							if (prop === "length") {
-								return target.length;
-							}
-							if (prop === "getItem") {
-								return (key: string) => {
-									const value = target.getItem(key);
-									const pattern = /^app-(\d+)-(.+)$/;
-									const match = key.match(pattern);
-									if (match) {
-										window.dispatchEvent(
-											new CustomEvent("NubeSDKStorageEvents", {
-												detail: {
-													method: "getItem",
-													type,
-													key,
-													value,
-												},
-											}),
-										);
-									}
-									return value;
-								};
-							}
-							if (prop === "setItem") {
-								return (key: string, value: string) => {
-									target.setItem(key, value);
-									const pattern = /^app-(\d+)-(.+)$/;
-									const match = key.match(pattern);
-									if (match) {
-										window.dispatchEvent(
-											new CustomEvent("NubeSDKStorageEvents", {
-												detail: {
-													method: "setItem",
-													type,
-													key,
-													value,
-												},
-											}),
-										);
-									}
-								};
-							}
-							if (prop === "clear") {
-								return () => {
-									window.dispatchEvent(
-										new CustomEvent("NubeSDKStorageEvents", {
-											detail: {
-												method: "clear",
-												type,
-												key: "",
-												value: "{}",
-											},
-										}),
-									);
-									return target.clear();
-								};
-							}
-							if (prop === "removeItem") {
-								return (key: string) => {
-									const value = target.removeItem(key);
-									const pattern = /^app-(\d+)-(.+)$/;
-									const match = key.match(pattern);
-									if (match) {
-										window.dispatchEvent(
-											new CustomEvent("NubeSDKStorageEvents", {
-												detail: {
-													method: "removeItem",
-													type,
-													key,
-													value: "{}",
-												},
-											}),
-										);
-									}
-									return value;
-								};
-							}
-							return target[prop as keyof Storage];
-						},
-					});
-
-				const localStorageProxy = getStorageProxy("localStorage");
-				const sessionStorageProxy = getStorageProxy("sessionStorage");
-
-				Object.defineProperty(window, "localStorage", {
-					value: localStorageProxy,
-					writable: true,
-					configurable: true,
-				});
-
-				Object.defineProperty(window, "sessionStorage", {
-					value: sessionStorageProxy,
-					writable: true,
-					configurable: true,
-				});
-
-				window.__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__ = true;
-			},
+			func: handleEvents,
 		},
 		() => {},
 	);
@@ -183,9 +56,7 @@ export const handleDevToolsInjectWindowVariable = (tabId: number) => {
 	chrome.scripting.executeScript({
 		target: { tabId },
 		world: "MAIN",
-		func: () => {
-			window.__NUBE_DEVTOOLS_EXTENSION__ = !!window.nubeSDK;
-		},
+		func: injectWindowVariable,
 	});
 };
 
@@ -203,12 +74,7 @@ export const handleDevToolsGetApps = ({
 		{
 			target: { tabId },
 			world: "MAIN",
-			func: () => {
-				if (window.nubeSDK) {
-					return window.nubeSDK.getState().apps;
-				}
-				return [];
-			},
+			func: getApps,
 		},
 		(results) => {
 			const apps = results?.[0]?.result;
@@ -269,15 +135,7 @@ export const handleDevToolsResendEvent = (
 		{
 			target: { tabId },
 			world: "MAIN",
-			func: (appId, state, event) => {
-				if (!window.nubeSDK) {
-					return false;
-				}
-				window.nubeSDK.send(appId, event, () => ({
-					...(state as NubeSDKState),
-				}));
-				return true;
-			},
+			func: resendEvent,
 			args: [appId, state, event],
 		},
 		(results) => {
@@ -306,80 +164,7 @@ export const handleDevToolsHighlightElement = ({
 		{
 			target: { tabId },
 			world: "MAIN",
-			func: (
-				id: string,
-				type: "enter" | "leave",
-				color: "green" | "blue",
-				title: string,
-			) => {
-        let element = null;
-        try {
-          const all = document.querySelectorAll(`#${id}`) || [];
-          element = Array.from(all).find(el =>
-            (el as HTMLElement).offsetParent !== null
-          );
-        } catch {}
-				if (element) {
-					const overlay = document.createElement("div");
-					overlay.id = "nube-devtools-highlight";
-					if (type === "enter") {
-						const rect = element.getBoundingClientRect();
-						const scrollLeft =
-							window.scrollX || document.documentElement.scrollLeft;
-						const scrollTop =
-							window.scrollY || document.documentElement.scrollTop;
-
-						const absoluteLeft = rect.left + scrollLeft;
-						const absoluteTop = rect.top + scrollTop;
-
-						overlay.style.position = "absolute";
-						overlay.style.top = `${absoluteTop}px`;
-						overlay.style.left = `${absoluteLeft}px`;
-						overlay.style.width = `${rect.width}px`;
-						overlay.style.height = `${rect.height}px`;
-						overlay.style.border =
-							color === "green"
-								? "1px dashed rgba(124, 219, 110, 0.75)"
-								: "1px dashed rgba(111, 168, 220, 0.75)";
-						overlay.style.backgroundColor =
-							color === "green"
-								? "rgba(124, 219, 110, 0.15)"
-								: "rgba(111, 168, 220, 0.15)";
-						overlay.style.pointerEvents = "none";
-
-						const box = document.createElement("div");
-						box.id = "nube-devtools-box";
-						box.style.position = "absolute";
-						box.style.display = "flex";
-						box.style.alignItems = "center";
-						box.style.justifyContent = "center";
-						box.style.top = `calc(4px + ${rect.height}px)`;
-						box.style.backgroundColor = "#4f4f4f";
-						box.style.padding = "4px 8px";
-						box.style.borderRadius = "2px";
-						overlay.appendChild(box);
-
-						const span1 = document.createElement("span");
-						const strong1 = document.createElement("strong");
-            strong1.textContent = title;
-            span1.appendChild(strong1);
-            span1.append(`#${id}`);
-						span1.style.color = "white";
-						span1.style.fontSize = "11px";
-						span1.style.fontWeight = "bold";
-						span1.style.borderRadius = "8px";
-
-						box.appendChild(span1);
-						document.body.appendChild(overlay);
-					} else {
-						const overlay = document.getElementById("nube-devtools-highlight");
-						if (overlay) {
-							document.body.removeChild(overlay);
-						}
-					}
-				}
-				return true;
-			},
+			func: highlightElement,
 			args: [id, type, color, title],
 		},
 		() => {
@@ -405,21 +190,7 @@ export const handleDevToolsScrollToElement = ({
 		{
 			target: { tabId },
 			world: "MAIN",
-			func: (id: string) => {
-				const element = document.getElementById(id);
-				if (element) {
-					element.scrollIntoView({
-						behavior: "smooth",
-						block: "start",
-					});
-					const topPos = element.offsetTop;
-					window.scrollTo({
-						top: topPos,
-						behavior: "smooth",
-					});
-				}
-				return true;
-			},
+			func: scrollToElement,
 			args: [id],
 		},
 		() => {
