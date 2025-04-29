@@ -25,5 +25,8 @@
     "build": "npm run build --workspaces --if-present",
     "check": "npm run check --workspaces --if-present",
     "fix": "npm run check:fix --workspaces --if-present"
+  },
+  "dependencies": {
+    "@biomejs/biome": "^1.9.4"
   }
 }
