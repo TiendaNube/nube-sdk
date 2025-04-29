@@ -8,5 +8,14 @@
 		"rules": {
 			"recommended": true
 		}
+	},
+	"files": {
+		"include": [
+			"src/**/*.js",
+			"src/**/*.jsx",
+			"src/**/*.ts",
+			"src/**/*.tsx",
+			"src/**/*.css"
+		]
 	}
 }
