@@ -1,0 +1,12 @@
+:root {
+  --nimbus-blue: #0050c3;
+  --vp-home-hero-name-color: var(--nimbus-blue);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --vp-button-brand-hover-bg: var(--nimbus-blue);
+    --vp-c-brand-1: var(--nimbus-blue);
+    --vp-button-brand-bg: var(--nimbus-blue);
+  }
+}

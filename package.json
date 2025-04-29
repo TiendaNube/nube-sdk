@@ -11,6 +11,7 @@
     "packages/ui",
     "packages/jsx",
     "packages/create-nube-app",
+    "packages/doc",
     "packages/nube-devtools"
   ],
   "author": "Tiendanube / Nuvemshop",

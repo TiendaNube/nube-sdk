@@ -1,4 +1,4 @@
-import type { Nullable, Prettify } from "./utility";
+import type { DeepPartial, Nullable, Prettify } from "./utility";
 
 /**
  * Represents a product in the cart.
@@ -123,7 +123,7 @@ export type Cart = {
 	prices: Prices;
 
 	/** Optional coupon applied to the cart. */
-	coupon: Nullable<Coupon>;
+	coupon: DeepPartial<Coupon>;
 };
 
 /**
