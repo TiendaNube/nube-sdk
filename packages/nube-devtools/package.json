@@ -21,8 +21,8 @@
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{tsx,ts,json,css,scss,md}'",
     "zip": "npm run build && node src/zip.js",
-    "check": "biome check src/*",
-		"check:fix": "biome check --write src/*"
+    "check": "biome check",
+    "check:fix": "biome check --write"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

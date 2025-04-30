@@ -191,19 +191,18 @@ const ExpandableNode = ({
 }) => {
 	return (
 		<div className="flex items-center">
-			<div
+			<button
+				type="button"
 				onClick={onClick}
 				onKeyDown={(e) => {
 					if (e.key === "Enter" || e.key === " ") {
 						onClick();
 					}
 				}}
-				role="button"
-				tabIndex={0}
 				className="px-1 cursor-pointer"
 			>
 				{isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-			</div>
+			</button>
 			{children}
 		</div>
 	);
