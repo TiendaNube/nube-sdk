@@ -77,6 +77,7 @@ const handleEvents: NubeComponentFieldEventHandler = (event) => {
 <Field
   name="email"
   label="Email"
+  value="example@example.com"
   onChange={handleEvents}
   onBlur={handleEvents}
   onFocus={handleEvents}

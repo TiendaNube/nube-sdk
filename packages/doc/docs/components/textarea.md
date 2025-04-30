@@ -81,6 +81,7 @@ const handleEvents: NubeComponentTextareaEventHandler = (event) => {
 <Textarea
   name="description"
   label="Description"
+  value="example@example.com"
   maxLength={500}
   rows={4}
   onChange={handleEvents}
@@ -101,6 +102,7 @@ const handleEvents: NubeComponentTextareaEventHandler = (event) => {
 textarea({
   name: "description",
   label: "Description",
+  value: "example@example.com",
   maxLength: 500,
   rows: 4,
   onChange: handleEvents,
@@ -117,6 +119,7 @@ textarea({
 | --------- | --------------------------------- | -------- | ------------------------------------------------------------- |
 | name      | string                            | Yes      | The name of the textarea, used to identify it in forms.       |
 | label     | string                            | Yes      | The label text displayed above the textarea.                  |
+| value     | string                            | No       | The current value of the textarea.                            |
 | maxLength | number                            | No       | The maximum number of characters allowed in the textarea.     |
 | rows      | number                            | No       | The number of visible text lines in the textarea.             |
 | onChange  | NubeComponentTextareaEventHandler | No       | Function called when the textarea value changes.              |

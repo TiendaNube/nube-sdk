@@ -17,6 +17,7 @@ import { Textarea } from "@tiendanube/nube-sdk-jsx";
 <Textarea
   name="description"
   label="Description"
+  value="example@example.com"
   maxLength={500}
   rows={4}
   onChange={() => {}}
@@ -31,6 +32,7 @@ import { textarea } from "@tiendanube/nube-sdk-ui";
 textarea({
   name: "description",
   label: "Description",
+  value: "example@example.com",
   maxLength: 500,
   rows: 4,
   onChange: () => {},
@@ -81,6 +83,7 @@ const handleEvents: NubeComponentTextareaEventHandler = (event) => {
 <Textarea
   name="description"
   label="Description"
+  value="example@example.com"
   maxLength={500}
   rows={4}
   onChange={handleEvents}
@@ -101,6 +104,7 @@ const handleEvents: NubeComponentTextareaEventHandler = (event) => {
 textarea({
   name: "description",
   label: "Description",
+  value: "example@example.com",
   maxLength: 500,
   rows: 4,
   onChange: handleEvents,
@@ -108,23 +112,3 @@ textarea({
   onFocus: handleEvents,
 });
 ```
-
-:::
-
-## Propiedad
-
-| Propiedad  | Tipo                              | Obligatorio | Descripción                                                      |
-| ---------- | --------------------------------- | ----------- | ---------------------------------------------------------------- |
-| name       | string                            | Si          | El nombre del textarea, usado para identificarlo en formularios. |
-| label      | string                            | Si          | El texto de la etiqueta mostrado encima del textarea.            |
-| maxLength  | number                            | No          | El número máximo de caracteres permitidos en el textarea.        |
-| rows       | number                            | No          | El número de líneas de texto visibles en el textarea.            |
-| onChange   | NubeComponentTextareaEventHandler | No          | Función llamada cuando el valor del textarea cambia.             |
-| onBlur     | NubeComponentTextareaEventHandler | No          | Función llamada cuando el textarea pierde el foco.               |
-| onFocus    | NubeComponentTextareaEventHandler | No          | Función llamada cuando el textarea recibe el foco.               |
-
-### Valores de propiedad
-
-| Tipo                              | Valor                                                                                                         | Descripción                                 |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| NubeComponentTextareaEventHandler | (data: {<br/>type: "change" \| "blur" \| "focus";<br/>state: NubeSDKState;<br/>value?: string;<br/>}) => void | Función manejadora de eventos del textarea. |
