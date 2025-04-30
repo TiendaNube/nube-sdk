@@ -74,6 +74,136 @@ nube.on("cart:update", ({ cart }) => {
 });
 ```
 
+## `cart:add`
+
+Dispatched by `app` to add an item to the cart.
+
+```typescript
+nube.send("cart:add", () => ({
+  cart: {
+    items: [{
+      variant_id: 123,
+      quantity: 1,
+    }]
+  },
+}))
+```
+
+## `cart:add:success`
+
+Dispatched by `store` when an item is successfully added to the cart.
+
+```typescript
+nube.on("cart:add:success", ({ cart }) => {
+  console.log(`Item ${cart.item.variant_id} was successfully added to cart`);
+});
+```
+
+## `cart:add:fail`
+
+Dispatched by `store` when there's a failure in adding an item to the cart.
+
+```typescript
+nube.on("cart:add:fail", ({ cart }) => {
+  console.log(`Failed to add item ${cart.item.variant_id} to cart`);
+});
+```
+
+## `cart:remove`
+
+Dispatched by `app` to remove an item from the cart.
+
+```typescript
+nube.send("cart:remove", () => ({
+  cart: {
+    items: [{
+      variant_id: 123,
+      quantity: 1,
+    }]
+  },
+}));
+```
+
+## `cart:remove:success`
+
+Dispatched by `store` when an item is successfully removed from the cart.
+
+```typescript
+nube.on("cart:remove:success", ({ cart }) => {
+  console.log(`Item ${cart.items[0].variant_id} was successfully removed from cart`);
+});
+```
+
+## `cart:remove:fail`
+
+Dispatched by `store` when there's a failure in removing an item from the cart.
+
+```typescript
+nube.on("cart:remove:fail", ({ cart }) => {
+  console.log(`Failed to remove item ${cart.items[0].variant_id} from cart`);
+});
+```
+
+## `coupon:add`
+
+Dispatched by `app` to add a coupon code to the cart.
+
+```typescript
+nube.send("coupon:add", () => ({
+  coupon: {
+    code: "SUMMER2024"
+  }
+}));
+```
+
+## `coupon:add:success`
+
+Dispatched by `store` when a coupon is successfully added to the cart.
+
+```typescript
+nube.on("coupon:add:success", ({ coupon }) => {
+  console.log(`Coupon ${coupon.code} was successfully applied`);
+});
+```
+
+## `coupon:add:fail`
+
+Dispatched by `store` when there's a failure in adding a coupon to the cart.
+
+```typescript
+nube.on("coupon:add:fail", ({ coupon }) => {
+  console.log(`Failed to apply coupon ${coupon.code}`);
+});
+```
+
+## `coupon:remove`
+
+Dispatched by `app` to remove a coupon code from the cart.
+
+```typescript
+nube.send("coupon:remove");
+```
+
+## `coupon:remove:success`
+
+Dispatched by `store` when a coupon is successfully removed from the cart.
+
+```typescript
+nube.on("coupon:remove:success", () => {
+  console.log("Coupon was successfully removed from cart");
+});
+```
+
+## `coupon:remove:fail`
+
+Dispatched by `store` when there's a failure in removing a coupon from the cart.
+
+```typescript
+nube.on("coupon:remove:fail", () => {
+  console.log("Failed to remove coupon from cart");
+});
+```
+
 ## `shipping:update`
 
 Dispatched by `store` when the shipping method changes.

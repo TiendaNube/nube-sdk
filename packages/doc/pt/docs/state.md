@@ -478,6 +478,9 @@ Esta propriedade pode ser nula dependendo da página da qual é acessada.
 
 ```typescript
 type Customer = {
+  /** Identificador único do cliente. **/
+  id: Nullable<number>;
+
   /** Informações de contato do cliente. */
   contact: {
     /** Endereço de e-mail do cliente. */
