@@ -77,6 +77,7 @@ const handleEvents: NubeComponentFieldEventHandler = (event) => {
 <Field
   name="email"
   label="Email"
+  value="example@example.com"
   onChange={handleEvents}
   onBlur={handleEvents}
   onFocus={handleEvents}
@@ -95,6 +96,7 @@ const handleEvents: NubeComponentFieldEventHandler = (event) => {
 field({
   name: "email",
   label: "Email",
+  value: "example@example.com",
   onChange: handleEvents,
   onBlur: handleEvents,
   onFocus: handleEvents,
@@ -109,6 +111,7 @@ field({
 | -------- | ------------------------------ | -------- | ---------------------------------------------------- |
 | name     | string                         | Yes      | The name of the field, used to identify it in forms. |
 | label    | string                         | Yes      | The label text displayed above the field.            |
+| value    | string                         | No       | The current value of the field input.                |
 | onChange | NubeComponentFieldEventHandler | No       | Function called when the field value changes.        |
 | onBlur   | NubeComponentFieldEventHandler | No       | Function called when the field loses focus.          |
 | onFocus  | NubeComponentFieldEventHandler | No       | Function called when the field receives focus.       |

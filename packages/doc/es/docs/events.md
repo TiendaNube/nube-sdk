@@ -74,6 +74,136 @@ nube.on("cart:update", ({ cart }) => {
 });
 ```
 
+## `cart:add`
+
+Disparado por la `app` para agregar un producto al carrito.
+
+```typescript
+nube.send("cart:add", () => ({
+  cart: {
+    items: [{
+      variant_id: 123,
+      quantity: 1,
+    }]
+  },
+}))
+```
+
+## `cart:add:success`
+
+Disparado por la `tienda` cuando un producto se agrega exitosamente al carrito.
+
+```typescript
+nube.on("cart:add:success", ({ cart }) => {
+  console.log(`El producto ${cart.item.variant_id} se agregó exitosamente al carrito`);
+});
+```
+
+## `cart:add:fail`
+
+Disparado por la `tienda` cuando hay un error al agregar un producto al carrito.
+
+```typescript
+nube.on("cart:add:fail", ({ cart }) => {
+  console.log(`Error al agregar el producto ${cart.item.variant_id} al carrito`);
+});
+```
+
+## `cart:remove`
+
+Disparado por la `app` para eliminar un producto del carrito.
+
+```typescript
+nube.send("cart:remove", () => ({
+  cart: {
+    items: [{
+      variant_id: 123,
+      quantity: 1,
+    }]
+  },
+}));
+```
+
+## `cart:remove:success`
+
+Disparado por la `tienda` cuando un producto se elimina exitosamente del carrito.
+
+```typescript
+nube.on("cart:remove:success", ({ cart }) => {
+  console.log(`El producto ${cart.items[0].variant_id} se eliminó exitosamente del carrito`);
+});
+```
+
+## `cart:remove:fail`
+
+Disparado por la `tienda` cuando hay un error al eliminar un producto del carrito.
+
+```typescript
+nube.on("cart:remove:fail", ({ cart }) => {
+  console.log(`Error al eliminar el producto ${cart.items[0].variant_id} del carrito`);
+});
+```
+
+## `coupon:add`
+
+Disparado por la `app` para agregar un código de cupón al carrito.
+
+```typescript
+nube.send("coupon:add", () => ({
+  coupon: {
+    code: "SUMMER2024"
+  }
+}));
+```
+
+## `coupon:add:success`
+
+Disparado por la `tienda` cuando un cupón se agrega exitosamente al carrito.
+
+```typescript
+nube.on("coupon:add:success", ({ coupon }) => {
+  console.log(`El cupón ${coupon.code} se aplicó exitosamente`);
+});
+```
+
+## `coupon:add:fail`
+
+Disparado por la `tienda` cuando hay un error al agregar un cupón al carrito.
+
+```typescript
+nube.on("coupon:add:fail", ({ coupon }) => {
+  console.log(`Error al aplicar el cupón ${coupon.code}`);
+});
+```
+
+## `coupon:remove`
+
+Disparado por la `app` para eliminar un código de cupón del carrito.
+
+```typescript
+nube.send("coupon:remove");
+```
+
+## `coupon:remove:success`
+
+Disparado por la `tienda` cuando un cupón se elimina exitosamente del carrito.
+
+```typescript
+nube.on("coupon:remove:success", () => {
+  console.log("El cupón se eliminó exitosamente del carrito");
+});
+```
+
+## `coupon:remove:fail`
+
+Disparado por la `tienda` cuando hay un error al eliminar un cupón del carrito.
+
+```typescript
+nube.on("coupon:remove:fail", () => {
+  console.log("Error al eliminar el cupón del carrito");
+});
+```
+
 ## `shipping:update`
 
 Disparado por la `tienda` cuando el método de envío cambia.

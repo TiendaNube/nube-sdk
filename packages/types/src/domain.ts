@@ -332,8 +332,8 @@ export type BillingAddress = Prettify<
  * Represents a customer in the checkout process.
  */
 export type Customer = {
+	id: Nullable<number>;
 	contact: {
-		id: Nullable<number>;
 		email: Nullable<string>;
 		name: Nullable<string>;
 		phone: Nullable<string>;

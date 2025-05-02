@@ -7,20 +7,21 @@ Cuando deseas agregar un componente de UI, necesitas especificar su ubicación e
 
 Estos son los slots disponibles en el checkout:
 
-| Slot                  | Página                     |
-| --------------------- | -------------------------- |
-| before_main_content   | inicio, pago               |
-| after_main_content    | inicio, pago               |
-| before_line_items     | inicio                     |
-| after_line_items      | inicio, pago               |
-| after_contact_form    | inicio                     |
-| after_address_form    | inicio                     |
-| after_billing_form    | inicio                     |
-| after_payment_options | pago                       |
-| before_address_form   | inicio                     |
-| before_billing_form   | inicio                     |
-| before_contact_form   | inicio                     |
-| modal_content         | inicio, pago, finalización |
+| Slot                  | Página                    |
+| --------------------- | --------------------------|
+| before_main_content   | start, payment            |
+| after_main_content    | start, payment            |
+| after_line_items_price| start, payment            |
+| before_line_items     | start                     |
+| after_line_items      | start, payment            |
+| after_contact_form    | start                     |
+| after_address_form    | start                     |
+| after_billing_form    | start                     |
+| after_payment_options | payment                   |
+| before_address_form   | start                     |
+| before_billing_form   | start                     |
+| before_contact_form   | start                     |
+| modal_content         | start, payment, finish    |
 
 ### Ubicación de los Slots en Desktop
 

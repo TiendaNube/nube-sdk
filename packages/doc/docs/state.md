@@ -478,6 +478,9 @@ This property may be null depending on the page it is accessed from.
 
 ```typescript
 type Customer = {
+  /** Customer's id **/
+  id: Nullable<number>;
+
   /** Customer contact information. */
   contact: {
     /** Customer's email address. */

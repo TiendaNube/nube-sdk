@@ -11,6 +11,7 @@ These are the slots that are available in checkout:
 | --------------------- | ---------------------- |
 | before_main_content   | start, payment         |
 | after_main_content    | start, payment         |
+| after_line_items_price| start, payment         |
 | before_line_items     | start                  |
 | after_line_items      | start, payment         |
 | after_contact_form    | start                  |
