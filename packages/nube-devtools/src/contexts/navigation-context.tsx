@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
 export const PAGES = {
@@ -8,7 +8,7 @@ export const PAGES = {
 	COMPONENTS: "components",
 } as const;
 
-export type Page = typeof PAGES[keyof typeof PAGES];
+export type Page = (typeof PAGES)[keyof typeof PAGES];
 
 type NavigationContextType = {
 	currentPage: Page;

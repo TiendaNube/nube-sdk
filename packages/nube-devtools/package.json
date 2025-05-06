@@ -1,7 +1,7 @@
 {
   "name": "nube-devtools",
   "displayName": "nube-devtools",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Tiendanube / Nuvemshop",
   "description": "Chrome DevTools extension for debugging and testing NubeSDK apps with real-time insights.",
   "type": "module",
@@ -16,7 +16,7 @@
     "node": ">=14.18.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "NODE_ENV=development vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{tsx,ts,json,css,scss,md}'",
