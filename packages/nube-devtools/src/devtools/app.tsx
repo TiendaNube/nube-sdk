@@ -3,6 +3,7 @@ import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
 import { NubeSDKStorageProvider } from "@/contexts/nube-sdk-storage-context";
 import {
 	NavigationProvider,
+	PAGES,
 	useNavigation,
 } from "../contexts/navigation-context";
 import { useNubeStatus } from "../hooks/use-nube-status";
@@ -14,6 +15,13 @@ import { Events } from "./pages/events";
 import { Storages } from "./pages/storages";
 import { Unavailable } from "./pages/unavailable";
 
+const PAGE_COMPONENTS = {
+	[PAGES.APPS]: Apps,
+	[PAGES.COMPONENTS]: Components,
+	[PAGES.EVENTS]: Events,
+	[PAGES.STORAGES]: Storages,
+} as const;
+
 const AppContent = () => {
 	const nubeStatus = useNubeStatus();
 	const { currentPage } = useNavigation();
@@ -22,18 +30,8 @@ const AppContent = () => {
 		return <Unavailable />;
 	}
 
-	switch (currentPage) {
-		case "apps":
-			return <Apps />;
-		case "components":
-			return <Components />;
-		case "events":
-			return <Events />;
-		case "storages":
-			return <Storages />;
-		default:
-			return <Apps />;
-	}
+	const PageComponent = PAGE_COMPONENTS[currentPage] || Apps;
+	return <PageComponent />;
 };
 
 export const App = () => {

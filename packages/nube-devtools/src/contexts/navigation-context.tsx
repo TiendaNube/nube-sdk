@@ -1,7 +1,14 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
-export type Page = "events" | "storages" | "apps" | "components";
+export const PAGES = {
+	EVENTS: "events",
+	STORAGES: "storages",
+	APPS: "apps",
+	COMPONENTS: "components",
+} as const;
+
+export type Page = (typeof PAGES)[keyof typeof PAGES];
 
 type NavigationContextType = {
 	currentPage: Page;
@@ -13,7 +20,16 @@ const NavigationContext = createContext<NavigationContextType | undefined>(
 );
 
 export function NavigationProvider({ children }: { children: ReactNode }) {
-	const [currentPage, setCurrentPage] = useState<Page>("apps");
+	const [currentPage, setCurrentPage] = useState<Page>(() => {
+		const savedPage = localStorage.getItem("currentPage");
+		return Object.values(PAGES).includes(savedPage as Page)
+			? (savedPage as Page)
+			: PAGES.APPS;
+	});
+
+	useEffect(() => {
+		localStorage.setItem("currentPage", currentPage);
+	}, [currentPage]);
 
 	const navigate = (page: Page) => {
 		setCurrentPage(page);

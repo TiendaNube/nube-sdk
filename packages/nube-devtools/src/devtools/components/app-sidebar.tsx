@@ -12,28 +12,28 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import type { Page } from "@/contexts/navigation-context";
+import { PAGES, type Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
 
 const menu: { title: string; page: Page; icon: React.ElementType }[] = [
 	{
 		title: "Apps",
-		page: "apps",
+		page: PAGES.APPS,
 		icon: ComponentIcon,
 	},
 	{
 		title: "Components",
-		page: "components",
+		page: PAGES.COMPONENTS,
 		icon: ComponentIcon,
 	},
 	{
 		title: "Events",
-		page: "events",
+		page: PAGES.EVENTS,
 		icon: ChartNoAxesGantt,
 	},
 	{
 		title: "Storage",
-		page: "storages",
+		page: PAGES.STORAGES,
 		icon: Box,
 	},
 ];
