@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { Divider } from "@/components/ui/divider";
+import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { ResizablePanelGroup } from "@/components/ui/resizable";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -11,17 +13,31 @@ import type {
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
 import { TableRowItem } from "@/devtools/components/table-row-item";
-import { TrashIcon } from "lucide-react";
+import { CircleXIcon, TrashIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
 const STORAGE_KEY = "nube-devtools-events-page-width";
+const SEARCH_STORAGE_KEY = "nube-devtools-filter-search";
 
 export function Events() {
 	const [selectedEvent, setSelectedEvent] = useState<NubeSDKEvent | null>(null);
 	const { events, setEvents, clearEvents } = useNubeSDKEventsContext();
+	const [filteredEvents, setFilteredEvents] = useState<NubeSDKEvent[]>([]);
+	const inputRef = useRef<HTMLInputElement>(null);
+	const [search, setSearch] = useState(() => {
+		return localStorage.getItem(SEARCH_STORAGE_KEY) || "";
+	});
 	const tableContainerRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		setFilteredEvents(events.filter((event) => event.data[1].includes(search)));
+	}, [events, search]);
+
+	useEffect(() => {
+		localStorage.setItem(SEARCH_STORAGE_KEY, search);
+	}, [search]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -30,13 +46,7 @@ export function Events() {
 				port.onMessage.addListener((message) => {
 					if (message.payload as NubeSDKEventData) {
 						setEvents((prevEvents) => {
-							return [
-								...prevEvents,
-								{
-									id: uuidv4(),
-									data: message.payload,
-								},
-							];
+							return [...prevEvents, { id: uuidv4(), data: message.payload }];
 						});
 
 						port.disconnect();
@@ -55,9 +65,12 @@ export function Events() {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (tableContainerRef.current) {
-			tableContainerRef.current.scrollTop =
-				tableContainerRef.current.scrollHeight -
-				tableContainerRef.current.clientHeight;
+			setTimeout(() => {
+				if (tableContainerRef.current) {
+					tableContainerRef.current.scrollTop =
+						tableContainerRef.current.scrollHeight;
+				}
+			}, 0);
 		}
 	}, [events]);
 
@@ -87,82 +100,124 @@ export function Events() {
 		);
 	};
 
+	const hasHiddenEvents =
+		filteredEvents.length === 0 && events.length !== filteredEvents.length;
+
 	return (
 		<Layout>
-			<ResizablePanelGroup
-				autoSaveId={STORAGE_KEY}
-				storage={localStorage}
-				direction="horizontal"
-			>
-				<ResizablePanel defaultSize={40}>
-					<nav className="flex items-center justify-between px-1.5 py-1 border-b">
-						<div className="flex items-center">
-							<SidebarTrigger />
-							<div className="h-4 w-px bg-neutral-600 mx-2" />
-							<Button
-								disabled={events.length === 0}
-								variant="ghost"
-								size="icon"
-								className="h-6 w-6"
-								onClick={handleClearList}
-							>
-								<TrashIcon className="size-3" />
-							</Button>
-						</div>
-						<span className="text-xs">
-							{events.length} {events.length === 1 ? "event" : "events"}
-						</span>
-					</nav>
-					<div
-						ref={tableContainerRef}
-						className="h-[calc(100%-33px)] overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 dark:[&::-webkit-scrollbar-thumb:hover]:bg-gray-600"
+			<div className="flex h-full flex-col">
+				<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px] shrink-0">
+					<div className="flex items-center">
+						<SidebarTrigger />
+						<Divider />
+						<Button
+							disabled={events.length === 0}
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6"
+							onClick={handleClearList}
+						>
+							<TrashIcon className="size-3" />
+						</Button>
+					</div>
+					<Divider />
+					<Input
+						ref={inputRef}
+						name="search"
+						className={`
+                  h-6 ml-2 mr-1
+                  transition-all duration-500 ease-in-out
+                  overflow-hidden
+                  w-full
+                  text-[12px] md:text-[12px]
+                `}
+						value={search}
+						placeholder="Filter"
+						onChange={(e) => setSearch(e.target.value)}
+						onClick={(e) => e.currentTarget.select()}
+					/>
+					<Button
+						disabled={search.length === 0}
+						variant="ghost"
+						size="icon"
+						className="h-6 w-6"
+						onClick={() => {
+							setSearch("");
+							inputRef.current?.select();
+						}}
 					>
-						{events.length === 0 ? (
-							<div className="flex h-full flex-col items-center justify-center gap-2">
-								<p className="text-sm">No events found</p>
-								<Button
-									variant="outline"
-									size="sm"
-									className="h-5 px-2 text-xs"
-									onClick={() => {
-										chrome.devtools.inspectedWindow.reload();
-									}}
-								>
-									Reload page
-								</Button>
+						<CircleXIcon className="size-3" />
+					</Button>
+					{events.length > 0 && (
+						<>
+							<Divider />
+							<span
+								className={`text-xs px-2 whitespace-nowrap ${hasHiddenEvents ? "text-neutral-400" : ""}`}
+							>
+								{hasHiddenEvents
+									? `${events.length} hidden`
+									: `${filteredEvents.length} ${filteredEvents.length === 1 ? "event" : "events"}`}
+							</span>
+						</>
+					)}
+				</nav>
+				<div className="flex-1 overflow-hidden">
+					<ResizablePanelGroup
+						autoSaveId={STORAGE_KEY}
+						storage={localStorage}
+						direction="horizontal"
+					>
+						<ResizablePanel defaultSize={40}>
+							<div
+								ref={tableContainerRef}
+								className="h-full overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 dark:[&::-webkit-scrollbar-thumb:hover]:bg-gray-600"
+							>
+								{events.length === 0 ? (
+									<div className="flex h-full flex-col items-center justify-center gap-2">
+										<p className="text-sm">No events found</p>
+										<Button
+											variant="outline"
+											size="sm"
+											className="h-5 px-2 text-xs"
+											onClick={() => {
+												chrome.devtools.inspectedWindow.reload();
+											}}
+										>
+											Reload page
+										</Button>
+									</div>
+								) : (
+									<Table>
+										<TableBody>
+											{filteredEvents.map((event) => (
+												<TableRow key={event.id}>
+													<TableRowItem
+														isSelected={event.id === selectedEvent?.id}
+														title={event.data[1]}
+														onResend={(data) => handleReplayEvent(data.data)}
+														event={event}
+														onSelect={setSelectedEvent}
+													/>
+												</TableRow>
+											))}
+										</TableBody>
+									</Table>
+								)}
 							</div>
-						) : (
-							<Table>
-								<TableBody>
-									{events.map((event) => {
-										return (
-											<TableRow key={event.id}>
-												<TableRowItem
-													isSelected={event.id === selectedEvent?.id}
-													title={event.data[1]}
-													onResend={(data) => handleReplayEvent(data.data)}
-													event={event}
-													onSelect={setSelectedEvent}
-												/>
-											</TableRow>
-										);
-									})}
-								</TableBody>
-							</Table>
-						)}
-					</div>
-				</ResizablePanel>
-				<ResizableHandle />
-				<ResizablePanel>
-					<div className="flex h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-						{selectedEvent && (
-							<div className="text-sm">
-								<JsonViewer className="p-2" data={selectedEvent.data} />
+						</ResizablePanel>
+						<ResizableHandle />
+						<ResizablePanel>
+							<div className="flex h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+								{selectedEvent && (
+									<div className="text-sm">
+										<JsonViewer className="p-2" data={selectedEvent.data} />
+									</div>
+								)}
 							</div>
-						)}
-					</div>
-				</ResizablePanel>
-			</ResizablePanelGroup>
+						</ResizablePanel>
+					</ResizablePanelGroup>
+				</div>
+			</div>
 		</Layout>
 	);
 }
