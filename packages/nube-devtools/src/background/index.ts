@@ -31,7 +31,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 				tabId: sender.tab.id,
 			});
 		}
-		return false;
+		return true;
 	}
 
 	if (message.action === "nube-devtools-replay-event") {
