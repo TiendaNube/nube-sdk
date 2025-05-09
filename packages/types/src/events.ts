@@ -21,6 +21,7 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  * @property {"shipping:update:label"} SHIPPING_UPDATE_LABEL - Used to update custom labels for shipping options.
  * @property {"coupon:add"} COUPON_ADD - Used to add a coupon to the cart.
  * @property {"coupon:remove"} COUPON_REMOVE - Used to remove a coupon from the cart.
+ * @property {"shipping:select"} SHIPPING_SELECT - Used to select shipping option.
  */
 export const SENDABLE_EVENT = {
 	CART_VALIDATE: "cart:validate",
@@ -31,6 +32,7 @@ export const SENDABLE_EVENT = {
 	SHIPPING_UPDATE_LABEL: "shipping:update:label",
 	COUPON_ADD: "coupon:add",
 	COUPON_REMOVE: "coupon:remove",
+	SHIPPING_SELECT: "shipping:select",
 } as const;
 
 /**
@@ -58,6 +60,8 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"checkout:ready"} CHECKOUT_READY - Triggered when checkout is fully initialized.
  * @property {"checkout:success"} CHECKOUT_SUCCESS - Fired upon successful checkout completion.
  * @property {"shipping:update"} SHIPPING_UPDATE - Fired when a non-custom shipping data change occurs.
+ * @property {"shipping:select:success"} SHIPPING_SELECT_SUCCESS - Fired when a shipping selected successfully.
+ * @property {"shipping:select:fail"} SHIPPING_SELECT_FAIL - Fired when a shipping selected unsuccessfully.
  * @property {"customer:update"} CUSTOMER_UPDATE - Fired when the customer data is updated.
  * @property {"payment:update"} PAYMENT_UPDATE - Fired when the payment data is updated.
  * @property {"coupon:add:success"} COUPON_ADD_SUCCESS - Fired when a coupon is added successfully.
@@ -76,6 +80,8 @@ export const EVENT = {
 	CHECKOUT_READY: "checkout:ready",
 	CHECKOUT_SUCCESS: "checkout:success",
 	SHIPPING_UPDATE: "shipping:update",
+	SHIPPING_SELECT_SUCCESS: "shipping:select:success",
+	SHIPPING_SELECT_FAIL: "shipping:select:fail",
 	CUSTOMER_UPDATE: "customer:update",
 	PAYMENT_UPDATE: "payment:update",
 	COUPON_ADD_SUCCESS: "coupon:add:success",
