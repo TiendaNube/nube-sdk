@@ -52,7 +52,7 @@ export type NubeStorageEventData =
 	| NubeStorageQueryResponseEventData;
 
 export type NubeNavigateEventData = {
-	route: string;
+	route: `/${string}`;
 };
 
 export interface AsyncNubeStorage {
