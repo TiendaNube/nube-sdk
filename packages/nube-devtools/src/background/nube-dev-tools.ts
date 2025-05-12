@@ -41,15 +41,12 @@ export const handleDevToolsVerifyNubeSdkStatus = ({
 	);
 };
 
-export const handleDevToolsEvents = ({ tabId }: { tabId: number }) => {
-	chrome.scripting.executeScript(
-		{
-			target: { tabId },
-			world: "MAIN",
-			func: handleEvents,
-		},
-		() => {},
-	);
+export const handleDevToolsEvents = async ({ tabId }: { tabId: number }) => {
+	await chrome.scripting.executeScript({
+		target: { tabId },
+		world: "MAIN",
+		func: handleEvents,
+	});
 };
 
 export const handleDevToolsInjectWindowVariable = (tabId: number) => {

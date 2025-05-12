@@ -7,20 +7,10 @@ window.addEventListener("load", () => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-	chrome.runtime.sendMessage(
-		{
-			action: "nube-devtools-monitor-events",
-		},
-		() => {
-			if (chrome.runtime.lastError) {
-				console.error(
-					"Error sending nube-devtools-monitor-events message:",
-					chrome.runtime.lastError,
-				);
-			}
-		},
-	);
-	return false;
+	chrome.runtime.sendMessage({
+		action: "nube-devtools-monitor-events",
+	});
+	return true;
 });
 
 interface NubeSDKEventDetail {
