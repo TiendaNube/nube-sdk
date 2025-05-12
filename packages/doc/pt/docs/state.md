@@ -335,6 +335,7 @@ type UISlot =
   | "after_address_form" // Depois do formulário de endereço no checkout
   | "after_billing_form" // Depois do formulário de faturamento no checkout
   | "after_payment_options" // Depois das opções de pagamento no checkout
+  | "before_payment_options" // Antes das opções de pagamento no checkout
   | "before_address_form" // Antes do formulário de endereço no checkout
   | "before_billing_form" // Antes do formulário de faturamento no checkout
   | "before_contact_form" // Antes do formulário de contato no checkout
