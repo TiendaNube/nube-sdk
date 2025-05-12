@@ -1,5 +1,6 @@
 import type { NubeSDKComponent } from "@/background/types";
 import { Button } from "@/components/ui/button";
+import { Divider } from "@/components/ui/divider";
 import {
 	Select,
 	SelectContent,
@@ -58,7 +59,7 @@ export function Components() {
 			<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px]">
 				<div className="flex items-center">
 					<SidebarTrigger />
-					<div className="h-4 w-px bg-neutral-600 mx-2" />
+					<Divider />
 					<Button
 						variant="ghost"
 						size="icon"
