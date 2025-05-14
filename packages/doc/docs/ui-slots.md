@@ -21,6 +21,12 @@ These are the slots that are available in checkout:
 | before_address_form   | start                  |
 | before_billing_form   | start                  |
 | before_contact_form   | start                  |
+| before_shipping_form  | start                  |
+| after_shipping_form   | start                  |
+| corner_top_left       | start, payment, finish |
+| corner_top_right      | start, payment, finish |
+| corner_bottom_left    | start, payment, finish |
+| corner_bottom_right   | start, payment, finish |
 | modal_content         | start, payment, finish |
 
 ### Desktop Slot location
