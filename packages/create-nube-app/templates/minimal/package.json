@@ -1,24 +1,24 @@
 {
-  "name": "template-minimal-app",
-  "version": "0.1.0",
-  "scripts": {
-    "dev": "concurrently -k -n BUILD,SERVE -c blue,green \"tsup --sourcemap inline --watch\" \"serve dist -l 8080 --cors\"",
-    "build": "tsup",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
-    "test:coverage": "vitest run --coverage",
-    "format": "biome check --write ./src",
-    "lint": "biome check ./src"
-  },
-  "author": "Tiendanube / Nuvemshop",
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@tiendanube/nube-sdk-types": "^0.11.0",
-    "@vitest/coverage-v8": "^3.0.9",
-    "concurrently": "^9.1.2",
-    "serve": "^14.2.4",
-    "tsup": "^8.3.0",
-    "typescript": "^5.6.2",
-    "vitest": "^3.0.9"
-  }
+	"name": "template-minimal-app",
+	"version": "0.1.0",
+	"scripts": {
+		"dev": "concurrently -k -n BUILD,SERVE -c blue,green \"tsup --sourcemap inline --watch\" \"serve dist -l 8080 --cors\"",
+		"build": "tsup",
+		"test": "vitest run",
+		"test:watch": "vitest watch",
+		"test:coverage": "vitest run --coverage",
+		"format": "biome check --write ./src",
+		"lint": "biome check ./src"
+	},
+	"author": "Tiendanube / Nuvemshop",
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@tiendanube/nube-sdk-types": "^0.11.0",
+		"@vitest/coverage-v8": "^3.0.9",
+		"concurrently": "^9.1.2",
+		"serve": "^14.2.4",
+		"tsup": "^8.3.0",
+		"typescript": "^5.6.2",
+		"vitest": "^3.0.9"
+	}
 }
