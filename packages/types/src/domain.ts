@@ -277,9 +277,9 @@ export type Shipping = {
 	/** Selected shipping option ID. */
 	selected: Nullable<string>;
 	/** List of available shipping options. */
-	options: ShippingOption[];
+	options?: ShippingOption[];
 	/** Custom labels assigned to shipping options. */
-	custom_labels: Record<string, string>;
+	custom_labels?: Record<string, string>;
 };
 
 /**
