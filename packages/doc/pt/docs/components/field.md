@@ -112,6 +112,7 @@ field({
 | name        | string                         | Sim         | O nome do campo, usado para identificá-lo em formulários. |
 | label       | string                         | Sim         | O texto do rótulo exibido acima do campo.                 |
 | value       | string                         | Não         | O valor atual do campo de entrada.                        |
+| autoFocus   | boolean                        | Não         | Se o campo deve receber foco automaticamente quando montado. |
 | onChange    | NubeComponentFieldEventHandler | Não         | Função chamada quando o valor do campo muda.              |
 | onBlur      | NubeComponentFieldEventHandler | Não         | Função chamada quando o campo perde o foco.               |
 | onFocus     | NubeComponentFieldEventHandler | Não         | Função chamada quando o campo recebe o foco.              |
