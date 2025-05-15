@@ -4,7 +4,8 @@ export type NubeStorageEvent =
 	| "internal:storage:set"
 	| "internal:storage:set:response"
 	| "internal:storage:remove"
-	| "internal:storage:remove:response";
+	| "internal:storage:remove:response"
+	| "internal:navigate";
 
 export type NubeStorageId = "local-storage" | "session-storage";
 
@@ -49,6 +50,10 @@ export type NubeStorageQueryResponseEventData =
 export type NubeStorageEventData =
 	| NubeStorageQueryEventData
 	| NubeStorageQueryResponseEventData;
+
+export type NubeNavigateEventData = {
+	route: `/${string}`;
+};
 
 export interface AsyncNubeStorage {
 	/**
