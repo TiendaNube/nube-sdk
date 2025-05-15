@@ -145,6 +145,7 @@ export type NubeComponentFieldProps = Prettify<
 		name: string;
 		label: string;
 		value?: string;
+		autoFocus?: boolean;
 		onChange?: NubeComponentFieldEventHandler;
 		onBlur?: NubeComponentFieldEventHandler;
 		onFocus?: NubeComponentFieldEventHandler;
@@ -248,6 +249,7 @@ export type NubeComponentTextareaProps = Prettify<
 		maxLength?: number;
 		row?: number;
 		value?: string;
+		autoFocus?: boolean;
 		onChange?: NubeComponentTextareaEventHandler;
 		onBlur?: NubeComponentTextareaEventHandler;
 		onFocus?: NubeComponentTextareaEventHandler;
@@ -425,6 +427,7 @@ export type UISlot =
 	| "after_address_form" // After the address form in checkout.
 	| "after_billing_form" // After the billing form in checkout.
 	| "after_payment_options" // After the payment options in checkout.
+	| "before_payment_options" // Before the payment options in checkout.
 	| "before_address_form" // Before the address form in checkout.
 	| "before_billing_form" // Before the billing form in checkout.
 	| "before_contact_form" // Before the contact form in checkout.

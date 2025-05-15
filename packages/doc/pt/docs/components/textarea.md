@@ -112,3 +112,23 @@ textarea({
   onFocus: handleEvents,
 });
 ```
+
+## Properties
+
+| Property  | Type                              | Required | Description                                                            |
+| --------- | --------------------------------- | -------- | -----------------------------------------------------------------------|
+| name      | string                            | Yes      | O nome do textarea, usado para identificá-lo em formulários.           |
+| label     | string                            | Yes      | O texto do rótulo exibido acima do textarea.                           |
+| value     | string                            | No       | O valor atual do textarea.                                             |
+| maxLength | number                            | No       | O número máximo de caracteres permitidos no textarea.                  |
+| rows      | number                            | No       | O número de linhas de texto visíveis no textarea.                      |
+| autoFocus | boolean                           | No       | Se o textarea deve receber foco automaticamente quando montado.        |
+| onChange  | NubeComponentTextareaEventHandler | No       | Função chamada quando o valor do textarea muda.                        |
+| onBlur    | NubeComponentTextareaEventHandler | No       | Função chamada quando o textarea perde o foco.                         |
+| onFocus   | NubeComponentTextareaEventHandler | No       | Função chamada quando o textarea recebe foco.                          |
+
+### Property values
+
+| Type                              | Value                                                                                                         | Description                              |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| NubeComponentTextareaEventHandler | (data: {<br/>type: "change" \| "blur" \| "focus";<br/>state: NubeSDKState;<br/>value?: string;<br/>}) => void | Função manipuladora de eventos do textarea. |
