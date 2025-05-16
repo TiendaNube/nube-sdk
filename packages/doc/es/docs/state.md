@@ -40,9 +40,8 @@ import type { NubeSDK, NubeSDKState } from '@tiendanube/nube-sdk-types';
 export function App(nube: NubeSDK) {
   // Escuchar cambios de estado
   nube.on('customer:update', (state: Readonly<NubeSDKState>) => {
-      const customerEmail = state.customer.email;
-      const customerAddress = state.customer.address;
-    }
+    const customerEmail = state.customer.email;
+    const customerAddress = state.customer.address;
   });
 }
 ```
@@ -65,7 +64,7 @@ export function App(nube: NubeSDK) {
     return {
       ui: {
         slots: {
-          before_main_content: <Text>{`Hello ${storeName}!`}</Text>,
+          before_main_content: <Text>{`¡Hola ${storeName}!`}</Text>,
         },
       },
     };
@@ -329,6 +328,7 @@ type UIValues = Record<NubeComponentId, UIValue>;
 type UISlot =
   | "before_main_content" // Antes del contenido principal del checkout
   | "after_main_content" // Después del contenido principal del checkout
+  | "after_line_items_price" // Después del precio de los items en el checkout
   | "before_line_items" // Antes de la lista de items en el carrito
   | "after_line_items" // Después de la lista de items en el carrito
   | "after_contact_form" // Después del formulario de contacto en el checkout
@@ -339,6 +339,12 @@ type UISlot =
   | "before_address_form" // Antes del formulario de dirección en el checkout
   | "before_billing_form" // Antes del formulario de facturación en el checkout
   | "before_contact_form" // Antes del formulario de contacto en el checkout
+  | "before_shipping_form" // Antes del formulario de envío en el checkout
+  | "after_shipping_form" // Después del formulario de envío en el checkout
+  | "corner_top_left" // Esquina superior izquierda del checkout
+  | "corner_top_right" // Esquina superior derecha del checkout
+  | "corner_bottom_left" // Esquina inferior izquierda del checkout
+  | "corner_bottom_right" // Esquina inferior derecha del checkout
   | "modal_content"; // Contenido de un diálogo modal en el checkout
 
 /**

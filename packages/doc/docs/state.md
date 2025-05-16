@@ -40,9 +40,8 @@ import type { NubeSDK, NubeSDKState } from '@tiendanube/nube-sdk-types';
 export function App(nube: NubeSDK) {
   // Listen for state changes
   nube.on('customer:update', (state: Readonly<NubeSDKState>) => {
-      const customerEmail = state.customer.email;
-      const customerAddress = state.customer.address;
-    }
+    const customerEmail = state.customer.email;
+    const customerAddress = state.customer.address;
   });
 }
 ```
@@ -329,6 +328,7 @@ type UIValues = Record<NubeComponentId, UIValue>;
 type UISlot =
   | "before_main_content" // Before the main checkout content
   | "after_main_content" // After the main checkout content
+  | "after_line_items_price" // After the line items price in checkout
   | "before_line_items" // Before the list of items in the cart
   | "after_line_items" // After the list of items in the cart
   | "after_contact_form" // After the contact form in checkout
@@ -339,6 +339,12 @@ type UISlot =
   | "before_address_form" // Before the address form in checkout
   | "before_billing_form" // Before the billing form in checkout
   | "before_contact_form" // Before the contact form in checkout
+  | "before_shipping_form" // Before the shipping form in checkout
+  | "after_shipping_form" // After the shipping form in checkout
+  | "corner_top_left" // Top left corner of the checkout
+  | "corner_top_right" // Top right corner of the checkout
+  | "corner_bottom_left" // Bottom left corner of the checkout
+  | "corner_bottom_right" // Bottom right corner of the checkout
   | "modal_content"; // Content of a modal dialog in checkout
 
 /**
