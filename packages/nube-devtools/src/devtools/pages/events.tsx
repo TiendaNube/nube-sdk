@@ -1,9 +1,9 @@
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { ResizablePanelGroup } from "@/components/ui/resizable";
+import { EventsList } from "@/devtools/components/events-list";
+import { EventsNav } from "@/devtools/components/events-nav";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
-import { EventsNav } from "@/devtools/components/events-nav";
-import { EventsList } from "@/devtools/components/events-list";
 import { useEvents } from "@/devtools/hooks/use-events";
 import { useEventsPanel } from "@/devtools/hooks/use-events-panel";
 

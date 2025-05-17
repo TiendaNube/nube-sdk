@@ -1,4 +1,3 @@
-import { Box, ChartNoAxesGantt, ComponentIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +12,12 @@ import {
 } from "@/components/ui/sidebar";
 import { PAGES, type Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
+import {
+	Box,
+	ChartNoAxesGantt,
+	ComponentIcon,
+	TerminalIcon,
+} from "lucide-react";
 
 const menu: { title: string; page: Page; icon: React.ElementType }[] = [
 	{
@@ -24,6 +29,11 @@ const menu: { title: string; page: Page; icon: React.ElementType }[] = [
 		title: "Components",
 		page: PAGES.COMPONENTS,
 		icon: ComponentIcon,
+	},
+	{
+		title: "Console",
+		page: PAGES.CONSOLE,
+		icon: TerminalIcon,
 	},
 	{
 		title: "Events",
