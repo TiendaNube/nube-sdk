@@ -1,12 +1,11 @@
 import {
-	getApps,
 	handleEvents,
 	highlightElement,
 	injectWindowVariable,
 	resendEvent,
 	scrollToElement,
 } from "./scripts";
-import type { NubeSDKApp, NubeSDKComponent, NubeSDKState } from "./types";
+import type { NubeSDKState } from "./types";
 
 type HandleDevToolsResendEventParams = {
 	state: NubeSDKState;
@@ -55,73 +54,6 @@ export const handleDevToolsInjectWindowVariable = (tabId: number) => {
 		world: "MAIN",
 		func: injectWindowVariable,
 	});
-};
-
-export const handleDevToolsGetApps = ({
-	tabId,
-	sendResponse,
-}: {
-	tabId: number;
-	sendResponse: (response: {
-		status: boolean;
-		apps?: Record<string, NubeSDKApp>;
-	}) => void;
-}) => {
-	chrome.scripting.executeScript(
-		{
-			target: { tabId },
-			world: "MAIN",
-			func: getApps,
-		},
-		(results) => {
-			const apps = results?.[0]?.result;
-			if (apps) {
-				sendResponse({ status: true, apps });
-			} else {
-				sendResponse({ status: true, apps: {} });
-			}
-		},
-	);
-};
-
-export const handleDevToolsGetComponents = ({
-	tabId,
-	sendResponse,
-}: {
-	tabId: number;
-	sendResponse: (response: {
-		status: boolean;
-		components?: {
-			[key: string]: Record<string, NubeSDKComponent>;
-		};
-	}) => void;
-}) => {
-	chrome.scripting.executeScript(
-		{
-			target: { tabId },
-			world: "MAIN",
-			func: () => {
-				if (window.nubeSDK) {
-					const apps = window.nubeSDK.getState().apps;
-					return Object.keys(apps).reduce<
-						Record<string, Record<string, NubeSDKComponent>>
-					>((acc, appId) => {
-						acc[appId] = apps[appId].ui.slots;
-						return acc;
-					}, {});
-				}
-				return {};
-			},
-		},
-		(results) => {
-			const components = results[0].result;
-			if (components) {
-				sendResponse({ status: true, components });
-			} else {
-				sendResponse({ status: true, components: {} });
-			}
-		},
-	);
 };
 
 export const handleDevToolsResendEvent = (

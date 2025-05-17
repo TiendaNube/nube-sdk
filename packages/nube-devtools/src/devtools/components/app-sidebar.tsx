@@ -1,5 +1,4 @@
 import { Box, ChartNoAxesGantt, ComponentIcon } from "lucide-react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,7 +54,7 @@ export function AppSidebar() {
 							NubeSDK
 						</div>
 						<Badge className="text-[10px] px-1 py-0.5" variant="destructive">
-							alpha
+							beta
 						</Badge>
 					</SidebarGroupLabel>
 					<SidebarGroupContent>

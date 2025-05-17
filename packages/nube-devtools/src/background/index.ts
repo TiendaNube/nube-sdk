@@ -1,7 +1,5 @@
 import {
 	handleDevToolsEvents,
-	handleDevToolsGetApps,
-	handleDevToolsGetComponents,
 	handleDevToolsHighlightElement,
 	handleDevToolsInjectWindowVariable,
 	handleDevToolsResendEvent,
@@ -36,22 +34,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 	if (message.action === "nube-devtools-replay-event") {
 		handleDevToolsResendEvent(sendResponse, message.payload);
-		return true;
-	}
-
-	if (message.action === "nube-devtools-fetch-apps") {
-		handleDevToolsGetApps({
-			tabId: message.payload.tabId,
-			sendResponse,
-		});
-		return true;
-	}
-
-	if (message.action === "nube-devtools-fetch-components") {
-		handleDevToolsGetComponents({
-			tabId: message.payload.tabId,
-			sendResponse,
-		});
 		return true;
 	}
 
