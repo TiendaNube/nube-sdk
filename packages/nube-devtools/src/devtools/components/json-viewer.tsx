@@ -16,10 +16,11 @@ export function JsonViewer({ data, className }: JsonViewerProps) {
 				theme={theme === "dark" ? "monokai" : "rjv-default"}
 				collapsed={2}
 				displayDataTypes={false}
-				iconStyle="circle"
+				iconStyle="triangle"
 				enableClipboard={false}
 				style={{
 					backgroundColor: "transparent",
+					fontSize: "12px",
 				}}
 			/>
 		</div>

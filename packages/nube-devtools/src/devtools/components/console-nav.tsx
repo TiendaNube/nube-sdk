@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Divider } from "@/components/ui/divider";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { SearchInput } from "@/devtools/components/search-input";
 import { TrashIcon } from "lucide-react";
+import { SearchInput } from "./search-input";
 
-interface EventsNavProps {
+interface ConsoleNavProps {
 	eventsCount: number;
 	filteredEventsCount: number;
 	hasHiddenEvents: boolean;
@@ -13,14 +13,14 @@ interface EventsNavProps {
 	onClear: () => void;
 }
 
-export function EventsNav({
+export function ConsoleNav({
 	eventsCount,
 	filteredEventsCount,
 	hasHiddenEvents,
 	search,
 	onSearchChange,
 	onClear,
-}: EventsNavProps) {
+}: ConsoleNavProps) {
 	return (
 		<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px] shrink-0">
 			<div className="flex items-center">

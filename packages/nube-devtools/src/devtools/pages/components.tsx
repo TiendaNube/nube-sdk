@@ -9,13 +9,13 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { RefreshCcw, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { EmptyState } from "@/devtools/components/empty-state";
 import Layout from "@/devtools/components/layout";
 import { TreeView } from "@/devtools/components/tree-view";
 import { useGetComponents } from "@/hooks/use-get-components";
-import { EmptyState } from "@/devtools/components/empty-state";
+import { Loader2, RefreshCcw } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type ComponentsData = {
 	[key: string]: Record<string, NubeSDKComponent>;

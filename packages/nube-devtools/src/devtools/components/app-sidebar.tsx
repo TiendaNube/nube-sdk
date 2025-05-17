@@ -1,4 +1,3 @@
-import { Box, ChartNoAxesGantt, ComponentIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,34 +10,68 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useConsoleEventsContext } from "@/contexts/console-events-context";
 import { PAGES, type Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
+import { useNetworkEventsContext } from "@/contexts/network-events-context";
+import {
+	Box,
+	ChartNoAxesGantt,
+	ComponentIcon,
+	NetworkIcon,
+	TerminalIcon,
+} from "lucide-react";
 
-const menu: { title: string; page: Page; icon: React.ElementType }[] = [
-	{
-		title: "Apps",
-		page: PAGES.APPS,
-		icon: ComponentIcon,
-	},
-	{
-		title: "Components",
-		page: PAGES.COMPONENTS,
-		icon: ComponentIcon,
-	},
-	{
-		title: "Events",
-		page: PAGES.EVENTS,
-		icon: ChartNoAxesGantt,
-	},
-	{
-		title: "Storage",
-		page: PAGES.STORAGES,
-		icon: Box,
-	},
-];
+type MenuItem = {
+	title: string;
+	page: Page;
+	icon: React.ElementType;
+	count: number;
+};
 
 export function AppSidebar() {
 	const { currentPage, navigate } = useNavigation();
+	const { countUnshown: consoleCount } = useConsoleEventsContext();
+	const { count: networkCount } = useNetworkEventsContext();
+
+	const menu: MenuItem[] = [
+		{
+			title: "Apps",
+			page: PAGES.APPS,
+			icon: ComponentIcon,
+			count: 0,
+		},
+		{
+			title: "Components",
+			page: PAGES.COMPONENTS,
+			icon: ComponentIcon,
+			count: 0,
+		},
+		{
+			title: "Console",
+			page: PAGES.CONSOLE,
+			icon: TerminalIcon,
+			count: consoleCount,
+		},
+		{
+			title: "Events",
+			page: PAGES.EVENTS,
+			icon: ChartNoAxesGantt,
+			count: 0,
+		},
+		{
+			title: "Network",
+			page: PAGES.NETWORK,
+			icon: NetworkIcon,
+			count: networkCount,
+		},
+		{
+			title: "Storage",
+			page: PAGES.STORAGES,
+			icon: Box,
+			count: 0,
+		},
+	];
 
 	return (
 		<Sidebar>
@@ -75,7 +108,17 @@ export function AppSidebar() {
 													{item.title}
 												</span>
 											) : (
-												<span className="font-light">{item.title}</span>
+												<>
+													<span className="font-light">{item.title}</span>
+													{item.count > 0 && (
+														<Badge
+															className="text-[10px] px-1 py-0.5"
+															variant="outline"
+														>
+															{item.count}
+														</Badge>
+													)}
+												</>
 											)}
 										</Button>
 									</SidebarMenuButton>

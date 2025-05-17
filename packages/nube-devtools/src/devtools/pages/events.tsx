@@ -1,11 +1,12 @@
+import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { ResizablePanelGroup } from "@/components/ui/resizable";
+import { EventsList } from "@/devtools/components/events-list";
+import { EventsNav } from "@/devtools/components/events-nav";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
-import { EventsNav } from "@/devtools/components/events-nav";
-import { EventsList } from "@/devtools/components/events-list";
 import { useEvents } from "@/devtools/hooks/use-events";
-import { useEventsPanel } from "@/devtools/hooks/use-events-panel";
+import { XIcon } from "lucide-react";
 
 const STORAGE_KEY = "nube-devtools-events-page-width";
 
@@ -21,8 +22,6 @@ export function Events() {
 		handleReplayEvent,
 		hasHiddenEvents,
 	} = useEvents();
-
-	const { panelContainerRef, panelWidth } = useEventsPanel();
 
 	return (
 		<Layout>
@@ -50,21 +49,39 @@ export function Events() {
 								onReplay={handleReplayEvent}
 							/>
 						</ResizablePanel>
-						<ResizableHandle />
-						<ResizablePanel>
-							<div ref={panelContainerRef} className="h-full">
-								<div
-									className="flex h-full overflow-y-auto [scrollbar-width:none]"
-									style={{ width: `${panelWidth}px` }}
-								>
-									{selectedEvent && (
-										<div className="text-sm w-full">
-											<JsonViewer className="p-2" data={selectedEvent.data} />
+						{selectedEvent && (
+							<>
+								<ResizableHandle />
+								<ResizablePanel>
+									<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px] shrink-0">
+										<div className="flex items-center">
+											<Button
+												className="h-6 w-6"
+												variant="ghost"
+												size="icon"
+												onClick={() => setSelectedEvent(null)}
+											>
+												<XIcon className="size-3" />
+											</Button>
 										</div>
-									)}
-								</div>
-							</div>
-						</ResizablePanel>
+									</nav>
+									<div className="h-full">
+										<div
+											className="flex h-full overflow-y-auto [scrollbar-width:none]"
+										>
+											{selectedEvent && (
+												<div className="text-sm w-full">
+													<JsonViewer
+														className="p-2"
+														data={selectedEvent.data}
+													/>
+												</div>
+											)}
+										</div>
+									</div>
+								</ResizablePanel>
+							</>
+						)}
 					</ResizablePanelGroup>
 				</div>
 			</div>

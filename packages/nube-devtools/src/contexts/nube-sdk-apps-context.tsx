@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 export interface NubeSDKEvent {
 	id: string;
+	shown: boolean;
 	data: {
 		id: string;
 		registered: boolean;
@@ -12,7 +13,10 @@ export interface NubeSDKEvent {
 
 type NubeSDKAppsContextType = {
 	apps: NubeSDKEvent[];
+	isLoading: boolean;
+	setIsLoading: (isLoading: boolean) => void;
 	setApps: (apps: NubeSDKEvent[]) => void;
+	markAsShown: (id: string) => void;
 };
 
 const NubeSDKAppsContext = createContext<NubeSDKAppsContextType | undefined>(
@@ -21,9 +25,18 @@ const NubeSDKAppsContext = createContext<NubeSDKAppsContextType | undefined>(
 
 export const NubeSDKAppsProvider = ({ children }: { children: ReactNode }) => {
 	const [apps, setApps] = useState<NubeSDKEvent[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 
-	return (
-		<NubeSDKAppsContext.Provider value={{ apps, setApps }}>
+	const markAsShown = (id: string) => {
+		setApps((prev) =>
+			prev.map((app) =>
+				app.id === id ? { ...app, shown: true } : app,
+			),
+		);
+	};
+
+  return (
+		<NubeSDKAppsContext.Provider value={{ apps, setApps, markAsShown, isLoading, setIsLoading }}>
 			{children}
 		</NubeSDKAppsContext.Provider>
 	);
