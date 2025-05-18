@@ -1,4 +1,4 @@
-import type { ConsoleMessage } from "@/devtools/hooks/use-console-events";
+import type { ConsoleMessage } from "@/devtools/hooks/use-console-script";
 import type { ReactNode } from "react";
 import { createContext, useContext, useMemo, useState } from "react";
 
@@ -40,13 +40,20 @@ export const ConsoleEventsProvider = ({
 		);
 	};
 
-  const countUnshown = useMemo(() => {
-    return events.filter((event) => !event.shown).length;
-  }, [events]);
+	const countUnshown = useMemo(() => {
+		return events.filter((event) => !event.shown).length;
+	}, [events]);
 
 	return (
 		<ConsoleEventsContext.Provider
-			value={{ count: events.length, countUnshown, events, setEvents, clear, markAsShown }}
+			value={{
+				count: events.length,
+				countUnshown,
+				events,
+				setEvents,
+				clear,
+				markAsShown,
+			}}
 		>
 			{children}
 		</ConsoleEventsContext.Provider>

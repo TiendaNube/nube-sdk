@@ -1,18 +1,19 @@
+import { Button } from "@/components/ui/button";
 import {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { useConsoleEventsContext } from "@/contexts/console-events-context";
 import Layout from "@/devtools/components/layout";
-import type { ConsoleMessage } from "@/devtools/hooks/use-console-events";
-import { useEffect, useRef, useState } from "react";
+import type { ConsoleMessage } from "@/devtools/hooks/use-console-script";
+import { XIcon } from "lucide-react";
+import { useState } from "react";
 import { ConsoleDetailsPanel } from "../components/console-details-panel";
 import { ConsoleEventsList } from "../components/console-events-list";
 import { ConsoleNav } from "../components/console-nav";
 import { useConsoleFilter } from "../hooks/use-console-filter";
-import { useConsoleEventsContext } from "@/contexts/console-events-context";
-import { Button } from "@/components/ui/button";
-import { XIcon } from "lucide-react";
+import { useScrollToBottom } from "../hooks/use-scroll-to-bottom";
 
 const STORAGE_KEY = "nube-devtools-console-events";
 
@@ -24,19 +25,11 @@ export function Console() {
 		id: string;
 		data: ConsoleMessage;
 	} | null>(null);
-	const tableContainerRef = useRef<HTMLDivElement>(null);
-	const lastEventsCountRef = useRef(events.length);
-
-	useEffect(() => {
-		if (
-			tableContainerRef.current &&
-			events.length !== lastEventsCountRef.current
-		) {
-			tableContainerRef.current.scrollTop =
-				tableContainerRef.current.scrollHeight;
-			lastEventsCountRef.current = events.length;
-		}
-	}, [events.length]);
+	const { containerRef: tableContainerRef } = useScrollToBottom<HTMLDivElement>(
+		{
+			dependencies: [events.length],
+		},
+	);
 
 	const handleClear = () => {
 		clear();
@@ -84,15 +77,18 @@ export function Console() {
 								<ResizablePanel>
 									<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px] shrink-0">
 										<div className="flex items-center">
-											<Button className="h-6 w-6" variant="ghost" size="icon" onClick={() => setSelectedEvent(null)}>
+											<Button
+												className="h-6 w-6"
+												variant="ghost"
+												size="icon"
+												onClick={() => setSelectedEvent(null)}
+											>
 												<XIcon className="size-3" />
 											</Button>
 										</div>
 									</nav>
 									<div className="h-full">
-										<ConsoleDetailsPanel
-											selectedEvent={selectedEvent}
-										/>
+										<ConsoleDetailsPanel selectedEvent={selectedEvent} />
 									</div>
 								</ResizablePanel>
 							</>

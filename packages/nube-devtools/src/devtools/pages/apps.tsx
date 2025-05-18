@@ -4,7 +4,10 @@ import {
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useNubeSDKAppsContext, type NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
+import {
+	type NubeSDKEvent,
+	useNubeSDKAppsContext,
+} from "@/contexts/nube-sdk-apps-context";
 import { AppDetailsPanel } from "@/devtools/components/app-details-panel";
 import { AppsList } from "@/devtools/components/apps-list";
 import Layout from "@/devtools/components/layout";

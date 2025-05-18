@@ -10,6 +10,7 @@ export type NubeSDKEventData = [
 
 export type NubeSDKEvent = {
 	id: string;
+	shown: boolean;
 	data: NubeSDKEventData;
 };
 

@@ -34,6 +34,7 @@ export function Storages() {
 							{
 								id: uuidv4(),
 								data: message.payload,
+								shown: false,
 							},
 						]);
 						port.disconnect();

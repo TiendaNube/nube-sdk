@@ -29,14 +29,14 @@ export const NubeSDKAppsProvider = ({ children }: { children: ReactNode }) => {
 
 	const markAsShown = (id: string) => {
 		setApps((prev) =>
-			prev.map((app) =>
-				app.id === id ? { ...app, shown: true } : app,
-			),
+			prev.map((app) => (app.id === id ? { ...app, shown: true } : app)),
 		);
 	};
 
-  return (
-		<NubeSDKAppsContext.Provider value={{ apps, setApps, markAsShown, isLoading, setIsLoading }}>
+	return (
+		<NubeSDKAppsContext.Provider
+			value={{ apps, setApps, markAsShown, isLoading, setIsLoading }}
+		>
 			{children}
 		</NubeSDKAppsContext.Provider>
 	);

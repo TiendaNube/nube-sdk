@@ -1,7 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableRow } from "@/components/ui/table";
-import { useNubeSDKAppsContext, type NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
+import {
+	type NubeSDKEvent,
+	useNubeSDKAppsContext,
+} from "@/contexts/nube-sdk-apps-context";
 import { Loader2 } from "lucide-react";
 import { TableRowItem } from "./table-row-item";
 
@@ -20,7 +23,7 @@ export function AppsList({
 	onReload,
 	isLoading,
 }: AppsListProps) {
-	console.log("🚀 ~ apps:", apps)
+	console.log("🚀 ~ apps:", apps);
 	const { markAsShown } = useNubeSDKAppsContext();
 	const isDevMode = (script: string) => {
 		return script.includes("localhost") || script.includes("127.0.0.1");

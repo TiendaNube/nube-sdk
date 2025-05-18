@@ -1,4 +1,4 @@
-import type { ConsoleMessage } from "../hooks/use-console-events";
+import type { ConsoleMessage } from "../hooks/use-console-script";
 import { JsonViewer } from "./json-viewer";
 
 interface ConsoleDetailsPanelProps {
@@ -25,9 +25,7 @@ export function ConsoleDetailsPanel({
 
 	return (
 		<div className="h-full">
-			<div
-				className="flex h-full overflow-y-auto [scrollbar-width:none]"
-			>
+			<div className="flex h-full overflow-y-auto [scrollbar-width:none]">
 				<div className="text-sm w-full">
 					<JsonViewer className="p-2" data={selectedEvent.data.args} />
 				</div>

@@ -1,5 +1,8 @@
 import { getApps as getAppsScript } from "@/background/scripts/get-apps";
-import { useNubeSDKAppsContext, type NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
+import {
+	type NubeSDKEvent,
+	useNubeSDKAppsContext,
+} from "@/contexts/nube-sdk-apps-context";
 import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -11,7 +14,10 @@ async function fetchSDKApps() {
 		world: "MAIN",
 		func: getAppsScript,
 	});
-	return data[0].result;
+	if (!data || data.length === 0) {
+		return {};
+	}
+	return data[0].result || {};
 }
 
 function mapAppsToEvents(
@@ -50,7 +56,7 @@ export function useFetchApps() {
 		fetchApps();
 	}, [fetchApps]);
 
-  return {
-    refetch: fetchApps,
-  }
+	return {
+		refetch: fetchApps,
+	};
 }

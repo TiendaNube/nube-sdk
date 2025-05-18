@@ -1,35 +1,20 @@
 import { useNetworkEventsContext } from "@/contexts/network-events-context";
 import { useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
 
-export type FetchAuditMessage =
-	| {
-			type: "fetch:start";
-			app: string;
-			method: string;
-			url: string;
-			options?: RequestInit;
-	  }
-	| {
-			type: "fetch:end";
-			app: string;
-			method: string;
-			url: string;
-			duration: number;
-			success: true;
-			status: number;
-	  }
-	| {
-			type: "fetch:fail";
-			app: string;
-			method: string;
-			url: string;
-			duration: number;
-			success: false;
-			error: unknown;
-	  };
+export type FetchAuditMessage = {
+	type: "fetch:start" | "fetch:end" | "fetch:fail";
+	app?: string;
+	method?: string;
+	url?: string;
+	status?: number;
+	duration?: number;
+	success?: boolean;
+	error?: unknown;
+	requestId: string;
+	options?: RequestInit;
+};
 
-export function useNetworkEvents() {
+export function useNetworkScript() {
 	const { setEvents } = useNetworkEventsContext();
 
 	useEffect(() => {
@@ -50,7 +35,10 @@ export function useNetworkEvents() {
 					};
 				}
 				for (const app of window?.__NUBE_SDK_APPS__ || []) {
-					app.worker.addEventListener("message", window.__NUBE_SDK_NETWORK_LISTENER);
+					app.worker.addEventListener(
+						"message",
+						window.__NUBE_SDK_NETWORK_LISTENER,
+					);
 				}
 			},
 		});
@@ -80,10 +68,29 @@ export function useNetworkEvents() {
 			if (port.name === "nube-devtools-network-events") {
 				port.onMessage.addListener((message) => {
 					if (message.payload as FetchAuditMessage) {
-						setEvents((prev) => [
-							...prev,
-							{ id: uuidv4(), data: message.payload as FetchAuditMessage },
-						]);
+						setEvents((prev) => {
+							const existingEventIndex = prev.findIndex(
+								(event) => event.id === message.payload.requestId,
+							);
+
+							if (existingEventIndex !== -1) {
+								const updatedEvents = [...prev];
+								updatedEvents[existingEventIndex] = {
+									...updatedEvents[existingEventIndex],
+									data: message.payload as FetchAuditMessage,
+								};
+								return updatedEvents;
+							}
+
+							return [
+								...prev,
+								{
+									id: message.payload.requestId,
+									data: message.payload as FetchAuditMessage,
+									shown: false,
+								},
+							];
+						});
 						port.disconnect();
 					}
 				});

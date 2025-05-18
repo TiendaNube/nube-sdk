@@ -1,17 +1,19 @@
-import type { FetchAuditMessage } from "@/devtools/hooks/use-network-events";
+import type { FetchAuditMessage } from "@/devtools/hooks/use-network-script";
 import type { ReactNode } from "react";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 
 export type NetworkEvent = {
 	id: string;
 	data: FetchAuditMessage;
+	shown: boolean;
 };
 
 interface NetworkEventsContextType {
 	events: NetworkEvent[];
 	setEvents: React.Dispatch<React.SetStateAction<NetworkEvent[]>>;
-	count: number;
+	countUnshown: number;
 	clear: () => void;
+	markAsShown: (id: string) => void;
 }
 
 const NetworkEventsContext = createContext<
@@ -29,9 +31,27 @@ export const NetworkEventsProvider = ({
 		setEvents([]);
 	};
 
+	const markAsShown = (id: string) => {
+		setEvents((prev) =>
+			prev.map((event) =>
+				event.id === id ? { ...event, shown: true } : event,
+			),
+		);
+	};
+
+	const countUnshown = useMemo(() => {
+		return events.filter((event) => !event.shown).length;
+	}, [events]);
+
 	return (
 		<NetworkEventsContext.Provider
-			value={{ events, setEvents, count: events.length, clear }}
+			value={{
+				events,
+				setEvents,
+				countUnshown,
+				clear,
+				markAsShown,
+			}}
 		>
 			{children}
 		</NetworkEventsContext.Provider>

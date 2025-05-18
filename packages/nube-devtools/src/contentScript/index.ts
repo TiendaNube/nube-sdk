@@ -1,5 +1,5 @@
 import type { NubeSDKStorageEvent } from "@/contexts/nube-sdk-storage-context";
-import type { FetchAuditMessage } from "@/devtools/hooks/use-network-events";
+import type { FetchAuditMessage } from "@/devtools/hooks/use-network-script";
 
 window.addEventListener("DOMContentLoaded", () => {
 	chrome.runtime.sendMessage({

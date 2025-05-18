@@ -7,6 +7,7 @@ import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
 import { useEvents } from "@/devtools/hooks/use-events";
 import { XIcon } from "lucide-react";
+import { useScrollToBottom } from "../hooks/use-scroll-to-bottom";
 
 const STORAGE_KEY = "nube-devtools-events-page-width";
 
@@ -22,6 +23,14 @@ export function Events() {
 		handleReplayEvent,
 		hasHiddenEvents,
 	} = useEvents();
+	const { containerRef: tableContainerRef } = useScrollToBottom<HTMLDivElement>(
+		{
+			dependencies: [events.length],
+		},
+	);
+	const handleReload = () => {
+		chrome.devtools.inspectedWindow.reload();
+	};
 
 	return (
 		<Layout>
@@ -41,13 +50,19 @@ export function Events() {
 						direction="horizontal"
 					>
 						<ResizablePanel defaultSize={40}>
-							<EventsList
-								events={events}
-								filteredEvents={filteredEvents}
-								selectedEvent={selectedEvent}
-								onSelect={setSelectedEvent}
-								onReplay={handleReplayEvent}
-							/>
+							<div
+								ref={tableContainerRef}
+								className="h-full overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 dark:[&::-webkit-scrollbar-thumb:hover]:bg-gray-600"
+							>
+								<EventsList
+									events={events}
+									filteredEvents={filteredEvents}
+									selectedEvent={selectedEvent}
+									onSelect={setSelectedEvent}
+									onReplay={handleReplayEvent}
+									onReload={handleReload}
+								/>
+							</div>
 						</ResizablePanel>
 						{selectedEvent && (
 							<>
@@ -66,9 +81,7 @@ export function Events() {
 										</div>
 									</nav>
 									<div className="h-full">
-										<div
-											className="flex h-full overflow-y-auto [scrollbar-width:none]"
-										>
+										<div className="flex h-full overflow-y-auto [scrollbar-width:none]">
 											{selectedEvent && (
 												<div className="text-sm w-full">
 													<JsonViewer

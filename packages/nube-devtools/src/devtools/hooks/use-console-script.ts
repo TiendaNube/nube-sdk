@@ -11,7 +11,7 @@ export type ConsoleMessage = {
 	args: unknown[];
 };
 
-export function useConsoleEvents() {
+export function useConsoleScript() {
 	const { setEvents } = useConsoleEventsContext();
 
 	useEffect(() => {
@@ -32,7 +32,10 @@ export function useConsoleEvents() {
 					};
 				}
 				for (const app of window?.__NUBE_SDK_APPS__ || []) {
-					app.worker.addEventListener("message", window.__NUBE_SDK_CONSOLE_LISTENER);
+					app.worker.addEventListener(
+						"message",
+						window.__NUBE_SDK_CONSOLE_LISTENER,
+					);
 				}
 			},
 		});
@@ -43,7 +46,7 @@ export function useConsoleEvents() {
 				world: "MAIN",
 				func: () => {
 					if (window.__NUBE_SDK_CONSOLE_LISTENER) {
-						for (const app of window.__NUBE_SDK_APPS__) {
+						for (const app of window.__NUBE_SDK_APPS__ || []) {
 							app.worker.removeEventListener(
 								"message",
 								window.__NUBE_SDK_CONSOLE_LISTENER,
@@ -64,7 +67,11 @@ export function useConsoleEvents() {
 					if (message.payload as ConsoleMessage) {
 						setEvents((prev) => [
 							...prev,
-							{ id: uuidv4(), data: message.payload as ConsoleMessage },
+							{
+								id: uuidv4(),
+								shown: false,
+								data: message.payload as ConsoleMessage,
+							},
 						]);
 						port.disconnect();
 					}

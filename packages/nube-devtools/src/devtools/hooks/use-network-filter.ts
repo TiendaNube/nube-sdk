@@ -1,9 +1,9 @@
-import type { ConsoleEvent } from "@/contexts/console-events-context";
+import type { NetworkEvent } from "@/contexts/network-events-context";
 import { useEffect, useState } from "react";
 
-const SEARCH_STORAGE_KEY = "nube-devtools-console-events-search";
+const SEARCH_STORAGE_KEY = "nube-devtools-network-events-search";
 
-export function useConsoleFilter(events: Array<ConsoleEvent>) {
+export function useNetworkFilter(events: Array<NetworkEvent>) {
 	const [search, setSearch] = useState(() => {
 		return localStorage.getItem(SEARCH_STORAGE_KEY) || "";
 	});

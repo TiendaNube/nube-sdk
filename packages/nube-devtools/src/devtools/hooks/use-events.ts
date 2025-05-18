@@ -31,7 +31,10 @@ export function useEvents() {
 				port.onMessage.addListener((message) => {
 					if (message.payload as NubeSDKEventData) {
 						setEvents((prevEvents) => {
-							return [...prevEvents, { id: uuidv4(), data: message.payload }];
+							return [
+								...prevEvents,
+								{ id: uuidv4(), data: message.payload, shown: false },
+							];
 						});
 
 						port.disconnect();
