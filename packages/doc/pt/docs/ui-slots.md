@@ -18,9 +18,16 @@ Estes são os slots disponíveis no checkout:
 | after_address_form    | start                       |
 | after_billing_form    | start                       |
 | after_payment_options | payment                     |
+| before_payment_options| payment                     |
 | before_address_form   | start                       |
 | before_billing_form   | start                       |
 | before_contact_form   | start                       |
+| before_shipping_form  | start                       |
+| after_shipping_form   | start                       |
+| corner_top_left       | start, payment, finish      |
+| corner_top_right      | start, payment, finish      |
+| corner_bottom_left    | start, payment, finish      |
+| corner_bottom_right   | start, payment, finish      |
 | modal_content         | start, payment, finish      |
 
 ### Localização dos Slots no Desktop

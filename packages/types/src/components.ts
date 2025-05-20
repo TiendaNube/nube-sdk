@@ -145,6 +145,7 @@ export type NubeComponentFieldProps = Prettify<
 		name: string;
 		label: string;
 		value?: string;
+		autoFocus?: boolean;
 		onChange?: NubeComponentFieldEventHandler;
 		onBlur?: NubeComponentFieldEventHandler;
 		onFocus?: NubeComponentFieldEventHandler;
@@ -248,6 +249,7 @@ export type NubeComponentTextareaProps = Prettify<
 		maxLength?: number;
 		row?: number;
 		value?: string;
+		autoFocus?: boolean;
 		onChange?: NubeComponentTextareaEventHandler;
 		onBlur?: NubeComponentTextareaEventHandler;
 		onFocus?: NubeComponentTextareaEventHandler;
@@ -425,11 +427,18 @@ export type UISlot =
 	| "after_address_form" // After the address form in checkout.
 	| "after_billing_form" // After the billing form in checkout.
 	| "after_payment_options" // After the payment options in checkout.
+	| "before_payment_options" // Before the payment options in checkout.
 	| "before_address_form" // Before the address form in checkout.
 	| "before_billing_form" // Before the billing form in checkout.
 	| "before_contact_form" // Before the contact form in checkout.
 	| "modal_content" // Content of a modal dialog in checkout.
-	| "after_line_items_price"; // After the price of the line items in checkout.
+	| "after_line_items_price" // After the price of the line items in checkout.
+	| "before_shipping_form" // Before the shipping form in checkout.
+	| "after_shipping_form" // After the shipping form in checkout.
+	| "corner_top_left" // Top left corner of the checkout page.
+	| "corner_top_right" // Top right corner of the checkout page.
+	| "corner_bottom_left" // Bottom left corner of the checkout page.
+	| "corner_bottom_right"; // Bottom right corner of the checkout page.
 
 /**
  * Represents the value of a UI component, typically used for form inputs.
