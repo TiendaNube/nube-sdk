@@ -16,7 +16,7 @@
 		"@biomejs/biome": "^1.9.4",
 		"@tiendanube/nube-sdk-ui": "^0.5.0",
 		"@tiendanube/nube-sdk-jsx": "^0.5.0",
-		"@tiendanube/nube-sdk-types": "^0.12.0",
+		"@tiendanube/nube-sdk-types": "^0.13.0",
 		"@vitest/coverage-v8": "^3.0.9",
 		"concurrently": "^9.1.2",
 		"serve": "^14.2.4",
