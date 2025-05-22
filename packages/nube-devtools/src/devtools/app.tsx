@@ -1,51 +1,49 @@
-import { Toaster } from "@/components/ui/sonner";
-import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
-import { NubeSDKStorageProvider } from "@/contexts/nube-sdk-storage-context";
-import {
-	NavigationProvider,
-	PAGES,
-	useNavigation,
-} from "../contexts/navigation-context";
-import { useNubeStatus } from "../hooks/use-nube-status";
-
-import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
-import { Apps } from "./pages/apps";
-import { Components } from "./pages/components";
-import { Events } from "./pages/events";
-import { Storages } from "./pages/storages";
-import { Unavailable } from "./pages/unavailable";
+import { PAGES, useNavigation } from "@/contexts/navigation-context";
+import { useConsoleScript } from "@/devtools/hooks/use-console-script";
+import { useNetworkScript } from "@/devtools/hooks/use-network-script";
+import { Apps } from "@/devtools/pages/apps";
+import { Components } from "@/devtools/pages/components";
+import { Console } from "@/devtools/pages/console";
+import { Events } from "@/devtools/pages/events";
+import { Network } from "@/devtools/pages/network";
+import { Storages } from "@/devtools/pages/storages";
+import { Unavailable } from "@/devtools/pages/unavailable";
+import { Providers } from "@/devtools/providers";
+import { useNubeStatus } from "@/hooks/use-nube-status";
 
 const PAGE_COMPONENTS = {
 	[PAGES.APPS]: Apps,
 	[PAGES.COMPONENTS]: Components,
 	[PAGES.EVENTS]: Events,
 	[PAGES.STORAGES]: Storages,
+	[PAGES.CONSOLE]: Console,
+	[PAGES.NETWORK]: Network,
 } as const;
 
-const AppContent = () => {
-	const nubeStatus = useNubeStatus();
+const MainContent = () => {
 	const { currentPage } = useNavigation();
-
-	if (!nubeStatus) {
-		return <Unavailable />;
-	}
+	useConsoleScript();
+	useNetworkScript();
 
 	const PageComponent = PAGE_COMPONENTS[currentPage] || Apps;
 	return <PageComponent />;
 };
 
+const AppContent = () => {
+	const nubeStatus = useNubeStatus();
+
+	if (!nubeStatus) {
+		return <Unavailable />;
+	}
+
+	return <MainContent />;
+};
+
 export const App = () => {
 	return (
-		<NavigationProvider>
-			<NubeSDKEventsProvider>
-				<NubeSDKStorageProvider>
-					<NubeSDKAppsProvider>
-						<AppContent />
-						<Toaster />
-					</NubeSDKAppsProvider>
-				</NubeSDKStorageProvider>
-			</NubeSDKEventsProvider>
-		</NavigationProvider>
+		<Providers>
+			<AppContent />
+		</Providers>
 	);
 };
 
