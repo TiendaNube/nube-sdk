@@ -145,6 +145,7 @@ export type NubeComponentFieldProps = Prettify<
 		name: string;
 		label: string;
 		value?: string;
+		mask?: string;
 		autoFocus?: boolean;
 		onChange?: NubeComponentFieldEventHandler;
 		onBlur?: NubeComponentFieldEventHandler;
@@ -249,6 +250,7 @@ export type NubeComponentTextareaProps = Prettify<
 		maxLength?: number;
 		row?: number;
 		value?: string;
+		mask?: string;
 		autoFocus?: boolean;
 		onChange?: NubeComponentTextareaEventHandler;
 		onBlur?: NubeComponentTextareaEventHandler;
