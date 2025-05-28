@@ -1,3 +1,4 @@
+import type { NubeComponentStyle } from "@tiendanube/nube-sdk-ui";
 import type { NubeSDKState } from "./main";
 import type { Prettify } from "./utility";
 
@@ -53,6 +54,7 @@ export type NubeComponentBoxProps = Prettify<
 			padding: Size;
 			gap: Size;
 			direction: "row" | "col";
+			style?: NubeComponentStyle;
 			reverse: boolean;
 			background: string;
 			color: string;
@@ -146,6 +148,11 @@ export type NubeComponentFieldProps = Prettify<
 		label: string;
 		value?: string;
 		autoFocus?: boolean;
+		style?: {
+			container?: NubeComponentStyle;
+			label?: NubeComponentStyle;
+			input?: NubeComponentStyle;
+		};
 		onChange?: NubeComponentFieldEventHandler;
 		onBlur?: NubeComponentFieldEventHandler;
 		onFocus?: NubeComponentFieldEventHandler;
@@ -182,6 +189,7 @@ export type NubeComponentButtonProps = Prettify<
 			variant: "primary" | "secondary" | "transparent" | "link";
 			width: Size;
 			height: Size;
+			style?: NubeComponentStyle;
 			onClick: NubeComponentButtonEventHandler;
 		}>
 >;
@@ -217,6 +225,11 @@ export type NubeComponentCheckboxProps = Prettify<
 		label: string;
 		checked: boolean;
 		onChange?: NubeComponentCheckEventHandler;
+		style?: {
+			container?: NubeComponentStyle;
+			label?: NubeComponentStyle;
+			checkbox?: NubeComponentStyle;
+		};
 	}
 >;
 
@@ -253,6 +266,11 @@ export type NubeComponentTextareaProps = Prettify<
 		onChange?: NubeComponentTextareaEventHandler;
 		onBlur?: NubeComponentTextareaEventHandler;
 		onFocus?: NubeComponentTextareaEventHandler;
+		style?: {
+			container?: NubeComponentStyle;
+			label?: NubeComponentStyle;
+			input?: NubeComponentStyle;
+		};
 	}
 >;
 
@@ -288,6 +306,7 @@ export type NubeComponentImageProps = Prettify<
 		sources?: ImageSource[];
 		width?: Size;
 		height?: Size;
+		style?: NubeComponentStyle;
 	}
 >;
 
@@ -327,6 +346,7 @@ export type NubeComponentTextProps = Prettify<
 		heading?: 1 | 2 | 3 | 4 | 5 | 6;
 		modifiers?: TxtModifier[];
 		inline?: boolean;
+		style?: NubeComponentStyle;
 		children?: NubeComponent | NubeComponent[] | string;
 	}
 >;

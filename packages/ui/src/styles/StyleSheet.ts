@@ -47,10 +47,6 @@ type EnhancedCSSProperties = {
  */
 export type NubeComponentStyle = Partial<EnhancedCSSProperties>;
 
-export type NamedStyles<T> = {
-	[P in keyof T]: NubeComponentStyle;
-};
-
 function parseValue(value: unknown): unknown {
 	if (value instanceof ThemeColor) {
 		return value.toValue();
@@ -80,10 +76,10 @@ function parseStyleObject(
 }
 
 export const StyleSheet = {
-	create<T extends NamedStyles<T>>(styles: T): T {
+	create<T extends { [key: string]: NubeComponentStyle }>(styles: T): T {
 		const parsedStyles: Record<string, unknown> = {};
 		for (const key in styles) {
-			parsedStyles[key] = parseStyleObject(styles[key]);
+			parsedStyles[key] = parseStyleObject(styles[key] as Record<string, unknown>);
 		}
 		return parsedStyles as T;
 	},
