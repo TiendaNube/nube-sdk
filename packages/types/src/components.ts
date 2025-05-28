@@ -81,14 +81,14 @@ export type NubeComponentBox = Prettify<
  * Represents the properties available for a `col` component.
  * Inherits properties from `box`, excluding `direction`.
  */
-export type NubeComponentColProps = Omit<NubeComponentBoxProps, "direction">;
+export type NubeComponentColumnProps = Omit<NubeComponentBoxProps, "direction">;
 
 /**
- * Represents a `col` component, used for column-based layouts.
+ * Represents a `column` component, used for column-based layouts.
  */
-export type NubeComponentCol = Prettify<
+export type NubeComponentColumn = Prettify<
 	NubeComponentBase &
-		NubeComponentColProps & {
+		NubeComponentColumnProps & {
 			type: "col";
 		}
 >;
@@ -144,6 +144,8 @@ export type NubeComponentFieldProps = Prettify<
 	NubeComponentBase & {
 		name: string;
 		label: string;
+		value?: string;
+		autoFocus?: boolean;
 		onChange?: NubeComponentFieldEventHandler;
 		onBlur?: NubeComponentFieldEventHandler;
 		onFocus?: NubeComponentFieldEventHandler;
@@ -207,9 +209,9 @@ export type NubeComponentCheckEventHandler = NubeComponentEventHandler<
 >;
 
 /**
- * Represents the properties available for a `check` component.
+ * Represents the properties available for a `checkbox` component.
  */
-export type NubeComponentCheckProps = Prettify<
+export type NubeComponentCheckboxProps = Prettify<
 	NubeComponentBase & {
 		name: string;
 		label: string;
@@ -219,45 +221,47 @@ export type NubeComponentCheckProps = Prettify<
 >;
 
 /**
- * Represents a `check` component, used for checkboxs.
+ * Represents a `checkbox` component, used for checkboxs.
  */
-export type NubeComponentCheck = Prettify<
+export type NubeComponentCheckbox = Prettify<
 	NubeComponentBase &
-		NubeComponentCheckProps & {
+		NubeComponentCheckboxProps & {
 			type: "check";
 		}
 >;
 
 /* -------------------------------------------------------------------------- */
-/*                          TxtArea Component                                */
+/*                          Textarea Component                                */
 /* -------------------------------------------------------------------------- */
 
-export type NubeComponentTxtAreaEventHandler = NubeComponentEventHandler<
+export type NubeComponentTextareaEventHandler = NubeComponentEventHandler<
 	"change" | "focus" | "blur",
 	string
 >;
 
 /**
- * Represents the properties available for a `txtarea` component.
+ * Represents the properties available for a `textarea` component.
  */
-export type NubeComponentTxtAreaProps = Prettify<
+export type NubeComponentTextareaProps = Prettify<
 	NubeComponentBase & {
 		name: string;
 		label: string;
 		maxLength?: number;
 		row?: number;
-		onChange?: NubeComponentTxtAreaEventHandler;
-		onBlur?: NubeComponentTxtAreaEventHandler;
-		onFocus?: NubeComponentTxtAreaEventHandler;
+		value?: string;
+		autoFocus?: boolean;
+		onChange?: NubeComponentTextareaEventHandler;
+		onBlur?: NubeComponentTextareaEventHandler;
+		onFocus?: NubeComponentTextareaEventHandler;
 	}
 >;
 
 /**
- * Represents a `txtarea` component, used for textareas.
+ * Represents a `textarea` component, used for textareas.
  */
-export type NubeComponentTxtArea = Prettify<
+export type NubeComponentTextarea = Prettify<
 	NubeComponentBase &
-		NubeComponentTxtAreaProps & {
+		NubeComponentTextareaProps & {
 			type: "txtarea";
 		}
 >;
@@ -275,9 +279,9 @@ export type ImageSource = {
 };
 
 /**
- * Represents the properties available for an `img` component.
+ * Represents the properties available for an `image` component.
  */
-export type NubeComponentImgProps = Prettify<
+export type NubeComponentImageProps = Prettify<
 	NubeComponentBase & {
 		src: string;
 		alt: string;
@@ -288,11 +292,11 @@ export type NubeComponentImgProps = Prettify<
 >;
 
 /**
- * Represents an `img` component, used to display images.
+ * Represents an `image` component, used to display images.
  */
-export type NubeComponentImg = Prettify<
+export type NubeComponentImage = Prettify<
 	NubeComponentBase &
-		NubeComponentImgProps & {
+		NubeComponentImageProps & {
 			type: "img";
 		}
 >;
@@ -314,9 +318,9 @@ export type TxtModifier =
 	| "capitalize";
 
 /**
- * Represents the properties available for a `txt` component.
+ * Represents the properties available for a `text` component.
  */
-export type NubeComponentTxtProps = Prettify<
+export type NubeComponentTextProps = Prettify<
 	NubeComponentBase & {
 		color?: string;
 		background?: string;
@@ -328,11 +332,11 @@ export type NubeComponentTxtProps = Prettify<
 >;
 
 /**
- * Represents a `txt` component, used for displaying text with formatting options.
+ * Represents a `text` component, used for displaying text with formatting options.
  */
-export type NubeComponentTxt = Prettify<
+export type NubeComponentText = Prettify<
 	NubeComponentBase &
-		NubeComponentTxtProps & {
+		NubeComponentTextProps & {
 			type: "txt";
 		}
 >;
@@ -393,14 +397,14 @@ export type ChildrenProps = {
 export type NubeComponent =
 	| string
 	| NubeComponentBox
-	| NubeComponentCol
+	| NubeComponentColumn
 	| NubeComponentRow
 	| NubeComponentField
 	| NubeComponentFragment
-	| NubeComponentImg
-	| NubeComponentTxt
-	| NubeComponentCheck
-	| NubeComponentTxtArea
+	| NubeComponentImage
+	| NubeComponentText
+	| NubeComponentCheckbox
+	| NubeComponentTextarea
 	| NubeComponentButton;
 
 /**
@@ -408,7 +412,7 @@ export type NubeComponent =
  */
 export type NubeComponentWithChildren =
 	| NubeComponentBox
-	| NubeComponentCol
+	| NubeComponentColumn
 	| NubeComponentRow;
 
 /**
@@ -423,10 +427,18 @@ export type UISlot =
 	| "after_address_form" // After the address form in checkout.
 	| "after_billing_form" // After the billing form in checkout.
 	| "after_payment_options" // After the payment options in checkout.
+	| "before_payment_options" // Before the payment options in checkout.
 	| "before_address_form" // Before the address form in checkout.
 	| "before_billing_form" // Before the billing form in checkout.
 	| "before_contact_form" // Before the contact form in checkout.
-	| "modal_content"; // Content of a modal dialog in checkout.
+	| "modal_content" // Content of a modal dialog in checkout.
+	| "after_line_items_price" // After the price of the line items in checkout.
+	| "before_shipping_form" // Before the shipping form in checkout.
+	| "after_shipping_form" // After the shipping form in checkout.
+	| "corner_top_left" // Top left corner of the checkout page.
+	| "corner_top_right" // Top right corner of the checkout page.
+	| "corner_bottom_left" // Bottom left corner of the checkout page.
+	| "corner_bottom_right"; // Bottom right corner of the checkout page.
 
 /**
  * Represents the value of a UI component, typically used for form inputs.

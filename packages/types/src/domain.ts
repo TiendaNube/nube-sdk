@@ -1,4 +1,4 @@
-import type { Nullable, Prettify } from "./utility";
+import type { DeepPartial, Nullable, Prettify } from "./utility";
 
 /**
  * Represents a product in the cart.
@@ -123,7 +123,7 @@ export type Cart = {
 	prices: Prices;
 
 	/** Optional coupon applied to the cart. */
-	coupon: Nullable<Coupon>;
+	coupon: DeepPartial<Coupon>;
 };
 
 /**
@@ -277,9 +277,9 @@ export type Shipping = {
 	/** Selected shipping option ID. */
 	selected: Nullable<string>;
 	/** List of available shipping options. */
-	options: ShippingOption[];
+	options?: ShippingOption[];
 	/** Custom labels assigned to shipping options. */
-	custom_labels: Record<string, string>;
+	custom_labels?: Record<string, string>;
 };
 
 /**
@@ -332,6 +332,7 @@ export type BillingAddress = Prettify<
  * Represents a customer in the checkout process.
  */
 export type Customer = {
+	id: Nullable<number>;
 	contact: {
 		email: Nullable<string>;
 		name: Nullable<string>;
