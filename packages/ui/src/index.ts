@@ -8,3 +8,5 @@ export * from "./components/text";
 export * from "./components/checkbox";
 export * from "./components/textarea";
 export * from "./components/button";
+export * from "./styles/StyleSheet";
+export * from "./styles/theme";
