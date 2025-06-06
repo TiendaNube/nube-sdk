@@ -171,6 +171,38 @@ export type NubeComponentField = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                            Select Component                                */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentSelectEventHandler = NubeComponentEventHandler<
+	"change",
+	string
+>;
+
+/**
+ * Represents the properties available for a `select` component.
+ */
+export type NubeComponentSelectProps = Prettify<
+	NubeComponentBase & {
+		name: string;
+		label: string;
+		value?: string;
+		options: { label: string; value: string }[];
+		onChange?: NubeComponentSelectEventHandler;
+	}
+>;
+
+/**
+ * Represents a `select` component, used for select inputs.
+ */
+export type NubeComponentSelect = Prettify<
+	NubeComponentBase &
+		NubeComponentSelectProps & {
+			type: "select";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                          Button Component                                */
 /* -------------------------------------------------------------------------- */
 
@@ -427,7 +459,8 @@ export type NubeComponent =
 	| NubeComponentText
 	| NubeComponentCheckbox
 	| NubeComponentTextarea
-	| NubeComponentButton;
+	| NubeComponentButton
+	| NubeComponentSelect;
 
 /**
  * Represents components that can contain other components as children.

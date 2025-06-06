@@ -15,6 +15,8 @@ import type {
 	NubeComponentImageProps,
 	NubeComponentRow,
 	NubeComponentRowProps,
+	NubeComponentSelect,
+	NubeComponentSelectProps,
 	NubeComponentText,
 	NubeComponentTextProps,
 	NubeComponentTextarea,
@@ -29,6 +31,7 @@ import {
 	fragment,
 	image,
 	row,
+	select,
 	text,
 	textarea,
 } from "@tiendanube/nube-sdk-ui";
@@ -208,4 +211,17 @@ export function Img(props: NubeComponentImageProps): NubeComponentImage {
  */
 export function Image(props: NubeComponentImageProps): NubeComponentImage {
 	return image(props);
+}
+
+/**
+ * Creates a `Select` component.
+ *
+ * A `Select` represents a dropdown menu that allows users to select one option from a list.
+ * It supports properties such as `name`, `label`, `options`, and event handlers (`onChange`).
+ *
+ * @param props - The properties for configuring the select component.
+ * @returns A `NubeComponentSelect` object representing the select component.
+ */
+export function Select(props: NubeComponentSelectProps): NubeComponentSelect {
+	return select(props);
 }
