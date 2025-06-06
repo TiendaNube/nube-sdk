@@ -10,6 +10,7 @@ export type NubeSDKStorageEvent = {
 
 export type NubeSDKEvent = {
 	id: string;
+	shown: boolean;
 	data: NubeSDKStorageEvent;
 };
 
