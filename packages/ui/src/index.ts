@@ -9,5 +9,7 @@ export * from "./components/checkbox";
 export * from "./components/textarea";
 export * from "./components/button";
 export * from "./components/select";
+export * from "./components/accordion";
+export * from "./components/accordion-item";
 export * from "./styles/StyleSheet";
 export * from "./styles/theme";
