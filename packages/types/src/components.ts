@@ -171,6 +171,58 @@ export type NubeComponentField = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           Accordion Component                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for an `accordion` component.
+ */
+export type NubeComponentAccordionProps = Prettify<
+	NubeComponentBase & ChildrenProps
+>;
+
+/**
+ * Represents an `accordion` component, used for accordions.
+ */
+export type NubeComponentAccordion = Prettify<
+	NubeComponentBase & NubeComponentAccordionProps & { type: "accordion" }
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                            Accordion Item Component                        */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the event handler for Accordion Item component
+ */
+export type NubeComponentAccordionItemEventHandler = NubeComponentEventHandler<
+	"click",
+	string
+>;
+
+/**
+ * Represents the properties available for an `accordion` item component.
+ */
+export type NubeComponentAccordionItemProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			title: string;
+			showIcon?: boolean;
+			right?: NubeComponent;
+			onToggle?: NubeComponentAccordionItemEventHandler;
+		}>
+>;
+
+/**
+ * Represents an `accordion` item component, used for accordion items.
+ */
+export type NubeComponentAccordionItem = Prettify<
+	NubeComponentBase &
+		NubeComponentAccordionItemProps & { type: "accordionItem" }
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                            Select Component                                */
 /* -------------------------------------------------------------------------- */
 
@@ -460,7 +512,9 @@ export type NubeComponent =
 	| NubeComponentCheckbox
 	| NubeComponentTextarea
 	| NubeComponentButton
-	| NubeComponentSelect;
+	| NubeComponentSelect
+	| NubeComponentAccordion
+	| NubeComponentAccordionItem;
 
 /**
  * Represents components that can contain other components as children.

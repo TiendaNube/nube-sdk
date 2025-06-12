@@ -1,4 +1,8 @@
 import type {
+	NubeComponentAccordion,
+	NubeComponentAccordionItem,
+	NubeComponentAccordionItemProps,
+	NubeComponentAccordionProps,
 	NubeComponentBox,
 	NubeComponentBoxProps,
 	NubeComponentButton,
@@ -23,6 +27,8 @@ import type {
 	NubeComponentTextareaProps,
 } from "@tiendanube/nube-sdk-types";
 import {
+	accordion,
+	accordionItem,
 	box,
 	button,
 	checkbox,
@@ -225,3 +231,36 @@ export function Image(props: NubeComponentImageProps): NubeComponentImage {
 export function Select(props: NubeComponentSelectProps): NubeComponentSelect {
 	return select(props);
 }
+
+/**
+ * Creates an `Accordion` component.
+ *
+ * The `Accordion` component is a vertically stacked list of items that can be expanded or collapsed to reveal their content.
+ * It supports properties such as `title`, `content`, and child `AccordionItem` components.
+ *
+ * @param props - The properties for configuring the accordion component.
+ * @returns A `NubeComponentAccordion` object representing the accordion component.
+ */
+export function Accordion(
+	props: NubeComponentAccordionProps,
+): NubeComponentAccordion {
+	return accordion(props);
+}
+
+function AccordionItem(
+	props: NubeComponentAccordionItemProps,
+): NubeComponentAccordionItem {
+	return accordionItem(props);
+}
+
+/**
+ * Creates an `AccordionItem` component.
+ *
+ * The `AccordionItem` component represents a single item within an accordion.
+ * Each item contains a header that can be clicked to show/hide its content.
+ * It supports properties such as `title` and child content.
+ *
+ * @param props - The properties for configuring the accordion item component.
+ * @returns A `NubeComponentAccordionItem` object representing the accordion item component.
+ */
+Accordion.Item = AccordionItem;
