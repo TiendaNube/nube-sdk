@@ -1,6 +1,6 @@
 import type {
-	NubeComponentAccordion,
-	NubeComponentAccordionProps,
+	NubeComponentAccordionRoot,
+	NubeComponentAccordionRootProps,
 } from "@tiendanube/nube-sdk-types";
 
 /**
@@ -9,9 +9,9 @@ import type {
  * An `accordion` is a vertically stacked list of items that can be expanded or collapsed to reveal their content.
  * It supports properties such as `title`, `content`, `isExpanded`, and event handlers (`onToggle`).
  */
-export const accordion = (
-	props: NubeComponentAccordionProps,
-): NubeComponentAccordion => ({
-	type: "accordion",
+export const accordionRoot = (
+	props: NubeComponentAccordionRootProps,
+): NubeComponentAccordionRoot => ({
+	type: "accordionRoot",
 	...props,
 });

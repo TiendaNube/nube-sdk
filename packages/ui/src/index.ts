@@ -11,5 +11,7 @@ export * from "./components/button";
 export * from "./components/select";
 export * from "./components/accordion";
 export * from "./components/accordion-item";
+export * from "./components/accordion-content";
+export * from "./components/accordion.header";
 export * from "./styles/StyleSheet";
 export * from "./styles/theme";
