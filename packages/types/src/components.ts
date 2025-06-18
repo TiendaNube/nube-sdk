@@ -171,6 +171,103 @@ export type NubeComponentField = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           Accordion Component                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for an `accordion` component.
+ */
+export type NubeComponentAccordionRootProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			defaultValue: string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents an `accordion` component, used for accordions.
+ */
+export type NubeComponentAccordionRoot = Prettify<
+	NubeComponentBase &
+		NubeComponentAccordionRootProps & { type: "accordionRoot" }
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                        Accordion Header Component                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for an `accordion` header component.
+ */
+export type NubeComponentAccordionHeaderProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			style?: NubeComponentStyle;
+			showIcon?: boolean;
+		}
+>;
+
+/**
+ * Represents an `accordion` header component, used for accordion headers.
+ */
+export type NubeComponentAccordionHeader = Prettify<
+	NubeComponentBase &
+		NubeComponentAccordionHeaderProps & { type: "accordionHeader" }
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                            Accordion Content Component                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for an `accordion` content component.
+ */
+export type NubeComponentAccordionContentProps = Prettify<
+	NubeComponentBase & ChildrenProps
+>;
+
+/**
+ * Represents an `accordion` content component, used for accordion content.
+ */
+export type NubeComponentAccordionContent = Prettify<
+	NubeComponentBase &
+		NubeComponentAccordionContentProps & { type: "accordionContent" }
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                            Accordion Item Component                        */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the event handler for Accordion Item component
+ */
+export type NubeComponentAccordionItemEventHandler = NubeComponentEventHandler<
+	"click",
+	string
+>;
+
+/**
+ * Represents the properties available for an `accordion` item component.
+ */
+export type NubeComponentAccordionItemProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			value: string;
+			onToggle?: NubeComponentAccordionItemEventHandler;
+		}
+>;
+
+/**
+ * Represents an `accordion` item component, used for accordion items.
+ */
+export type NubeComponentAccordionItem = Prettify<
+	NubeComponentBase &
+		NubeComponentAccordionItemProps & { type: "accordionItem" }
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                            Select Component                                */
 /* -------------------------------------------------------------------------- */
 
@@ -460,7 +557,11 @@ export type NubeComponent =
 	| NubeComponentCheckbox
 	| NubeComponentTextarea
 	| NubeComponentButton
-	| NubeComponentSelect;
+	| NubeComponentSelect
+	| NubeComponentAccordionRoot
+	| NubeComponentAccordionItem
+	| NubeComponentAccordionContent
+	| NubeComponentAccordionHeader;
 
 /**
  * Represents components that can contain other components as children.
