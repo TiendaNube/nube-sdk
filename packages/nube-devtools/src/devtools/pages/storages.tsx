@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Divider } from "@/components/ui/divider";
 import {
@@ -33,6 +34,7 @@ export function Storages() {
 							{
 								id: uuidv4(),
 								data: message.payload,
+								shown: false,
 							},
 						]);
 						port.disconnect();
@@ -128,13 +130,26 @@ export function Storages() {
 											{events.map((event) => (
 												<TableRow key={event.id}>
 													<TableRowItem
-														title={event.data.key}
 														isSelected={event.id === selectedEvent?.id}
-														badge1={event.data.type}
-														badge2={event.data.method}
-														event={event}
+														data={event}
 														onSelect={setSelectedEvent}
-													/>
+													>
+														<div className="flex items-center gap-1">
+															<span>{event.data.key}</span>
+															<Badge
+																className="text-[10px] px-1 py-0.5"
+																variant="outline"
+															>
+																{event.data.type}
+															</Badge>
+															<Badge
+																className="text-[10px] px-1 py-0.5"
+																variant="outline"
+															>
+																{event.data.method}
+															</Badge>
+														</div>
+													</TableRowItem>
 												</TableRow>
 											))}
 										</TableBody>
