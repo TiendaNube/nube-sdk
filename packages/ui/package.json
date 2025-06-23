@@ -1,6 +1,6 @@
 {
   "name": "@tiendanube/nube-sdk-ui",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Library for building declarative interfaces for NubeSDK",
   "type": "module",
   "main": "./dist/index.js",
