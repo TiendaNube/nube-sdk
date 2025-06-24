@@ -493,6 +493,78 @@ export type NubeComponentText = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                          Toast Component                                   */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentToastVariant =
+	| "success"
+	| "error"
+	| "warning"
+	| "info";
+
+/**
+ * Represents the properties available for a `toast` root component.
+ */
+export type NubeComponentToastRootProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			variant?: NubeComponentToastVariant;
+			duration?: number;
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `toast` root component, used for toasts.
+ */
+export type NubeComponentToastRoot = Prettify<
+	NubeComponentBase &
+		NubeComponentToastRootProps & {
+			type: "toastRoot";
+		}
+>;
+
+/**
+ * Represents the properties available for a `toast` title component.
+ */
+export type NubeComponentToastTitleProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `toast` title component, used for toast titles.
+ */
+export type NubeComponentToastTitle = Prettify<
+	NubeComponentBase &
+		NubeComponentToastTitleProps & {
+			type: "toastTitle";
+		}
+>;
+
+/**
+ * Represents the properties available for a `toast` description component.
+ */
+export type NubeComponentToastDescriptionProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `toast` description component, used for toast descriptions.
+ */
+export type NubeComponentToastDescription = Prettify<
+	NubeComponentBase &
+		NubeComponentToastDescriptionProps & {
+			type: "toastDescription";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                          Fragment Component                                */
 /* -------------------------------------------------------------------------- */
 
@@ -561,7 +633,10 @@ export type NubeComponent =
 	| NubeComponentAccordionRoot
 	| NubeComponentAccordionItem
 	| NubeComponentAccordionContent
-	| NubeComponentAccordionHeader;
+	| NubeComponentAccordionHeader
+	| NubeComponentToastRoot
+	| NubeComponentToastTitle
+	| NubeComponentToastDescription;
 
 /**
  * Represents components that can contain other components as children.

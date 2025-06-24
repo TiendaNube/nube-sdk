@@ -13,5 +13,8 @@ export * from "./components/accordion";
 export * from "./components/accordion-item";
 export * from "./components/accordion-content";
 export * from "./components/accordion.header";
+export * from "./components/toast-root";
+export * from "./components/toast-title";
+export * from "./components/toast-description";
 export * from "./styles/StyleSheet";
 export * from "./styles/theme";
