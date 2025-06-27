@@ -29,6 +29,12 @@ import type {
 	NubeComponentTextProps,
 	NubeComponentTextarea,
 	NubeComponentTextareaProps,
+	NubeComponentToastDescription,
+	NubeComponentToastDescriptionProps,
+	NubeComponentToastRoot,
+	NubeComponentToastRootProps,
+	NubeComponentToastTitle,
+	NubeComponentToastTitleProps,
 } from "@tiendanube/nube-sdk-types";
 import {
 	accordionContent,
@@ -46,6 +52,9 @@ import {
 	select,
 	text,
 	textarea,
+	toastDescription,
+	toastRoot,
+	toastTitle,
 } from "@tiendanube/nube-sdk-ui";
 
 /**
@@ -295,4 +304,32 @@ export const Accordion = {
 	Item: AccordionItem,
 	Content: AccordionContent,
 	Header: AccordionHeader,
+};
+
+/**
+ * Creates a `Toast` component.
+ *
+ * A `Toast` is a small notification that appears at the bottom of the screen to inform the user about an action or a message.
+ * It supports properties such as `type` for controlling the type of toast, and custom styling.
+ */
+function ToastRoot(props: NubeComponentToastRootProps): NubeComponentToastRoot {
+	return toastRoot(props);
+}
+
+function ToastTitle(
+	props: NubeComponentToastTitleProps,
+): NubeComponentToastTitle {
+	return toastTitle(props);
+}
+
+function ToastDescription(
+	props: NubeComponentToastDescriptionProps,
+): NubeComponentToastDescription {
+	return toastDescription(props);
+}
+
+export const Toast = {
+	Root: ToastRoot,
+	Title: ToastTitle,
+	Description: ToastDescription,
 };
