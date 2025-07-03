@@ -37,3 +37,9 @@ Estes são os slots disponíveis no checkout:
 ### Localização no Mobile
 
 ![localização dos slots de ui no checkout](/images/ui-slots-mobile-checkout.png)
+
+## Renderizando Componentes
+
+Para renderizar componentes nesses slots, use o método [`render`](/docs/ui-rendering) do NubeSDK. Este método permite injetar tanto componentes estáticos quanto dinâmicos que podem ser computados com base no estado atual.
+
+Para mais informações sobre renderização e gerenciamento de componentes de UI, consulte a documentação [Renderização de UI](/docs/ui-rendering).
