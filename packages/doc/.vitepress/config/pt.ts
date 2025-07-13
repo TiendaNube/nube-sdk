@@ -38,6 +38,7 @@ export const pt = defineConfig({
 					{ text: "Eventos", link: "/pt/docs/events" },
 					{ text: "APIs do Navegador", link: "/pt/docs/browser-apis" },
 					{ text: "Slots de UI", link: "/pt/docs/ui-slots" },
+					{ text: "Estilização de Componentes", link: "/pt/docs/styling" },
 				],
 			},
 			{

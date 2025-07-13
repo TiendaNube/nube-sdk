@@ -38,6 +38,7 @@ export const es = defineConfig({
 					{ text: "Eventos", link: "/es/docs/events" },
 					{ text: "APIs del Navegador", link: "/es/docs/browser-apis" },
 					{ text: "Slots de UI", link: "/es/docs/ui-slots" },
+					{ text: "Estilización de Componentes", link: "/es/docs/styling" },
 				],
 			},
 			{

@@ -18,3 +18,4 @@ export * from "./components/toast-title";
 export * from "./components/toast-description";
 export * from "./styles/StyleSheet";
 export * from "./styles/theme";
+export * from "./styles/styled";

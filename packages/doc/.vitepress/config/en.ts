@@ -35,6 +35,7 @@ export const en = defineConfig({
 					{ text: "Events", link: "/docs/events" },
 					{ text: "Browser API's", link: "/docs/browser-apis" },
 					{ text: "UI Slots", link: "/docs/ui-slots" },
+					{ text: "Styling Components", link: "/docs/styling" },
 				],
 			},
 			{
