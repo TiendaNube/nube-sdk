@@ -284,6 +284,10 @@ export type NubeComponentSelectProps = Prettify<
 		name: string;
 		label: string;
 		value?: string;
+		style?: {
+			label?: NubeComponentStyle;
+			select?: NubeComponentStyle;
+		};
 		options: { label: string; value: string }[];
 		onChange?: NubeComponentSelectEventHandler;
 	}
