@@ -19,6 +19,8 @@ import type {
 	NubeComponentFieldProps,
 	NubeComponentFragment,
 	NubeComponentFragmentProps,
+	NubeComponentIcon,
+	NubeComponentIconProps,
 	NubeComponentImage,
 	NubeComponentImageProps,
 	NubeComponentRow,
@@ -47,6 +49,7 @@ import {
 	column,
 	field,
 	fragment,
+	icon,
 	image,
 	row,
 	select,
@@ -333,3 +336,15 @@ export const Toast = {
 	Title: ToastTitle,
 	Description: ToastDescription,
 };
+
+/**
+ * Creates an `Icon` component.
+ *
+ * The `Icon` component is used to display icons. It supports properties such as `name` for specifying the icon to display.
+ *
+ * @param props - The properties for configuring the icon component.
+ * @returns A `NubeComponentIcon` object representing the icon component.
+ */
+export function Icon(props: NubeComponentIconProps): NubeComponentIcon {
+	return icon(props);
+}
