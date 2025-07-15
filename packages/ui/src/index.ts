@@ -19,3 +19,4 @@ export * from "./components/toast-description";
 export * from "./styles/StyleSheet";
 export * from "./styles/theme";
 export * from "./styles/styled";
+export { keyframes } from "./styles/keyframes";
