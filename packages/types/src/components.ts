@@ -589,6 +589,186 @@ export type NubeComponentFragment = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           Icon Component                                   */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentIconName =
+	| "infinite"
+	| "peso"
+	| "pix"
+	| "accordion"
+	| "align-center"
+	| "align-left"
+	| "align-right"
+	| "apps-list"
+	| "apps"
+	| "archive"
+	| "arrow-left"
+	| "arrow-right"
+	| "arrows-horizontal"
+	| "arrows-vertical"
+	| "backspace"
+	| "bag"
+	| "barcode"
+	| "bold"
+	| "box-packed"
+	| "box-unpacked"
+	| "briefcase"
+	| "browser-search"
+	| "browser"
+	| "calculator"
+	| "calendar-days"
+	| "calendar"
+	| "camera"
+	| "cash"
+	| "cashier"
+	| "chat-dots"
+	| "check-circle"
+	| "check"
+	| "chevron-down"
+	| "chevron-left"
+	| "chevron-right"
+	| "chevron-up"
+	| "christ"
+	| "clock"
+	| "close"
+	| "code"
+	| "cog"
+	| "color-palette"
+	| "copy"
+	| "credit-card"
+	| "desktop"
+	| "discount-circle"
+	| "diskette"
+	| "download"
+	| "drag-dots"
+	| "drag"
+	| "drink"
+	| "drop"
+	| "drums"
+	| "duplicate"
+	| "ecosystem"
+	| "edit"
+	| "ellipsis"
+	| "exclamation-circle"
+	| "exclamation-triangle"
+	| "external-link"
+	| "eye-off"
+	| "eye"
+	| "file-alt"
+	| "file"
+	| "fingerprint"
+	| "fire"
+	| "flag"
+	| "font"
+	| "forbidden"
+	| "generative-stars"
+	| "gift-box"
+	| "gift-card"
+	| "glasses"
+	| "globe"
+	| "google"
+	| "guitar"
+	| "heart"
+	| "history"
+	| "home"
+	| "id-card"
+	| "info-circle"
+	| "invoice"
+	| "italic"
+	| "life-ring"
+	| "lightbulb"
+	| "link-off"
+	| "link"
+	| "list"
+	| "location"
+	| "lock-open"
+	| "lock"
+	| "log-out"
+	| "magic-wand"
+	| "mail"
+	| "marketing"
+	| "mate"
+	| "menu"
+	| "meta"
+	| "mobile"
+	| "money"
+	| "moon"
+	| "notification"
+	| "obelisk"
+	| "online-store"
+	| "ordered-list"
+	| "paper-plane"
+	| "pencil"
+	| "picture"
+	| "planet"
+	| "play"
+	| "plus-circle"
+	| "printer"
+	| "pyramid"
+	| "qr-code"
+	| "question-circle"
+	| "real"
+	| "redo"
+	| "remove-format"
+	| "repeat"
+	| "rocket"
+	| "scooter"
+	| "search"
+	| "share"
+	| "shopping-cart"
+	| "shot"
+	| "size-height"
+	| "size-width"
+	| "sliders"
+	| "star"
+	| "stats"
+	| "steps"
+	| "sticky-note"
+	| "stop"
+	| "store"
+	| "subcategory"
+	| "sun"
+	| "tag"
+	| "telephone"
+	| "text-size"
+	| "tiendanube"
+	| "tiktok"
+	| "tools"
+	| "transfer-peso"
+	| "transfer-real"
+	| "trash"
+	| "truck"
+	| "undo"
+	| "university"
+	| "upload"
+	| "user-circle"
+	| "user-group"
+	| "user"
+	| "vertical-stacks"
+	| "volume"
+	| "wallet"
+	| "whatsapp";
+
+/**
+ * Represents the properties available for an `icon` component.
+ */
+export type NubeComponentIconProps = Prettify<
+	NubeComponentBase & {
+		name: NubeComponentIconName;
+		size?: Size;
+		color?: string;
+	}
+>;
+
+/**
+ * Represents an `icon` component, used for displaying icons.
+ */
+export type NubeComponentIcon = Prettify<
+	NubeComponentBase & NubeComponentIconProps & { type: "icon" }
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                         Basic Definitions                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -640,7 +820,8 @@ export type NubeComponent =
 	| NubeComponentAccordionHeader
 	| NubeComponentToastRoot
 	| NubeComponentToastTitle
-	| NubeComponentToastDescription;
+	| NubeComponentToastDescription
+	| NubeComponentIcon;
 
 /**
  * Represents components that can contain other components as children.

@@ -1,7 +1,7 @@
 import type { Size } from "@tiendanube/nube-sdk-types";
 import type * as CSS from "csstype";
-import type { ThemeCSSValue } from "./theme";
 import { ThemeColor } from "./ThemeColor";
+import type { ThemeCSSValue } from "./theme";
 
 /**
  * Maps properties that should use the Size type
@@ -79,7 +79,9 @@ export const StyleSheet = {
 	create<T extends { [key: string]: NubeComponentStyle }>(styles: T): T {
 		const parsedStyles: Record<string, unknown> = {};
 		for (const key in styles) {
-			parsedStyles[key] = parseStyleObject(styles[key] as Record<string, unknown>);
+			parsedStyles[key] = parseStyleObject(
+				styles[key] as Record<string, unknown>,
+			);
 		}
 		return parsedStyles as T;
 	},

@@ -1,6 +1,6 @@
 import type {
-    NubeComponentAccordionHeader,
-    NubeComponentAccordionHeaderProps,
+	NubeComponentAccordionHeader,
+	NubeComponentAccordionHeaderProps,
 } from "@tiendanube/nube-sdk-types";
 
 /**
