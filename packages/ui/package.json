@@ -7,8 +7,8 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup",
-    "lint": "biome check src/*",
-    "format": "biome check --write src/*",
+    "check": "biome check src/*",
+    "check:fix": "biome check --write src/*",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
