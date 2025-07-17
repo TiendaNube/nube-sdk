@@ -789,7 +789,9 @@ export type NubeComponentProps = {
 /**
  * Defines the base structure for all UI components.
  */
-export type NubeComponentBase = NubeComponentProps;
+export type NubeComponentBase = {
+	styled?: string;
+} & NubeComponentProps;
 
 /**
  * Defines components that can have child elements.
@@ -885,3 +887,9 @@ export type UI = {
 	 */
 	values: UIValues;
 };
+
+/**
+ * Type for components that have been styled with the styled function.
+ * Extends NubeComponent with the styled property containing CSS.
+ */
+export type NubeComponentWithStyle = NubeComponent & { styled: string };
