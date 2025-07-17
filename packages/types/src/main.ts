@@ -1,5 +1,5 @@
 import type { NubeBrowserAPIs } from "./browser";
-import type { UI } from "./components";
+import type { NubeComponent, UI, UISlot } from "./components";
 import type {
 	AppConfig,
 	AppLocation,
@@ -123,6 +123,28 @@ export type NubeSDK = {
 	 * @returns The available browser APIs.
 	 */
 	getBrowserAPIs(): NubeBrowserAPIs;
+
+	/**
+	 * Renders a component into a specific UI slot.
+	 * The component can be either a static component or a function that receives the current state
+	 * and returns a component to render.
+	 *
+	 * @param slot - The UI slot where the component will be rendered.
+	 * @param component - The component to render, either a static component or a function that returns a component based on the current state.
+	 */
+	render(
+		slot: UISlot,
+		component:
+			| NubeComponent
+			| ((state: Readonly<NubeSDKState>) => NubeComponent),
+	): void;
+
+	/**
+	 * Clears a component from a specific UI slot, removing it from the NubeSDKState.
+	 *
+	 * @param slot - The UI slot from which the component will be cleared.
+	 */
+	clearSlot(slot: UISlot): void;
 };
 
 /**
