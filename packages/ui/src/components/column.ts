@@ -2,6 +2,7 @@ import type {
 	NubeComponentColumn,
 	NubeComponentColumnProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `column` component.
@@ -17,4 +18,5 @@ export const column = (
 ): NubeComponentColumn => ({
 	type: "col",
 	...props,
+	__internalId: generateInternalId("col", props),
 });

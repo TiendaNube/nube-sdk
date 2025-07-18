@@ -2,6 +2,7 @@ import type {
 	NubeComponentToastDescription,
 	NubeComponentToastDescriptionProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `toast` description component.
@@ -14,4 +15,5 @@ export const toastDescription = (
 ): NubeComponentToastDescription => ({
 	type: "toastDescription",
 	...props,
+	__internalId: generateInternalId("toastDescription", props),
 });
