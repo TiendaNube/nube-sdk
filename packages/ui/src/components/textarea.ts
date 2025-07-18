@@ -2,6 +2,7 @@ import type {
 	NubeComponentTextarea,
 	NubeComponentTextareaProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * @deprecated This component has been deprecated since version `0.8.0`. Please use the `textarea` component instead.
@@ -11,6 +12,7 @@ export const txtarea = (
 ): NubeComponentTextarea => ({
 	type: "txtarea",
 	...props,
+	__internalId: generateInternalId("txtarea", props),
 });
 
 /**
@@ -27,4 +29,5 @@ export const textarea = (
 ): NubeComponentTextarea => ({
 	type: "txtarea",
 	...props,
+	__internalId: generateInternalId("txtarea", props),
 });

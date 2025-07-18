@@ -2,6 +2,7 @@ import type {
 	NubeComponentField,
 	NubeComponentFieldProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `field` component.
@@ -15,4 +16,5 @@ import type {
 export const field = (props: NubeComponentFieldProps): NubeComponentField => ({
 	type: "field",
 	...props,
+	__internalId: generateInternalId("field", props),
 });

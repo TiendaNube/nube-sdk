@@ -2,6 +2,7 @@ import type {
 	NubeComponentToastRoot,
 	NubeComponentToastRootProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `toast` component.
@@ -14,4 +15,5 @@ export const toastRoot = (
 ): NubeComponentToastRoot => ({
 	type: "toastRoot",
 	...props,
+	__internalId: generateInternalId("toastRoot", props),
 });

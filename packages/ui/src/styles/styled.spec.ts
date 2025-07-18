@@ -2,12 +2,16 @@ import type {
 	NubeComponentText,
 	NubeComponentWithStyle,
 } from "@tiendanube/nube-sdk-types";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { box } from "../components/box";
 import { button } from "../components/button";
 import { text } from "../components/text";
 import { keyframes } from "./keyframes";
 import { styled } from "./styled";
+
+vi.mock("../components/generateInternalId", () => ({
+	generateInternalId: vi.fn().mockReturnValue("test-id"),
+}));
 
 describe("styled", () => {
 	describe("basic functionality", () => {
@@ -20,6 +24,7 @@ describe("styled", () => {
 			const result = StyledBox({ children: "Test content" });
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "box",
 				children: "Test content",
 				styled: "background-color:red;padding:16px;",
@@ -40,6 +45,7 @@ describe("styled", () => {
 			});
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "box",
 				children: "Content",
 				width: "100%",
@@ -60,6 +66,7 @@ describe("styled", () => {
 			const result = StyledText({ children: "Hello World" });
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "txt",
 				children: "Hello World",
 				styled: "color:white;font-size:18px;font-weight:bold;",
@@ -76,6 +83,7 @@ describe("styled", () => {
 			const result = StyledButton({ children: "Click me" });
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "button",
 				children: "Click me",
 				styled: "background-color:green;border-radius:8px;padding:12px 24px;",
@@ -94,6 +102,7 @@ describe("styled", () => {
 			const result = StyledBox({ children: "Content" });
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "box",
 				children: "Content",
 				styled: "background-color:var(--primary-color);padding:16px;",
@@ -110,6 +119,7 @@ describe("styled", () => {
 			const result = StyledBox({ children: "Content" });
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "box",
 				children: "Content",
 				styled: "padding:20px;margin:10px;",
@@ -128,6 +138,7 @@ describe("styled", () => {
 			const result = StyledBox({ children: "Content" });
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "box",
 				children: "Content",
 				styled: "background-color:red;color:white;padding:16px;",
@@ -144,6 +155,7 @@ describe("styled", () => {
 			const result = StyledBox({ children: "Content" });
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "box",
 				children: "Content",
 				styled: "background-color:red;padding:16px;",
@@ -226,6 +238,7 @@ describe("styled", () => {
 			const result = FinalStyledBox({ children: "Content" });
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "box",
 				children: "Content",
 				styled:
@@ -269,6 +282,7 @@ describe("styled", () => {
 			const result = StyledBox({ children: "Content" });
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "box",
 				children: "Content",
 				styled: "",
@@ -293,6 +307,7 @@ describe("styled", () => {
 			const result = StyledBox({});
 
 			expect(result).toEqual({
+				__internalId: "test-id",
 				type: "box",
 				styled: "background-color:red;",
 			});

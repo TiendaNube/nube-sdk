@@ -2,6 +2,7 @@ import type {
 	NubeComponentAccordionHeader,
 	NubeComponentAccordionHeaderProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates an `accordion-header` component.
@@ -14,4 +15,5 @@ export const accordionHeader = (
 ): NubeComponentAccordionHeader => ({
 	type: "accordionHeader",
 	...props,
+	__internalId: generateInternalId("accordionHeader", props),
 });

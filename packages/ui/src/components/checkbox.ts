@@ -2,6 +2,7 @@ import type {
 	NubeComponentCheckbox,
 	NubeComponentCheckboxProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * @deprecated This component has been deprecated since version `0.8.0`. Please use the `checkbox` component instead.
@@ -11,6 +12,7 @@ export const check = (
 ): NubeComponentCheckbox => ({
 	type: "check",
 	...props,
+	__internalId: generateInternalId("check", props),
 });
 
 /**

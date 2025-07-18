@@ -2,6 +2,7 @@ import type {
 	NubeComponentBox,
 	NubeComponentBoxProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `box` component.
@@ -15,4 +16,5 @@ import type {
 export const box = (props: NubeComponentBoxProps): NubeComponentBox => ({
 	type: "box",
 	...props,
+	__internalId: generateInternalId("box", props),
 });

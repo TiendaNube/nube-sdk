@@ -2,6 +2,7 @@ import type {
 	NubeComponentImage,
 	NubeComponentImageProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * @deprecated This component has been deprecated since version `0.8.0`. Please use the `image` component instead.
@@ -9,6 +10,7 @@ import type {
 export const img = (props: NubeComponentImageProps): NubeComponentImage => ({
 	type: "img",
 	...props,
+	__internalId: generateInternalId("img", props),
 });
 
 /**
@@ -23,4 +25,5 @@ export const img = (props: NubeComponentImageProps): NubeComponentImage => ({
 export const image = (props: NubeComponentImageProps): NubeComponentImage => ({
 	type: "img",
 	...props,
+	__internalId: generateInternalId("img", props),
 });
