@@ -2,6 +2,7 @@ import type {
 	NubeComponentIcon,
 	NubeComponentIconProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates an `icon` component.
@@ -12,4 +13,5 @@ import type {
 export const icon = (props: NubeComponentIconProps): NubeComponentIcon => ({
 	type: "icon",
 	...props,
+	__internalId: generateInternalId("icon", props),
 });
