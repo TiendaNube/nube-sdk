@@ -318,7 +318,7 @@ export type NubeComponentButtonEventHandler = NubeComponentEventHandler<
 export type NubeComponentButtonProps = Prettify<
 	NubeComponentBase &
 		Partial<{
-			children: string;
+			children: NubeComponentChildren;
 			disabled: boolean;
 			variant: "primary" | "secondary" | "transparent" | "link";
 			width: Size;
@@ -482,7 +482,7 @@ export type NubeComponentTextProps = Prettify<
 		modifiers?: TxtModifier[];
 		inline?: boolean;
 		style?: NubeComponentStyle;
-		children?: NubeComponent | NubeComponent[] | string;
+		children?: NubeComponentChildren;
 	}
 >;
 
@@ -797,7 +797,7 @@ export type NubeComponentBase = {
  * Defines components that can have child elements.
  */
 export type ChildrenProps = {
-	children?: NubeComponent | NubeComponent[];
+	children?: NubeComponentChildren;
 };
 
 /**
@@ -824,6 +824,14 @@ export type NubeComponent =
 	| NubeComponentToastTitle
 	| NubeComponentToastDescription
 	| NubeComponentIcon;
+
+/**
+ * Represents the children of a UI component.
+ */
+export type NubeComponentChildren =
+	| string
+	| NubeComponent
+	| (string | NubeComponent)[];
 
 /**
  * Represents components that can contain other components as children.
