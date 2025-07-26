@@ -2,6 +2,7 @@ import type {
 	NubeComponentSelect,
 	NubeComponentSelectProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `select` component.
@@ -14,4 +15,5 @@ export const select = (
 ): NubeComponentSelect => ({
 	type: "select",
 	...props,
+	__internalId: generateInternalId("select", props),
 });

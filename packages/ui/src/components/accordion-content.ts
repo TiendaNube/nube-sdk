@@ -2,6 +2,7 @@ import type {
 	NubeComponentAccordionContent,
 	NubeComponentAccordionContentProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates an `accordion-content` component.
@@ -14,4 +15,5 @@ export const accordionContent = (
 ): NubeComponentAccordionContent => ({
 	type: "accordionContent",
 	...props,
+	__internalId: generateInternalId("accordionContent", props),
 });

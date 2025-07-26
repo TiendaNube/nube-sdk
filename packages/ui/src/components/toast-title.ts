@@ -2,6 +2,7 @@ import type {
 	NubeComponentToastTitle,
 	NubeComponentToastTitleProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `toast` title component.
@@ -14,4 +15,5 @@ export const toastTitle = (
 ): NubeComponentToastTitle => ({
 	type: "toastTitle",
 	...props,
+	__internalId: generateInternalId("toastTitle", props),
 });
