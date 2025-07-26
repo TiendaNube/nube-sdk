@@ -1,33 +1,42 @@
 import { Button } from "@/components/ui/button";
-import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
-import { ResizablePanelGroup } from "@/components/ui/resizable";
-import { EventsList } from "@/devtools/components/events-list";
-import { EventsNav } from "@/devtools/components/events-nav";
-import { JsonViewer } from "@/devtools/components/json-viewer";
+import {
+	ResizableHandle,
+	ResizablePanel,
+	ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { useNetworkEventsContext } from "@/contexts/network-events-context";
 import Layout from "@/devtools/components/layout";
-import { useEvents } from "@/devtools/hooks/use-events";
+import type { FetchAuditMessage } from "@/devtools/hooks/use-network-script";
 import { XIcon } from "lucide-react";
+import { useState } from "react";
+import { NetworkDetailsPanel } from "../components/network-details-panel";
+import { NetworkEventsList } from "../components/network-events-list";
+import { NetworkNav } from "../components/network-nav";
+import { useNetworkFilter } from "../hooks/use-network-filter";
 import { useScrollToBottom } from "../hooks/use-scroll-to-bottom";
 
-const STORAGE_KEY = "nube-devtools-events-page-width";
+const STORAGE_KEY = "nube-devtools-network-events";
 
-export function Events() {
-	const {
-		selectedEvent,
-		setSelectedEvent,
-		events,
-		filteredEvents,
-		search,
-		setSearch,
-		handleClearList,
-		handleReplayEvent,
-		hasHiddenEvents,
-	} = useEvents();
+export function Network() {
+	const { events, clear } = useNetworkEventsContext();
+	const { search, setSearch, filteredEvents, hasHiddenEvents } =
+		useNetworkFilter(events);
+	const [selectedEvent, setSelectedEvent] = useState<{
+		id: string;
+		data: FetchAuditMessage;
+		shown: boolean;
+	} | null>(null);
 	const { containerRef: tableContainerRef } = useScrollToBottom<HTMLDivElement>(
 		{
 			dependencies: [events.length],
 		},
 	);
+
+	const handleClear = () => {
+		clear();
+		setSelectedEvent(null);
+	};
+
 	const handleReload = () => {
 		chrome.devtools.inspectedWindow.reload();
 	};
@@ -35,13 +44,13 @@ export function Events() {
 	return (
 		<Layout>
 			<div className="flex h-full flex-col">
-				<EventsNav
+				<NetworkNav
 					eventsCount={events.length}
 					filteredEventsCount={filteredEvents.length}
 					hasHiddenEvents={hasHiddenEvents}
 					search={search}
 					onSearchChange={setSearch}
-					onClear={handleClearList}
+					onClear={handleClear}
 				/>
 				<div className="flex-1 overflow-hidden">
 					<ResizablePanelGroup
@@ -54,12 +63,11 @@ export function Events() {
 								ref={tableContainerRef}
 								className="h-full overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 dark:[&::-webkit-scrollbar-thumb:hover]:bg-gray-600"
 							>
-								<EventsList
+								<NetworkEventsList
 									events={events}
 									filteredEvents={filteredEvents}
-									selectedEvent={selectedEvent}
-									onSelect={setSelectedEvent}
-									onReplay={handleReplayEvent}
+									selectedEventId={selectedEvent?.id ?? null}
+									onEventSelect={(event) => setSelectedEvent(event)}
 									onReload={handleReload}
 								/>
 							</div>
@@ -81,16 +89,7 @@ export function Events() {
 										</div>
 									</nav>
 									<div className="h-full">
-										<div className="flex h-full overflow-y-auto [scrollbar-width:none]">
-											{selectedEvent && (
-												<div className="text-sm w-full">
-													<JsonViewer
-														className="p-2"
-														data={selectedEvent.data}
-													/>
-												</div>
-											)}
-										</div>
+										<NetworkDetailsPanel selectedEvent={selectedEvent} />
 									</div>
 								</ResizablePanel>
 							</>
