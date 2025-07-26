@@ -1,6 +1,6 @@
 {
 	"name": "@tiendanube/nube-sdk-types",
-	"version": "0.12.0",
+	"version": "0.18.1",
 	"description": "Type definition of NubeSDK",
 	"type": "module",
 	"main": "./src/index.ts",
@@ -22,6 +22,9 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.8.3",
 		"typescript": "^5.6.2"
+	},
+	"peerDependencies": {
+		"@tiendanube/nube-sdk-ui": "*"
 	},
 	"files": ["./src", "README.md", "CHANGELOG.md"],
 	"keywords": ["tiendanube", "nuvemshop", "nube-sdk", "ecommerce", "sdk"]

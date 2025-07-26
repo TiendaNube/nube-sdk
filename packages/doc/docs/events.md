@@ -218,6 +218,28 @@ nube.on("shipping:update", ({ shipping }) => {
 });
 ```
 
+## `shipping:select`
+
+Dispatched by `app` to select a shipping method. After dispatching this event, the store will respond with either `shipping:select:success` or `shipping:select:fail`.
+
+```typescript
+function App (nube: NubeSDK) {
+  nube.send("shipping:select", () => ({
+    shipping: {
+      selected: "ne-correios-sedex",
+    }
+  }));
+  
+  nube.on("shipping:select:success", ({ shipping }) => {
+    console.log("Selected option", shipping.selected)
+  });
+  
+  nube.on("shipping:select:fail", ({ shipping }) => {
+    console.log("Selected option", shipping.selected)
+  });
+}
+```
+
 ## `customer:update`
 
 Dispatched by `store` when the customer data changes.

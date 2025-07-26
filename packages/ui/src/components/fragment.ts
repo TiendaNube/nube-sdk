@@ -2,6 +2,7 @@ import type {
 	NubeComponentFragment,
 	NubeComponentFragmentProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `fragment` component.
@@ -17,4 +18,5 @@ export const fragment = (
 ): NubeComponentFragment => ({
 	type: "fragment",
 	...props,
+	__internalId: generateInternalId("fragment", props),
 });

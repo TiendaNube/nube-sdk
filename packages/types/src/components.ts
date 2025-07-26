@@ -1,3 +1,4 @@
+import type { NubeComponentStyle } from "@tiendanube/nube-sdk-ui";
 import type { NubeSDKState } from "./main";
 import type { Prettify } from "./utility";
 
@@ -53,6 +54,7 @@ export type NubeComponentBoxProps = Prettify<
 			padding: Size;
 			gap: Size;
 			direction: "row" | "col";
+			style?: NubeComponentStyle;
 			reverse: boolean;
 			background: string;
 			color: string;
@@ -145,7 +147,13 @@ export type NubeComponentFieldProps = Prettify<
 		name: string;
 		label: string;
 		value?: string;
+		mask?: string;
 		autoFocus?: boolean;
+		style?: {
+			container?: NubeComponentStyle;
+			label?: NubeComponentStyle;
+			input?: NubeComponentStyle;
+		};
 		onChange?: NubeComponentFieldEventHandler;
 		onBlur?: NubeComponentFieldEventHandler;
 		onFocus?: NubeComponentFieldEventHandler;
@@ -159,6 +167,139 @@ export type NubeComponentField = Prettify<
 	NubeComponentBase &
 		NubeComponentFieldProps & {
 			type: "field";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Accordion Component                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for an `accordion` component.
+ */
+export type NubeComponentAccordionRootProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			defaultValue: string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents an `accordion` component, used for accordions.
+ */
+export type NubeComponentAccordionRoot = Prettify<
+	NubeComponentBase &
+		NubeComponentAccordionRootProps & { type: "accordionRoot" }
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                        Accordion Header Component                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for an `accordion` header component.
+ */
+export type NubeComponentAccordionHeaderProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			style?: NubeComponentStyle;
+			showIcon?: boolean;
+		}
+>;
+
+/**
+ * Represents an `accordion` header component, used for accordion headers.
+ */
+export type NubeComponentAccordionHeader = Prettify<
+	NubeComponentBase &
+		NubeComponentAccordionHeaderProps & { type: "accordionHeader" }
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                            Accordion Content Component                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for an `accordion` content component.
+ */
+export type NubeComponentAccordionContentProps = Prettify<
+	NubeComponentBase & ChildrenProps
+>;
+
+/**
+ * Represents an `accordion` content component, used for accordion content.
+ */
+export type NubeComponentAccordionContent = Prettify<
+	NubeComponentBase &
+		NubeComponentAccordionContentProps & { type: "accordionContent" }
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                            Accordion Item Component                        */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the event handler for Accordion Item component
+ */
+export type NubeComponentAccordionItemEventHandler = NubeComponentEventHandler<
+	"click",
+	string
+>;
+
+/**
+ * Represents the properties available for an `accordion` item component.
+ */
+export type NubeComponentAccordionItemProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			value: string;
+			onToggle?: NubeComponentAccordionItemEventHandler;
+		}
+>;
+
+/**
+ * Represents an `accordion` item component, used for accordion items.
+ */
+export type NubeComponentAccordionItem = Prettify<
+	NubeComponentBase &
+		NubeComponentAccordionItemProps & { type: "accordionItem" }
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                            Select Component                                */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentSelectEventHandler = NubeComponentEventHandler<
+	"change",
+	string
+>;
+
+/**
+ * Represents the properties available for a `select` component.
+ */
+export type NubeComponentSelectProps = Prettify<
+	NubeComponentBase & {
+		name: string;
+		label: string;
+		value?: string;
+		style?: {
+			label?: NubeComponentStyle;
+			select?: NubeComponentStyle;
+		};
+		options: { label: string; value: string }[];
+		onChange?: NubeComponentSelectEventHandler;
+	}
+>;
+
+/**
+ * Represents a `select` component, used for select inputs.
+ */
+export type NubeComponentSelect = Prettify<
+	NubeComponentBase &
+		NubeComponentSelectProps & {
+			type: "select";
 		}
 >;
 
@@ -177,11 +318,12 @@ export type NubeComponentButtonEventHandler = NubeComponentEventHandler<
 export type NubeComponentButtonProps = Prettify<
 	NubeComponentBase &
 		Partial<{
-			children: string;
+			children: NubeComponentChildren;
 			disabled: boolean;
 			variant: "primary" | "secondary" | "transparent" | "link";
 			width: Size;
 			height: Size;
+			style?: NubeComponentStyle;
 			onClick: NubeComponentButtonEventHandler;
 		}>
 >;
@@ -217,6 +359,11 @@ export type NubeComponentCheckboxProps = Prettify<
 		label: string;
 		checked: boolean;
 		onChange?: NubeComponentCheckEventHandler;
+		style?: {
+			container?: NubeComponentStyle;
+			label?: NubeComponentStyle;
+			checkbox?: NubeComponentStyle;
+		};
 	}
 >;
 
@@ -249,10 +396,16 @@ export type NubeComponentTextareaProps = Prettify<
 		maxLength?: number;
 		row?: number;
 		value?: string;
+		mask?: string;
 		autoFocus?: boolean;
 		onChange?: NubeComponentTextareaEventHandler;
 		onBlur?: NubeComponentTextareaEventHandler;
 		onFocus?: NubeComponentTextareaEventHandler;
+		style?: {
+			container?: NubeComponentStyle;
+			label?: NubeComponentStyle;
+			input?: NubeComponentStyle;
+		};
 	}
 >;
 
@@ -288,6 +441,7 @@ export type NubeComponentImageProps = Prettify<
 		sources?: ImageSource[];
 		width?: Size;
 		height?: Size;
+		style?: NubeComponentStyle;
 	}
 >;
 
@@ -327,7 +481,8 @@ export type NubeComponentTextProps = Prettify<
 		heading?: 1 | 2 | 3 | 4 | 5 | 6;
 		modifiers?: TxtModifier[];
 		inline?: boolean;
-		children?: NubeComponent | NubeComponent[] | string;
+		style?: NubeComponentStyle;
+		children?: NubeComponentChildren;
 	}
 >;
 
@@ -338,6 +493,78 @@ export type NubeComponentText = Prettify<
 	NubeComponentBase &
 		NubeComponentTextProps & {
 			type: "txt";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                          Toast Component                                   */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentToastVariant =
+	| "success"
+	| "error"
+	| "warning"
+	| "info";
+
+/**
+ * Represents the properties available for a `toast` root component.
+ */
+export type NubeComponentToastRootProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			variant?: NubeComponentToastVariant;
+			duration?: number;
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `toast` root component, used for toasts.
+ */
+export type NubeComponentToastRoot = Prettify<
+	NubeComponentBase &
+		NubeComponentToastRootProps & {
+			type: "toastRoot";
+		}
+>;
+
+/**
+ * Represents the properties available for a `toast` title component.
+ */
+export type NubeComponentToastTitleProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `toast` title component, used for toast titles.
+ */
+export type NubeComponentToastTitle = Prettify<
+	NubeComponentBase &
+		NubeComponentToastTitleProps & {
+			type: "toastTitle";
+		}
+>;
+
+/**
+ * Represents the properties available for a `toast` description component.
+ */
+export type NubeComponentToastDescriptionProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `toast` description component, used for toast descriptions.
+ */
+export type NubeComponentToastDescription = Prettify<
+	NubeComponentBase &
+		NubeComponentToastDescriptionProps & {
+			type: "toastDescription";
 		}
 >;
 
@@ -362,6 +589,186 @@ export type NubeComponentFragment = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           Icon Component                                   */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentIconName =
+	| "infinite"
+	| "peso"
+	| "pix"
+	| "accordion"
+	| "align-center"
+	| "align-left"
+	| "align-right"
+	| "apps-list"
+	| "apps"
+	| "archive"
+	| "arrow-left"
+	| "arrow-right"
+	| "arrows-horizontal"
+	| "arrows-vertical"
+	| "backspace"
+	| "bag"
+	| "barcode"
+	| "bold"
+	| "box-packed"
+	| "box-unpacked"
+	| "briefcase"
+	| "browser-search"
+	| "browser"
+	| "calculator"
+	| "calendar-days"
+	| "calendar"
+	| "camera"
+	| "cash"
+	| "cashier"
+	| "chat-dots"
+	| "check-circle"
+	| "check"
+	| "chevron-down"
+	| "chevron-left"
+	| "chevron-right"
+	| "chevron-up"
+	| "christ"
+	| "clock"
+	| "close"
+	| "code"
+	| "cog"
+	| "color-palette"
+	| "copy"
+	| "credit-card"
+	| "desktop"
+	| "discount-circle"
+	| "diskette"
+	| "download"
+	| "drag-dots"
+	| "drag"
+	| "drink"
+	| "drop"
+	| "drums"
+	| "duplicate"
+	| "ecosystem"
+	| "edit"
+	| "ellipsis"
+	| "exclamation-circle"
+	| "exclamation-triangle"
+	| "external-link"
+	| "eye-off"
+	| "eye"
+	| "file-alt"
+	| "file"
+	| "fingerprint"
+	| "fire"
+	| "flag"
+	| "font"
+	| "forbidden"
+	| "generative-stars"
+	| "gift-box"
+	| "gift-card"
+	| "glasses"
+	| "globe"
+	| "google"
+	| "guitar"
+	| "heart"
+	| "history"
+	| "home"
+	| "id-card"
+	| "info-circle"
+	| "invoice"
+	| "italic"
+	| "life-ring"
+	| "lightbulb"
+	| "link-off"
+	| "link"
+	| "list"
+	| "location"
+	| "lock-open"
+	| "lock"
+	| "log-out"
+	| "magic-wand"
+	| "mail"
+	| "marketing"
+	| "mate"
+	| "menu"
+	| "meta"
+	| "mobile"
+	| "money"
+	| "moon"
+	| "notification"
+	| "obelisk"
+	| "online-store"
+	| "ordered-list"
+	| "paper-plane"
+	| "pencil"
+	| "picture"
+	| "planet"
+	| "play"
+	| "plus-circle"
+	| "printer"
+	| "pyramid"
+	| "qr-code"
+	| "question-circle"
+	| "real"
+	| "redo"
+	| "remove-format"
+	| "repeat"
+	| "rocket"
+	| "scooter"
+	| "search"
+	| "share"
+	| "shopping-cart"
+	| "shot"
+	| "size-height"
+	| "size-width"
+	| "sliders"
+	| "star"
+	| "stats"
+	| "steps"
+	| "sticky-note"
+	| "stop"
+	| "store"
+	| "subcategory"
+	| "sun"
+	| "tag"
+	| "telephone"
+	| "text-size"
+	| "tiendanube"
+	| "tiktok"
+	| "tools"
+	| "transfer-peso"
+	| "transfer-real"
+	| "trash"
+	| "truck"
+	| "undo"
+	| "university"
+	| "upload"
+	| "user-circle"
+	| "user-group"
+	| "user"
+	| "vertical-stacks"
+	| "volume"
+	| "wallet"
+	| "whatsapp";
+
+/**
+ * Represents the properties available for an `icon` component.
+ */
+export type NubeComponentIconProps = Prettify<
+	NubeComponentBase & {
+		name: NubeComponentIconName;
+		size?: Size;
+		color?: string;
+	}
+>;
+
+/**
+ * Represents an `icon` component, used for displaying icons.
+ */
+export type NubeComponentIcon = Prettify<
+	NubeComponentBase & NubeComponentIconProps & { type: "icon" }
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                         Basic Definitions                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -382,13 +789,15 @@ export type NubeComponentProps = {
 /**
  * Defines the base structure for all UI components.
  */
-export type NubeComponentBase = NubeComponentProps;
+export type NubeComponentBase = {
+	styled?: string;
+} & NubeComponentProps;
 
 /**
  * Defines components that can have child elements.
  */
 export type ChildrenProps = {
-	children?: NubeComponent | NubeComponent[];
+	children?: NubeComponentChildren;
 };
 
 /**
@@ -405,7 +814,24 @@ export type NubeComponent =
 	| NubeComponentText
 	| NubeComponentCheckbox
 	| NubeComponentTextarea
-	| NubeComponentButton;
+	| NubeComponentButton
+	| NubeComponentSelect
+	| NubeComponentAccordionRoot
+	| NubeComponentAccordionItem
+	| NubeComponentAccordionContent
+	| NubeComponentAccordionHeader
+	| NubeComponentToastRoot
+	| NubeComponentToastTitle
+	| NubeComponentToastDescription
+	| NubeComponentIcon;
+
+/**
+ * Represents the children of a UI component.
+ */
+export type NubeComponentChildren =
+	| string
+	| NubeComponent
+	| (string | NubeComponent)[];
 
 /**
  * Represents components that can contain other components as children.
@@ -469,3 +895,9 @@ export type UI = {
 	 */
 	values: UIValues;
 };
+
+/**
+ * Type for components that have been styled with the styled function.
+ * Extends NubeComponent with the styled property containing CSS.
+ */
+export type NubeComponentWithStyle = NubeComponent & { styled: string };

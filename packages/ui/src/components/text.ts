@@ -2,6 +2,7 @@ import type {
 	NubeComponentText,
 	NubeComponentTextProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `txt` (text) component.
@@ -16,6 +17,7 @@ import type {
 export const text = (props: NubeComponentTextProps): NubeComponentText => ({
 	type: "txt",
 	...props,
+	__internalId: generateInternalId("txt", props),
 });
 
 /**
@@ -24,4 +26,5 @@ export const text = (props: NubeComponentTextProps): NubeComponentText => ({
 export const txt = (props: NubeComponentTextProps): NubeComponentText => ({
 	type: "txt",
 	...props,
+	__internalId: generateInternalId("txt", props),
 });
