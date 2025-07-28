@@ -93,6 +93,12 @@ export function AppSidebar() {
 				count: networkCount,
 			},
 			{ title: "Storage", page: PAGES.STORAGES, icon: Box, count: 0 },
+			{
+				title: "SVG Converter",
+				page: PAGES.SVG_CONVERT,
+				icon: NetworkIcon,
+				count: 0,
+			},
 		],
 		[consoleCount, networkCount],
 	);

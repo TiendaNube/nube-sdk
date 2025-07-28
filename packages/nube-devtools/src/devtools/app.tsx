@@ -7,6 +7,7 @@ import { Console } from "@/devtools/pages/console";
 import { Events } from "@/devtools/pages/events";
 import { Network } from "@/devtools/pages/network";
 import { Storages } from "@/devtools/pages/storages";
+import { SvgConverter } from "@/devtools/pages/svg-converter";
 import { Unavailable } from "@/devtools/pages/unavailable";
 import { Providers } from "@/devtools/providers";
 import { useNubeStatus } from "@/hooks/use-nube-status";
@@ -18,6 +19,7 @@ const PAGE_COMPONENTS = {
 	[PAGES.STORAGES]: Storages,
 	[PAGES.CONSOLE]: Console,
 	[PAGES.NETWORK]: Network,
+	[PAGES.SVG_CONVERT]: SvgConverter,
 } as const;
 
 const MainContent = () => {
