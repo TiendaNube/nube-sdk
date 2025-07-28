@@ -1,33 +1,41 @@
 import { Button } from "@/components/ui/button";
-import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
-import { ResizablePanelGroup } from "@/components/ui/resizable";
-import { EventsList } from "@/devtools/components/events-list";
-import { EventsNav } from "@/devtools/components/events-nav";
-import { JsonViewer } from "@/devtools/components/json-viewer";
+import {
+	ResizableHandle,
+	ResizablePanel,
+	ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { useConsoleEventsContext } from "@/contexts/console-events-context";
 import Layout from "@/devtools/components/layout";
-import { useEvents } from "@/devtools/hooks/use-events";
+import type { ConsoleMessage } from "@/devtools/hooks/use-console-script";
 import { XIcon } from "lucide-react";
+import { useState } from "react";
+import { ConsoleDetailsPanel } from "../components/console-details-panel";
+import { ConsoleEventsList } from "../components/console-events-list";
+import { ConsoleNav } from "../components/console-nav";
+import { useConsoleFilter } from "../hooks/use-console-filter";
 import { useScrollToBottom } from "../hooks/use-scroll-to-bottom";
 
-const STORAGE_KEY = "nube-devtools-events-page-width";
+const STORAGE_KEY = "nube-devtools-console-events";
 
-export function Events() {
-	const {
-		selectedEvent,
-		setSelectedEvent,
-		events,
-		filteredEvents,
-		search,
-		setSearch,
-		handleClearList,
-		handleReplayEvent,
-		hasHiddenEvents,
-	} = useEvents();
+export function Console() {
+	const { events, clear } = useConsoleEventsContext();
+	const { search, setSearch, filteredEvents, hasHiddenEvents } =
+		useConsoleFilter(events);
+	const [selectedEvent, setSelectedEvent] = useState<{
+		id: string;
+		data: ConsoleMessage;
+	} | null>(null);
 	const { containerRef: tableContainerRef } = useScrollToBottom<HTMLDivElement>(
 		{
 			dependencies: [events.length],
 		},
 	);
+
+	const handleClear = () => {
+		clear();
+		setSelectedEvent(null);
+	};
+
 	const handleReload = () => {
 		chrome.devtools.inspectedWindow.reload();
 	};
@@ -35,13 +43,13 @@ export function Events() {
 	return (
 		<Layout>
 			<div className="flex h-full flex-col">
-				<EventsNav
+				<ConsoleNav
 					eventsCount={events.length}
 					filteredEventsCount={filteredEvents.length}
 					hasHiddenEvents={hasHiddenEvents}
 					search={search}
 					onSearchChange={setSearch}
-					onClear={handleClearList}
+					onClear={handleClear}
 				/>
 				<div className="flex-1 overflow-hidden">
 					<ResizablePanelGroup
@@ -54,12 +62,11 @@ export function Events() {
 								ref={tableContainerRef}
 								className="h-full overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 dark:[&::-webkit-scrollbar-thumb:hover]:bg-gray-600"
 							>
-								<EventsList
+								<ConsoleEventsList
 									events={events}
 									filteredEvents={filteredEvents}
-									selectedEvent={selectedEvent}
-									onSelect={setSelectedEvent}
-									onReplay={handleReplayEvent}
+									selectedEventId={selectedEvent?.id ?? null}
+									onEventSelect={setSelectedEvent}
 									onReload={handleReload}
 								/>
 							</div>
@@ -81,16 +88,7 @@ export function Events() {
 										</div>
 									</nav>
 									<div className="h-full">
-										<div className="flex h-full overflow-y-auto [scrollbar-width:none]">
-											{selectedEvent && (
-												<div className="text-sm w-full">
-													<JsonViewer
-														className="p-2"
-														data={selectedEvent.data}
-													/>
-												</div>
-											)}
-										</div>
+										<ConsoleDetailsPanel selectedEvent={selectedEvent} />
 									</div>
 								</ResizablePanel>
 							</>
