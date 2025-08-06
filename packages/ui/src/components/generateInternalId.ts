@@ -6,7 +6,8 @@ const memo = new WeakMap<object, string>();
  * Serialize the props in a stable way, ignoring functions.
  */
 function stableStringify(value: unknown): string {
-	return JSON.stringify(value, (_key, val) => {
+	return JSON.stringify(value, (key, val) => {
+		if (key === "children" && typeof val !== "string") return "[children]";
 		if (typeof val === "function") return "[fn]";
 		return val;
 	});

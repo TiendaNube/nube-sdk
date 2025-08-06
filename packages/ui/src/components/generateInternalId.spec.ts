@@ -67,4 +67,28 @@ describe("generateInternalId", () => {
 
 		expect(id1).toBe(id2);
 	});
+
+	it("should handle non-string children props (arrays, objects, etc.)", () => {
+		const propsWithArrayChildren = {
+			children: ["item1", "item2"],
+			width: "100%",
+		};
+		const propsWithObjectChildren = {
+			children: { type: "element", value: "test" },
+			width: "100%",
+		};
+		const propsWithNumberChildren = {
+			children: 42,
+			width: "100%",
+		};
+
+		const id1 = generateInternalId("box", propsWithArrayChildren);
+		const id2 = generateInternalId("box", propsWithObjectChildren);
+		const id3 = generateInternalId("box", propsWithNumberChildren);
+
+		// All should generate the same ID because non-string children are normalized to "[children]"
+		expect(id1).toBe(id2);
+		expect(id2).toBe(id3);
+		expect(id1).toContain("box-test-app-id-");
+	});
 });
