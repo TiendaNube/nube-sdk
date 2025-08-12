@@ -2,6 +2,7 @@ import type {
 	NubeComponent,
 	NubeComponentProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "../components/generateInternalId";
 import { isKeyframesObject } from "./keyframes";
 import { minify } from "./minify";
 
@@ -22,9 +23,6 @@ export function styled<Props extends NubeComponentProps>(
 ) {
 	return (strings: TemplateStringsArray, ...exprs: unknown[]) => {
 		const StyledComponent: NubeComponentFunction<Props> = (props) => {
-			const component = baseComponent(props);
-			if (typeof component === "string") return component;
-
 			let rawCSS = "";
 			const animation: string[] = [];
 
@@ -43,6 +41,19 @@ export function styled<Props extends NubeComponentProps>(
 
 			const minifiedCSS = minify(`${animation.join("")}${rawCSS}`);
 
+			const componentType = baseComponent.name || "component";
+
+			const internalId = generateInternalId(componentType, {
+				...props,
+				__styledCSS: minifiedCSS,
+			});
+
+			// Create the base component with pre-generated ID
+			const component = baseComponent({ ...props, __internalId: internalId });
+
+			if (typeof component === "string") return component;
+
+			// Apply the styled CSS
 			component.styled = `${component.styled || ""}${minifiedCSS}`;
 
 			return component;
