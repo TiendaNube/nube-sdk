@@ -91,4 +91,70 @@ describe("generateInternalId", () => {
 		expect(id2).toBe(id3);
 		expect(id1).toContain("box-test-app-id-");
 	});
+
+	describe("should reuse valid internal IDs", () => {
+		it("should return the same ID when a valid __internalId is provided", () => {
+			const validId = "box-test-app-id-abc123";
+			const props = {
+				__internalId: validId,
+				children: "test",
+				width: "100%",
+			};
+
+			const result = generateInternalId("box", props);
+			expect(result).toBe(validId);
+		});
+
+		it("should ignore invalid __internalId and generate a new one", () => {
+			const invalidId = "invalid-id-format";
+			const props = {
+				__internalId: invalidId,
+				children: "test",
+				width: "100%",
+			};
+
+			const result = generateInternalId("box", props);
+			expect(result).not.toBe(invalidId);
+			expect(result).toContain("box-test-app-id-");
+			expect(result).toMatch(/^box-test-app-id-[a-z0-9]+$/);
+		});
+
+		it("should ignore empty string __internalId and generate a new one", () => {
+			const props = {
+				__internalId: "",
+				children: "test",
+				width: "100%",
+			};
+
+			const result = generateInternalId("box", props);
+			expect(result).toContain("box-test-app-id-");
+			expect(result).toMatch(/^box-test-app-id-[a-z0-9]+$/);
+		});
+
+		it("should ignore non-string __internalId and generate a new one", () => {
+			const props = {
+				__internalId: 123,
+				children: "test",
+				width: "100%",
+			};
+
+			const result = generateInternalId("box", props);
+			expect(result).toContain("box-test-app-id-");
+			expect(result).toMatch(/^box-test-app-id-[a-z0-9]+$/);
+		});
+
+		it("should ignore __internalId with wrong app ID and generate a new one", () => {
+			const wrongAppId = "box-wrong-app-id-abc123";
+			const props = {
+				__internalId: wrongAppId,
+				children: "test",
+				width: "100%",
+			};
+
+			const result = generateInternalId("box", props);
+			expect(result).not.toBe(wrongAppId);
+			expect(result).toContain("box-test-app-id-");
+			expect(result).toMatch(/^box-test-app-id-[a-z0-9]+$/);
+		});
+	});
 });

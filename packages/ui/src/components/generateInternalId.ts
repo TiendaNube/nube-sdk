@@ -29,10 +29,30 @@ function createId(type: string, hash: string) {
 }
 
 /**
+ * Regular expression to validate the internal ID format: {type}-{appId}-{hash}
+ * - type: component type (letters, numbers, underscore, hyphen)
+ * - appId: application ID (alphanumeric)
+ * - hash: base36 hash (letters and numbers)
+ */
+function createInternalIdRegex(appId: string): RegExp {
+	// Escape special regex characters in appId
+	const escapedAppId = appId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	return new RegExp(`^[a-zA-Z0-9_-]+-${escapedAppId}-[a-z0-9]+$`);
+}
+
+function isValidInternalId(id: unknown): id is string {
+	if (typeof id !== "string" || id === "") return false;
+
+	const regex = createInternalIdRegex(self.__APP_DATA__.id);
+	return regex.test(id);
+}
+
+/**
  * Generate a stable ID for a component based on the type and props.
  */
 export function generateInternalId(type: string, props: Props): string {
-	// Use cache based on the props reference
+	if (isValidInternalId(props.__internalId)) return props.__internalId;
+
 	const cached = memo.get(props);
 	if (cached) return createId(type, cached);
 
