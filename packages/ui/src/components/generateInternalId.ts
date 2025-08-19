@@ -8,7 +8,15 @@ const memo = new WeakMap<object, string>();
 function stableStringify(value: unknown): string {
 	return JSON.stringify(value, (key, val) => {
 		if (key === "children" && typeof val !== "string") return "[children]";
-		if (typeof val === "function") return "[fn]";
+		if (typeof val === "function") {
+			if (memo.has(val)) return memo.get(val);
+
+			const fnid = `[fn:${crypto.randomUUID()}]`;
+
+			memo.set(val, fnid);
+
+			return fnid;
+		}
 		return val;
 	});
 }

@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { generateInternalId } from "./generateInternalId";
 
 describe("generateInternalId", () => {
@@ -42,7 +42,7 @@ describe("generateInternalId", () => {
 		expect(id).toMatch(/^box-test-app-id-[a-z0-9]+$/);
 	});
 
-	it("should handle props with functions (should be ignored)", () => {
+	it("should handle props with functions generating different ids", () => {
 		const props1 = {
 			children: "test",
 			onClick: () => console.log("click"),
@@ -55,8 +55,7 @@ describe("generateInternalId", () => {
 		const id1 = generateInternalId("button", props1);
 		const id2 = generateInternalId("button", props2);
 
-		// IDs should be the same because functions are ignored
-		expect(id1).toBe(id2);
+		expect(id1).not.toEqual(id2);
 	});
 
 	it("should use memoization for the same props object", () => {
