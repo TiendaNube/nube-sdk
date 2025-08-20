@@ -36,7 +36,7 @@ export type Product = {
 	sku: Nullable<string>;
 
 	/** Additional properties related to the product (structure unknown). */
-	properties: Array<unknown>;
+	properties: Array<unknown> | Record<string, unknown>;
 
 	/** URL of the product's page. */
 	url: string;
