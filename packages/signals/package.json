@@ -1,0 +1,23 @@
+{
+	"name": "@tiendanube/nube-sdk-signals",
+	"version": "0.1.0",
+	"type": "module",
+	"main": "./dist/signal.js",
+	"types": "./dist/signal.d.ts",
+	"scripts": {
+		"build": "tsup",
+		"test": "vitest run",
+		"test:watch": "vitest watch",
+		"test:coverage": "vitest run --coverage",
+		"format": "biome check --write ./src",
+		"lint": "biome check ./src"
+	},
+	"author": "Tiendanube / Nuvemshop",
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@vitest/coverage-v8": "^3.1.1",
+		"tsup": "^8.3.0",
+		"typescript": "^5.6.2",
+		"vitest": "^3.1.1"
+	}
+}
