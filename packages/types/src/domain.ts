@@ -287,7 +287,7 @@ export type Store = {
 /**
  * Represents a product category.
  */
-export type Category = { id: string; name: string };
+export type Category = { id: number; name: string };
 
 /**
  * Represents the different steps in the checkout process.
