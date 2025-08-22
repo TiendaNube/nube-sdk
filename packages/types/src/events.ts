@@ -52,6 +52,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @constant
  *
  * @property {"*"} ALL - Wildcard listener for all events.
+ * @property {"page:loaded"} PAGE_LOADED - Fired when the page is loaded and the SDK is ready to be used.
  * @property {"cart:update"} CART_UPDATE - Fired when the cart state is updated.
  * @property {"cart:add:success"} CART_ADD_SUCCESS - Fired when a cart item is added successfully.
  * @property {"cart:add:fail"} CART_ADD_FAIL - Fired when a cart item is added unsuccessfully.
@@ -72,6 +73,7 @@ export type NubeSDKSendableEvent = Prettify<
  */
 export const EVENT = {
 	ALL: "*",
+	PAGE_LOADED: "page:loaded",
 	CART_UPDATE: "cart:update",
 	CART_ADD_SUCCESS: "cart:add:success",
 	CART_REMOVE_SUCCESS: "cart:remove:success",

@@ -1,10 +1,10 @@
 import type { DeepPartial, Nullable, Prettify } from "./utility";
 
 /**
- * Represents a product in the cart.
+ * Represents a Cart Item.
  * This type maintains compatibility with the API response format.
  */
-export type Product = {
+export type CartItem = {
 	/** Unique identifier for the product instance in the cart. */
 	id: number;
 
@@ -43,6 +43,144 @@ export type Product = {
 
 	/** Indicates whether the product is eligible for Ahora 12 financing. */
 	is_ahora_12_eligible: boolean;
+};
+
+/**
+ * Alias for CartItem.
+ * @deprecated Use CartItem instead.
+ * This type maintains compatibility with the API response format.
+ */
+export type Product = CartItem;
+
+/**
+ * Represents the supported language keys for localization.
+ */
+export type LanguageKey = "es" | "pt" | "en";
+
+/**
+ * Represents a string that can be localized in multiple languages.
+ * Each key corresponds to a language code and the value is the translated string.
+ */
+export type LocalizedString = {
+	[k in LanguageKey]?: string;
+};
+
+/**
+ * Represents a product image with its metadata.
+ */
+export type ProductImage = {
+	/** Unique identifier for the image. */
+	id: number;
+	/** Alternative text for the image for accessibility. */
+	alt: string;
+	/** Height of the image in pixels. */
+	height: number;
+	/** Source URL of the image. */
+	src: string;
+	/** Width of the image in pixels. */
+	width: number;
+};
+
+/**
+ * Represents a product variant with all its properties and inventory information.
+ */
+export type ProductVariant = {
+	/** Unique identifier for the variant. */
+	id: number;
+	/** Target age group for the product variant. */
+	age_group: "adult" | "infant" | "kids" | "newborn" | "toddler" | null;
+	/** Barcode identifier for the variant. */
+	barcode: null | string;
+	/** Original price before any discounts. */
+	compare_at_price: null | string;
+	/** Cost of the product for the merchant. */
+	cost: null | number;
+	/** Custom data associated with the variant. */
+	customData?: {
+		/** Color information for the variant. */
+		color?: string;
+	};
+	/** Depth measurement of the product. */
+	depth: string;
+	/** Target gender for the product variant. */
+	gender: "female" | "male" | "unisex" | null;
+	/** Height measurement of the product. */
+	height: string;
+	/** ID of the associated image for this variant. */
+	image_id: null | number;
+	/** Inventory levels across different locations. */
+	inventory_levels: {
+		/** Unique identifier for the inventory level. */
+		id: number;
+		/** Location identifier where the stock is held. */
+		location_id: string;
+		/** Available stock quantity at this location. */
+		stock: null | number;
+		/** ID of the variant this inventory refers to. */
+		variant_id: number;
+	}[];
+	/** Manufacturer Part Number. */
+	mpn: null | number;
+	/** Position of this variant in the product's variant list. */
+	position: number;
+	/** Selling price of the variant. */
+	price: null | string;
+	/** ID of the parent product. */
+	product_id: number;
+	/** Promotional or discounted price. */
+	promotional_price: null | string;
+	/** Stock Keeping Unit identifier. */
+	sku: null | string;
+	/** Total available stock for this variant. */
+	stock: null | number;
+	/** Whether stock management is enabled for this variant. */
+	stock_management: boolean;
+	/** Localized attribute values for the variant. */
+	values: LocalizedString[];
+	/** Weight measurement of the product. */
+	weight: string;
+	/** Width measurement of the product. */
+	width: string;
+};
+
+/**
+ * Represents a detailed product with all its properties and metadata.
+ */
+export type ProductDetails = {
+	/** Localized product attributes (size, color, etc.). */
+	attributes: LocalizedString[];
+	/** Brand name of the product. */
+	brand: null | string;
+	/** Canonical URL for SEO purposes. */
+	canonical_url: string;
+	/** Unique identifier for the product. */
+	id: number;
+	/** Array of category IDs this product belongs to. */
+	categories?: Category["id"][];
+	/** Localized product description. */
+	description: LocalizedString;
+	/** Whether the product qualifies for free shipping. */
+	free_shipping?: boolean;
+	/** Localized URL-friendly product identifier. */
+	handle: LocalizedString;
+	/** Array of product images. */
+	images: ProductImage[];
+	/** Localized product name. */
+	name: LocalizedString;
+	/** Whether the product is published and visible. */
+	published: boolean;
+	/** Whether the product requires shipping. */
+	requires_shipping: boolean;
+	/** Localized SEO meta description. */
+	seo_description: LocalizedString;
+	/** Localized SEO title. */
+	seo_title: LocalizedString;
+	/** Comma-separated product tags. */
+	tags: string;
+	/** Array of available product variants. */
+	variants: ProductVariant[];
+	/** URL of the product's promotional video. */
+	video_url: null | string;
 };
 
 /**
@@ -116,8 +254,8 @@ export type Cart = {
 	/** Validation status of the cart. */
 	validation: CartValidation;
 
-	/** List of products currently in the cart. */
-	items: Product[];
+	/** List of items currently in the cart. */
+	items: CartItem[];
 
 	/** Breakdown of the cart's pricing details. */
 	prices: Prices;
@@ -159,7 +297,7 @@ export type Checkout = { step: "start" | "payment" | "success" };
 /**
  * Represents a product page.
  */
-export type ProductPage = { type: "product"; data: Product };
+export type ProductPage = { type: "product"; data: ProductDetails };
 
 /**
  * Represents a category page.
