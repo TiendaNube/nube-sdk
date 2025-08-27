@@ -1,5 +1,6 @@
 import type { NubeComponentStyle } from "@tiendanube/nube-sdk-ui";
 import type { NubeSDKState } from "./main";
+import type { UISlot } from "./slots";
 import type { Prettify } from "./utility";
 
 /* -------------------------------------------------------------------------- */
@@ -840,49 +841,6 @@ export type NubeComponentWithChildren =
 	| NubeComponentBox
 	| NubeComponentColumn
 	| NubeComponentRow;
-
-export type CommonUISlot =
-	| "before_main_content" // Before the main checkout content.
-	| "after_main_content" // After the main checkout content.
-	| "modal_content" // Content of a modal dialog in checkout.
-	| "corner_top_left" // Top left corner of the checkout page.
-	| "corner_top_right" // Top right corner of the checkout page.
-	| "corner_bottom_left" // Bottom left corner of the checkout page.
-	| "corner_bottom_right"; // Bottom right corner of the checkout page.
-
-export type CheckoutUISlot =
-	| CommonUISlot
-	| "before_line_items" // Before the list of items in the cart.
-	| "after_line_items" // After the list of items in the cart.
-	| "after_contact_form" // After the contact form in checkout.
-	| "after_address_form" // After the address form in checkout.
-	| "after_billing_form" // After the billing form in checkout.
-	| "after_payment_options" // After the payment options in checkout.
-	| "before_payment_options" // Before the payment options in checkout.
-	| "before_address_form" // Before the address form in checkout.
-	| "before_billing_form" // Before the billing form in checkout.
-	| "before_contact_form" // Before the contact form in checkout.
-	| "after_line_items_price" // After the price of the line items in checkout.
-	| "before_shipping_form" // Before the shipping form in checkout.
-	| "after_shipping_form"; // After the shipping form in checkout.
-
-export type StorefrontUISlot =
-	| CommonUISlot
-	| "before_quick_buy_add_to_cart"
-	| "before_product_detail_add_to_cart"
-	| "after_product_detail_add_to_cart"
-	| "product_detail_image_top_left"
-	| "product_detail_image_top_right"
-	| "after_product_grid_item_name"
-	| "product_grid_item_image_top_right"
-	| "product_grid_item_image_top_left"
-	| "product_grid_item_image_bottom_right"
-	| "product_grid_item_image_bottom_left";
-
-/**
- * Represents a UI slot where components can be dynamically injected.
- */
-export type UISlot = Prettify<CheckoutUISlot | StorefrontUISlot>;
 
 /**
  * Represents the value of a UI component, typically used for form inputs.

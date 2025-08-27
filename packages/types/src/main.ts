@@ -1,5 +1,5 @@
 import type { NubeBrowserAPIs } from "./browser";
-import type { NubeComponent, UI, UISlot } from "./components";
+import type { NubeComponent, UI } from "./components";
 import type {
 	AppConfig,
 	AppLocation,
@@ -10,6 +10,7 @@ import type {
 	Store,
 } from "./domain";
 import type { NubeSDKListenableEvent, NubeSDKSendableEvent } from "./events";
+import type { UISlot } from "./slots";
 import type { DeepPartial, Nullable } from "./utility";
 
 /**
