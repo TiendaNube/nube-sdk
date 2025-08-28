@@ -69,6 +69,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"coupon:add:fail"} COUPON_ADD_FAIL - Fired when a coupon is added unsuccessfully.
  * @property {"coupon:remove:success"} COUPON_REMOVE_SUCCESS - Fired when a coupon is removed successfully.
  * @property {"coupon:remove:fail"} COUPON_REMOVE_FAIL - Fired when a coupon is removed unsuccessfully.
+ * @property {"location:updated"} LOCATION_UPDATED - Fired when the location is updated.
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
 export const EVENT = {
@@ -90,6 +91,7 @@ export const EVENT = {
 	COUPON_REMOVE_SUCCESS: "coupon:remove:success",
 	COUPON_ADD_FAIL: "coupon:add:fail",
 	COUPON_REMOVE_FAIL: "coupon:remove:fail",
+	LOCATION_UPDATED: "location:updated",
 	...SENDABLE_EVENT,
 } as const;
 
