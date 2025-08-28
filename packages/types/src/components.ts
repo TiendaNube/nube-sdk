@@ -340,6 +340,40 @@ export type NubeComponentButton = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           Link Component                                  */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentLinkEventHandler = NubeComponentEventHandler<
+	"click",
+	string
+>;
+
+/**
+ * Represents the properties available for a `link` component.
+ */
+export type NubeComponentLinkProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			children: NubeComponentChildren;
+			href: string;
+			target?: "_blank" | "_self" | "_parent" | "_top";
+			variant?: "primary" | "secondary" | "transparent" | "link";
+			style?: NubeComponentStyle;
+			onClick?: NubeComponentLinkEventHandler;
+		}>
+>;
+
+/**
+ * Represents a `link` component, used for navigation links.
+ */
+export type NubeComponentLink = Prettify<
+	NubeComponentBase &
+		NubeComponentLinkProps & {
+			type: "link";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                            Check Component                                 */
 /* -------------------------------------------------------------------------- */
 
@@ -816,6 +850,7 @@ export type NubeComponent =
 	| NubeComponentCheckbox
 	| NubeComponentTextarea
 	| NubeComponentButton
+	| NubeComponentLink
 	| NubeComponentSelect
 	| NubeComponentAccordionRoot
 	| NubeComponentAccordionItem
@@ -840,7 +875,8 @@ export type NubeComponentChildren =
 export type NubeComponentWithChildren =
 	| NubeComponentBox
 	| NubeComponentColumn
-	| NubeComponentRow;
+	| NubeComponentRow
+	| NubeComponentLink;
 
 /**
  * Represents the value of a UI component, typically used for form inputs.
