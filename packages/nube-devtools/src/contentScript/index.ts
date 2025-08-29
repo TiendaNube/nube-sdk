@@ -1,4 +1,5 @@
 import type { NubeSDKStorageEvent } from "@/contexts/nube-sdk-storage-context";
+import "./request-interceptor";
 
 window.addEventListener("load", () => {
 	chrome.runtime.sendMessage({
