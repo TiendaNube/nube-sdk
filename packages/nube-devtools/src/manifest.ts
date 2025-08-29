@@ -24,6 +24,7 @@ export default defineManifest({
 			matches: ["http://*/*", "https://*/*"],
 			js: ["src/contentScript/index.ts"],
 			run_at: "document_start",
+			all_frames: true,
 		},
 	],
 	web_accessible_resources: [
@@ -37,6 +38,6 @@ export default defineManifest({
 			matches: [],
 		},
 	],
-	permissions: ["scripting", "activeTab"],
+	permissions: ["scripting", "activeTab", "declarativeNetRequest"],
 	host_permissions: ["http://*/*", "https://*/*"],
 });
