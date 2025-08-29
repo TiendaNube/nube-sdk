@@ -24,15 +24,15 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  * @property {"shipping:select"} SHIPPING_SELECT - Used to select shipping option.
  */
 export const SENDABLE_EVENT = {
-  CART_VALIDATE: "cart:validate",
-  CART_ADD: "cart:add",
-  CART_REMOVE: "cart:remove",
-  CONFIG_SET: "config:set",
-  UI_SLOT_SET: "ui:slot:set",
-  SHIPPING_UPDATE_LABEL: "shipping:update:label",
-  COUPON_ADD: "coupon:add",
-  COUPON_REMOVE: "coupon:remove",
-  SHIPPING_SELECT: "shipping:select",
+	CART_VALIDATE: "cart:validate",
+	CART_ADD: "cart:add",
+	CART_REMOVE: "cart:remove",
+	CONFIG_SET: "config:set",
+	UI_SLOT_SET: "ui:slot:set",
+	SHIPPING_UPDATE_LABEL: "shipping:update:label",
+	COUPON_ADD: "coupon:add",
+	COUPON_REMOVE: "coupon:remove",
+	SHIPPING_SELECT: "shipping:select",
 } as const;
 
 /**
@@ -40,7 +40,7 @@ export const SENDABLE_EVENT = {
  * These events trigger specific actions within the SDK.
  */
 export type NubeSDKSendableEvent = Prettify<
-  ObjectValues<typeof SENDABLE_EVENT> | NubeSDKCustomEvent
+	ObjectValues<typeof SENDABLE_EVENT> | NubeSDKCustomEvent
 >;
 
 /**
@@ -73,34 +73,34 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
 export const EVENT = {
-  ALL: "*",
-  PAGE_LOADED: "page:loaded",
-  CART_UPDATE: "cart:update",
-  CART_ADD_SUCCESS: "cart:add:success",
-  CART_REMOVE_SUCCESS: "cart:remove:success",
-  CART_ADD_FAIL: "cart:add:fail",
-  CART_REMOVE_FAIL: "cart:remove:fail",
-  CHECKOUT_READY: "checkout:ready",
-  CHECKOUT_SUCCESS: "checkout:success",
-  SHIPPING_UPDATE: "shipping:update",
-  SHIPPING_SELECT_SUCCESS: "shipping:select:success",
-  SHIPPING_SELECT_FAIL: "shipping:select:fail",
-  CUSTOMER_UPDATE: "customer:update",
-  PAYMENT_UPDATE: "payment:update",
-  COUPON_ADD_SUCCESS: "coupon:add:success",
-  COUPON_REMOVE_SUCCESS: "coupon:remove:success",
-  COUPON_ADD_FAIL: "coupon:add:fail",
-  COUPON_REMOVE_FAIL: "coupon:remove:fail",
-  LOCATION_UPDATED: "location:updated",
-  ...SENDABLE_EVENT,
+	ALL: "*",
+	PAGE_LOADED: "page:loaded",
+	CART_UPDATE: "cart:update",
+	CART_ADD_SUCCESS: "cart:add:success",
+	CART_REMOVE_SUCCESS: "cart:remove:success",
+	CART_ADD_FAIL: "cart:add:fail",
+	CART_REMOVE_FAIL: "cart:remove:fail",
+	CHECKOUT_READY: "checkout:ready",
+	CHECKOUT_SUCCESS: "checkout:success",
+	SHIPPING_UPDATE: "shipping:update",
+	SHIPPING_SELECT_SUCCESS: "shipping:select:success",
+	SHIPPING_SELECT_FAIL: "shipping:select:fail",
+	CUSTOMER_UPDATE: "customer:update",
+	PAYMENT_UPDATE: "payment:update",
+	COUPON_ADD_SUCCESS: "coupon:add:success",
+	COUPON_REMOVE_SUCCESS: "coupon:remove:success",
+	COUPON_ADD_FAIL: "coupon:add:fail",
+	COUPON_REMOVE_FAIL: "coupon:remove:fail",
+	LOCATION_UPDATED: "location:updated",
+	...SENDABLE_EVENT,
 } as const;
 
 /**
  * Represents the possible events that can be listened to within NubeSDK that end with :success.
  */
 export type SuccessEvents = Extract<
-  NubeSDKListenableEvent,
-  `${string}:success`
+	NubeSDKListenableEvent,
+	`${string}:success`
 >;
 
 /**
@@ -108,5 +108,5 @@ export type SuccessEvents = Extract<
  * These events notify the application about changes in state or actions.
  */
 export type NubeSDKListenableEvent = Prettify<
-  ObjectValues<typeof EVENT> | NubeSDKCustomEvent
+	ObjectValues<typeof EVENT> | NubeSDKCustomEvent
 >;
