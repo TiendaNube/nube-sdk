@@ -73,7 +73,7 @@ export type NubeSDKState = {
  */
 export type NubeSDKListener = (
   state: Readonly<NubeSDKState>,
-  event: NubeSDKSendableEvent
+  event: NubeSDKListenableEvent
 ) => void;
 
 /**
@@ -85,7 +85,7 @@ export type NubeSDKListener = (
  */
 export type NubeSDKListenerWithStateAndPayload = (
   state: Readonly<NubeSDKState> & { payload?: Record<string, unknown> },
-  event: NubeSDKSendableEvent
+  event: SuccessEvents
 ) => void;
 
 /**
@@ -94,10 +94,8 @@ export type NubeSDKListenerWithStateAndPayload = (
  * @type {EventListenerMap}
  */
 type EventListenerMap = {
-  // Eventos :success recebem o listener com payload
   [K in SuccessEvents]: NubeSDKListenerWithStateAndPayload;
 } & {
-  // Todos os outros eventos recebem o listener padrão
   [K in Exclude<NubeSDKListenableEvent, SuccessEvents>]: NubeSDKListener;
 };
 
