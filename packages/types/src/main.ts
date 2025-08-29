@@ -49,7 +49,7 @@ export type NubeSDKState = {
   ui: UI;
 
   /**
-   * Informaion about shipping, such as avaliable options, selected option and custom labels.
+   * Information about shipping, such as available options, the selected option, and custom labels.
    * This property may be null depending on the page it is accessed from.
    */
   shipping: Nullable<Shipping>;
