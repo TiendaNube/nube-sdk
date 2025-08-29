@@ -113,12 +113,12 @@ export type NubeSDKStateModifier = (
 /**
  * Represents a function that modifies the SDK state with a payload.
  *
- * @param state - The current immutable state of the SDK.
+ * @param state - The current immutable state of the SDK. The event payload is available on state.payload.
  * @returns A partial update of the SDK state.
  */
 type NubeSDKStateModifierWithPayload = (
   state: Readonly<NubeSDKState> & { payload?: Record<string, unknown> }
-) => DeepPartial<NubeSDKState & { payload?: Record<string, unknown> }>;
+) => DeepPartial<NubeSDKState>;
 
 /**
  * Maps the events to the appropriate state modifier type.
@@ -156,7 +156,10 @@ export type NubeSDK = {
    * @param event - The event type to stop listening for.
    * @param listener - The function that was previously registered.
    */
-  off(event: NubeSDKListenableEvent, listener: NubeSDKListener): void;
+  off<T extends NubeSDKListenableEvent>(
+    event: T,
+    listener: EventListenerMap[T]
+  ): void;
 
   /**
    * Sends an event to the SDK, optionally modifying the state.
