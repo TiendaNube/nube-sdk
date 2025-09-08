@@ -23,6 +23,8 @@ import type {
 	NubeComponentIconProps,
 	NubeComponentImage,
 	NubeComponentImageProps,
+	NubeComponentNumberField,
+	NubeComponentNumberFieldProps,
 	NubeComponentRow,
 	NubeComponentRowProps,
 	NubeComponentSelect,
@@ -51,6 +53,7 @@ import {
 	fragment,
 	icon,
 	image,
+	numberfield,
 	row,
 	select,
 	text,
@@ -117,6 +120,21 @@ export function Row(props: NubeComponentRowProps): NubeComponentRow {
  */
 export function Field(props: NubeComponentFieldProps): NubeComponentField {
 	return field(props);
+}
+
+/**
+ * Creates a `NumberField` component.
+ *
+ * The `NumberField` component represents a numeric input element with increment/decrement buttons.
+ * It supports properties like `name`, `label`, `min`, `max`, `step`, and event handlers.
+ *
+ * @param props - The properties for configuring the numberfield component.
+ * @returns A `NubeComponentNumberField` object representing the numeric form field.
+ */
+export function NumberField(
+	props: NubeComponentNumberFieldProps,
+): NubeComponentNumberField {
+	return numberfield(props);
 }
 
 /**
