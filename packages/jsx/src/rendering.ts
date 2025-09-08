@@ -5,7 +5,7 @@ import type { FunctionComponent } from "./types";
 export function renderJSX(
 	tag: FunctionComponent | undefined,
 	props: Record<string, unknown>,
-	_key?: string,
+	key?: string | number,
 ): JSX.Element {
 	// Fragment
 	if (tag === undefined) {

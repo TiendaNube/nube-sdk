@@ -783,6 +783,7 @@ export type NubeComponentId = string;
  */
 export type NubeComponentProps = {
 	id?: NubeComponentId;
+	key?: string | number;
 	// DON'T USE THIS, USED INTERNALLY BY THE SDK, ANY VALUE PASSED HERE WILL BE OVERWRITTEN
 	__internalId?: NubeComponentId;
 };
