@@ -850,7 +850,12 @@ export type UIValue = string;
 /**
  * Represents a mapping of UI slots to their respective components.
  */
-export type UISlots = Partial<Record<UISlot, NubeComponent>>;
+export type UISlots = Partial<
+	Record<
+		UISlot,
+		NubeComponent | NubeComponent[] | Record<string, NubeComponent>
+	>
+>;
 
 /**
  * Represents a mapping of UI component IDs to their respective values.

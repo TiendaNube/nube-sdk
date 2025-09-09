@@ -203,7 +203,8 @@ export type NubeSDK = {
 		slot: UISlot,
 		component:
 			| NubeComponent
-			| ((state: Readonly<NubeSDKState>) => NubeComponent),
+			| NubeComponent[]
+			| ((state: Readonly<NubeSDKState>) => NubeComponent | NubeComponent[]),
 	): void;
 
 	/**
