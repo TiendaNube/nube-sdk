@@ -20,7 +20,7 @@ export type { JSX };
 export function jsxDEV(
 	type: FunctionComponent | undefined,
 	props: Record<string, unknown>,
-	key: string | undefined,
+	key: string | number | undefined,
 	isStaticChildren: boolean,
 	source: { fileName: string; lineNumber: number },
 	self: unknown,
