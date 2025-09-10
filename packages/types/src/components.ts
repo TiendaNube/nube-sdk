@@ -126,11 +126,7 @@ export type NubeComponentRow = Prettify<
 export type NubeComponentEventHandler<
 	Events extends string,
 	Value = string,
-> = (data: {
-	type: Events;
-	state: NubeSDKState;
-	value?: Value;
-}) => void;
+> = (data: { type: Events; state: NubeSDKState; value?: Value }) => void;
 
 /**
  * Defines a handler for field-related events.
@@ -168,6 +164,52 @@ export type NubeComponentField = Prettify<
 	NubeComponentBase &
 		NubeComponentFieldProps & {
 			type: "field";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           NumberField Component                                */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentNumberFieldEventHandler = NubeComponentEventHandler<
+	"change" | "focus" | "blur" | "increment" | "decrement",
+	number
+>;
+
+/**
+ * Represents the properties available for a `numberfield` component.
+ */
+export type NubeComponentNumberFieldProps = Prettify<
+	NubeComponentBase & {
+		name: string;
+		label: string;
+		value?: number;
+		min?: number;
+		max?: number;
+		step?: number;
+		disabled?: boolean;
+		style?: {
+			container?: NubeComponentStyle;
+			label?: NubeComponentStyle;
+			input?: NubeComponentStyle;
+			decrementButton?: NubeComponentStyle;
+			incrementButton?: NubeComponentStyle;
+		};
+		onChange?: NubeComponentNumberFieldEventHandler;
+		onBlur?: NubeComponentNumberFieldEventHandler;
+		onFocus?: NubeComponentNumberFieldEventHandler;
+		onIncrement?: NubeComponentNumberFieldEventHandler;
+		onDecrement?: NubeComponentNumberFieldEventHandler;
+	}
+>;
+
+/**
+ * Represents a `numberfield` component, used for numeric form inputs with increment/decrement buttons.
+ */
+export type NubeComponentNumberField = Prettify<
+	NubeComponentBase &
+		NubeComponentNumberFieldProps & {
+			type: "numberfield";
 		}
 >;
 
