@@ -11,8 +11,8 @@ import type {
 } from "./domain";
 import type {
 	NubeSDKListenableEvent,
+	NubeSDKListenableSuccessEvent,
 	NubeSDKSendableEvent,
-	SuccessEvents,
 } from "./events";
 
 import type { UISlot } from "./slots";
@@ -68,7 +68,7 @@ export type NubeSDKState = {
 /*
  * Represents an optional event payload.
  */
-type OptionalEventPayload = { payload?: Record<string, unknown> };
+type OptionalEventPayload = { eventPayload?: Record<string, unknown> };
 
 /**
  * Represents a listener function that responds to SDK events.
@@ -90,7 +90,7 @@ export type NubeSDKListener = (
  */
 export type NubeSDKListenerWithPayload = (
 	state: Readonly<NubeSDKState> & OptionalEventPayload,
-	event: SuccessEvents,
+	event: NubeSDKListenableSuccessEvent,
 ) => void;
 
 /**
@@ -99,9 +99,12 @@ export type NubeSDKListenerWithPayload = (
  * @type {EventListenerMap}
  */
 type EventListenerMap = {
-	[K in SuccessEvents]: NubeSDKListenerWithPayload;
+	[K in NubeSDKListenableSuccessEvent]: NubeSDKListenerWithPayload;
 } & {
-	[K in Exclude<NubeSDKListenableEvent, SuccessEvents>]: NubeSDKListener;
+	[K in Exclude<
+		NubeSDKListenableEvent,
+		NubeSDKListenableSuccessEvent
+	>]: NubeSDKListener;
 };
 
 /**
@@ -132,10 +135,13 @@ type NubeSDKStateModifierWithPayload = (
  */
 type NubeSDKStateModifierMap = {
 	// Eventos :success recebem o listener com payload
-	[K in SuccessEvents]: NubeSDKStateModifierWithPayload;
+	[K in NubeSDKListenableSuccessEvent]: NubeSDKStateModifierWithPayload;
 } & {
 	// Todos os outros eventos recebem o listener padrão
-	[K in Exclude<NubeSDKListenableEvent, SuccessEvents>]: NubeSDKStateModifier;
+	[K in Exclude<
+		NubeSDKListenableEvent,
+		NubeSDKListenableSuccessEvent
+	>]: NubeSDKStateModifier;
 };
 
 /**

@@ -98,7 +98,7 @@ export const EVENT = {
 /**
  * Represents the possible events that can be listened to within NubeSDK that end with :success.
  */
-export type SuccessEvents = Extract<
+export type NubeSDKListenableSuccessEvent = Extract<
 	NubeSDKListenableEvent,
 	`${string}:success`
 >;
