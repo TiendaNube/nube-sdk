@@ -170,6 +170,12 @@ export type NubeComponentField = Prettify<
 /* -------------------------------------------------------------------------- */
 /*                           NumberField Component                                */
 /* -------------------------------------------------------------------------- */
+
+export type NubeComponentNumberFieldEventHandler = NubeComponentEventHandler<
+	"change" | "focus" | "blur" | "increment" | "decrement",
+	number
+>;
+
 /**
  * Represents the properties available for a `numberfield` component.
  */
@@ -189,11 +195,11 @@ export type NubeComponentNumberFieldProps = Prettify<
 			decrementButton?: NubeComponentStyle;
 			incrementButton?: NubeComponentStyle;
 		};
-		onChange?: (event: { value: number }) => void;
-		onBlur?: (event: { value: number }) => void;
-		onFocus?: (event: { value: number }) => void;
-		onIncrement?: (event: { value: number }) => void;
-		onDecrement?: (event: { value: number }) => void;
+		onChange?: NubeComponentNumberFieldEventHandler;
+		onBlur?: NubeComponentNumberFieldEventHandler;
+		onFocus?: NubeComponentNumberFieldEventHandler;
+		onIncrement?: NubeComponentNumberFieldEventHandler;
+		onDecrement?: NubeComponentNumberFieldEventHandler;
 	}
 >;
 
