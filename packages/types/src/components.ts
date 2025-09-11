@@ -853,6 +853,7 @@ export type NubeComponent =
 	| NubeComponentColumn
 	| NubeComponentRow
 	| NubeComponentField
+	| NubeComponentNumberField
 	| NubeComponentFragment
 	| NubeComponentImage
 	| NubeComponentText
