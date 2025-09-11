@@ -73,7 +73,7 @@ export type NubeSDKState = {
 /*
  * Represents an optional event payload.
  */
-type OptionalEventPayload = { eventPayload?: Record<string, unknown> };
+export type OptionalEventPayload = { eventPayload?: Record<string, unknown> };
 
 /**
  * Represents a listener function that responds to SDK events.
@@ -103,7 +103,7 @@ export type NubeSDKListenerWithPayload = (
  *
  * @type {EventListenerMap}
  */
-type EventListenerMap = {
+export type EventListenerMap = {
 	[K in NubeSDKListenableSuccessEvent]: NubeSDKListenerWithPayload;
 } & {
 	[K in Exclude<
@@ -129,7 +129,7 @@ export type NubeSDKStateModifier = (
  * @param state - The current immutable state of the SDK. The event payload is available on state.payload.
  * @returns A partial update of the SDK state.
  */
-type NubeSDKStateModifierWithPayload = (
+export type NubeSDKStateModifierWithPayload = (
 	state: Readonly<NubeSDKState> & OptionalEventPayload,
 ) => DeepPartial<NubeSDKState>;
 
@@ -138,7 +138,7 @@ type NubeSDKStateModifierWithPayload = (
  *
  * @type {NubeSDKStateModifierMap}
  */
-type NubeSDKStateModifierMap = {
+export type NubeSDKStateModifierMap = {
 	// Eventos :success recebem o listener com payload
 	[K in NubeSDKListenableSuccessEvent]: NubeSDKStateModifierWithPayload;
 } & {
