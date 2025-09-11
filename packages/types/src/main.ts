@@ -63,6 +63,11 @@ export type NubeSDKState = {
 	 * Information about the payment method, including type, status, and selected option.
 	 */
 	payment: Nullable<Payment>;
+
+	/**
+	 * Optional event payload
+	 */
+	eventPayload: Nullable<Record<string, unknown>>;
 };
 
 /*
