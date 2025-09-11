@@ -281,7 +281,7 @@ export type Store = {
 	currency: string;
 
 	/** Language code of the store (e.g., "en", "es"). */
-	language: string;
+	language: LanguageKey;
 };
 
 /**
