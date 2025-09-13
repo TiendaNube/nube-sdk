@@ -11,6 +11,7 @@ import { useNubeStatus } from "../hooks/use-nube-status";
 import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
 import { Apps } from "./pages/apps";
 import { Components } from "./pages/components";
+import { DevMode } from "./pages/dev-mode";
 import { Events } from "./pages/events";
 import { Storages } from "./pages/storages";
 import { Unavailable } from "./pages/unavailable";
@@ -20,6 +21,7 @@ const PAGE_COMPONENTS = {
 	[PAGES.COMPONENTS]: Components,
 	[PAGES.EVENTS]: Events,
 	[PAGES.STORAGES]: Storages,
+	[PAGES.DEV_MODE]: DevMode,
 } as const;
 
 const AppContent = () => {

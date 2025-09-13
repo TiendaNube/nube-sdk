@@ -1,8 +1,10 @@
 import {
+	checkDevScript,
 	getApps,
 	handleEvents,
 	highlightElement,
 	injectWindowVariable,
+	registerDevApp,
 	resendEvent,
 	scrollToElement,
 } from "./scripts";
@@ -195,6 +197,60 @@ export const handleDevToolsScrollToElement = ({
 				sendResponse({ status: true });
 			} catch (error) {
 				sendResponse({ status: false });
+			}
+		},
+	);
+};
+
+export const handleDevToolsCheckScript = ({
+	tabId,
+	scriptUrl,
+	sendResponse,
+}: {
+	tabId: number;
+	scriptUrl: string;
+	sendResponse: (response: { status: boolean; scriptLoaded: boolean }) => void;
+}) => {
+	chrome.scripting.executeScript(
+		{
+			target: { tabId },
+			world: "MAIN",
+			func: checkDevScript,
+			args: [scriptUrl],
+		},
+		(results) => {
+			try {
+				const scriptLoaded = results?.[0]?.result === true;
+				sendResponse({ status: true, scriptLoaded });
+			} catch (error) {
+				sendResponse({ status: false, scriptLoaded: false });
+			}
+		},
+	);
+};
+
+export const handleDevToolsRegisterApp = ({
+	tabId,
+	scriptUrl,
+	sendResponse,
+}: {
+	tabId: number;
+	scriptUrl: string;
+	sendResponse: (response: { status: boolean; registered: boolean }) => void;
+}) => {
+	chrome.scripting.executeScript(
+		{
+			target: { tabId },
+			world: "MAIN",
+			func: registerDevApp,
+			args: [scriptUrl],
+		},
+		(results) => {
+			try {
+				const registered = results?.[0]?.result === true;
+				sendResponse({ status: true, registered });
+			} catch (error) {
+				sendResponse({ status: false, registered: false });
 			}
 		},
 	);

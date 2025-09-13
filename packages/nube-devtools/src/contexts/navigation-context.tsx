@@ -6,6 +6,7 @@ export const PAGES = {
 	STORAGES: "storages",
 	APPS: "apps",
 	COMPONENTS: "components",
+	DEV_MODE: "dev-mode",
 } as const;
 
 export type Page = (typeof PAGES)[keyof typeof PAGES];

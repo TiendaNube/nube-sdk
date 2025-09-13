@@ -80,6 +80,22 @@ export function Events() {
 		};
 	}, []);
 
+	// Listener for automatic refresh when dev mode changes
+	useEffect(() => {
+		const handleRefresh = (message: { action: string }) => {
+			if (message.action === "nube-devtools-refresh-data") {
+				console.log("Events ready to receive new dev mode data");
+				// Events are added automatically via onConnect when generated
+			}
+		};
+
+		chrome.runtime.onMessage.addListener(handleRefresh);
+
+		return () => {
+			chrome.runtime.onMessage.removeListener(handleRefresh);
+		};
+	}, []);
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (tableContainerRef.current) {
