@@ -35,8 +35,8 @@ export type CartItem = {
 	/** Nullable SKU (Stock Keeping Unit) for the product variant. */
 	sku: Nullable<string>;
 
-	/** Additional properties related to the product (structure unknown). */
-	properties: Array<unknown> | Record<string, unknown>;
+	/** Additional properties related to the product. */
+	properties: Array<unknown> | Record<string, string | number>;
 
 	/** URL of the product's page. */
 	url: string;
