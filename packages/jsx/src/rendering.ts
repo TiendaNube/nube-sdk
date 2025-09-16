@@ -14,7 +14,7 @@ export function renderJSX(
 
 	// Function
 	if (typeof tag === "function") {
-		return tag(props);
+		return tag(key === undefined ? props : { ...props, key });
 	}
 
 	// Normal tag
