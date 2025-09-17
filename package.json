@@ -12,7 +12,8 @@
     "packages/jsx",
     "packages/create-nube-app",
     "packages/doc",
-    "packages/nube-devtools"
+    "packages/nube-devtools",
+    "packages/helper"
   ],
   "author": "Tiendanube / Nuvemshop",
   "license": "MIT",
