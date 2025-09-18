@@ -284,10 +284,17 @@ export type Store = {
 	language: LanguageKey;
 };
 
+export type WithProductList = { products?: ProductDetails[] };
+
 /**
  * Represents a product category.
  */
 export type Category = { id: number; name: string };
+
+/**
+ * Represents search information.
+ */
+export type Search = { q: string };
 
 /**
  * Represents the different steps in the checkout process.
@@ -302,7 +309,25 @@ export type ProductPage = { type: "product"; data: ProductDetails };
 /**
  * Represents a category page.
  */
-export type CategoryPage = { type: "category"; data: Category };
+export type CategoryPage = {
+	type: "category";
+	data: Category & WithProductList;
+};
+
+const ALL_PRODUCTS_CATEGORY_ID = 0;
+
+/**
+ * Represents the root category page.
+ */
+export type AllProductsPage = {
+	type: "products";
+	data: Category & { id: typeof ALL_PRODUCTS_CATEGORY_ID } & WithProductList;
+};
+
+/**
+ * Represents the search results page.
+ */
+export type SearchPage = { type: "search"; data: Search & WithProductList };
 
 /**
  * Represents a checkout page.
@@ -312,7 +337,12 @@ export type CheckoutPage = { type: "checkout"; data: Checkout };
 /**
  * Represents a page within the application.
  */
-export type Page = CheckoutPage | ProductPage | CategoryPage;
+export type Page =
+	| CheckoutPage
+	| ProductPage
+	| CategoryPage
+	| AllProductsPage
+	| SearchPage;
 
 /**
  * Represents the user's current location within the application.
