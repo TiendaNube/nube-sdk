@@ -87,6 +87,7 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"product_grid_item_image_top_left"} PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT - Top left corner of product grid item images.
  * @property {"product_grid_item_image_bottom_right"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT - Bottom right corner of product grid item images.
  * @property {"product_grid_item_image_bottom_left"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT - Bottom left corner of product grid item images.
+ * @property {"before_start_checkout_button"} BEFORE_START_CHECKOUT_BUTTON - Before the start checkout button.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -102,6 +103,7 @@ export const STOREFRONT_UI_SLOT = {
 	PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT: "product_grid_item_image_top_left",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT: "product_grid_item_image_bottom_right",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT: "product_grid_item_image_bottom_left",
+	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
 } as const;
 
 /**
