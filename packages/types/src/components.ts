@@ -276,6 +276,7 @@ export type NubeComponentNumberFieldProps = Prettify<
 		disabled?: boolean;
 		style?: {
 			container?: NubeComponentStyle;
+			wrapper?: NubeComponentStyle;
 			label?: NubeComponentStyle;
 			input?: NubeComponentStyle;
 			decrementButton?: NubeComponentStyle;
