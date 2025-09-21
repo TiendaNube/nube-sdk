@@ -1,4 +1,4 @@
-import type { NubeComponentStyle } from "@tiendanube/nube-sdk-ui";
+import type * as CSS from "csstype";
 import type { NubeSDKState } from "./main";
 import type { UISlot } from "./slots";
 import type { Prettify } from "./utility";
@@ -37,6 +37,92 @@ export type FlexContent =
  * Defines possible alignment values for flex items.
  */
 export type FlexItems = "start" | "center" | "end" | "stretch";
+
+/**
+ * Represents the range of opacity values for theme colors.
+ */
+export type ThemeColorOpacityRange =
+	| 0
+	| 5
+	| 10
+	| 20
+	| 30
+	| 40
+	| 50
+	| 60
+	| 70
+	| 80
+	| 90;
+
+/**
+ * Represents a theme color class that can generate CSS custom properties.
+ */
+export interface ThemeColorInterface {
+	opacity(opacity: ThemeColorOpacityRange): string;
+	toValue(): string;
+	toString(): string;
+}
+
+export type ThemeColorValue = string;
+export type ThemeColorOpacityValue = string;
+
+/**
+ * Primitive CSS values that can be used in theme definitions.
+ */
+type ThemeCSSPrimitive = string | number;
+
+/**
+ * Represents values that can be used in theme-aware CSS properties.
+ */
+export type ThemeCSSValue =
+	| ThemeColorInterface
+	| ThemeColorOpacityValue
+	| ThemeCSSPrimitive;
+
+/**
+ * Maps properties that should use the Size type
+ */
+type SizePropertyKeys =
+	| "width"
+	| "height"
+	| "minWidth"
+	| "minHeight"
+	| "maxWidth"
+	| "maxHeight"
+	| "top"
+	| "right"
+	| "bottom"
+	| "left"
+	| "margin"
+	| "marginTop"
+	| "marginBottom"
+	| "marginLeft"
+	| "marginRight"
+	| "padding"
+	| "paddingTop"
+	| "paddingBottom"
+	| "paddingLeft"
+	| "paddingRight"
+	| "fontSize"
+	| "lineHeight"
+	| "borderWidth"
+	| "borderRadius";
+
+/**
+ * Applies Size only to size properties.
+ * The others remain as string | number.
+ */
+type EnhancedCSSProperties = {
+	[K in keyof CSS.Properties]?: K extends SizePropertyKeys
+		? Size | ThemeCSSValue
+		: CSS.Properties[K] | ThemeCSSValue;
+};
+
+/**
+ * Define named styles for Nube components.
+ * This type combines CSS properties with theme-aware values and Size types for layout properties.
+ */
+export type NubeComponentStyle = Partial<EnhancedCSSProperties>;
 
 /* -------------------------------------------------------------------------- */
 /*                            Box Component                                   */
@@ -190,6 +276,7 @@ export type NubeComponentNumberFieldProps = Prettify<
 		disabled?: boolean;
 		style?: {
 			container?: NubeComponentStyle;
+			wrapper?: NubeComponentStyle;
 			label?: NubeComponentStyle;
 			input?: NubeComponentStyle;
 			decrementButton?: NubeComponentStyle;

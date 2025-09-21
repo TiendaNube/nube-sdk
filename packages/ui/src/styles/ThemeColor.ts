@@ -1,17 +1,9 @@
-export type ThemeColorOpacityRange =
-	| 0
-	| 5
-	| 10
-	| 20
-	| 30
-	| 40
-	| 50
-	| 60
-	| 70
-	| 80
-	| 90;
+import type {
+	ThemeColorInterface,
+	ThemeColorOpacityRange,
+} from "@tiendanube/nube-sdk-types";
 
-export class ThemeColor {
+export class ThemeColor implements ThemeColorInterface {
 	constructor(private readonly token: string) {}
 
 	opacity(opacity: ThemeColorOpacityRange) {

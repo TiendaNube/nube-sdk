@@ -1,3 +1,8 @@
+import type {
+	ThemeCSSValue,
+	ThemeColorOpacityValue,
+	ThemeColorValue,
+} from "@tiendanube/nube-sdk-types";
 import { ThemeColor } from "./ThemeColor";
 
 export const theme = {
@@ -59,12 +64,6 @@ export const theme = {
 } as const;
 
 export type Theme = typeof theme;
-export type ThemeColorValue = ReturnType<ThemeColor["toValue"]>;
-export type ThemeColorOpacityValue = ReturnType<ThemeColor["opacity"]>;
 
-type ThemeCSSPrimitive = string | number;
-
-export type ThemeCSSValue =
-	| ThemeColor
-	| ThemeColorOpacityValue
-	| ThemeCSSPrimitive;
+// Re-export types from the types package for backward compatibility
+export type { ThemeColorValue, ThemeColorOpacityValue, ThemeCSSValue };
