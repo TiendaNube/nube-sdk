@@ -2,10 +2,6 @@
 
 **A development toolkit for creating third-party apps within the Nuvemshop platform.**
 
-> [!IMPORTANT]  
-> NubeSDK is currently in its **beta phase**, and new features are still being implemented. Developers interested in using this SDK should **contact the Nuvemshop / Tiendanube team before integration** to ensure compatibility and receive support.
-
-
 ## About
 
 NubeSDK provides a suite of libraries that enable developers to create **secure, declarative, and extensible applications** inside the Nuvemshop ecosystem. Apps built with NubeSDK run inside **isolated web workers**, ensuring a controlled execution environment without direct access to the DOM.
