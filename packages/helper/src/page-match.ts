@@ -1,6 +1,6 @@
 /**
  * @fileoverview Page matching system for NubeSDK
- * 
+ *
  * This module provides a type-safe system for handling different page types
  * (product, category, checkout) and their respective data.
  * Includes functions for page matching and event handlers.
@@ -12,10 +12,11 @@ import type {
 	NubeSDKState,
 	ProductDetails,
 } from "@tiendanube/nube-sdk-types";
+import { isCategoryPage, isCheckoutPage, isProductPage } from "./typeguards";
 
 /**
  * Maps each page type to its specific data payload.
- * 
+ *
  * @example
  * ```typescript
  * // Product page data
@@ -24,7 +25,7 @@ import type {
  *   name: 'Example Product',
  *   price: 29.99
  * };
- * 
+ *
  * // Category page data
  * const categoryData: PageDataMap['category'] = {
  *   id: 'cat-1',
@@ -32,7 +33,7 @@ import type {
  *   products: []
  * };
  * ```
- * 
+ *
  * @since 0.1.0
  */
 export type PageDataMap = {
@@ -43,25 +44,25 @@ export type PageDataMap = {
 
 /**
  * Typed handler for a given page type.
- * 
+ *
  * @template T - The page type (product, category, checkout)
  * @param state - Current NubeSDK state
  * @param data - Page-specific data for the given page type
- * 
+ *
  * @example
  * ```typescript
  * const productHandler: PageHandlerFunction<'product'> = (state, data) => {
  *   console.log('Product viewed:', data.name);
  *   trackProductView(data.id);
  * };
- * 
+ *
  * const checkoutHandler: PageHandlerFunction<'checkout'> = (state, data) => {
  *   if (data.step === 'success') {
  *     trackPurchase(data.orderId);
  *   }
  * };
  * ```
- * 
+ *
  * @since 0.1.0
  */
 export type PageHandlerFunction<T extends keyof PageDataMap> = (
@@ -71,7 +72,7 @@ export type PageHandlerFunction<T extends keyof PageDataMap> = (
 
 /**
  * Partial set of handlers where only relevant page types need to be implemented.
- * 
+ *
  * @example
  * ```typescript
  * const handlers: PageHandlers = {
@@ -82,7 +83,7 @@ export type PageHandlerFunction<T extends keyof PageDataMap> = (
  *   // category handler is optional
  * };
  * ```
- * 
+ *
  * @since 0.1.0
  */
 export type PageHandlers = {
@@ -95,11 +96,11 @@ export type PageHandlers = {
  *
  * @param state - Current NubeSDK state
  * @param handlers - Handlers mapped by page type
- * 
+ *
  * @example
  * ```typescript
  * const state = getCurrentState();
- * 
+ *
  * pageMatch(state, {
  *   product: (state, data) => {
  *     console.log('Product:', data.name, 'Price:', data.price);
@@ -112,28 +113,25 @@ export type PageHandlers = {
  *   }
  * });
  * ```
- * 
+ *
  * @since 0.1.0
  */
 export function pageMatch(state: NubeSDKState, handlers: PageHandlers): void {
 	const { page } = state.location;
 
-	// Type-safe dispatch based on the page type
-	switch (page.type) {
-		case "product":
-			handlers.product?.(state, page.data as ProductDetails);
-			break;
-		case "category":
-			handlers.category?.(state, page.data as Category);
-			break;
-		case "checkout":
-			handlers.checkout?.(state, page.data as Checkout);
-			break;
-		default: {
-			// Ensures all cases are covered
-			const _exhaustive: never = page;
-			break;
-		}
+	if (isProductPage(page)) {
+		handlers.product?.(state, page.data);
+		return;
+	}
+
+	if (isCategoryPage(page)) {
+		handlers.category?.(state, page.data);
+		return;
+	}
+
+	if (isCheckoutPage(page)) {
+		handlers.checkout?.(state, page.data);
+		return;
 	}
 }
 
@@ -154,23 +152,22 @@ export function pageMatch(state: NubeSDKState, handlers: PageHandlers): void {
  *   }
  * });
  * ```
- * 
+ *
  * @since 0.1.0
  */
 export function onPage(handlers: PageHandlers): void {
 	const nube = self.__SDK_INSTANCE__;
 
-	const currentState = nube.getState()
-	
-	pageMatch(currentState, handlers)
-	
+	const currentState = nube.getState();
+
+	pageMatch(currentState, handlers);
 
 	nube.on("location:updated", (state) => pageMatch(state, handlers));
 }
 
 /**
  * Union of all possible checkout steps.
- * 
+ *
  * @since 0.1.0
  */
 type CheckoutStep = Checkout["step"];
@@ -178,7 +175,7 @@ type CheckoutStep = Checkout["step"];
 /**
  * Handlers per checkout step (e.g., 'cart', 'payment', 'success').
  * Only the steps you care about need to be provided.
- * 
+ *
  * @example
  * ```typescript
  * const checkoutHandlers: CheckoutStepHandlers = {
@@ -187,7 +184,7 @@ type CheckoutStep = Checkout["step"];
  *   success: (state) => console.log('Success step')
  * };
  * ```
- * 
+ *
  * @since 0.1.0
  */
 export type CheckoutStepHandlers = Partial<
@@ -201,7 +198,7 @@ export type CheckoutStepHandlers = Partial<
  * invokes the handler registered for the current `Checkout.step`.
  *
  * @param handlers - Handlers keyed by checkout step
- * 
+ *
  * @example
  * ```typescript
  * onCheckoutStep({
@@ -215,23 +212,22 @@ export type CheckoutStepHandlers = Partial<
  *   }
  * });
  * ```
- * 
+ *
  * @since 0.1.0
  */
 export function onCheckoutStep(handlers: CheckoutStepHandlers): void {
 	const nube = self.__SDK_INSTANCE__;
 
-	const currentState = nube.getState()
+	const currentState = nube.getState();
 	const currentPage = currentState.location.page;
 
 	if (currentPage.type === "checkout") {
 		handlers[currentPage?.data?.step]?.(currentState);
 	}
-	
+
 	nube.on("checkout:ready", (state: NubeSDKState) => {
 		const { page } = state.location;
 		if (page.type !== "checkout") return;
 		handlers[page.data.step]?.(state);
 	});
 }
-

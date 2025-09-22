@@ -1,6 +1,6 @@
+import type { NubeSDK, NubeSDKState } from "@tiendanube/nube-sdk-types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { onCheckoutStep, onPage, pageMatch } from "./page-match.js";
-import type { NubeSDK, NubeSDKState } from "@tiendanube/nube-sdk-types";
 import type { CheckoutStepHandlers, PageHandlers } from "./page-match.js";
 
 function createMockSDK(): NubeSDK {
@@ -12,18 +12,18 @@ function createMockSDK(): NubeSDK {
 }
 
 function setMockSDKOnGlobal(): NubeSDK {
-    const sdk = createMockSDK();
-    interface GlobalWithSDK {
-        self: { __SDK_INSTANCE__: NubeSDK };
-    }
-    (globalThis as unknown as GlobalWithSDK).self = {
-        __SDK_INSTANCE__: sdk,
-    };
-    return sdk;
+	const sdk = createMockSDK();
+	interface GlobalWithSDK {
+		self: { __SDK_INSTANCE__: NubeSDK };
+	}
+	(globalThis as unknown as GlobalWithSDK).self = {
+		__SDK_INSTANCE__: sdk,
+	};
+	return sdk;
 }
 
 function makeState(page: unknown): NubeSDKState {
-    return { location: { page } } as unknown as NubeSDKState;
+	return { location: { page } } as unknown as NubeSDKState;
 }
 
 describe("page-match", () => {
@@ -66,7 +66,10 @@ describe("page-match", () => {
 		it("dispatches to category handler when page is category", () => {
 			const categoryHandler = vi.fn();
 			const handlers = { category: categoryHandler } as const;
-			const state = makeState({ type: "category", data: { id: 99, name: "X" } });
+			const state = makeState({
+				type: "category",
+				data: { id: 99, name: "X" },
+			});
 
 			pageMatch(state, handlers);
 
@@ -85,13 +88,13 @@ describe("page-match", () => {
 			expect(() => pageMatch(state, handlers)).not.toThrow();
 		});
 
-			it("does not throw for unknown page type (default branch)", () => {
-				const handlers = {} as PageHandlers;
-				const state = makeState({ type: "unknown", data: {} });
+		it("does not throw for unknown page type (default branch)", () => {
+			const handlers = {} as PageHandlers;
+			const state = makeState({ type: "unknown", data: {} });
 
-				// exercises default case
-				expect(() => pageMatch(state, handlers)).not.toThrow();
-			});
+			// exercises default case
+			expect(() => pageMatch(state, handlers)).not.toThrow();
+		});
 	});
 
 	describe("onPage", () => {
@@ -102,7 +105,10 @@ describe("page-match", () => {
 			onPage({ product: productHandler });
 
 			expect(sdk.on).toHaveBeenCalledTimes(1);
-			expect(sdk.on).toHaveBeenCalledWith("location:updated", expect.any(Function));
+			expect(sdk.on).toHaveBeenCalledWith(
+				"location:updated",
+				expect.any(Function),
+			);
 		});
 	});
 
@@ -114,7 +120,10 @@ describe("page-match", () => {
 			onCheckoutStep({ success: successHandler } as CheckoutStepHandlers);
 
 			expect(sdk.on).toHaveBeenCalledTimes(1);
-			expect(sdk.on).toHaveBeenCalledWith("checkout:ready", expect.any(Function));
+			expect(sdk.on).toHaveBeenCalledWith(
+				"checkout:ready",
+				expect.any(Function),
+			);
 		});
 
 		it("registers handler for specific checkout step", () => {
@@ -122,15 +131,16 @@ describe("page-match", () => {
 			const successHandler = vi.fn();
 			const paymentHandler = vi.fn();
 
-			onCheckoutStep({ 
+			onCheckoutStep({
 				success: successHandler,
-				payment: paymentHandler 
+				payment: paymentHandler,
 			} as CheckoutStepHandlers);
 
 			expect(sdk.on).toHaveBeenCalledTimes(1);
-			expect(sdk.on).toHaveBeenCalledWith("checkout:ready", expect.any(Function));
+			expect(sdk.on).toHaveBeenCalledWith(
+				"checkout:ready",
+				expect.any(Function),
+			);
 		});
 	});
 });
-
-

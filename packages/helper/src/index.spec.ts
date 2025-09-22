@@ -9,5 +9,3 @@ describe("index exports", () => {
 		expect(typeof mod.deepClone).toBe("function");
 	});
 });
-
-
