@@ -284,27 +284,40 @@ export type Store = {
 	language: LanguageKey;
 };
 
+type FixedProductListSectionName =
+	| "featured_products"
+	| "new_products"
+	| "sale_products";
+type ProductSpecificProductListSectionName =
+	| "alternative_products"
+	| "complementary_products"
+	| "related_products";
 
+export type SectionablePage =
+	| HomePage
+	| CategoryPage
+	| AllProductsPage
+	| ProductPage;
 
-type FixedProductListSectionName = 'featured_products' | 'new_products' | 'sale_products';
-type ProductSpecificProductListSectionName = 'alternative_products' | 'complementary_products' | 'related_products';
+type ProductListSectionName<T extends SectionablePage["type"]> =
+	T extends ProductPage["type"]
+		? ProductSpecificProductListSectionName
+		: FixedProductListSectionName;
 
-export type SectionablePage = HomePage | CategoryPage | AllProductsPage | ProductPage;
-
-type ProductListSectionName<T extends SectionablePage['type']> = T extends ProductPage['type'] ? ProductSpecificProductListSectionName : FixedProductListSectionName;
-
-type ProductListSection<T extends SectionablePage['type']> = {
+type ProductListSection<T extends SectionablePage["type"]> = {
 	type: ProductListSectionName<T>;
 	products: ProductDetails[];
-}
+};
 
 // Other sections will be added on demand
-export type Section<T extends SectionablePage['type']> = ProductListSection<T>;
+export type Section<T extends SectionablePage["type"]> = ProductListSection<T>;
 
 /**
  * Represents data that may contain a list of sections.
  */
-export type WithSections<T extends SectionablePage['type']> = { sections?: Section<T>[] };
+export type WithSections<T extends SectionablePage["type"]> = {
+	sections?: Section<T>[];
+};
 
 /**
  * Represents data that may contain a list of products.
@@ -329,14 +342,14 @@ export type Checkout = { step: "start" | "payment" | "success" };
 /**
  * Represents the homepage data.
  */
-export type Home = undefined | WithSections<'home'>;
+export type Home = undefined | WithSections<"home">;
 
 /**
  * Represents the product page data.
  */
 export type ProductPageData = {
 	product: ProductDetails;
-} & WithSections<'product'>;
+} & WithSections<"product">;
 
 /**
  * Represents a product page.
