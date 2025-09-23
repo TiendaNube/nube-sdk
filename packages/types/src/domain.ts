@@ -284,6 +284,31 @@ export type Store = {
 	language: LanguageKey;
 };
 
+
+
+type FixedProductListSectionName = 'featured_products' | 'new_products' | 'sale_products';
+type ProductSpecificProductListSectionName = 'alternative_products' | 'complementary_products' | 'related_products';
+
+export type SectionablePage = HomePage | CategoryPage | AllProductsPage | ProductPage;
+
+type ProductListSectionName<T extends SectionablePage['type']> = T extends ProductPage['type'] ? ProductSpecificProductListSectionName : FixedProductListSectionName;
+
+type ProductListSection<T extends SectionablePage['type']> = {
+	type: ProductListSectionName<T>;
+	products: ProductDetails[];
+}
+
+// Other sections will be added on demand
+export type Section<T extends SectionablePage['type']> = ProductListSection<T>;
+
+/**
+ * Represents data that may contain a list of sections.
+ */
+export type WithSections<T extends SectionablePage['type']> = { sections?: Section<T>[] };
+
+/**
+ * Represents data that may contain a list of products.
+ */
 export type WithProductList = { products?: ProductDetails[] };
 
 /**
@@ -304,12 +329,19 @@ export type Checkout = { step: "start" | "payment" | "success" };
 /**
  * Represents the homepage data.
  */
-export type Home = {  };
+export type Home = undefined | WithSections<'home'>;
+
+/**
+ * Represents the product page data.
+ */
+export type ProductPageData = {
+	product: ProductDetails;
+} & WithSections<'product'>;
 
 /**
  * Represents a product page.
  */
-export type ProductPage = { type: "product"; data: ProductDetails };
+export type ProductPage = { type: "product"; data: ProductPageData };
 
 /**
  * Represents a category page.
@@ -348,6 +380,7 @@ export type HomePage = { type: "home"; data: Home };
  * Represents a page within the application.
  */
 export type Page =
+	| HomePage
 	| CheckoutPage
 	| ProductPage
 	| CategoryPage
