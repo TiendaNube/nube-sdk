@@ -302,6 +302,11 @@ export type Search = { q: string };
 export type Checkout = { step: "start" | "payment" | "success" };
 
 /**
+ * Represents the homepage data.
+ */
+export type Home = {  };
+
+/**
  * Represents a product page.
  */
 export type ProductPage = { type: "product"; data: ProductDetails };
@@ -333,6 +338,11 @@ export type SearchPage = { type: "search"; data: Search & WithProductList };
  * Represents a checkout page.
  */
 export type CheckoutPage = { type: "checkout"; data: Checkout };
+
+/**
+ * Represents the homepage.
+ */
+export type HomePage = { type: "home"; data: Home };
 
 /**
  * Represents a page within the application.
