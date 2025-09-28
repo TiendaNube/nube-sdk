@@ -455,6 +455,7 @@ export type NubeComponentButtonProps = Prettify<
 			height: Size;
 			style?: NubeComponentStyle;
 			onClick: NubeComponentButtonEventHandler;
+			ariaLabel: string;
 		}>
 >;
 
