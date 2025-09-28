@@ -259,7 +259,7 @@ export type NubeComponentField = Prettify<
 
 export type NubeComponentNumberFieldEventHandler = NubeComponentEventHandler<
 	"change" | "focus" | "blur" | "increment" | "decrement",
-	number
+	string
 >;
 
 /**
@@ -455,6 +455,7 @@ export type NubeComponentButtonProps = Prettify<
 			height: Size;
 			style?: NubeComponentStyle;
 			onClick: NubeComponentButtonEventHandler;
+			ariaLabel: string;
 		}>
 >;
 
