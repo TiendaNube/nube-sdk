@@ -259,7 +259,7 @@ export type NubeComponentField = Prettify<
 
 export type NubeComponentNumberFieldEventHandler = NubeComponentEventHandler<
 	"change" | "focus" | "blur" | "increment" | "decrement",
-	number
+	string
 >;
 
 /**
