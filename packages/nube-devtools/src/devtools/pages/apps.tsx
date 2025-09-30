@@ -60,6 +60,20 @@ export function Apps() {
 
 	useEffect(() => {
 		fetchApps();
+
+		// Listener for automatic refresh when dev mode changes
+		const handleRefresh = (message: { action: string }) => {
+			if (message.action === "nube-devtools-refresh-data") {
+				console.log("Automatic refresh of apps due to dev mode change");
+				fetchApps();
+			}
+		};
+
+		chrome.runtime.onMessage.addListener(handleRefresh);
+
+		return () => {
+			chrome.runtime.onMessage.removeListener(handleRefresh);
+		};
 	}, [fetchApps]);
 
 	const handleOnSelect = (event: NubeSDKEvent) => {
