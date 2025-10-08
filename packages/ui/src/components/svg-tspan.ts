@@ -2,6 +2,7 @@ import type {
 	NubeComponentTSpan,
 	NubeComponentTSpanProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgTspan` component.
@@ -18,4 +19,5 @@ export const svgTspan = (
 ): NubeComponentTSpan => ({
 	type: "svgTspan",
 	...props,
+	__internalId: generateInternalId("svgTspan", props),
 });

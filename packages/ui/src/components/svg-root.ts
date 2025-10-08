@@ -2,6 +2,7 @@ import type {
 	NubeComponentSvg,
 	NubeComponentSvgProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates an `svgRoot` component.
@@ -16,4 +17,5 @@ import type {
 export const svgRoot = (props: NubeComponentSvgProps): NubeComponentSvg => ({
 	type: "svgRoot",
 	...props,
+	__internalId: generateInternalId("svgRoot", props),
 });

@@ -2,6 +2,7 @@ import type {
 	NubeComponentFeGaussianBlur,
 	NubeComponentFeGaussianBlurProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgFeGaussianBlur` component.
@@ -18,4 +19,5 @@ export const svgFeGaussianBlur = (
 ): NubeComponentFeGaussianBlur => ({
 	type: "svgFeGaussianBlur",
 	...props,
+	__internalId: generateInternalId("svgFeGaussianBlur", props),
 });

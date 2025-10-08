@@ -2,6 +2,7 @@ import type {
 	NubeComponentRadialGradient,
 	NubeComponentRadialGradientProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgRadialGradient` component.
@@ -18,4 +19,5 @@ export const svgRadialGradient = (
 ): NubeComponentRadialGradient => ({
 	type: "svgRadialGradient",
 	...props,
+	__internalId: generateInternalId("svgRadialGradient", props),
 });

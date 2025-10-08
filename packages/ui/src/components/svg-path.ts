@@ -2,6 +2,7 @@ import type {
 	NubeComponentPath,
 	NubeComponentPathProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgPath` component.
@@ -16,4 +17,5 @@ import type {
 export const svgPath = (props: NubeComponentPathProps): NubeComponentPath => ({
 	type: "svgPath",
 	...props,
+	__internalId: generateInternalId("svgPath", props),
 });

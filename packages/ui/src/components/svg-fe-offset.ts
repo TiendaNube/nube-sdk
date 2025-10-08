@@ -2,6 +2,7 @@ import type {
 	NubeComponentFeOffset,
 	NubeComponentFeOffsetProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgFeOffset` component.
@@ -18,4 +19,5 @@ export const svgFeOffset = (
 ): NubeComponentFeOffset => ({
 	type: "svgFeOffset",
 	...props,
+	__internalId: generateInternalId("svgFeOffset", props),
 });

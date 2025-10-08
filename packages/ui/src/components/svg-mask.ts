@@ -2,6 +2,7 @@ import type {
 	NubeComponentMask,
 	NubeComponentMaskProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgMask` component.
@@ -16,4 +17,5 @@ import type {
 export const svgMask = (props: NubeComponentMaskProps): NubeComponentMask => ({
 	type: "svgMask",
 	...props,
+	__internalId: generateInternalId("svgMask", props),
 });

@@ -2,6 +2,7 @@ import type {
 	NubeComponentSymbol,
 	NubeComponentSymbolProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgSymbol` component.
@@ -18,4 +19,5 @@ export const svgSymbol = (
 ): NubeComponentSymbol => ({
 	type: "svgSymbol",
 	...props,
+	__internalId: generateInternalId("svgSymbol", props),
 });

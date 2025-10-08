@@ -2,6 +2,7 @@ import type {
 	NubeComponentClipPath,
 	NubeComponentClipPathProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgClipPath` component.
@@ -18,4 +19,5 @@ export const svgClipPath = (
 ): NubeComponentClipPath => ({
 	type: "svgClipPath",
 	...props,
+	__internalId: generateInternalId("svgClipPath", props),
 });

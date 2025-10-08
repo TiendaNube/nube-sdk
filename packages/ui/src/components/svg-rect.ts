@@ -2,6 +2,7 @@ import type {
 	NubeComponentRect,
 	NubeComponentRectProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgRect` component.
@@ -16,4 +17,5 @@ import type {
 export const svgRect = (props: NubeComponentRectProps): NubeComponentRect => ({
 	type: "svgRect",
 	...props,
+	__internalId: generateInternalId("svgRect", props),
 });

@@ -2,6 +2,7 @@ import type {
 	NubeComponentLine,
 	NubeComponentLineProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgLine` component.
@@ -16,4 +17,5 @@ import type {
 export const svgLine = (props: NubeComponentLineProps): NubeComponentLine => ({
 	type: "svgLine",
 	...props,
+	__internalId: generateInternalId("svgLine", props),
 });

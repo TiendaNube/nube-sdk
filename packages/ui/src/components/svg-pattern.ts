@@ -2,6 +2,7 @@ import type {
 	NubeComponentPattern,
 	NubeComponentPatternProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgPattern` component.
@@ -18,4 +19,5 @@ export const svgPattern = (
 ): NubeComponentPattern => ({
 	type: "svgPattern",
 	...props,
+	__internalId: generateInternalId("svgPattern", props),
 });

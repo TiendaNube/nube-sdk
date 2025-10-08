@@ -2,6 +2,7 @@ import type {
 	NubeComponentStop,
 	NubeComponentStopProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgStop` component.
@@ -16,4 +17,5 @@ import type {
 export const svgStop = (props: NubeComponentStopProps): NubeComponentStop => ({
 	type: "svgStop",
 	...props,
+	__internalId: generateInternalId("svgStop", props),
 });

@@ -2,6 +2,7 @@ import type {
 	NubeComponentPolyline,
 	NubeComponentPolylineProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgPolyline` component.
@@ -18,4 +19,5 @@ export const svgPolyline = (
 ): NubeComponentPolyline => ({
 	type: "svgPolyline",
 	...props,
+	__internalId: generateInternalId("svgPolyline", props),
 });

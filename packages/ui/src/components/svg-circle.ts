@@ -2,6 +2,7 @@ import type {
 	NubeComponentCircle,
 	NubeComponentCircleProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgCircle` component.
@@ -18,4 +19,5 @@ export const svgCircle = (
 ): NubeComponentCircle => ({
 	type: "svgCircle",
 	...props,
+	__internalId: generateInternalId("svgCircle", props),
 });

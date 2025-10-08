@@ -2,6 +2,7 @@ import type {
 	NubeComponentUse,
 	NubeComponentUseProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgUse` component.
@@ -16,4 +17,5 @@ import type {
 export const svgUse = (props: NubeComponentUseProps): NubeComponentUse => ({
 	type: "svgUse",
 	...props,
+	__internalId: generateInternalId("svgUse", props),
 });

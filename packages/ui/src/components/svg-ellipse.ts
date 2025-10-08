@@ -2,6 +2,7 @@ import type {
 	NubeComponentEllipse,
 	NubeComponentEllipseProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgEllipse` component.
@@ -18,4 +19,5 @@ export const svgEllipse = (
 ): NubeComponentEllipse => ({
 	type: "svgEllipse",
 	...props,
+	__internalId: generateInternalId("svgEllipse", props),
 });

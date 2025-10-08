@@ -2,6 +2,7 @@ import type {
 	NubeComponentPolygon,
 	NubeComponentPolygonProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgPolygon` component.
@@ -18,4 +19,5 @@ export const svgPolygon = (
 ): NubeComponentPolygon => ({
 	type: "svgPolygon",
 	...props,
+	__internalId: generateInternalId("svgPolygon", props),
 });

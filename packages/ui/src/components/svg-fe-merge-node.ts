@@ -2,6 +2,7 @@ import type {
 	NubeComponentFeMergeNode,
 	NubeComponentFeMergeNodeProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgFeMergeNode` component.
@@ -18,4 +19,5 @@ export const svgFeMergeNode = (
 ): NubeComponentFeMergeNode => ({
 	type: "svgFeMergeNode",
 	...props,
+	__internalId: generateInternalId("svgFeMergeNode", props),
 });

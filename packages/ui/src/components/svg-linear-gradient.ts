@@ -2,6 +2,7 @@ import type {
 	NubeComponentLinearGradient,
 	NubeComponentLinearGradientProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgLinearGradient` component.
@@ -18,4 +19,5 @@ export const svgLinearGradient = (
 ): NubeComponentLinearGradient => ({
 	type: "svgLinearGradient",
 	...props,
+	__internalId: generateInternalId("svgLinearGradient", props),
 });

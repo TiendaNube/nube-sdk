@@ -2,6 +2,7 @@ import type {
 	NubeComponentSvgText,
 	NubeComponentSvgTextProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgText` component.
@@ -18,4 +19,5 @@ export const svgText = (
 ): NubeComponentSvgText => ({
 	type: "svgText",
 	...props,
+	__internalId: generateInternalId("svgText", props),
 });

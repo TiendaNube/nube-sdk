@@ -2,6 +2,7 @@ import type {
 	NubeComponentFilter,
 	NubeComponentFilterProps,
 } from "@tiendanube/nube-sdk-types";
+import { generateInternalId } from "./generateInternalId";
 
 /**
  * Creates a `svgFilter` component.
@@ -18,4 +19,5 @@ export const svgFilter = (
 ): NubeComponentFilter => ({
 	type: "svgFilter",
 	...props,
+	__internalId: generateInternalId("svgFilter", props),
 });
