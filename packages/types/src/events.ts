@@ -52,6 +52,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @constant
  *
  * @property {"*"} ALL - Wildcard listener for all events.
+ * @property {"page:loaded"} PAGE_LOADED - Fired when the page is loaded and the SDK is ready to be used.
  * @property {"cart:update"} CART_UPDATE - Fired when the cart state is updated.
  * @property {"cart:add:success"} CART_ADD_SUCCESS - Fired when a cart item is added successfully.
  * @property {"cart:add:fail"} CART_ADD_FAIL - Fired when a cart item is added unsuccessfully.
@@ -68,10 +69,14 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"coupon:add:fail"} COUPON_ADD_FAIL - Fired when a coupon is added unsuccessfully.
  * @property {"coupon:remove:success"} COUPON_REMOVE_SUCCESS - Fired when a coupon is removed successfully.
  * @property {"coupon:remove:fail"} COUPON_REMOVE_FAIL - Fired when a coupon is removed unsuccessfully.
+ * @property {"location:updated"} LOCATION_UPDATED - Fired when the location is updated.
+ * @property {"quickbuy:open"} QUICKBUY_OPEN - Fired when the quickbuy modal is opened.
+ * @property {"quickbuy:close"} QUICKBUY_CLOSE - Fired when the quickbuy modal is closed.
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
 export const EVENT = {
 	ALL: "*",
+	PAGE_LOADED: "page:loaded",
 	CART_UPDATE: "cart:update",
 	CART_ADD_SUCCESS: "cart:add:success",
 	CART_REMOVE_SUCCESS: "cart:remove:success",
@@ -88,8 +93,19 @@ export const EVENT = {
 	COUPON_REMOVE_SUCCESS: "coupon:remove:success",
 	COUPON_ADD_FAIL: "coupon:add:fail",
 	COUPON_REMOVE_FAIL: "coupon:remove:fail",
+	LOCATION_UPDATED: "location:updated",
+	QUICKBUY_OPEN: "quickbuy:open",
+	QUICKBUY_CLOSE: "quickbuy:close",
 	...SENDABLE_EVENT,
 } as const;
+
+/**
+ * Represents the possible events that can be listened to within NubeSDK that end with :success.
+ */
+export type NubeSDKListenableSuccessEvent = Extract<
+	NubeSDKListenableEvent,
+	`${string}:success`
+>;
 
 /**
  * Represents the possible events that can be listened to within NubeSDK.

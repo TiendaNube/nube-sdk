@@ -2,6 +2,7 @@ export * from "./components/box";
 export * from "./components/column";
 export * from "./components/row";
 export * from "./components/field";
+export * from "./components/number-field";
 export * from "./components/fragment";
 export * from "./components/image";
 export * from "./components/text";

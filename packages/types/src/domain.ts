@@ -1,10 +1,10 @@
 import type { DeepPartial, Nullable, Prettify } from "./utility";
 
 /**
- * Represents a product in the cart.
+ * Represents a Cart Item.
  * This type maintains compatibility with the API response format.
  */
-export type Product = {
+export type CartItem = {
 	/** Unique identifier for the product instance in the cart. */
 	id: number;
 
@@ -36,13 +36,151 @@ export type Product = {
 	sku: Nullable<string>;
 
 	/** Additional properties related to the product (structure unknown). */
-	properties: Array<unknown>;
+	properties: Array<unknown> | Record<string, unknown>;
 
 	/** URL of the product's page. */
 	url: string;
 
 	/** Indicates whether the product is eligible for Ahora 12 financing. */
 	is_ahora_12_eligible: boolean;
+};
+
+/**
+ * Alias for CartItem.
+ * @deprecated Use CartItem instead.
+ * This type maintains compatibility with the API response format.
+ */
+export type Product = CartItem;
+
+/**
+ * Represents the supported language keys for localization.
+ */
+export type LanguageKey = "es" | "pt" | "en";
+
+/**
+ * Represents a string that can be localized in multiple languages.
+ * Each key corresponds to a language code and the value is the translated string.
+ */
+export type LocalizedString = {
+	[k in LanguageKey]?: string;
+};
+
+/**
+ * Represents a product image with its metadata.
+ */
+export type ProductImage = {
+	/** Unique identifier for the image. */
+	id: number;
+	/** Alternative text for the image for accessibility. */
+	alt: string;
+	/** Height of the image in pixels. */
+	height: number;
+	/** Source URL of the image. */
+	src: string;
+	/** Width of the image in pixels. */
+	width: number;
+};
+
+/**
+ * Represents a product variant with all its properties and inventory information.
+ */
+export type ProductVariant = {
+	/** Unique identifier for the variant. */
+	id: number;
+	/** Target age group for the product variant. */
+	age_group: "adult" | "infant" | "kids" | "newborn" | "toddler" | null;
+	/** Barcode identifier for the variant. */
+	barcode: null | string;
+	/** Original price before any discounts. */
+	compare_at_price: null | string;
+	/** Cost of the product for the merchant. */
+	cost: null | number;
+	/** Custom data associated with the variant. */
+	customData?: {
+		/** Color information for the variant. */
+		color?: string;
+	};
+	/** Depth measurement of the product. */
+	depth: string;
+	/** Target gender for the product variant. */
+	gender: "female" | "male" | "unisex" | null;
+	/** Height measurement of the product. */
+	height: string;
+	/** ID of the associated image for this variant. */
+	image_id: null | number;
+	/** Inventory levels across different locations. */
+	inventory_levels: {
+		/** Unique identifier for the inventory level. */
+		id: number;
+		/** Location identifier where the stock is held. */
+		location_id: string;
+		/** Available stock quantity at this location. */
+		stock: null | number;
+		/** ID of the variant this inventory refers to. */
+		variant_id: number;
+	}[];
+	/** Manufacturer Part Number. */
+	mpn: null | number;
+	/** Position of this variant in the product's variant list. */
+	position: number;
+	/** Selling price of the variant. */
+	price: null | string;
+	/** ID of the parent product. */
+	product_id: number;
+	/** Promotional or discounted price. */
+	promotional_price: null | string;
+	/** Stock Keeping Unit identifier. */
+	sku: null | string;
+	/** Total available stock for this variant. */
+	stock: null | number;
+	/** Whether stock management is enabled for this variant. */
+	stock_management: boolean;
+	/** Localized attribute values for the variant. */
+	values: LocalizedString[];
+	/** Weight measurement of the product. */
+	weight: string;
+	/** Width measurement of the product. */
+	width: string;
+};
+
+/**
+ * Represents a detailed product with all its properties and metadata.
+ */
+export type ProductDetails = {
+	/** Localized product attributes (size, color, etc.). */
+	attributes: LocalizedString[];
+	/** Brand name of the product. */
+	brand: null | string;
+	/** Canonical URL for SEO purposes. */
+	canonical_url: string;
+	/** Unique identifier for the product. */
+	id: number;
+	/** Array of category IDs this product belongs to. */
+	categories?: Category["id"][];
+	/** Localized product description. */
+	description: LocalizedString;
+	/** Whether the product qualifies for free shipping. */
+	free_shipping?: boolean;
+	/** Localized URL-friendly product identifier. */
+	handle: LocalizedString;
+	/** Array of product images. */
+	images: ProductImage[];
+	/** Localized product name. */
+	name: LocalizedString;
+	/** Whether the product is published and visible. */
+	published: boolean;
+	/** Whether the product requires shipping. */
+	requires_shipping: boolean;
+	/** Localized SEO meta description. */
+	seo_description: LocalizedString;
+	/** Localized SEO title. */
+	seo_title: LocalizedString;
+	/** Comma-separated product tags. */
+	tags: string;
+	/** Array of available product variants. */
+	variants: ProductVariant[];
+	/** URL of the product's promotional video. */
+	video_url: null | string;
 };
 
 /**
@@ -116,8 +254,8 @@ export type Cart = {
 	/** Validation status of the cart. */
 	validation: CartValidation;
 
-	/** List of products currently in the cart. */
-	items: Product[];
+	/** List of items currently in the cart. */
+	items: CartItem[];
 
 	/** Breakdown of the cart's pricing details. */
 	prices: Prices;
@@ -143,13 +281,58 @@ export type Store = {
 	currency: string;
 
 	/** Language code of the store (e.g., "en", "es"). */
-	language: string;
+	language: LanguageKey;
 };
+
+type FixedProductListSectionName =
+	| "featured_products"
+	| "new_products"
+	| "sale_products";
+type ProductSpecificProductListSectionName =
+	| "alternative_products"
+	| "complementary_products"
+	| "related_products";
+
+export type SectionablePage =
+	| HomePage
+	| CategoryPage
+	| AllProductsPage
+	| ProductPage;
+
+type ProductListSectionName<T extends SectionablePage["type"]> =
+	T extends ProductPage["type"]
+		? ProductSpecificProductListSectionName
+		: FixedProductListSectionName;
+
+type ProductListSection<T extends SectionablePage["type"]> = {
+	type: ProductListSectionName<T>;
+	products: ProductDetails[];
+};
+
+// Other sections will be added on demand
+export type Section<T extends SectionablePage["type"]> = ProductListSection<T>;
+
+/**
+ * Represents data that may contain a list of sections.
+ */
+export type WithSections<T extends SectionablePage["type"]> = {
+	sections?: Section<T>[];
+};
+
+/**
+ * Represents data that may contain a list of products.
+ */
+export type WithProductList = { products?: ProductDetails[] };
 
 /**
  * Represents a product category.
  */
-export type Category = { id: string; name: string };
+export type Category = { id: number; name: string };
+
+/**
+ * Represents search information.
+ */
+export type Search = { q: string };
 
 /**
  * Represents the different steps in the checkout process.
@@ -157,14 +340,44 @@ export type Category = { id: string; name: string };
 export type Checkout = { step: "start" | "payment" | "success" };
 
 /**
+ * Represents the homepage data.
+ */
+export type Home = undefined | WithSections<"home">;
+
+/**
+ * Represents the product page data.
+ */
+export type ProductPageData = {
+	product: ProductDetails;
+} & WithSections<"product">;
+
+/**
  * Represents a product page.
  */
-export type ProductPage = { type: "product"; data: Product };
+export type ProductPage = { type: "product"; data: ProductPageData };
 
 /**
  * Represents a category page.
  */
-export type CategoryPage = { type: "category"; data: Category };
+export type CategoryPage = {
+	type: "category";
+	data: Category & WithProductList;
+};
+
+const ALL_PRODUCTS_CATEGORY_ID = 0;
+
+/**
+ * Represents the root category page.
+ */
+export type AllProductsPage = {
+	type: "products";
+	data: Category & { id: typeof ALL_PRODUCTS_CATEGORY_ID } & WithProductList;
+};
+
+/**
+ * Represents the search results page.
+ */
+export type SearchPage = { type: "search"; data: Search & WithProductList };
 
 /**
  * Represents a checkout page.
@@ -172,9 +385,20 @@ export type CategoryPage = { type: "category"; data: Category };
 export type CheckoutPage = { type: "checkout"; data: Checkout };
 
 /**
+ * Represents the homepage.
+ */
+export type HomePage = { type: "home"; data: Home };
+
+/**
  * Represents a page within the application.
  */
-export type Page = CheckoutPage | ProductPage | CategoryPage;
+export type Page =
+	| HomePage
+	| CheckoutPage
+	| ProductPage
+	| CategoryPage
+	| AllProductsPage
+	| SearchPage;
 
 /**
  * Represents the user's current location within the application.

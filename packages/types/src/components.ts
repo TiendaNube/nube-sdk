@@ -1,5 +1,6 @@
-import type { NubeComponentStyle } from "@tiendanube/nube-sdk-ui";
+import type * as CSS from "csstype";
 import type { NubeSDKState } from "./main";
+import type { UISlot } from "./slots";
 import type { Prettify } from "./utility";
 
 /* -------------------------------------------------------------------------- */
@@ -36,6 +37,92 @@ export type FlexContent =
  * Defines possible alignment values for flex items.
  */
 export type FlexItems = "start" | "center" | "end" | "stretch";
+
+/**
+ * Represents the range of opacity values for theme colors.
+ */
+export type ThemeColorOpacityRange =
+	| 0
+	| 5
+	| 10
+	| 20
+	| 30
+	| 40
+	| 50
+	| 60
+	| 70
+	| 80
+	| 90;
+
+/**
+ * Represents a theme color class that can generate CSS custom properties.
+ */
+export interface ThemeColorInterface {
+	opacity(opacity: ThemeColorOpacityRange): string;
+	toValue(): string;
+	toString(): string;
+}
+
+export type ThemeColorValue = string;
+export type ThemeColorOpacityValue = string;
+
+/**
+ * Primitive CSS values that can be used in theme definitions.
+ */
+type ThemeCSSPrimitive = string | number;
+
+/**
+ * Represents values that can be used in theme-aware CSS properties.
+ */
+export type ThemeCSSValue =
+	| ThemeColorInterface
+	| ThemeColorOpacityValue
+	| ThemeCSSPrimitive;
+
+/**
+ * Maps properties that should use the Size type
+ */
+type SizePropertyKeys =
+	| "width"
+	| "height"
+	| "minWidth"
+	| "minHeight"
+	| "maxWidth"
+	| "maxHeight"
+	| "top"
+	| "right"
+	| "bottom"
+	| "left"
+	| "margin"
+	| "marginTop"
+	| "marginBottom"
+	| "marginLeft"
+	| "marginRight"
+	| "padding"
+	| "paddingTop"
+	| "paddingBottom"
+	| "paddingLeft"
+	| "paddingRight"
+	| "fontSize"
+	| "lineHeight"
+	| "borderWidth"
+	| "borderRadius";
+
+/**
+ * Applies Size only to size properties.
+ * The others remain as string | number.
+ */
+type EnhancedCSSProperties = {
+	[K in keyof CSS.Properties]?: K extends SizePropertyKeys
+		? Size | ThemeCSSValue
+		: CSS.Properties[K] | ThemeCSSValue;
+};
+
+/**
+ * Define named styles for Nube components.
+ * This type combines CSS properties with theme-aware values and Size types for layout properties.
+ */
+export type NubeComponentStyle = Partial<EnhancedCSSProperties>;
 
 /* -------------------------------------------------------------------------- */
 /*                            Box Component                                   */
@@ -125,11 +212,7 @@ export type NubeComponentRow = Prettify<
 export type NubeComponentEventHandler<
 	Events extends string,
 	Value = string,
-> = (data: {
-	type: Events;
-	state: NubeSDKState;
-	value?: Value;
-}) => void;
+> = (data: { type: Events; state: NubeSDKState; value?: Value }) => void;
 
 /**
  * Defines a handler for field-related events.
@@ -167,6 +250,53 @@ export type NubeComponentField = Prettify<
 	NubeComponentBase &
 		NubeComponentFieldProps & {
 			type: "field";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           NumberField Component                                */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentNumberFieldEventHandler = NubeComponentEventHandler<
+	"change" | "focus" | "blur" | "increment" | "decrement",
+	string
+>;
+
+/**
+ * Represents the properties available for a `numberfield` component.
+ */
+export type NubeComponentNumberFieldProps = Prettify<
+	NubeComponentBase & {
+		name: string;
+		label: string;
+		value?: number;
+		min?: number;
+		max?: number;
+		step?: number;
+		disabled?: boolean;
+		style?: {
+			container?: NubeComponentStyle;
+			wrapper?: NubeComponentStyle;
+			label?: NubeComponentStyle;
+			input?: NubeComponentStyle;
+			decrementButton?: NubeComponentStyle;
+			incrementButton?: NubeComponentStyle;
+		};
+		onChange?: NubeComponentNumberFieldEventHandler;
+		onBlur?: NubeComponentNumberFieldEventHandler;
+		onFocus?: NubeComponentNumberFieldEventHandler;
+		onIncrement?: NubeComponentNumberFieldEventHandler;
+		onDecrement?: NubeComponentNumberFieldEventHandler;
+	}
+>;
+
+/**
+ * Represents a `numberfield` component, used for numeric form inputs with increment/decrement buttons.
+ */
+export type NubeComponentNumberField = Prettify<
+	NubeComponentBase &
+		NubeComponentNumberFieldProps & {
+			type: "numberfield";
 		}
 >;
 
@@ -325,6 +455,7 @@ export type NubeComponentButtonProps = Prettify<
 			height: Size;
 			style?: NubeComponentStyle;
 			onClick: NubeComponentButtonEventHandler;
+			ariaLabel: string;
 		}>
 >;
 
@@ -1570,6 +1701,7 @@ export type NubeComponentId = string;
  */
 export type NubeComponentProps = {
 	id?: NubeComponentId;
+	key?: string | number;
 	// DON'T USE THIS, USED INTERNALLY BY THE SDK, ANY VALUE PASSED HERE WILL BE OVERWRITTEN
 	__internalId?: NubeComponentId;
 };
@@ -1597,6 +1729,7 @@ export type NubeComponent =
 	| NubeComponentColumn
 	| NubeComponentRow
 	| NubeComponentField
+	| NubeComponentNumberField
 	| NubeComponentFragment
 	| NubeComponentImage
 	| NubeComponentText
@@ -1666,31 +1799,6 @@ export type NubeComponentWithChildren =
 	| NubeComponentFeMerge;
 
 /**
- * Represents a UI slot where components can be dynamically injected.
- */
-export type UISlot =
-	| "before_main_content" // Before the main checkout content.
-	| "after_main_content" // After the main checkout content.
-	| "before_line_items" // Before the list of items in the cart.
-	| "after_line_items" // After the list of items in the cart.
-	| "after_contact_form" // After the contact form in checkout.
-	| "after_address_form" // After the address form in checkout.
-	| "after_billing_form" // After the billing form in checkout.
-	| "after_payment_options" // After the payment options in checkout.
-	| "before_payment_options" // Before the payment options in checkout.
-	| "before_address_form" // Before the address form in checkout.
-	| "before_billing_form" // Before the billing form in checkout.
-	| "before_contact_form" // Before the contact form in checkout.
-	| "modal_content" // Content of a modal dialog in checkout.
-	| "after_line_items_price" // After the price of the line items in checkout.
-	| "before_shipping_form" // Before the shipping form in checkout.
-	| "after_shipping_form" // After the shipping form in checkout.
-	| "corner_top_left" // Top left corner of the checkout page.
-	| "corner_top_right" // Top right corner of the checkout page.
-	| "corner_bottom_left" // Bottom left corner of the checkout page.
-	| "corner_bottom_right"; // Bottom right corner of the checkout page.
-
-/**
  * Represents the value of a UI component, typically used for form inputs.
  */
 export type UIValue = string;
@@ -1698,7 +1806,12 @@ export type UIValue = string;
 /**
  * Represents a mapping of UI slots to their respective components.
  */
-export type UISlots = Partial<Record<UISlot, NubeComponent>>;
+export type UISlots = Partial<
+	Record<
+		UISlot,
+		NubeComponent | NubeComponent[] | Record<string, NubeComponent>
+	>
+>;
 
 /**
  * Represents a mapping of UI component IDs to their respective values.
