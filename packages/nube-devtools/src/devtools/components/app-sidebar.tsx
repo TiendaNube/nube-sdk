@@ -1,6 +1,6 @@
-import { Box, ChartNoAxesGantt, ComponentIcon } from "lucide-react";
+import { Box, ChartNoAxesGantt, CodeXml, ComponentIcon } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
+import { Badge as BadgeComponent } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Sidebar,
@@ -15,7 +15,20 @@ import {
 import { PAGES, type Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
 
-const menu: { title: string; page: Page; icon: React.ElementType }[] = [
+const Badge = ({ text }: { text: string }) => {
+	return (
+		<BadgeComponent className="text-[10px] px-1 py-0.5" variant="destructive">
+			{text}
+		</BadgeComponent>
+	);
+};
+
+const menu: {
+	title: string;
+	page: Page;
+	icon: React.ElementType;
+	badge?: string;
+}[] = [
 	{
 		title: "Apps",
 		page: PAGES.APPS,
@@ -36,6 +49,12 @@ const menu: { title: string; page: Page; icon: React.ElementType }[] = [
 		page: PAGES.STORAGES,
 		icon: Box,
 	},
+	{
+		title: "SVG Converter",
+		page: PAGES.SVG_CONVERT,
+		icon: CodeXml,
+		badge: "beta",
+	},
 ];
 
 export function AppSidebar() {
@@ -54,9 +73,6 @@ export function AppSidebar() {
 							/>
 							NubeSDK
 						</div>
-						<Badge className="text-[10px] px-1 py-0.5" variant="destructive">
-							alpha
-						</Badge>
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
@@ -72,11 +88,17 @@ export function AppSidebar() {
 										>
 											<item.icon />
 											{currentPage === item.page ? (
-												<span className="font-bold text-primary">
-													{item.title}
-												</span>
+												<div className="flex items-center gap-1">
+													<span className="font-bold text-primary">
+														{item.title}
+													</span>
+													{item.badge && <Badge text={item.badge} />}
+												</div>
 											) : (
-												<span className="font-light">{item.title}</span>
+												<div className="flex items-center gap-1">
+													<span className="font-light">{item.title}</span>
+													{item.badge && <Badge text={item.badge} />}
+												</div>
 											)}
 										</Button>
 									</SidebarMenuButton>
