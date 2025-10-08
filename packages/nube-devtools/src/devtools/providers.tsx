@@ -1,7 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
-import { ConsoleEventsProvider } from "@/contexts/console-events-context";
 import { NavigationProvider } from "@/contexts/navigation-context";
-import { NetworkEventsProvider } from "@/contexts/network-events-context";
 import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
 import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
 import { NubeSDKStorageProvider } from "@/contexts/nube-sdk-storage-context";
@@ -16,12 +14,8 @@ export const Providers = ({ children }: ProvidersProps) => {
 			<NubeSDKEventsProvider>
 				<NubeSDKStorageProvider>
 					<NubeSDKAppsProvider>
-						<ConsoleEventsProvider>
-							<NetworkEventsProvider>
-								{children}
-								<Toaster />
-							</NetworkEventsProvider>
-						</ConsoleEventsProvider>
+						{children}
+						<Toaster />
 					</NubeSDKAppsProvider>
 				</NubeSDKStorageProvider>
 			</NubeSDKEventsProvider>

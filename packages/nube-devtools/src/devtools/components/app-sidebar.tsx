@@ -10,17 +10,13 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useConsoleEventsContext } from "@/contexts/console-events-context";
 import { PAGES, type Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
-import { useNetworkEventsContext } from "@/contexts/network-events-context";
 import { cn } from "@/lib/utils";
 import {
 	Box,
 	ChartNoAxesGantt,
 	ComponentIcon,
-	NetworkIcon,
-	TerminalIcon,
 } from "lucide-react";
 import type { LucideProps } from "lucide-react";
 import type { ElementType } from "react";
@@ -67,8 +63,6 @@ function HighlightBadge({ count, className }: HighlightBadgeProps) {
 
 export function AppSidebar() {
 	const { currentPage, navigate } = useNavigation();
-	const { countUnshown: consoleCount } = useConsoleEventsContext();
-	const { countUnshown: networkCount } = useNetworkEventsContext();
 
 	const menu = useMemo<MenuItem[]>(
 		() => [
@@ -79,28 +73,16 @@ export function AppSidebar() {
 				icon: ComponentIcon,
 				count: 0,
 			},
-			{
-				title: "Console",
-				page: PAGES.CONSOLE,
-				icon: TerminalIcon,
-				count: consoleCount,
-			},
 			{ title: "Events", page: PAGES.EVENTS, icon: ChartNoAxesGantt, count: 0 },
-			{
-				title: "Network",
-				page: PAGES.NETWORK,
-				icon: NetworkIcon,
-				count: networkCount,
-			},
 			{ title: "Storage", page: PAGES.STORAGES, icon: Box, count: 0 },
 			{
 				title: "SVG Converter",
 				page: PAGES.SVG_CONVERT,
-				icon: NetworkIcon,
+				icon: ComponentIcon,
 				count: 0,
 			},
 		],
-		[consoleCount, networkCount],
+		[],
 	);
 
 	return (

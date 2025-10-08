@@ -6,8 +6,6 @@ export const PAGES = {
 	STORAGES: "storages",
 	APPS: "apps",
 	COMPONENTS: "components",
-	CONSOLE: "console",
-	NETWORK: "network",
 	SVG_CONVERT: "svg-convert",
 } as const;
 

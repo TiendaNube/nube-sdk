@@ -1,5 +1,4 @@
 import type { NubeSDKStorageEvent } from "@/contexts/nube-sdk-storage-context";
-import type { FetchAuditMessage } from "@/devtools/hooks/use-network-script";
 
 window.addEventListener("DOMContentLoaded", () => {
 	chrome.runtime.sendMessage({
@@ -34,18 +33,3 @@ window.addEventListener("NubeSDKStorageEvents", ((event: Event) => {
 	});
 }) as EventListener);
 
-window.addEventListener("NubeSDKConsoleEvents", ((event: Event) => {
-	const payload = event as CustomEvent;
-	const port = chrome.runtime.connect({ name: "nube-devtools-console-events" });
-	port.postMessage({
-		payload: payload.detail,
-	});
-}) as EventListener);
-
-window.addEventListener("NubeSDKFetchAuditEvents", ((event: Event) => {
-	const payload = event as CustomEvent<FetchAuditMessage>;
-	const port = chrome.runtime.connect({ name: "nube-devtools-network-events" });
-	port.postMessage({
-		payload: payload.detail,
-	});
-}) as EventListener);
