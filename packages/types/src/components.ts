@@ -987,6 +987,7 @@ export type NubeComponentPathProps = Prettify<
 			strokeLinecap: "butt" | "round" | "square";
 			strokeLinejoin: "miter" | "round" | "bevel";
 			fillRule: "nonzero" | "evenodd";
+			clipRule: "nonzero" | "evenodd";
 			opacity: number;
 			style?: NubeComponentStyle;
 		}>
