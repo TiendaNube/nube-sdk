@@ -1601,6 +1601,7 @@ export type NubeComponentFeGaussianBlurProps = Prettify<
 		Partial<{
 			stdDeviation: number | string;
 			edgeMode: "duplicate" | "wrap" | "none";
+			in: string;
 			style?: NubeComponentStyle;
 		}>
 >;
