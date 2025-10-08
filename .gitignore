@@ -61,3 +61,8 @@ packages/doc/.vitepress/cache
 # Operating system
 .DS_Store
 Thumbs.db
+
+# IDEs
+
+.idea
+.cursor

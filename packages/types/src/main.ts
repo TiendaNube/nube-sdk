@@ -1,5 +1,5 @@
 import type { NubeBrowserAPIs } from "./browser";
-import type { NubeComponent, UI, UISlot } from "./components";
+import type { NubeComponent, UI } from "./components";
 import type {
 	AppConfig,
 	AppLocation,
@@ -9,7 +9,13 @@ import type {
 	Shipping,
 	Store,
 } from "./domain";
-import type { NubeSDKListenableEvent, NubeSDKSendableEvent } from "./events";
+import type {
+	NubeSDKListenableEvent,
+	NubeSDKListenableSuccessEvent,
+	NubeSDKSendableEvent,
+} from "./events";
+
+import type { UISlot } from "./slots";
 import type { DeepPartial, Nullable } from "./utility";
 
 /**
@@ -43,7 +49,7 @@ export type NubeSDKState = {
 	ui: UI;
 
 	/**
-	 * Informaion about shipping, such as avaliable options, selected option and custom labels.
+	 * Information about shipping, such as available options, the selected option, and custom labels.
 	 * This property may be null depending on the page it is accessed from.
 	 */
 	shipping: Nullable<Shipping>;
@@ -57,7 +63,17 @@ export type NubeSDKState = {
 	 * Information about the payment method, including type, status, and selected option.
 	 */
 	payment: Nullable<Payment>;
+
+	/**
+	 * Optional event payload
+	 */
+	eventPayload: Nullable<Record<string, unknown>>;
 };
+
+/*
+ * Represents an optional event payload.
+ */
+export type OptionalEventPayload = { eventPayload?: Record<string, unknown> };
 
 /**
  * Represents a listener function that responds to SDK events.
@@ -67,8 +83,34 @@ export type NubeSDKState = {
  */
 export type NubeSDKListener = (
 	state: Readonly<NubeSDKState>,
-	event: NubeSDKSendableEvent,
+	event: NubeSDKListenableEvent,
 ) => void;
+
+/**
+ * Represents a listener function that responds to SDK events with state and payload.
+ *
+ * @param state - The current immutable state of the SDK.
+ * @param event - The event that was triggered.
+
+ */
+export type NubeSDKListenerWithPayload = (
+	state: Readonly<NubeSDKState> & OptionalEventPayload,
+	event: NubeSDKListenableSuccessEvent,
+) => void;
+
+/**
+ * Maps the events to the appropriate listener type.
+ *
+ * @type {EventListenerMap}
+ */
+export type EventListenerMap = {
+	[K in NubeSDKListenableSuccessEvent]: NubeSDKListenerWithPayload;
+} & {
+	[K in Exclude<
+		NubeSDKListenableEvent,
+		NubeSDKListenableSuccessEvent
+	>]: NubeSDKListener;
+};
 
 /**
  * Represents a function that modifies the SDK state.
@@ -82,9 +124,36 @@ export type NubeSDKStateModifier = (
 ) => DeepPartial<NubeSDKState>;
 
 /**
+ * Represents a function that modifies the SDK state with a payload.
+ *
+ * @param state - The current immutable state of the SDK. The event payload is available on state.payload.
+ * @returns A partial update of the SDK state.
+ */
+export type NubeSDKStateModifierWithPayload = (
+	state: Readonly<NubeSDKState> & OptionalEventPayload,
+) => DeepPartial<NubeSDKState>;
+
+/**
+ * Maps the events to the appropriate state modifier type.
+ *
+ * @type {NubeSDKStateModifierMap}
+ */
+export type NubeSDKStateModifierMap = {
+	// Eventos :success recebem o listener com payload
+	[K in NubeSDKListenableSuccessEvent]: NubeSDKStateModifierWithPayload;
+} & {
+	// Todos os outros eventos recebem o listener padrão
+	[K in Exclude<
+		NubeSDKListenableEvent,
+		NubeSDKListenableSuccessEvent
+	>]: NubeSDKStateModifier;
+};
+
+/**
  * Represents the main interface for interacting with NubeSDK.
  * Provides methods to listen to events, send events, and retrieve state.
  */
+
 export type NubeSDK = {
 	/**
 	 * Registers an event listener.
@@ -92,7 +161,10 @@ export type NubeSDK = {
 	 * @param event - The event type to listen for.
 	 * @param listener - The function to execute when the event occurs.
 	 */
-	on(event: NubeSDKListenableEvent, listener: NubeSDKListener): void;
+	on<T extends NubeSDKListenableEvent>(
+		event: T,
+		listener: EventListenerMap[T],
+	): void;
 
 	/**
 	 * Removes a registered event listener.
@@ -100,7 +172,10 @@ export type NubeSDK = {
 	 * @param event - The event type to stop listening for.
 	 * @param listener - The function that was previously registered.
 	 */
-	off(event: NubeSDKListenableEvent, listener: NubeSDKListener): void;
+	off<T extends NubeSDKListenableEvent>(
+		event: T,
+		listener: EventListenerMap[T],
+	): void;
 
 	/**
 	 * Sends an event to the SDK, optionally modifying the state.
@@ -108,7 +183,10 @@ export type NubeSDK = {
 	 * @param event - The event type to send.
 	 * @param modifier - An optional function to modify the SDK state.
 	 */
-	send(event: NubeSDKSendableEvent, modifier?: NubeSDKStateModifier): void;
+	send<T extends NubeSDKSendableEvent>(
+		event: T,
+		modifier?: NubeSDKStateModifierMap[T],
+	): void;
 
 	/**
 	 * Retrieves the current immutable state of the SDK.
@@ -136,7 +214,8 @@ export type NubeSDK = {
 		slot: UISlot,
 		component:
 			| NubeComponent
-			| ((state: Readonly<NubeSDKState>) => NubeComponent),
+			| NubeComponent[]
+			| ((state: Readonly<NubeSDKState>) => NubeComponent | NubeComponent[]),
 	): void;
 
 	/**
