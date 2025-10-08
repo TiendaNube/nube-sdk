@@ -1,50 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useDevToolsTheme } from "@/contexts/devtools-theme-context";
 import Layout from "@/devtools/components/layout";
-import { Copy, Download, RefreshCw, Sparkles } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Copy, Download } from "lucide-react";
+import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
 	oneDark,
 	oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { toast } from "sonner";
-
-// Hook personalizado para calcular largura dinamicamente
-const useDynamicWidth = () => {
-	const [width, setWidth] = useState<number>(0);
-	const containerRef = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		const updateWidth = () => {
-			if (containerRef.current) {
-				const rect = containerRef.current.getBoundingClientRect();
-				setWidth(rect.width);
-			}
-		};
-
-		// Atualiza a largura inicial
-		updateWidth();
-
-		// Adiciona listener para mudanças de tamanho
-		const resizeObserver = new ResizeObserver(updateWidth);
-		if (containerRef.current) {
-			resizeObserver.observe(containerRef.current);
-		}
-
-		// Listener para mudanças de tamanho da janela
-		window.addEventListener("resize", updateWidth);
-
-		return () => {
-			resizeObserver.disconnect();
-			window.removeEventListener("resize", updateWidth);
-		};
-	}, []);
-
-	return { width, containerRef };
-};
+import { convertSvgToNubeSDK, copyToClipboard, downloadFile } from "@/utils";
+import { useDynamicWidth } from "@/devtools/hooks";
 
 export function SvgConverter() {
 	const [inputSvg, setInputSvg] = useState<string>("");
@@ -53,131 +21,10 @@ export function SvgConverter() {
 	const isDarkMode = theme === "dark";
 	const { width, containerRef } = useDynamicWidth();
 
-	const convertSvgToNubeSDK = (svgString: string) => {
-		const trimmedSvg = svgString.trim();
-		if (!trimmedSvg) {
-			setOutputCode("");
-			return;
-		}
-
+	const handleSvgConversion = (svgString: string) => {
 		try {
-			let converted = trimmedSvg.replace(/<!--[\s\S]*?-->/g, "");
-
-			// Remove o atributo class de todas as tags
-			converted = converted.replace(/\s+class\s*=\s*["'][^"']*["']/g, "");
-
-			const tagMappings = {
-				"<svg": "<Svg.Root",
-				"</svg>": "</Svg.Root>",
-				"<g": "<Svg.G",
-				"</g>": "</Svg.G>",
-				"<path": "<Svg.Path",
-				"</path>": "</Svg.Path>",
-				"<circle": "<Svg.Circle",
-				"</circle>": "</Svg.Circle>",
-				"<rect": "<Svg.Rect",
-				"</rect>": "</Svg.Rect>",
-				"<line": "<Svg.Line",
-				"</line>": "</Svg.Line>",
-				"<polyline": "<Svg.Polyline",
-				"</polyline>": "</Svg.Polyline>",
-				"<polygon": "<Svg.Polygon",
-				"</polygon>": "</Svg.Polygon>",
-				"<ellipse": "<Svg.Ellipse",
-				"</ellipse>": "</Svg.Ellipse>",
-				"<text": "<Svg.Text",
-				"</text>": "</Svg.Text>",
-				"<tspan": "<Svg.TSpan",
-				"</tspan>": "</Svg.TSpan>",
-				"<defs": "<Svg.Defs",
-				"</defs>": "</Svg.Defs>",
-				"<linearGradient": "<Svg.LinearGradient",
-				"</linearGradient>": "</Svg.LinearGradient>",
-				"<radialGradient": "<Svg.RadialGradient",
-				"</radialGradient>": "</Svg.RadialGradient>",
-				"<stop": "<Svg.Stop",
-				"</stop>": "</Svg.Stop>",
-				"<clipPath": "<Svg.ClipPath",
-				"</clipPath>": "</Svg.ClipPath>",
-				"<mask": "<Svg.Mask",
-				"</mask>": "</Svg.Mask>",
-				"<use": "<Svg.Use",
-				"</use>": "</Svg.Use>",
-				"<symbol": "<Svg.Symbol",
-				"</symbol>": "</Svg.Symbol>",
-				"<marker": "<Svg.Marker",
-				"</marker>": "</Svg.Marker>",
-				"<pattern": "<Svg.Pattern",
-				"</pattern>": "</Svg.Pattern>",
-				"<image": "<Svg.Image",
-				"</image>": "</Svg.Image>",
-			};
-
-			for (const [from, to] of Object.entries(tagMappings)) {
-				converted = converted.replace(new RegExp(from, "g"), to);
-			}
-
-			const attributeMappings = {
-				"stroke-width": "strokeWidth",
-				"stroke-linecap": "strokeLinecap",
-				"stroke-linejoin": "strokeLinejoin",
-				"stroke-dasharray": "strokeDasharray",
-				"stroke-dashoffset": "strokeDashoffset",
-				"stroke-miterlimit": "strokeMiterlimit",
-				"fill-rule": "fillRule",
-				"fill-opacity": "fillOpacity",
-				"stroke-opacity": "strokeOpacity",
-				"clip-path": "clipPath",
-				"clip-rule": "clipRule",
-				"font-family": "fontFamily",
-				"font-size": "fontSize",
-				"font-weight": "fontWeight",
-				"font-style": "fontStyle",
-				"text-anchor": "textAnchor",
-				"text-decoration": "textDecoration",
-				"vector-effect": "vectorEffect",
-				"stop-color": "stopColor",
-				"stop-opacity": "stopOpacity",
-				offset: "offset",
-				"gradient-units": "gradientUnits",
-				"gradient-transform": "gradientTransform",
-				"spread-method": "spreadMethod",
-				x1: "x1",
-				y1: "y1",
-				x2: "x2",
-				y2: "y2",
-				cx: "cx",
-				cy: "cy",
-				r: "r",
-				rx: "rx",
-				ry: "ry",
-				viewBox: "viewBox",
-			};
-
-			for (const [from, to] of Object.entries(attributeMappings)) {
-				const regex = new RegExp(`\\b${from}=`, "g");
-				converted = converted.replace(regex, `${to}=`);
-			}
-
-			const usedComponents = new Set<string>();
-			const componentRegex = /<(\w+)/g;
-			let match: RegExpExecArray | null = componentRegex.exec(converted);
-			while (match !== null) {
-				const component = match[1];
-				if (component !== "div" && component !== "span") {
-					usedComponents.add(component);
-				}
-				match = componentRegex.exec(converted);
-			}
-
-			const importStatement = `import { Svg } from '@tiendanube/nube-sdk-jsx';\n\n`;
-
-			const componentCode = `export const Component = () => {\n  return (\n ${converted
-				.split("\n")
-				.map((line) => `    ${line}`)
-				.join("\n")}\n  );\n};`;
-
-			setOutputCode(`${importStatement}${componentCode}`);
+			const convertedCode = convertSvgToNubeSDK(svgString);
+			setOutputCode(convertedCode);
 		} catch (error) {
 			toast.error("Conversion Error", {
 				description: "Please check if the SVG is in valid format",
@@ -186,54 +33,19 @@ export function SvgConverter() {
 	};
 
 	const handleCopy = async () => {
-		try {
-			if (typeof chrome !== "undefined" && chrome.runtime) {
-				const textArea = document.createElement("textarea");
-				textArea.value = outputCode;
-				textArea.style.position = "fixed";
-				textArea.style.left = "-999999px";
-				textArea.style.top = "-999999px";
-				document.body.appendChild(textArea);
-				textArea.focus();
-				textArea.select();
-
-				const successful = document.execCommand("copy");
-				document.body.removeChild(textArea);
-
-				if (successful) {
-					toast.success("Copied!", {
-						description: "Code copied to clipboard",
-					});
-					return;
-				}
-			}
-
-			await navigator.clipboard.writeText(outputCode);
-			toast.success("Copied!", {
-				description: "Code copied to clipboard",
-			});
-		} catch (error) {
-			alert(`Please copy this code manually:\n\n${outputCode}`);
-			toast.error("Error", {
-				description: "Could not copy automatically. Code shown in alert.",
-			});
-		}
+		await copyToClipboard(
+			outputCode,
+			(message) => toast.success("Copied!", { description: message }),
+			(error) => toast.error("Error", { description: error })
+		);
 	};
 
 	const handleDownload = () => {
-		const blob = new Blob([outputCode], { type: "text/plain" });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = "SvgComponent.tsx";
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		URL.revokeObjectURL(url);
-
-		toast.success("Download started", {
-			description: "SvgComponent.tsx file downloaded",
-		});
+		downloadFile(
+			outputCode,
+			"SvgComponent.tsx",
+			(message) => toast.success("Download started", { description: message })
+		);
 	};
 
 	return (
@@ -290,7 +102,7 @@ export function SvgConverter() {
 								value={inputSvg}
 								onChange={(e) => {
 									setInputSvg(e.target.value);
-									convertSvgToNubeSDK(e.target.value);
+									handleSvgConversion(e.target.value);
 								}}
 								placeholder="Paste your SVG code here..."
 								className="h-full p-3 border rounded-md font-mono text-sm resize-none overflow-auto"
