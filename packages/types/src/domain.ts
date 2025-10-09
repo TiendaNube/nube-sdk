@@ -1,6 +1,34 @@
 import type { DeepPartial, Nullable, Prettify } from "./utility";
 
 /**
+ * Represents the type of device.
+ */
+type DeviceType = "mobile" | "desktop";
+
+/**
+ * Represents the orientation of the screen.
+ */
+type DeviceScreenOrientation = "portrait" | "landscape";
+
+/**
+ * Represents the screen state of the device.
+ */
+export type DeviceScreen = {
+	width: number;
+	height: number;
+	orientation: DeviceScreenOrientation;
+	pixelRatio: number;
+};
+
+/**
+ * Represents the device state.
+ */
+export type Device = {
+	screen: DeviceScreen;
+	type: DeviceType;
+};
+
+/**
  * Represents a Cart Item.
  * This type maintains compatibility with the API response format.
  */
