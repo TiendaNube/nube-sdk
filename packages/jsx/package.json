@@ -1,6 +1,6 @@
 {
   "name": "@tiendanube/nube-sdk-jsx",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "Library for building JSX interfaces for NubeSDK",
   "type": "module",
   "main": "./dist/index.js",
