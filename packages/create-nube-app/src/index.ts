@@ -68,8 +68,39 @@ async function installDependencies(
 	}
 }
 
-function copyTemplateFiles(src: string, dest: string): Promise<void> {
-	return fs.copy(src, dest);
+async function initGit(dest: string): Promise<boolean> {
+	const execAsync = promisify(exec);
+
+	try {
+		await execAsync("git --version");
+	} catch (error) {
+		return true;
+	}
+
+	const spinner = prompts.spinner();
+	spinner.start("Initializing git...");
+	try {
+		await execAsync("git init", {
+			cwd: dest,
+		});
+		spinner.stop("🌱 Git initialized!");
+		return true;
+	} catch (error) {
+		spinner.stop("Git failed to initialize.");
+		return false;
+	}
+}
+
+async function copyTemplateFiles(src: string, dest: string): Promise<void> {
+	await fs.copy(src, dest);
+
+	// Rename gitignore to .gitignore (NPM ignores .gitignore files during publish)
+	const gitignorePath = path.join(dest, "gitignore");
+	const dotGitignorePath = path.join(dest, ".gitignore");
+
+	if (await fs.pathExists(gitignorePath)) {
+		await fs.move(gitignorePath, dotGitignorePath);
+	}
 }
 
 function cancel(message = "Operation cancelled") {
@@ -125,6 +156,9 @@ async function main(): Promise<void> {
 
 	const success = await installDependencies(pkgManager, dest, projectName);
 	if (!success) return;
+
+	const gitSuccess = await initGit(dest);
+	if (!gitSuccess) return;
 
 	let message = "🚀 Done. Now run:\n";
 	message += `\n  cd ${projectName}`;
