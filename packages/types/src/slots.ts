@@ -48,6 +48,7 @@ export const COMMON_UI_SLOT = {
  * @property {"after_line_items_price"} AFTER_LINE_ITEMS_PRICE - After the price of the line items in checkout.
  * @property {"before_shipping_form"} BEFORE_SHIPPING_FORM - Before the shipping form in checkout.
  * @property {"after_shipping_form"} AFTER_SHIPPING_FORM - After the shipping form in checkout.
+ * @property {"after_shipping_description"} AFTER_SHIPPING_DESCRIPTION - After the shipping description in checkout.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const CHECKOUT_UI_SLOT = {
@@ -65,6 +66,7 @@ export const CHECKOUT_UI_SLOT = {
 	AFTER_LINE_ITEMS_PRICE: "after_line_items_price",
 	BEFORE_SHIPPING_FORM: "before_shipping_form",
 	AFTER_SHIPPING_FORM: "after_shipping_form",
+	AFTER_SHIPPING_DESCRIPTION: "after_shipping_description",
 } as const;
 
 /**
