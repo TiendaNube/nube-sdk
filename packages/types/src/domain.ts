@@ -436,7 +436,7 @@ export type ShippingOption = {
 	id: string;
 	original_name: Nullable<string>;
 	name: Nullable<string>;
-	code: Nullable<string>;
+	code: Nullable<string | number>;
 	reference: Nullable<string>;
 	type: Nullable<string>;
 	price: number;
