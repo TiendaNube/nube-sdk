@@ -538,6 +538,16 @@ export type ShippingOption = {
 };
 
 /**
+ * Represents a custom label for a shipping option.
+ */
+export type CustomLabel =
+	| string
+	| {
+			title?: Nullable<string>;
+			description?: Nullable<string>;
+	  };
+
+/**
  * Represents shipping information in checkout.
  */
 export type Shipping = {
@@ -546,7 +556,7 @@ export type Shipping = {
 	/** List of available shipping options. */
 	options?: ShippingOption[];
 	/** Custom labels assigned to shipping options. */
-	custom_labels?: Record<string, string>;
+	custom_labels?: Record<string, CustomLabel>;
 };
 
 /**
