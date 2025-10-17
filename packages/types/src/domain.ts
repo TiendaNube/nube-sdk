@@ -3,12 +3,12 @@ import type { DeepPartial, Nullable, Prettify } from "./utility";
 /**
  * Represents the type of device.
  */
-type DeviceType = "mobile" | "desktop";
+export type DeviceType = "mobile" | "desktop";
 
 /**
  * Represents the orientation of the screen.
  */
-type DeviceScreenOrientation = "portrait" | "landscape";
+export type DeviceScreenOrientation = "portrait" | "landscape";
 
 /**
  * Represents the screen state of the device.
