@@ -14,9 +14,16 @@ type DeviceScreenOrientation = "portrait" | "landscape";
  * Represents the screen state of the device.
  */
 export type DeviceScreen = {
+	/** The width of the screen in pixels. */
 	width: number;
+	/** The height of the screen in pixels. */
 	height: number;
+	/**
+	 * The orientation of the screen.
+	 * @example "portrait" | "landscape"
+	 */
 	orientation: DeviceScreenOrientation;
+	/** The pixel ratio of the screen. */
 	pixelRatio: number;
 };
 
@@ -24,7 +31,15 @@ export type DeviceScreen = {
  * Represents the device state.
  */
 export type Device = {
+	/**
+	 * The screen state of the device.
+	 * @example { width: 100, height: 100, orientation: "portrait" }
+	 */
 	screen: DeviceScreen;
+	/**
+	 * The type of device.
+	 * @example "mobile" | "desktop"
+	 */
 	type: DeviceType;
 };
 
