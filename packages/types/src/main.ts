@@ -5,6 +5,7 @@ import type {
 	AppLocation,
 	Cart,
 	Customer,
+	Device,
 	Payment,
 	Shipping,
 	Store,
@@ -23,6 +24,11 @@ import type { DeepPartial, Nullable } from "./utility";
  * This state is immutable and contains all relevant application data.
  */
 export type NubeSDKState = {
+	/**
+	 * The current device state, containing screen information.
+	 */
+	device: Device;
+
 	/**
 	 * The current cart state, containing products, pricing, and validation status.
 	 */
