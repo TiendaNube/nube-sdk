@@ -13,6 +13,7 @@ import { Apps } from "./pages/apps";
 import { Components } from "./pages/components";
 import { Events } from "./pages/events";
 import { Storages } from "./pages/storages";
+import { SvgConverter } from "./pages/svg-converter";
 import { Unavailable } from "./pages/unavailable";
 
 const PAGE_COMPONENTS = {
@@ -20,6 +21,7 @@ const PAGE_COMPONENTS = {
 	[PAGES.COMPONENTS]: Components,
 	[PAGES.EVENTS]: Events,
 	[PAGES.STORAGES]: Storages,
+	[PAGES.SVG_CONVERT]: SvgConverter,
 } as const;
 
 const AppContent = () => {
