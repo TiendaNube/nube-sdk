@@ -15,6 +15,7 @@ import { Events } from "./pages/events";
 import { Storages } from "./pages/storages";
 import { SvgConverter } from "./pages/svg-converter";
 import { Unavailable } from "./pages/unavailable";
+import { State } from "./pages/state";
 
 const PAGE_COMPONENTS = {
 	[PAGES.APPS]: Apps,
@@ -22,6 +23,7 @@ const PAGE_COMPONENTS = {
 	[PAGES.EVENTS]: Events,
 	[PAGES.STORAGES]: Storages,
 	[PAGES.SVG_CONVERT]: SvgConverter,
+  [PAGES.STATE]: State,
 } as const;
 
 const AppContent = () => {

@@ -1,10 +1,11 @@
-import { Box, ChartNoAxesGantt, CodeXml, ComponentIcon } from "lucide-react";
+import { Box, Braces, ChartNoAxesGantt, CodeXml, ComponentIcon, Database } from "lucide-react";
 
 import { Badge as BadgeComponent } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Sidebar,
 	SidebarContent,
+	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarGroupLabel,
@@ -47,7 +48,7 @@ const menu: {
 	{
 		title: "Storage",
 		page: PAGES.STORAGES,
-		icon: Box,
+		icon: Database,
 	},
 	{
 		title: "SVG Converter",
@@ -55,6 +56,11 @@ const menu: {
 		icon: CodeXml,
 		badge: "beta",
 	},
+  {
+    title: "State",
+    page: PAGES.STATE,
+    icon: Braces,
+  },
 ];
 
 export function AppSidebar() {
