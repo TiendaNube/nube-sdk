@@ -486,10 +486,9 @@ export type NubeComponentLinkProps = Prettify<
 		Partial<{
 			children: NubeComponentChildren;
 			href: string;
-			target?: "_blank" | "_self" | "_parent" | "_top";
+			target?: "_blank";
 			variant?: "primary" | "secondary" | "transparent" | "link";
 			style?: NubeComponentStyle;
-			onClick?: NubeComponentLinkEventHandler;
 		}>
 >;
 
