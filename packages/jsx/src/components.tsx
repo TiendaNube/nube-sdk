@@ -47,6 +47,8 @@ import type {
 	NubeComponentLineProps,
 	NubeComponentLinearGradient,
 	NubeComponentLinearGradientProps,
+	NubeComponentLink,
+	NubeComponentLinkProps,
 	NubeComponentMask,
 	NubeComponentMaskProps,
 	NubeComponentNumberField,
@@ -103,6 +105,7 @@ import {
 	fragment,
 	icon,
 	image,
+	link,
 	numberfield,
 	row,
 	select,
@@ -223,6 +226,21 @@ export function NumberField(
  */
 export function Button(props: NubeComponentButtonProps): NubeComponentButton {
 	return button(props);
+}
+
+/**
+ * Creates a `Link` component.
+ *
+ * The `Link` component is used for navigation links. It supports properties such as
+ * `href`, `target`, `rel`, `disabled`, `variant`, and `onClick` event handling.
+ * Links can be styled with different variants (primary, secondary, transparent)
+ * and support both internal and external navigation.
+ *
+ * @param props - The properties for configuring the link component.
+ * @returns A `NubeComponentLink` object representing the link component.
+ */
+export function Link(props: NubeComponentLinkProps): NubeComponentLink {
+	return link(props);
 }
 
 /**

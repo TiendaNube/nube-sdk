@@ -10,6 +10,7 @@ export * from "./components/checkbox";
 export * from "./components/textarea";
 export * from "./components/button";
 export * from "./components/select";
+export * from "./components/link";
 export * from "./components/accordion";
 export * from "./components/accordion-item";
 export * from "./components/accordion-content";
