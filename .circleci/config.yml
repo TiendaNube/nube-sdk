@@ -165,18 +165,18 @@ workflows:
           filters:
             <<: *filter-prd
       - publish-types:
-          context: NPM_TOKEN_SDK
+          context: NPM_TOKEN_SDK2
           requires:
             - approval-publish-types
       - publish-ui:
-          context: NPM_TOKEN_SDK
+          context: NPM_TOKEN_SDK2
           requires:
             - approval-publish-ui
       - publish-jsx:
-          context: NPM_TOKEN_SDK
+          context: NPM_TOKEN_SDK2
           requires:
             - approval-publish-jsx
       - publish-create-nube-app:
-          context: NPM_TOKEN_SDK
+          context: NPM_TOKEN_SDK2
           requires:
             - approval-publish-create-nube-app
