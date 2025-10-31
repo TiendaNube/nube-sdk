@@ -76,7 +76,7 @@ jobs:
       - run:
           name: Publish @tiendanube/nube-sdk-types
           command: |
-            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK2
             npm publish --workspace packages/types --access public
 
   publish-ui:
@@ -89,7 +89,7 @@ jobs:
       - run:
           name: Publish @tiendanube/nube-sdk-ui
           command: |
-            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK2
             npm run build --workspace packages/ui
             npm publish --workspace packages/ui --access public
 
@@ -103,7 +103,7 @@ jobs:
       - run:
           name: Publish @tiendanube/nube-sdk-jsx
           command: |
-            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK2
             npm run build
             npm publish --workspace packages/jsx --access public
 
@@ -117,7 +117,7 @@ jobs:
       - run:
           name: Publish create-nube-app
           command: |
-            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK2
             npm run build
             npm publish --workspace packages/create-nube-app --access public
 
