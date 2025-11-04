@@ -64,6 +64,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"shipping:select:success"} SHIPPING_SELECT_SUCCESS - Fired when a shipping selected successfully.
  * @property {"shipping:select:fail"} SHIPPING_SELECT_FAIL - Fired when a shipping selected unsuccessfully.
  * @property {"customer:update"} CUSTOMER_UPDATE - Fired when the customer data is updated.
+ * @property {"order:update"} ORDER_UPDATE - Fired when the order data is updated.
  * @property {"payment:update"} PAYMENT_UPDATE - Fired when the payment data is updated.
  * @property {"coupon:add:success"} COUPON_ADD_SUCCESS - Fired when a coupon is added successfully.
  * @property {"coupon:add:fail"} COUPON_ADD_FAIL - Fired when a coupon is added unsuccessfully.
@@ -88,6 +89,7 @@ export const EVENT = {
 	SHIPPING_SELECT_SUCCESS: "shipping:select:success",
 	SHIPPING_SELECT_FAIL: "shipping:select:fail",
 	CUSTOMER_UPDATE: "customer:update",
+	ORDER_UPDATE: "order:update",
 	PAYMENT_UPDATE: "payment:update",
 	COUPON_ADD_SUCCESS: "coupon:add:success",
 	COUPON_REMOVE_SUCCESS: "coupon:remove:success",
