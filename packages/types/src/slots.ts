@@ -15,6 +15,8 @@ import type { ObjectValues, Prettify } from "./utility";
  * @property {"corner_top_right"} CORNER_TOP_RIGHT - Top right corner of the page.
  * @property {"corner_bottom_left"} CORNER_BOTTOM_LEFT - Bottom left corner of the page.
  * @property {"corner_bottom_right"} CORNER_BOTTOM_RIGHT - Bottom right corner of the page.
+ * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
+ * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  */
 export const COMMON_UI_SLOT = {
 	BEFORE_MAIN_CONTENT: "before_main_content",
@@ -24,6 +26,8 @@ export const COMMON_UI_SLOT = {
 	CORNER_TOP_RIGHT: "corner_top_right",
 	CORNER_BOTTOM_LEFT: "corner_bottom_left",
 	CORNER_BOTTOM_RIGHT: "corner_bottom_right",
+	BEFORE_LINE_ITEMS: "before_line_items",
+	AFTER_LINE_ITEMS: "after_line_items",
 } as const;
 
 /**
@@ -35,8 +39,6 @@ export const COMMON_UI_SLOT = {
  *
  * @constant
  *
- * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
- * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  * @property {"after_contact_form"} AFTER_CONTACT_FORM - After the contact form in checkout.
  * @property {"after_address_form"} AFTER_ADDRESS_FORM - After the address form in checkout.
  * @property {"after_billing_form"} AFTER_BILLING_FORM - After the billing form in checkout.
@@ -53,8 +55,6 @@ export const COMMON_UI_SLOT = {
  */
 export const CHECKOUT_UI_SLOT = {
 	...COMMON_UI_SLOT,
-	BEFORE_LINE_ITEMS: "before_line_items",
-	AFTER_LINE_ITEMS: "after_line_items",
 	AFTER_CONTACT_FORM: "after_contact_form",
 	AFTER_ADDRESS_FORM: "after_address_form",
 	AFTER_BILLING_FORM: "after_billing_form",
