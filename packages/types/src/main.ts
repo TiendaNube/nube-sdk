@@ -28,7 +28,7 @@ export type NubeSDKState = {
 	/**
 	 * The current order state, containing order status and tracking statuses.
 	 */
-	order: Order;
+	order?: Order;
 	/**
 	 * The current device state, containing screen information.
 	 */

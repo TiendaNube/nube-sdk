@@ -320,10 +320,10 @@ export type OrderTrackingStatus = {
 
 export type Order = {
 	/** Status of the order. */
-	status: Nullable<"open" | "closed" | "cancelled">;
+	status?: Nullable<"open" | "closed" | "cancelled">;
 
 	/** Tracking statuses of the order. */
-	tracking_statuses: OrderTrackingStatus[];
+	tracking_statuses?: OrderTrackingStatus[];
 };
 
 /**
