@@ -307,6 +307,25 @@ export type Cart = {
 	coupon: DeepPartial<Coupon>;
 };
 
+export type OrderTrackingStatus = {
+	/** Type of the tracking status. */
+	type: "shipped" | "packed" | "shipping_failure";
+
+	/** Title of the tracking status. */
+	title: string;
+
+	/** Timestamp of the tracking status. */
+	timestamp: string;
+};
+
+export type Order = {
+	/** Status of the order. */
+	status?: Nullable<"open" | "closed" | "cancelled">;
+
+	/** Tracking statuses of the order. */
+	tracking_statuses?: OrderTrackingStatus[];
+};
+
 /**
  * Represents information about the current store.
  */
