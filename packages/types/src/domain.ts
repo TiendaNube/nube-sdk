@@ -442,6 +442,14 @@ export type AllProductsPage = {
 export type SearchPage = { type: "search"; data: Search & WithProductList };
 
 /**
+ * Represents the account data.
+ */
+export type Account = {
+	customerId: Nullable<number>;
+	loggedIn: boolean;
+};
+
+/**
  * Represents a checkout page.
  */
 export type CheckoutPage = { type: "checkout"; data: Checkout };
@@ -452,6 +460,11 @@ export type CheckoutPage = { type: "checkout"; data: Checkout };
 export type HomePage = { type: "home"; data: Home };
 
 /**
+ * Represents Account Page
+ */
+export type AccountPage = { type: "account"; data: Account };
+
+/**
  * Represents a page within the application.
  */
 export type Page =
@@ -460,7 +473,8 @@ export type Page =
 	| ProductPage
 	| CategoryPage
 	| AllProductsPage
-	| SearchPage;
+	| SearchPage
+	| AccountPage;
 
 /**
  * Represents the user's current location within the application.
