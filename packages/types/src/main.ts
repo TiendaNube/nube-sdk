@@ -8,6 +8,7 @@ import type {
 	Device,
 	Order,
 	Payment,
+	Session,
 	Shipping,
 	Store,
 } from "./domain";
@@ -79,6 +80,11 @@ export type NubeSDKState = {
 	 * Optional event payload
 	 */
 	eventPayload: Nullable<Record<string, unknown>>;
+
+	/**
+	 * Information about the session, including the session ID.
+	 */
+	session: Session;
 };
 
 /*

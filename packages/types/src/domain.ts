@@ -681,3 +681,11 @@ export type Payment = {
 	status: Nullable<PaymentStatus>;
 	selected: Nullable<SelectedPayment>;
 };
+
+/**
+ * Represents the session information.
+ */
+export type Session = {
+	/** Unique identifier for the session. */
+	id: Nullable<string>;
+};
