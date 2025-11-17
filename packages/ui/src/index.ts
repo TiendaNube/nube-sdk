@@ -5,6 +5,7 @@ export * from "./components/field";
 export * from "./components/number-field";
 export * from "./components/fragment";
 export * from "./components/image";
+export * from "./components/progress";
 export * from "./components/text";
 export * from "./components/checkbox";
 export * from "./components/textarea";

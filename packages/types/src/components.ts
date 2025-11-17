@@ -620,6 +620,31 @@ export type NubeComponentImage = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                         Progress Component                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `progress` component.
+ */
+export type NubeComponentProgressProps = Prettify<
+	NubeComponentBase & {
+		value?: number;
+		max?: number;
+		style?: NubeComponentStyle;
+	}
+>;
+
+/**
+ * Represents a `progress` component, used to display completion progress of a task.
+ */
+export type NubeComponentProgress = Prettify<
+	NubeComponentBase &
+		NubeComponentProgressProps & {
+			type: "progress";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                           Txt Component                                    */
 /* -------------------------------------------------------------------------- */
 
@@ -1767,6 +1792,7 @@ export type NubeComponent =
 	| NubeComponentNumberField
 	| NubeComponentFragment
 	| NubeComponentImage
+	| NubeComponentProgress
 	| NubeComponentText
 	| NubeComponentCheckbox
 	| NubeComponentTextarea

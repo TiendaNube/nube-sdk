@@ -61,6 +61,8 @@ import type {
 	NubeComponentPolygonProps,
 	NubeComponentPolyline,
 	NubeComponentPolylineProps,
+	NubeComponentProgress,
+	NubeComponentProgressProps,
 	NubeComponentRadialGradient,
 	NubeComponentRadialGradientProps,
 	NubeComponentRect,
@@ -107,6 +109,7 @@ import {
 	image,
 	link,
 	numberfield,
+	progress,
 	row,
 	select,
 	svgCircle,
@@ -346,6 +349,22 @@ export function Img(props: NubeComponentImageProps): NubeComponentImage {
  */
 export function Image(props: NubeComponentImageProps): NubeComponentImage {
 	return image(props);
+}
+
+/**
+ * Creates a `Progress` component.
+ *
+ * A `Progress` represents the completion progress of a task. It supports properties such as `value` and `max`
+ * to define the progress range and current state. When no value is provided, the progress bar
+ * displays in an indeterminate state.
+ *
+ * @param props - The properties for configuring the progress component.
+ * @returns A `NubeComponentProgress` object representing the progress component.
+ */
+export function Progress(
+	props: NubeComponentProgressProps,
+): NubeComponentProgress {
+	return progress(props);
 }
 
 /**
