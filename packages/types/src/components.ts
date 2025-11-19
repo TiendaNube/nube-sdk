@@ -649,6 +649,39 @@ export type NubeComponentProgress = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                         Iframe Component                                  */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for an `iframe` component.
+ * Designed for third-party content integration in e-commerce stores.
+ */
+export type NubeComponentIframeProps = Prettify<
+	NubeComponentBase & {
+		/** Third-party content URL (HTTPS only for security) */
+		src: SecurityURL;
+		/** Widget width (controlled by third-party) */
+		width?: Size;
+		/** Widget height (controlled by third-party) */
+		height?: Size;
+		/** Security sandbox restrictions (defaults to safe third-party settings) */
+		sandbox?: string;
+		/** Basic styling within platform theme constraints */
+		style?: NubeComponentStyle;
+	}
+>;
+
+/**
+ * Represents an `iframe` component, used to embed external content.
+ */
+export type NubeComponentIframe = Prettify<
+	NubeComponentBase &
+		NubeComponentIframeProps & {
+			type: "iframe";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                           Txt Component                                    */
 /* -------------------------------------------------------------------------- */
 
@@ -1797,6 +1830,7 @@ export type NubeComponent =
 	| NubeComponentFragment
 	| NubeComponentImage
 	| NubeComponentProgress
+	| NubeComponentIframe
 	| NubeComponentText
 	| NubeComponentCheckbox
 	| NubeComponentTextarea
