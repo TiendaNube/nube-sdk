@@ -631,6 +631,10 @@ export type NubeComponentProgressProps = Prettify<
 		value?: number;
 		max?: number;
 		style?: NubeComponentStyle;
+		"aria-valuemax"?: number | undefined;
+		"aria-valuemin"?: number | undefined;
+		"aria-valuenow"?: number | undefined;
+		"aria-label"?: string | undefined;
 	}
 >;
 
