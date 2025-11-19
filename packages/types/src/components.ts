@@ -624,18 +624,25 @@ export type NubeComponentImage = Prettify<
 /* -------------------------------------------------------------------------- */
 
 /**
+ * Represents ARIA properties for accessibility in progress components.
+ */
+export type ProgressAriaProps = {
+	"aria-valuemax"?: number;
+	"aria-valuemin"?: number;
+	"aria-valuenow"?: number;
+	"aria-label"?: string;
+};
+
+/**
  * Represents the properties available for a `progress` component.
  */
 export type NubeComponentProgressProps = Prettify<
-	NubeComponentBase & {
-		value?: number;
-		max?: number;
-		style?: NubeComponentStyle;
-		"aria-valuemax"?: number | undefined;
-		"aria-valuemin"?: number | undefined;
-		"aria-valuenow"?: number | undefined;
-		"aria-label"?: string | undefined;
-	}
+	NubeComponentBase &
+		ProgressAriaProps & {
+			value?: number;
+			max?: number;
+			style?: NubeComponentStyle;
+		}
 >;
 
 /**
