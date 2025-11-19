@@ -41,6 +41,8 @@ import type {
 	NubeComponentGProps,
 	NubeComponentIcon,
 	NubeComponentIconProps,
+	NubeComponentIframe,
+	NubeComponentIframeProps,
 	NubeComponentImage,
 	NubeComponentImageProps,
 	NubeComponentLine,
@@ -104,6 +106,7 @@ import {
 	field,
 	fragment,
 	icon,
+	iframe,
 	image,
 	link,
 	numberfield,
@@ -346,6 +349,19 @@ export function Img(props: NubeComponentImageProps): NubeComponentImage {
  */
 export function Image(props: NubeComponentImageProps): NubeComponentImage {
 	return image(props);
+}
+
+/**
+ * Creates an `Iframe` component.
+ *
+ * The `Iframe` component is used to embed external content. It supports properties such as
+ * `src`, `width`, `height`, `sandbox`, and `style`.
+ *
+ * @param props - The properties for configuring the iframe component.
+ * @returns A `NubeComponentIframe` object representing the iframe component.
+ */
+export function Iframe(props: NubeComponentIframeProps): NubeComponentIframe {
+	return iframe(props);
 }
 
 /**
