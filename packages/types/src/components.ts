@@ -620,7 +620,43 @@ export type NubeComponentImage = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
-/*                             Iframe Component                               */
+/*                         Progress Component                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents ARIA properties for accessibility in progress components.
+ */
+export type ProgressAriaProps = {
+	"aria-valuemax"?: number;
+	"aria-valuemin"?: number;
+	"aria-valuenow"?: number;
+	"aria-label"?: string;
+};
+
+/**
+ * Represents the properties available for a `progress` component.
+ */
+export type NubeComponentProgressProps = Prettify<
+	NubeComponentBase &
+		ProgressAriaProps & {
+			value?: number;
+			max?: number;
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `progress` component, used to display completion progress of a task.
+ */
+export type NubeComponentProgress = Prettify<
+	NubeComponentBase &
+		NubeComponentProgressProps & {
+			type: "progress";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                         Iframe Component                                  */
 /* -------------------------------------------------------------------------- */
 
 /**
@@ -1800,6 +1836,7 @@ export type NubeComponent =
 	| NubeComponentNumberField
 	| NubeComponentFragment
 	| NubeComponentImage
+	| NubeComponentProgress
 	| NubeComponentIframe
 	| NubeComponentText
 	| NubeComponentCheckbox
