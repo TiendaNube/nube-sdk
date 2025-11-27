@@ -81,15 +81,23 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_quick_buy_add_to_cart"} BEFORE_QUICK_BUY_ADD_TO_CART - Before the quick buy add to cart button.
  * @property {"before_product_detail_add_to_cart"} BEFORE_PRODUCT_DETAIL_ADD_TO_CART - Before the product detail add to cart button.
  * @property {"after_product_detail_add_to_cart"} AFTER_PRODUCT_DETAIL_ADD_TO_CART - After the product detail add to cart button.
+ * @property {"before_add_to_cart_pdp"} BEFORE_ADD_TO_CART_PDP - Before the add to cart button on product detail page.
+ * @property {"after_add_to_cart_pdp"} AFTER_ADD_TO_CART_PDP - After the add to cart button on product detail page.
  * @property {"product_detail_image_top_left"} PRODUCT_DETAIL_IMAGE_TOP_LEFT - Top left corner of product detail images.
  * @property {"product_detail_image_top_right"} PRODUCT_DETAIL_IMAGE_TOP_RIGHT - Top right corner of product detail images.
  * @property {"after_product_detail_name"} AFTER_PRODUCT_DETAIL_NAME - After the product name in product detail.
+ * @property {"after_product_description"} AFTER_PRODUCT_DESCRIPTION - After the product description.
+ * @property {"before_price_pdp"} BEFORE_PRICE_PDP - Before the price on product detail page.
+ * @property {"after_price_pdp"} AFTER_PRICE_PDP - After the price on product detail page.
  * @property {"after_product_grid_item_name"} AFTER_PRODUCT_GRID_ITEM_NAME - After the product name in grid items.
  * @property {"product_grid_item_image_top_right"} PRODUCT_GRID_ITEM_IMAGE_TOP_RIGHT - Top right corner of product grid item images.
  * @property {"product_grid_item_image_top_left"} PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT - Top left corner of product grid item images.
  * @property {"product_grid_item_image_bottom_right"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT - Bottom right corner of product grid item images.
  * @property {"product_grid_item_image_bottom_left"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT - Bottom left corner of product grid item images.
  * @property {"before_start_checkout_button"} BEFORE_START_CHECKOUT_BUTTON - Before the start checkout button.
+ * @property {"after_go_to_checkout"} AFTER_GO_TO_CHECKOUT - After the go to checkout button.
+ * @property {"after_cart_summary"} AFTER_CART_SUMMARY - After the cart summary.
+ * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -97,8 +105,13 @@ export const STOREFRONT_UI_SLOT = {
 	BEFORE_QUICK_BUY_ADD_TO_CART: "before_quick_buy_add_to_cart",
 	BEFORE_PRODUCT_DETAIL_ADD_TO_CART: "before_product_detail_add_to_cart",
 	AFTER_PRODUCT_DETAIL_ADD_TO_CART: "after_product_detail_add_to_cart",
+	BEFORE_ADD_TO_CART_PDP: "before_add_to_cart_pdp",
+	AFTER_ADD_TO_CART_PDP: "after_add_to_cart_pdp",
 	PRODUCT_DETAIL_IMAGE_TOP_LEFT: "product_detail_image_top_left",
 	AFTER_PRODUCT_DETAIL_NAME: "after_product_detail_name",
+	AFTER_PRODUCT_DESCRIPTION: "after_product_description",
+	BEFORE_PRICE_PDP: "before_price_pdp",
+	AFTER_PRICE_PDP: "after_price_pdp",
 	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
 	AFTER_PRODUCT_GRID_ITEM_NAME: "after_product_grid_item_name",
 	PRODUCT_GRID_ITEM_IMAGE_TOP_RIGHT: "product_grid_item_image_top_right",
@@ -106,6 +119,9 @@ export const STOREFRONT_UI_SLOT = {
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT: "product_grid_item_image_bottom_right",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT: "product_grid_item_image_bottom_left",
 	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
+	AFTER_GO_TO_CHECKOUT: "after_go_to_checkout",
+	AFTER_CART_SUMMARY: "after_cart_summary",
+	BEFORE_FOOTER: "before_footer",
 } as const;
 
 /**
