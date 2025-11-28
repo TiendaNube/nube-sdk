@@ -73,6 +73,8 @@ import type {
 	NubeComponentRowProps,
 	NubeComponentSelect,
 	NubeComponentSelectProps,
+	NubeComponentSideScroll,
+	NubeComponentSideScrollProps,
 	NubeComponentStop,
 	NubeComponentStopProps,
 	NubeComponentSvg,
@@ -115,6 +117,7 @@ import {
 	progress,
 	row,
 	select,
+	sideScroll,
 	svgCircle,
 	svgClipPath,
 	svgDefs,
@@ -394,6 +397,22 @@ export function Iframe(props: NubeComponentIframeProps): NubeComponentIframe {
  */
 export function Select(props: NubeComponentSelectProps): NubeComponentSelect {
 	return select(props);
+}
+
+/**
+ * Creates a `SideScroll` component.
+ *
+ * A `SideScroll` is a horizontal scrolling container that allows users to scroll through content
+ * that extends beyond the container's visible width. It supports customizable gap between items
+ * and can optionally hide the scrollbar for a cleaner appearance.
+ *
+ * @param props - The properties for configuring the sidescroll component.
+ * @returns A `NubeComponentSideScroll` object representing the sidescroll component.
+ */
+export function SideScroll(
+	props: NubeComponentSideScrollProps,
+): NubeComponentSideScroll {
+	return sideScroll(props);
 }
 
 /**

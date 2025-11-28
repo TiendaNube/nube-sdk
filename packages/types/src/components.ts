@@ -1792,6 +1792,35 @@ export type NubeComponentFeMergeNode = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           SideScroll Component                             */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `sidescroll` component.
+ */
+export type NubeComponentSideScrollProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			gap?: Size;
+			hideScrollbar?: boolean;
+			step?: number;
+			style?: NubeComponentStyle;
+			width?: Size;
+		}>
+>;
+
+/**
+ * Represents a `sidescroll` component, used for horizontal scrolling containers.
+ */
+export type NubeComponentSideScroll = Prettify<
+	NubeComponentBase &
+		NubeComponentSideScrollProps & {
+			type: "sidescroll";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                         Basic Definitions                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -1852,6 +1881,7 @@ export type NubeComponent =
 	| NubeComponentToastTitle
 	| NubeComponentToastDescription
 	| NubeComponentIcon
+	| NubeComponentSideScroll
 	| NubeComponentSvg
 	| NubeComponentCircle
 	| NubeComponentPath
@@ -1894,6 +1924,7 @@ export type NubeComponentWithChildren =
 	| NubeComponentColumn
 	| NubeComponentRow
 	| NubeComponentLink
+	| NubeComponentSideScroll
 	| NubeComponentSvg
 	| NubeComponentG
 	| NubeComponentDefs
