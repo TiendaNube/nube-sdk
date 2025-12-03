@@ -25,6 +25,10 @@ export type DeviceScreen = {
 	orientation: DeviceScreenOrientation;
 	/** The pixel ratio of the screen. */
 	pixelRatio: number;
+	/** The width of the inner window in pixels. */
+	innerWidth: number;
+	/** The height of the inner window in pixels. */
+	innerHeight: number;
 };
 
 /**
