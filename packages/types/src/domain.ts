@@ -450,6 +450,11 @@ export type Account = {
 };
 
 /**
+ * Represents the data for a custom page.
+ */
+export type CustomPageData = { name: string };
+
+/**
  * Represents a checkout page.
  */
 export type CheckoutPage = { type: "checkout"; data: Checkout };
@@ -465,6 +470,14 @@ export type HomePage = { type: "home"; data: Home };
 export type AccountPage = { type: "account"; data: Account };
 
 /**
+ * Represents a custom page step.
+ */
+export type CustomPage = {
+	type: "custom_page";
+	data: CustomPageData;
+};
+
+/**
  * Represents a page within the application.
  */
 export type Page =
@@ -474,7 +487,8 @@ export type Page =
 	| CategoryPage
 	| AllProductsPage
 	| SearchPage
-	| AccountPage;
+	| AccountPage
+	| CustomPage;
 
 /**
  * Represents the user's current location within the application.
