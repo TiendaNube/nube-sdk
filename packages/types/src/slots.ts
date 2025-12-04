@@ -94,6 +94,7 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"product_grid_item_image_top_left"} PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT - Top left corner of product grid item images.
  * @property {"product_grid_item_image_bottom_right"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT - Bottom right corner of product grid item images.
  * @property {"product_grid_item_image_bottom_left"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT - Bottom left corner of product grid item images.
+ * @property {"before_cart"} BEFORE_CART - Before the cart section.
  * @property {"before_start_checkout_button"} BEFORE_START_CHECKOUT_BUTTON - Before the start checkout button.
  * @property {"after_go_to_checkout"} AFTER_GO_TO_CHECKOUT - After the go to checkout button.
  * @property {"after_cart_summary"} AFTER_CART_SUMMARY - After the cart summary.
@@ -118,6 +119,7 @@ export const STOREFRONT_UI_SLOT = {
 	PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT: "product_grid_item_image_top_left",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT: "product_grid_item_image_bottom_right",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT: "product_grid_item_image_bottom_left",
+	BEFORE_CART: "before_cart",
 	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
 	AFTER_GO_TO_CHECKOUT: "after_go_to_checkout",
 	AFTER_CART_SUMMARY: "after_cart_summary",
