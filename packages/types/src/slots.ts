@@ -98,6 +98,7 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_go_to_checkout"} AFTER_GO_TO_CHECKOUT - After the go to checkout button.
  * @property {"after_cart_summary"} AFTER_CART_SUMMARY - After the cart summary.
  * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
+ * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -122,6 +123,7 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_GO_TO_CHECKOUT: "after_go_to_checkout",
 	AFTER_CART_SUMMARY: "after_cart_summary",
 	BEFORE_FOOTER: "before_footer",
+	CART_LINE_ITEM_TOP: "cart_line_item_top",
 } as const;
 
 /**
