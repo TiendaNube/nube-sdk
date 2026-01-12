@@ -17,6 +17,7 @@ import type { ObjectValues, Prettify } from "./utility";
  * @property {"corner_bottom_right"} CORNER_BOTTOM_RIGHT - Bottom right corner of the page.
  * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
  * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
+ * @property {"after_header"} AFTER_HEADER - After the header.
  */
 export const COMMON_UI_SLOT = {
 	BEFORE_MAIN_CONTENT: "before_main_content",
@@ -28,6 +29,7 @@ export const COMMON_UI_SLOT = {
 	CORNER_BOTTOM_RIGHT: "corner_bottom_right",
 	BEFORE_LINE_ITEMS: "before_line_items",
 	AFTER_LINE_ITEMS: "after_line_items",
+	AFTER_HEADER: "after_header",
 } as const;
 
 /**
