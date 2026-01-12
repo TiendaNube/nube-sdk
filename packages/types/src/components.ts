@@ -659,6 +659,21 @@ export type NubeComponentProgress = Prettify<
 /*                         Iframe Component                                  */
 /* -------------------------------------------------------------------------- */
 
+export type JsonValue =
+	| string
+	| number
+	| boolean
+	| null
+	| JsonValue[]
+	| { [key: string]: JsonValue };
+
+export type JsonObject = { [key: string]: JsonValue };
+
+export type NubeComponentIframeEventHandler = NubeComponentEventHandler<
+	"message",
+	JsonObject
+>;
+
 /**
  * Represents the properties available for an `iframe` component.
  * Designed for third-party content integration in e-commerce stores.
@@ -675,6 +690,8 @@ export type NubeComponentIframeProps = Prettify<
 		sandbox?: string;
 		/** Basic styling within platform theme constraints */
 		style?: NubeComponentStyle;
+		/** Event handler for messages from the iframe */
+		onMessage?: NubeComponentIframeEventHandler;
 	}
 >;
 

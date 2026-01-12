@@ -1,4 +1,5 @@
 import type {
+	NubeIframeMessageEventData,
 	NubeNavigateEventData,
 	NubeStorageEvent,
 	NubeStorageEventData,
@@ -8,7 +9,8 @@ export type NubeSdkInternalEvent = NubeStorageEvent;
 
 export type NubeSdkInternalEventData =
 	| NubeStorageEventData
-	| NubeNavigateEventData;
+	| NubeNavigateEventData
+	| NubeIframeMessageEventData;
 
 export const NubeSdkInternalEventPrefix = "internal:";
 
