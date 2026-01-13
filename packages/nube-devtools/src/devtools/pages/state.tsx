@@ -4,9 +4,10 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import type { NubeSDKEventData } from "@/contexts/nube-sdk-events-context";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import { UpdatedAt } from "@/devtools/components/updated-at";
+import { getModifiedPaths } from "@/utils/json-diff";
 import type { NubeSDKState } from "@tiendanube/nube-sdk-types";
 import { RefreshCwIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Layout from "../components/layout";
 
 const GET_STATE_EXPRESSION = "window.nubeSDK?.getState?.()";
@@ -16,6 +17,8 @@ export function State() {
 	const [state, setState] = useState<NubeSDKState | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [modifiedPaths, setModifiedPaths] = useState<Set<string>>(new Set());
+	const previousStateRef = useRef<NubeSDKState | null>(null);
 
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
@@ -54,7 +57,18 @@ export function State() {
 					);
 					setState(null);
 				} else {
-					setState(result as NubeSDKState);
+					const newState = result as NubeSDKState;
+
+					// Calculate modified paths if we have a previous state
+					if (previousStateRef.current) {
+						const paths = getModifiedPaths(previousStateRef.current, newState);
+						setModifiedPaths(paths);
+					} else {
+						setModifiedPaths(new Set());
+					}
+
+					previousStateRef.current = newState;
+					setState(newState);
 					setUpdatedAt(Date.now());
 				}
 			},
@@ -101,7 +115,11 @@ export function State() {
 						</div>
 					) : state ? (
 						<div className="text-sm">
-							<JsonViewer data={state} collapsed={1} />
+							<JsonViewer
+								data={state}
+								collapsed={1}
+								modifiedPaths={modifiedPaths}
+							/>
 						</div>
 					) : loading ? (
 						<div className="text-center p-4 text-sm text-gray-500">
