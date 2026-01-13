@@ -1,25 +1,28 @@
-import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { JsonViewer } from "@/devtools/components/json-viewer";
-import Layout from "../components/layout";
-import { RefreshCwIcon } from "lucide-react";
-import type { NubeSDKState } from "@tiendanube/nube-sdk-types";
+import { Divider } from "@/components/ui/divider";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import type { NubeSDKEventData } from "@/contexts/nube-sdk-events-context";
+import { JsonViewer } from "@/devtools/components/json-viewer";
+import { UpdatedAt } from "@/devtools/components/updated-at";
+import type { NubeSDKState } from "@tiendanube/nube-sdk-types";
+import { RefreshCwIcon } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import Layout from "../components/layout";
+
+const GET_STATE_EXPRESSION = "window.nubeSDK?.getState?.()";
 
 export function State() {
+	const [updatedAt, setUpdatedAt] = useState<number>(0);
 	const [state, setState] = useState<NubeSDKState | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
 			if (port.name === "nube-devtools-events") {
 				port.onMessage.addListener((message) => {
-					console.log("🚀 ~ listener ~ message.payload:", message.payload[0])
-					if (message.payload as NubeSDKEventData) {
-            setState(message.payload[0]);
-						port.disconnect();
-					}
+					fetchState();
+					setUpdatedAt(Date.now());
 				});
 			}
 		};
@@ -36,19 +39,25 @@ export function State() {
 		setError(null);
 
 		chrome.devtools.inspectedWindow.eval(
-			'window.nubeSDK?.getState?.()',
+			GET_STATE_EXPRESSION,
 			(result, isException) => {
 				setLoading(false);
 
-				if (isException || !result || (typeof result === "object" && Object.keys(result).length === 0)) {
+				if (
+					isException ||
+					!result ||
+					(typeof result === "object" && Object.keys(result).length === 0)
+				) {
 					setError(
-						isException?.value || "nubeSDK.getState() not found or returned null"
+						isException?.value ||
+							"nubeSDK.getState() not found or returned null",
 					);
 					setState(null);
 				} else {
 					setState(result as NubeSDKState);
+					setUpdatedAt(Date.now());
 				}
-			}
+			},
 		);
 	}, []);
 
@@ -60,16 +69,21 @@ export function State() {
 		<Layout>
 			<div className="flex h-full flex-col">
 				<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px] shrink-0">
-					<h1 className="text-sm font-medium">State</h1>
-					<Button
-						variant="ghost"
-						size="icon"
-						className="h-6 w-6"
-						onClick={fetchState}
-						disabled={loading}
-					>
-						<RefreshCwIcon className={`size-3 ${loading ? "animate-spin" : ""}`} />
-					</Button>
+					<SidebarTrigger />
+					<div className="flex items-center gap-2">
+						<UpdatedAt timestamp={updatedAt} />
+						<Button
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6"
+							onClick={fetchState}
+							disabled={loading}
+						>
+							<RefreshCwIcon
+								className={`size-3 ${loading ? "animate-spin" : ""}`}
+							/>
+						</Button>
+					</div>
 				</nav>
 				<div className="flex-1 overflow-y-auto p-2">
 					{error ? (
@@ -86,9 +100,9 @@ export function State() {
 							</Button>
 						</div>
 					) : state ? (
-            <div className="text-sm">
-              <JsonViewer data={state} />
-            </div>
+						<div className="text-sm">
+							<JsonViewer data={state} collapsed={1} />
+						</div>
 					) : loading ? (
 						<div className="text-center p-4 text-sm text-gray-500">
 							Loading state...

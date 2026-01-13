@@ -1,4 +1,11 @@
-import { Box, Braces, ChartNoAxesGantt, CodeXml, ComponentIcon, Database } from "lucide-react";
+import {
+	Box,
+	Braces,
+	ChartNoAxesGantt,
+	CodeXml,
+	ComponentIcon,
+	Database,
+} from "lucide-react";
 
 import { Badge as BadgeComponent } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -56,11 +63,11 @@ const menu: {
 		icon: CodeXml,
 		badge: "beta",
 	},
-  {
-    title: "State",
-    page: PAGES.STATE,
-    icon: Braces,
-  },
+	{
+		title: "State",
+		page: PAGES.STATE,
+		icon: Braces,
+	},
 ];
 
 export function AppSidebar() {

@@ -12,10 +12,10 @@ import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
 import { Apps } from "./pages/apps";
 import { Components } from "./pages/components";
 import { Events } from "./pages/events";
+import { State } from "./pages/state";
 import { Storages } from "./pages/storages";
 import { SvgConverter } from "./pages/svg-converter";
 import { Unavailable } from "./pages/unavailable";
-import { State } from "./pages/state";
 
 const PAGE_COMPONENTS = {
 	[PAGES.APPS]: Apps,
@@ -23,7 +23,7 @@ const PAGE_COMPONENTS = {
 	[PAGES.EVENTS]: Events,
 	[PAGES.STORAGES]: Storages,
 	[PAGES.SVG_CONVERT]: SvgConverter,
-  [PAGES.STATE]: State,
+	[PAGES.STATE]: State,
 } as const;
 
 const AppContent = () => {

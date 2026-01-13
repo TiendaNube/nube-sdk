@@ -4,9 +4,14 @@ import ReactJsonView from "@microlink/react-json-view";
 interface JsonViewerProps {
 	data: object;
 	className?: string;
+	collapsed?: number;
 }
 
-export function JsonViewer({ data, className }: JsonViewerProps) {
+export function JsonViewer({
+	data,
+	className,
+	collapsed = 2,
+}: JsonViewerProps) {
 	const { theme } = useDevToolsTheme();
 
 	return (
@@ -14,7 +19,7 @@ export function JsonViewer({ data, className }: JsonViewerProps) {
 			<ReactJsonView
 				src={data}
 				theme={theme === "dark" ? "monokai" : "rjv-default"}
-				collapsed={2}
+				collapsed={collapsed}
 				displayDataTypes={false}
 				iconStyle="circle"
 				enableClipboard={false}
