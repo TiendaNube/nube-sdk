@@ -19,6 +19,7 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  * @property {"config:set"} CONFIG_SET - Used to update the SDK configuration.
  * @property {"ui:slot:set"} UI_SLOT_SET - Used to update a UI slot with new content.
  * @property {"shipping:update:label"} SHIPPING_UPDATE_LABEL - Used to update custom labels for shipping options.
+ * @property {"order:add:tracking_statuses"} ORDER_ADD_TRACKING_STATUSES - Used to add tracking statuses to an order.
  * @property {"coupon:add"} COUPON_ADD - Used to add a coupon to the cart.
  * @property {"coupon:remove"} COUPON_REMOVE - Used to remove a coupon from the cart.
  * @property {"shipping:select"} SHIPPING_SELECT - Used to select shipping option.
@@ -30,6 +31,7 @@ export const SENDABLE_EVENT = {
 	CONFIG_SET: "config:set",
 	UI_SLOT_SET: "ui:slot:set",
 	SHIPPING_UPDATE_LABEL: "shipping:update:label",
+	ORDER_ADD_TRACKING_STATUSES: "order:add:tracking_statuses",
 	COUPON_ADD: "coupon:add",
 	COUPON_REMOVE: "coupon:remove",
 	SHIPPING_SELECT: "shipping:select",
@@ -64,6 +66,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"shipping:select:success"} SHIPPING_SELECT_SUCCESS - Fired when a shipping selected successfully.
  * @property {"shipping:select:fail"} SHIPPING_SELECT_FAIL - Fired when a shipping selected unsuccessfully.
  * @property {"customer:update"} CUSTOMER_UPDATE - Fired when the customer data is updated.
+ * @property {"order:update"} ORDER_UPDATE - Fired when the order data is updated.
  * @property {"payment:update"} PAYMENT_UPDATE - Fired when the payment data is updated.
  * @property {"coupon:add:success"} COUPON_ADD_SUCCESS - Fired when a coupon is added successfully.
  * @property {"coupon:add:fail"} COUPON_ADD_FAIL - Fired when a coupon is added unsuccessfully.
@@ -88,6 +91,7 @@ export const EVENT = {
 	SHIPPING_SELECT_SUCCESS: "shipping:select:success",
 	SHIPPING_SELECT_FAIL: "shipping:select:fail",
 	CUSTOMER_UPDATE: "customer:update",
+	ORDER_UPDATE: "order:update",
 	PAYMENT_UPDATE: "payment:update",
 	COUPON_ADD_SUCCESS: "coupon:add:success",
 	COUPON_REMOVE_SUCCESS: "coupon:remove:success",

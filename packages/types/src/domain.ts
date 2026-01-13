@@ -25,6 +25,10 @@ export type DeviceScreen = {
 	orientation: DeviceScreenOrientation;
 	/** The pixel ratio of the screen. */
 	pixelRatio: number;
+	/** The width of the inner window in pixels. */
+	innerWidth: number;
+	/** The height of the inner window in pixels. */
+	innerHeight: number;
 };
 
 /**
@@ -307,6 +311,25 @@ export type Cart = {
 	coupon: DeepPartial<Coupon>;
 };
 
+export type OrderTrackingStatus = {
+	/** Type of the tracking status. */
+	type: "shipped" | "packed" | "shipping_failure";
+
+	/** Title of the tracking status. */
+	title: string;
+
+	/** Timestamp of the tracking status. */
+	timestamp: string;
+};
+
+export type Order = {
+	/** Status of the order. */
+	status?: Nullable<"open" | "closed" | "cancelled">;
+
+	/** Tracking statuses of the order. */
+	tracking_statuses?: OrderTrackingStatus[];
+};
+
 /**
  * Represents information about the current store.
  */
@@ -423,6 +446,19 @@ export type AllProductsPage = {
 export type SearchPage = { type: "search"; data: Search & WithProductList };
 
 /**
+ * Represents the account data.
+ */
+export type Account = {
+	customerId: Nullable<number>;
+	loggedIn: boolean;
+};
+
+/**
+ * Represents the data for a custom page.
+ */
+export type CustomPageData = { name: string };
+
+/**
  * Represents a checkout page.
  */
 export type CheckoutPage = { type: "checkout"; data: Checkout };
@@ -433,6 +469,19 @@ export type CheckoutPage = { type: "checkout"; data: Checkout };
 export type HomePage = { type: "home"; data: Home };
 
 /**
+ * Represents Account Page
+ */
+export type AccountPage = { type: "account"; data: Account };
+
+/**
+ * Represents a custom page step.
+ */
+export type CustomPage = {
+	type: "custom_page";
+	data: CustomPageData;
+};
+
+/**
  * Represents a page within the application.
  */
 export type Page =
@@ -441,7 +490,9 @@ export type Page =
 	| ProductPage
 	| CategoryPage
 	| AllProductsPage
-	| SearchPage;
+	| SearchPage
+	| AccountPage
+	| CustomPage;
 
 /**
  * Represents the user's current location within the application.
@@ -661,4 +712,12 @@ export type SelectedPayment = {
 export type Payment = {
 	status: Nullable<PaymentStatus>;
 	selected: Nullable<SelectedPayment>;
+};
+
+/**
+ * Represents the session information.
+ */
+export type Session = {
+	/** Unique identifier for the session. */
+	id: Nullable<string>;
 };

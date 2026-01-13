@@ -470,6 +470,39 @@ export type NubeComponentButton = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           Link Component                                  */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentLinkEventHandler = NubeComponentEventHandler<
+	"click",
+	string
+>;
+
+/**
+ * Represents the properties available for a `link` component.
+ */
+export type NubeComponentLinkProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			children: NubeComponentChildren;
+			href: string;
+			target?: "_blank";
+			variant?: "primary" | "secondary" | "transparent" | "link";
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `link` component, used for navigation links.
+ */
+export type NubeComponentLink = Prettify<
+	NubeComponentBase &
+		NubeComponentLinkProps & {
+			type: "link";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                            Check Component                                 */
 /* -------------------------------------------------------------------------- */
 
@@ -583,6 +616,92 @@ export type NubeComponentImage = Prettify<
 	NubeComponentBase &
 		NubeComponentImageProps & {
 			type: "img";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                         Progress Component                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents ARIA properties for accessibility in progress components.
+ */
+export type ProgressAriaProps = {
+	"aria-valuemax"?: number;
+	"aria-valuemin"?: number;
+	"aria-valuenow"?: number;
+	"aria-label"?: string;
+};
+
+/**
+ * Represents the properties available for a `progress` component.
+ */
+export type NubeComponentProgressProps = Prettify<
+	NubeComponentBase &
+		ProgressAriaProps & {
+			value?: number;
+			max?: number;
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `progress` component, used to display completion progress of a task.
+ */
+export type NubeComponentProgress = Prettify<
+	NubeComponentBase &
+		NubeComponentProgressProps & {
+			type: "progress";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                         Iframe Component                                  */
+/* -------------------------------------------------------------------------- */
+
+export type JsonValue =
+	| string
+	| number
+	| boolean
+	| null
+	| JsonValue[]
+	| { [key: string]: JsonValue };
+
+export type JsonObject = { [key: string]: JsonValue };
+
+export type NubeComponentIframeEventHandler = NubeComponentEventHandler<
+	"message",
+	JsonObject
+>;
+
+/**
+ * Represents the properties available for an `iframe` component.
+ * Designed for third-party content integration in e-commerce stores.
+ */
+export type NubeComponentIframeProps = Prettify<
+	NubeComponentBase & {
+		/** Third-party content URL (HTTPS only for security) */
+		src: SecurityURL;
+		/** Widget width (controlled by third-party) */
+		width?: Size;
+		/** Widget height (controlled by third-party) */
+		height?: Size;
+		/** Security sandbox restrictions (defaults to safe third-party settings) */
+		sandbox?: string;
+		/** Basic styling within platform theme constraints */
+		style?: NubeComponentStyle;
+		/** Event handler for messages from the iframe */
+		onMessage?: NubeComponentIframeEventHandler;
+	}
+>;
+
+/**
+ * Represents an `iframe` component, used to embed external content.
+ */
+export type NubeComponentIframe = Prettify<
+	NubeComponentBase &
+		NubeComponentIframeProps & {
+			type: "iframe";
 		}
 >;
 
@@ -1690,6 +1809,35 @@ export type NubeComponentFeMergeNode = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           SideScroll Component                             */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `sidescroll` component.
+ */
+export type NubeComponentSideScrollProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			gap?: Size;
+			hideScrollbar?: boolean;
+			step?: number;
+			style?: NubeComponentStyle;
+			width?: Size;
+		}>
+>;
+
+/**
+ * Represents a `sidescroll` component, used for horizontal scrolling containers.
+ */
+export type NubeComponentSideScroll = Prettify<
+	NubeComponentBase &
+		NubeComponentSideScrollProps & {
+			type: "sidescroll";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                         Basic Definitions                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -1734,10 +1882,13 @@ export type NubeComponent =
 	| NubeComponentNumberField
 	| NubeComponentFragment
 	| NubeComponentImage
+	| NubeComponentProgress
+	| NubeComponentIframe
 	| NubeComponentText
 	| NubeComponentCheckbox
 	| NubeComponentTextarea
 	| NubeComponentButton
+	| NubeComponentLink
 	| NubeComponentSelect
 	| NubeComponentAccordionRoot
 	| NubeComponentAccordionItem
@@ -1747,6 +1898,7 @@ export type NubeComponent =
 	| NubeComponentToastTitle
 	| NubeComponentToastDescription
 	| NubeComponentIcon
+	| NubeComponentSideScroll
 	| NubeComponentSvg
 	| NubeComponentCircle
 	| NubeComponentPath
@@ -1788,6 +1940,8 @@ export type NubeComponentWithChildren =
 	| NubeComponentBox
 	| NubeComponentColumn
 	| NubeComponentRow
+	| NubeComponentLink
+	| NubeComponentSideScroll
 	| NubeComponentSvg
 	| NubeComponentG
 	| NubeComponentDefs

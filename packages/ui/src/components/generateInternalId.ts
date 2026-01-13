@@ -11,7 +11,7 @@ function stableStringify(value: unknown): string {
 		if (typeof val === "function") {
 			if (memo.has(val)) return memo.get(val);
 
-			const fnid = `[fn:${crypto.randomUUID()}]`;
+			const fnid = `[${val.toString()}]`;
 
 			memo.set(val, fnid);
 
