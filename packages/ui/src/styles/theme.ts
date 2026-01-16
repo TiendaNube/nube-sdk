@@ -45,6 +45,7 @@ export const theme = {
 	},
 	typography: {
 		body: {
+			font: "var(--_body-font)",
 			fontSize: "var(--_body-font-size)",
 			lineHeight: "var(--_body-font-leading)",
 		},
