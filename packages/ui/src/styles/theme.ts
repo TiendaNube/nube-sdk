@@ -93,7 +93,7 @@ export const theme = {
 		foreground: "var(--button-foreground)",
 		background: "var(--button-background)",
 		/**
-		* @deprecated Use button.border.color instead.
+		 * @deprecated Use button.border.color instead.
 		 */
 		borderColor: "var(--button-border-color)",
 		/**
