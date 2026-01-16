@@ -251,6 +251,9 @@ export type Prices = {
 
 	/** Final total price after all discounts and shipping. */
 	total: number;
+
+	/** Subtotal before discounts and shipping, without taxes. */
+	subtotal_without_taxes: number;
 };
 
 /**
