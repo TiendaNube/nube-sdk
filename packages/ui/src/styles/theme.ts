@@ -91,9 +91,23 @@ export const theme = {
 	button: {
 		foreground: "var(--button-foreground)",
 		background: "var(--button-background)",
+		/**
+		* @deprecated Use button.border.color instead.
+		 */
 		borderColor: "var(--button-border-color)",
+		/**
+		 * @deprecated Use button.border.radius instead.
+		 */
 		borderRadius: "var(--button-border-radius)",
+		/**
+		 * @deprecated Use button.border.width instead.
+		 */
 		borderWidth: "var(--button-border-width)",
+		border: {
+			color: "var(--button-border-color)",
+			radius: "var(--button-border-radius)",
+			width: "var(--button-border-width)",
+		},
 	},
 	label: {
 		foreground: "var(--label-foreground)",
