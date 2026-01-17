@@ -8,6 +8,7 @@ export const PAGES = {
 	COMPONENTS: "components",
 	SVG_CONVERT: "svg-convert",
 	STATE: "state",
+	SLOTS: "slots",
 } as const;
 
 export type Page = (typeof PAGES)[keyof typeof PAGES];

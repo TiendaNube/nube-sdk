@@ -1,11 +1,13 @@
 import {
 	handleDevToolsEvents,
 	handleDevToolsGetApps,
+	handleDevToolsGetAllDataSlots,
 	handleDevToolsGetComponents,
 	handleDevToolsHighlightElement,
 	handleDevToolsInjectWindowVariable,
 	handleDevToolsResendEvent,
 	handleDevToolsScrollToElement,
+	handleDevToolsSetAllSlots,
 	handleDevToolsVerifyNubeSdkStatus,
 } from "./nube-dev-tools";
 
@@ -73,5 +75,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 			id: message.payload.id,
 			sendResponse,
 		});
+		return true;
+	}
+
+	if (message.action === "nube-devtools-set-all-slots") {
+		handleDevToolsSetAllSlots({
+			tabId: message.payload.tabId,
+			slotNames: message.payload.slotNames,
+			sendResponse,
+		});
+		return true;
+	}
+
+	if (message.action === "nube-devtools-get-all-data-slots") {
+		handleDevToolsGetAllDataSlots({
+			tabId: message.payload.tabId,
+			sendResponse,
+		});
+		return true;
 	}
 });

@@ -68,6 +68,11 @@ const menu: {
 		page: PAGES.STATE,
 		icon: Braces,
 	},
+	{
+		title: "Slots",
+		page: PAGES.SLOTS,
+		icon: Box,
+	},
 ];
 
 export function AppSidebar() {

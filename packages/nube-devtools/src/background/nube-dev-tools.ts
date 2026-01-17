@@ -1,10 +1,12 @@
 import {
 	getApps,
+	getAllDataSlots,
 	handleEvents,
 	highlightElement,
 	injectWindowVariable,
 	resendEvent,
 	scrollToElement,
+	setAllSlots,
 } from "./scripts";
 import type { NubeSDKApp, NubeSDKComponent, NubeSDKState } from "./types";
 
@@ -195,6 +197,94 @@ export const handleDevToolsScrollToElement = ({
 				sendResponse({ status: true });
 			} catch (error) {
 				sendResponse({ status: false });
+			}
+		},
+	);
+};
+
+export const handleDevToolsSetAllSlots = ({
+	tabId,
+	slotNames,
+	sendResponse,
+}: {
+	tabId: number;
+	slotNames: string[];
+	sendResponse: (response: {
+		status: boolean;
+		summary?: { total: number; success: number; failed: number };
+		error?: string;
+	}) => void;
+}) => {
+	chrome.scripting.executeScript(
+		{
+			target: { tabId },
+			world: "MAIN",
+			func: setAllSlots,
+			args: [slotNames],
+		},
+		(results) => {
+			try {
+				const result = results?.[0]?.result;
+				if (result) {
+					sendResponse({
+						status: result.success,
+						summary: result.summary,
+						error: result.error,
+					});
+				} else {
+					sendResponse({ status: false, error: "No result returned" });
+				}
+			} catch (error) {
+				sendResponse({
+					status: false,
+					error: error instanceof Error ? error.message : String(error),
+				});
+			}
+		},
+	);
+};
+
+export const handleDevToolsGetAllDataSlots = ({
+	tabId,
+	sendResponse,
+}: {
+	tabId: number;
+	sendResponse: (response: {
+		status: boolean;
+		slots?: Array<{
+			slot: string;
+			visible: boolean;
+			id: string;
+			className: string;
+		}>;
+		total?: number;
+		error?: string;
+	}) => void;
+}) => {
+	chrome.scripting.executeScript(
+		{
+			target: { tabId },
+			world: "MAIN",
+			func: getAllDataSlots,
+		},
+		(results) => {
+			try {
+				const result = results?.[0]?.result;
+				if (result) {
+					sendResponse({
+						status: result.success,
+						slots: result.slots,
+						total: result.total,
+						error: result.error,
+					});
+				} else {
+					sendResponse({ status: false, error: "No result returned" });
+				}
+			} catch (error) {
+				sendResponse({
+					status: false,
+					error: error instanceof Error ? error.message : String(error),
+				});
 			}
 		},
 	);

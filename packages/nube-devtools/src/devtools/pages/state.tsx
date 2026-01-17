@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Divider } from "@/components/ui/divider";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import type { NubeSDKEventData } from "@/contexts/nube-sdk-events-context";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import { UpdatedAt } from "@/devtools/components/updated-at";
 import { getModifiedPaths } from "@/utils/json-diff";

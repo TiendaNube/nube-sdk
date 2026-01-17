@@ -1,4 +1,4 @@
-import type { NubeSDKState } from "@tiendanube/nube-sdk-types";
+import type { NubeSDKState, UISlots } from "@tiendanube/nube-sdk-types";
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 
