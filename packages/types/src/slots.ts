@@ -93,8 +93,7 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_price_pdp"} BEFORE_PRICE_PDP - Before the price on product detail page.
  * @property {"after_price_pdp"} AFTER_PRICE_PDP - After the price on product detail page.
  * @property {"after_product_grid_item_name"} AFTER_PRODUCT_GRID_ITEM_NAME - After the product name in grid items.
- * @property {"product_grid_before_product_detail_name"} PRODUCT_GRID_BEFORE_PRODUCT_DETAIL_NAME - Before the product detail name in product grid.
- * @property {"product_grid_after_product_price_name"} PRODUCT_GRID_AFTER_PRODUCT_PRICE_NAME - After the product price name in product grid.
+ * @property {"before_product_grid_item_name"} BEFORE_PRODUCT_GRID_ITEM_NAME - Before the product name in grid items.
  * @property {"product_grid_item_image_top_right"} PRODUCT_GRID_ITEM_IMAGE_TOP_RIGHT - Top right corner of product grid item images.
  * @property {"product_grid_item_image_top_left"} PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT - Top left corner of product grid item images.
  * @property {"product_grid_item_image_bottom_right"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT - Bottom right corner of product grid item images.
@@ -120,10 +119,7 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_PRICE_PDP: "after_price_pdp",
 	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
 	AFTER_PRODUCT_GRID_ITEM_NAME: "after_product_grid_item_name",
-	PRODUCT_GRID_BEFORE_PRODUCT_DETAIL_NAME:
-		"product_grid_before_product_detail_name",
-	PRODUCT_GRID_AFTER_PRODUCT_PRICE_NAME:
-		"product_grid_after_product_price_name",
+	BEFORE_PRODUCT_GRID_ITEM_NAME: "before_product_grid_item_name",
 	PRODUCT_GRID_ITEM_IMAGE_TOP_RIGHT: "product_grid_item_image_top_right",
 	PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT: "product_grid_item_image_top_left",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT: "product_grid_item_image_bottom_right",
