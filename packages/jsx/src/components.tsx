@@ -51,6 +51,8 @@ import type {
 	NubeComponentLinearGradientProps,
 	NubeComponentLink,
 	NubeComponentLinkProps,
+	NubeComponentMarkdown,
+	NubeComponentMarkdownProps,
 	NubeComponentMask,
 	NubeComponentMaskProps,
 	NubeComponentNumberField,
@@ -113,6 +115,7 @@ import {
 	iframe,
 	image,
 	link,
+	markdown,
 	numberfield,
 	progress,
 	row,
@@ -413,6 +416,21 @@ export function SideScroll(
 	props: NubeComponentSideScrollProps,
 ): NubeComponentSideScroll {
 	return sideScroll(props);
+}
+
+/**
+ * Creates a `Markdown` component.
+ *
+ * The `Markdown` component is used to render markdown content.
+ * It supports properties such as `content` for the markdown string.
+ *
+ * @param props - The properties for configuring the markdown component.
+ * @returns A `NubeComponentMarkdown` object representing the markdown component.
+ */
+export function Markdown(
+	props: NubeComponentMarkdownProps,
+): NubeComponentMarkdown {
+	return markdown(props);
 }
 
 /**

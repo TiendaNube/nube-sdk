@@ -21,6 +21,7 @@ export * from "./components/toast-root";
 export * from "./components/toast-title";
 export * from "./components/toast-description";
 export * from "./components/icon";
+export * from "./components/markdown";
 export * from "./components/side-scroll";
 export * from "./components/svg-root";
 export * from "./components/svg-circle";
