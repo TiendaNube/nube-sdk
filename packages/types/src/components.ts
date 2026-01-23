@@ -1838,6 +1838,29 @@ export type NubeComponentSideScroll = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           Markdown Component                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `markdown` component.
+ */
+export type NubeComponentMarkdownProps = Prettify<
+	NubeComponentBase & {
+		content: string;
+	}
+>;
+
+/**
+ * Represents a `markdown` component, used for rendering markdown content.
+ */
+export type NubeComponentMarkdown = Prettify<
+	NubeComponentBase &
+		NubeComponentMarkdownProps & {
+			type: "markdown";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                         Basic Definitions                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -1899,6 +1922,7 @@ export type NubeComponent =
 	| NubeComponentToastDescription
 	| NubeComponentIcon
 	| NubeComponentSideScroll
+	| NubeComponentMarkdown
 	| NubeComponentSvg
 	| NubeComponentCircle
 	| NubeComponentPath
