@@ -18,10 +18,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 	}
 
 	if (message.action === "nube-devtools-check-nube-status") {
-		handleDevToolsVerifyNubeSdkStatus({
-			sendResponse,
-			tabId: message.payload.tabId,
-		});
+		const tabId = message.payload?.tabId ?? sender.tab?.id;
+		if (tabId) {
+			handleDevToolsVerifyNubeSdkStatus({
+				sendResponse,
+				tabId,
+			});
+		} else {
+			sendResponse({ status: false });
+		}
 		return true;
 	}
 
