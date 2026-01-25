@@ -4,6 +4,15 @@ window.addEventListener("load", () => {
 	chrome.runtime.sendMessage({
 		action: "nube-devtools-initialize-sdk",
 	});
+
+	// Check for nubeSDK and notify background
+	setTimeout(() => {
+		if (window.nubeSDK) {
+			chrome.runtime.sendMessage({
+				action: "nube-devtools-sdk-detected",
+			});
+		}
+	}, 1000);
 });
 
 window.addEventListener("DOMContentLoaded", () => {
