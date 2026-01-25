@@ -5,7 +5,7 @@ export const handleEvents = () => {
 		return;
 	}
 
-	window.nubeSDK.on("*", async (...state: NubeSDKState[]) => {
+	window.nubeSDK.on("*", (...state: NubeSDKState[]) => {
 		window.dispatchEvent(
 			new CustomEvent("NubeSDKEvents", {
 				detail: state,
