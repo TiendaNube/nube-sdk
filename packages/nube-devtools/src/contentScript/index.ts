@@ -1,5 +1,9 @@
 import type { NubeSDKStorageEvent } from "@/contexts/nube-sdk-storage-context";
 
+interface NubeSDKEventDetail {
+	data: unknown[];
+}
+
 window.addEventListener("load", () => {
 	chrome.runtime.sendMessage({
 		action: "nube-devtools-initialize-sdk",
@@ -15,15 +19,18 @@ window.addEventListener("load", () => {
 	}, 1000);
 });
 
-window.addEventListener("DOMContentLoaded", () => {
+if (document.readyState === "loading") {
+  window.addEventListener("DOMContentLoaded", () => {
+		chrome.runtime.sendMessage({
+      action: "nube-devtools-monitor-events",
+		});
+		return true;
+	});
+} else {
+	// DOM is already loaded, execute immediately
 	chrome.runtime.sendMessage({
 		action: "nube-devtools-monitor-events",
 	});
-	return true;
-});
-
-interface NubeSDKEventDetail {
-	data: unknown[];
 }
 
 window.addEventListener("NubeSDKEvents", ((event) => {
