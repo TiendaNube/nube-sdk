@@ -10,7 +10,7 @@ export const Unavailable = () => {
 		<main className="min-h-screen p-8">
 			<div className="max-w-2xl mx-auto">
 				<div className="flex items-center gap-2 mb-4">
-					<img src="/img/logo-32.png" alt="Nube Logo" className="w-6 h-6" />
+					<img src="/logo/logo-32.png" alt="Nube Logo" className="w-6 h-6" />
 					<h3 className="text-2xl font-bold">NubeSDK</h3>
 				</div>
 				<Card>

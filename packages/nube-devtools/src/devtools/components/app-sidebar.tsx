@@ -80,7 +80,7 @@ export function AppSidebar() {
 					<SidebarGroupLabel className="justify-between">
 						<div className="flex items-center gap-2">
 							<img
-								src="/img/logo-32.png"
+								src="/logo/logo-32.png"
 								alt="NubeSDK Logo"
 								className="w-4 h-4"
 							/>
