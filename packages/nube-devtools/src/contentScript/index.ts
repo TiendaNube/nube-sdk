@@ -11,9 +11,9 @@ window.addEventListener("load", () => {
 });
 
 if (document.readyState === "loading") {
-  window.addEventListener("DOMContentLoaded", () => {
+	window.addEventListener("DOMContentLoaded", () => {
 		chrome.runtime.sendMessage({
-      action: "nube-devtools-monitor-events",
+			action: "nube-devtools-monitor-events",
 		});
 		return true;
 	});

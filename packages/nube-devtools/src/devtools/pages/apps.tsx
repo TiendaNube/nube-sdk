@@ -1,3 +1,4 @@
+import type { NubeSDKApp } from "@/background/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,11 +19,11 @@ import { TableRowItem } from "../components/table-row-item";
 
 const STORAGE_KEY = "nube-devtools-apps-panel-size";
 
-type NubeSDKAppsResponse = {
-	status: boolean;
-	apps: {
-		[key: string]: NubeSDKEvent["data"];
-	};
+const getApps = (): Record<string, NubeSDKApp> => {
+	if (window.nubeSDK) {
+		return window.nubeSDK.getState().apps;
+	}
+	return {};
 };
 
 export function Apps() {
@@ -30,29 +31,36 @@ export function Apps() {
 	const [selectedApp, setSelectedApp] = useState<NubeSDKEvent | null>(null);
 
 	const fetchApps = useCallback(() => {
-		chrome.runtime.sendMessage(
+		chrome.scripting.executeScript(
 			{
-				action: "nube-devtools-fetch-apps",
-				payload: {
-					tabId: chrome.devtools.inspectedWindow.tabId,
-				},
+				target: { tabId: chrome.devtools.inspectedWindow.tabId },
+				world: "MAIN",
+				func: getApps,
 			},
-			(response: NubeSDKAppsResponse) => {
-				const apps = Object.keys(response.apps);
-				if (response.status && apps.length > 0) {
-					const apps = Object.keys(response.apps).map((key) => {
-						return {
-							id: uuidv4(),
-							data: response.apps[key],
-						};
-					});
-					setApps(apps);
-				} else {
+			(results) => {
+				try {
+					const appsResult = results?.[0]?.result as
+						| Record<string, NubeSDKApp>
+						| undefined;
+					const appsKeys = appsResult ? Object.keys(appsResult) : [];
+
+					if (appsKeys.length > 0 && appsResult) {
+						const apps = Object.keys(appsResult).map((key) => {
+							return {
+								id: uuidv4(),
+								data: appsResult[key],
+							};
+						});
+						setApps(apps);
+					} else {
+						setApps([]);
+						const timeout = setTimeout(() => {
+							fetchApps();
+							clearTimeout(timeout);
+						}, 2000);
+					}
+				} catch (error) {
 					setApps([]);
-					const timeout = setTimeout(() => {
-						fetchApps();
-						clearTimeout(timeout);
-					}, 3000);
 				}
 			},
 		);
@@ -130,7 +138,8 @@ export function Apps() {
 										<h4 className="text-sm font-medium leading-none">ID</h4>
 										<Input
 											className="w-auto"
-											defaultValue={selectedApp.data.id}
+											value={selectedApp.data.id}
+											readOnly
 											onClick={(e) => (e.target as HTMLInputElement).select()}
 										/>
 									</div>
@@ -140,9 +149,8 @@ export function Apps() {
 										</h4>
 										<Input
 											className="w-auto"
-											defaultValue={
-												selectedApp.data.registered ? "true" : "false"
-											}
+											value={selectedApp.data.registered ? "true" : "false"}
+											readOnly
 											onClick={(e) => (e.target as HTMLInputElement).select()}
 										/>
 									</div>
@@ -151,7 +159,8 @@ export function Apps() {
 										<div className="flex items-center gap-2">
 											<Textarea
 												className="w-auto max-w-[300px]"
-												defaultValue={selectedApp.data.script}
+												value={selectedApp.data.script}
+												readOnly
 												onClick={(e) =>
 													(e.target as HTMLTextAreaElement).select()
 												}
