@@ -1,6 +1,6 @@
+import { Column, Text } from "@tiendanube/nube-sdk-jsx";
 import type { NubeSDK } from "@tiendanube/nube-sdk-types";
 import { styled } from "@tiendanube/nube-sdk-ui";
-import { Column, Text } from "@tiendanube/nube-sdk-jsx";
 import { Logo } from "./components/Logo";
 
 const StyledColumn = styled(Column)`
