@@ -1,8 +1,7 @@
 /**
  * App Settings types for the Nube SDK
  *
- * These types represent the app settings values that are stored in the database
- * and can be retrieved by apps via the SDK.
+ * These types represent the app settings values and can be retrieved by apps via the SDK.
  */
 
 /**
