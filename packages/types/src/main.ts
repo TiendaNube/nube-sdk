@@ -1,3 +1,4 @@
+import type { AppSettingsValues } from "./app-settings";
 import type { NubeBrowserAPIs } from "./browser";
 import type { NubeComponent, UI } from "./components";
 import type {
@@ -241,6 +242,13 @@ export type NubeSDK = {
 	 * @param slot - The UI slot from which the component will be cleared.
 	 */
 	clearSlot(slot: UISlot): void;
+
+	/**
+	 * Retrieves the app settings values for the current app.
+	 *
+	 * @returns A promise that resolves to the app settings values, or an empty object if not available.
+	 */
+	getAppSettings(): Promise<AppSettingsValues>;
 };
 
 /**
