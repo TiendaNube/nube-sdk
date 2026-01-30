@@ -5,7 +5,10 @@ import type {
 	AppLocation,
 	Cart,
 	Customer,
+	Device,
+	Order,
 	Payment,
+	Session,
 	Shipping,
 	Store,
 } from "./domain";
@@ -23,6 +26,15 @@ import type { DeepPartial, Nullable } from "./utility";
  * This state is immutable and contains all relevant application data.
  */
 export type NubeSDKState = {
+	/**
+	 * The current order state, containing order status and tracking statuses.
+	 */
+	order?: Order;
+	/**
+	 * The current device state, containing screen information.
+	 */
+	device: Device;
+
 	/**
 	 * The current cart state, containing products, pricing, and validation status.
 	 */
@@ -68,6 +80,11 @@ export type NubeSDKState = {
 	 * Optional event payload
 	 */
 	eventPayload: Nullable<Record<string, unknown>>;
+
+	/**
+	 * Information about the session, including the session ID.
+	 */
+	session: Session;
 };
 
 /*

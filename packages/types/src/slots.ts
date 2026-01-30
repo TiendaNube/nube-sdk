@@ -15,6 +15,9 @@ import type { ObjectValues, Prettify } from "./utility";
  * @property {"corner_top_right"} CORNER_TOP_RIGHT - Top right corner of the page.
  * @property {"corner_bottom_left"} CORNER_BOTTOM_LEFT - Bottom left corner of the page.
  * @property {"corner_bottom_right"} CORNER_BOTTOM_RIGHT - Bottom right corner of the page.
+ * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
+ * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
+ * @property {"after_header"} AFTER_HEADER - After the header.
  */
 export const COMMON_UI_SLOT = {
 	BEFORE_MAIN_CONTENT: "before_main_content",
@@ -24,6 +27,9 @@ export const COMMON_UI_SLOT = {
 	CORNER_TOP_RIGHT: "corner_top_right",
 	CORNER_BOTTOM_LEFT: "corner_bottom_left",
 	CORNER_BOTTOM_RIGHT: "corner_bottom_right",
+	BEFORE_LINE_ITEMS: "before_line_items",
+	AFTER_LINE_ITEMS: "after_line_items",
+	AFTER_HEADER: "after_header",
 } as const;
 
 /**
@@ -35,8 +41,6 @@ export const COMMON_UI_SLOT = {
  *
  * @constant
  *
- * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
- * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  * @property {"after_contact_form"} AFTER_CONTACT_FORM - After the contact form in checkout.
  * @property {"after_address_form"} AFTER_ADDRESS_FORM - After the address form in checkout.
  * @property {"after_billing_form"} AFTER_BILLING_FORM - After the billing form in checkout.
@@ -48,12 +52,11 @@ export const COMMON_UI_SLOT = {
  * @property {"after_line_items_price"} AFTER_LINE_ITEMS_PRICE - After the price of the line items in checkout.
  * @property {"before_shipping_form"} BEFORE_SHIPPING_FORM - Before the shipping form in checkout.
  * @property {"after_shipping_form"} AFTER_SHIPPING_FORM - After the shipping form in checkout.
+ * @property {"after_shipping_description"} AFTER_SHIPPING_DESCRIPTION - After the shipping description in checkout.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const CHECKOUT_UI_SLOT = {
 	...COMMON_UI_SLOT,
-	BEFORE_LINE_ITEMS: "before_line_items",
-	AFTER_LINE_ITEMS: "after_line_items",
 	AFTER_CONTACT_FORM: "after_contact_form",
 	AFTER_ADDRESS_FORM: "after_address_form",
 	AFTER_BILLING_FORM: "after_billing_form",
@@ -65,6 +68,7 @@ export const CHECKOUT_UI_SLOT = {
 	AFTER_LINE_ITEMS_PRICE: "after_line_items_price",
 	BEFORE_SHIPPING_FORM: "before_shipping_form",
 	AFTER_SHIPPING_FORM: "after_shipping_form",
+	AFTER_SHIPPING_DESCRIPTION: "after_shipping_description",
 } as const;
 
 /**
@@ -79,15 +83,28 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_quick_buy_add_to_cart"} BEFORE_QUICK_BUY_ADD_TO_CART - Before the quick buy add to cart button.
  * @property {"before_product_detail_add_to_cart"} BEFORE_PRODUCT_DETAIL_ADD_TO_CART - Before the product detail add to cart button.
  * @property {"after_product_detail_add_to_cart"} AFTER_PRODUCT_DETAIL_ADD_TO_CART - After the product detail add to cart button.
+ * @property {"before_add_to_cart_pdp"} BEFORE_ADD_TO_CART_PDP - Before the add to cart button on product detail page.
+ * @property {"after_add_to_cart_pdp"} AFTER_ADD_TO_CART_PDP - After the add to cart button on product detail page.
  * @property {"product_detail_image_top_left"} PRODUCT_DETAIL_IMAGE_TOP_LEFT - Top left corner of product detail images.
  * @property {"product_detail_image_top_right"} PRODUCT_DETAIL_IMAGE_TOP_RIGHT - Top right corner of product detail images.
  * @property {"after_product_detail_name"} AFTER_PRODUCT_DETAIL_NAME - After the product name in product detail.
+ * @property {"before_product_detail_name"} BEFORE_PRODUCT_DETAIL_NAME - Before the product name in product detail.
+ * @property {"after_product_description"} AFTER_PRODUCT_DESCRIPTION - After the product description.
+ * @property {"before_price_pdp"} BEFORE_PRICE_PDP - Before the price on product detail page.
+ * @property {"after_price_pdp"} AFTER_PRICE_PDP - After the price on product detail page.
  * @property {"after_product_grid_item_name"} AFTER_PRODUCT_GRID_ITEM_NAME - After the product name in grid items.
+ * @property {"before_product_grid_item_name"} BEFORE_PRODUCT_GRID_ITEM_NAME - Before the product name in grid items.
+ * @property {"after_product_grid_item_price"} AFTER_PRODUCT_GRID_ITEM_PRICE - After the product price in grid items.
+ * @property {"before_product_grid_item_price"} BEFORE_PRODUCT_GRID_ITEM_PRICE - Before the product price in grid items.
  * @property {"product_grid_item_image_top_right"} PRODUCT_GRID_ITEM_IMAGE_TOP_RIGHT - Top right corner of product grid item images.
  * @property {"product_grid_item_image_top_left"} PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT - Top left corner of product grid item images.
  * @property {"product_grid_item_image_bottom_right"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT - Bottom right corner of product grid item images.
  * @property {"product_grid_item_image_bottom_left"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT - Bottom left corner of product grid item images.
  * @property {"before_start_checkout_button"} BEFORE_START_CHECKOUT_BUTTON - Before the start checkout button.
+ * @property {"after_go_to_checkout"} AFTER_GO_TO_CHECKOUT - After the go to checkout button.
+ * @property {"after_cart_summary"} AFTER_CART_SUMMARY - After the cart summary.
+ * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
+ * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -95,15 +112,28 @@ export const STOREFRONT_UI_SLOT = {
 	BEFORE_QUICK_BUY_ADD_TO_CART: "before_quick_buy_add_to_cart",
 	BEFORE_PRODUCT_DETAIL_ADD_TO_CART: "before_product_detail_add_to_cart",
 	AFTER_PRODUCT_DETAIL_ADD_TO_CART: "after_product_detail_add_to_cart",
+	BEFORE_ADD_TO_CART_PDP: "before_add_to_cart_pdp",
+	AFTER_ADD_TO_CART_PDP: "after_add_to_cart_pdp",
 	PRODUCT_DETAIL_IMAGE_TOP_LEFT: "product_detail_image_top_left",
 	AFTER_PRODUCT_DETAIL_NAME: "after_product_detail_name",
+	AFTER_PRODUCT_DESCRIPTION: "after_product_description",
+	BEFORE_PRICE_PDP: "before_price_pdp",
+	AFTER_PRICE_PDP: "after_price_pdp",
 	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
 	AFTER_PRODUCT_GRID_ITEM_NAME: "after_product_grid_item_name",
+	BEFORE_PRODUCT_GRID_ITEM_NAME: "before_product_grid_item_name",
+	AFTER_PRODUCT_GRID_ITEM_PRICE: "after_product_grid_item_price",
+	BEFORE_PRODUCT_GRID_ITEM_PRICE: "before_product_grid_item_price",
 	PRODUCT_GRID_ITEM_IMAGE_TOP_RIGHT: "product_grid_item_image_top_right",
 	PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT: "product_grid_item_image_top_left",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT: "product_grid_item_image_bottom_right",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT: "product_grid_item_image_bottom_left",
 	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
+	AFTER_GO_TO_CHECKOUT: "after_go_to_checkout",
+	AFTER_CART_SUMMARY: "after_cart_summary",
+	BEFORE_FOOTER: "before_footer",
+	CART_LINE_ITEM_TOP: "cart_line_item_top",
+	BEFORE_PRODUCT_DETAIL_NAME: "before_product_detail_name",
 } as const;
 
 /**

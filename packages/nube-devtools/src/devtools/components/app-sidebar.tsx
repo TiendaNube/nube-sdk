@@ -1,10 +1,18 @@
-import { Box, ChartNoAxesGantt, CodeXml, ComponentIcon } from "lucide-react";
+import {
+	Braces,
+	ChartNoAxesGantt,
+	CodeXml,
+	ComponentIcon,
+	Database,
+	Package,
+} from "lucide-react";
 
 import { Badge as BadgeComponent } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Sidebar,
 	SidebarContent,
+	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarGroupLabel,
@@ -14,6 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import { PAGES, type Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
+import packageData from "../../../package.json";
 
 const Badge = ({ text }: { text: string }) => {
 	return (
@@ -32,7 +41,7 @@ const menu: {
 	{
 		title: "Apps",
 		page: PAGES.APPS,
-		icon: ComponentIcon,
+		icon: Package,
 	},
 	{
 		title: "Components",
@@ -47,13 +56,18 @@ const menu: {
 	{
 		title: "Storage",
 		page: PAGES.STORAGES,
-		icon: Box,
+		icon: Database,
 	},
 	{
 		title: "SVG Converter",
 		page: PAGES.SVG_CONVERT,
 		icon: CodeXml,
 		badge: "beta",
+	},
+	{
+		title: "State",
+		page: PAGES.STATE,
+		icon: Braces,
 	},
 ];
 
@@ -108,6 +122,11 @@ export function AppSidebar() {
 					</SidebarGroupContent>
 				</SidebarGroup>
 			</SidebarContent>
+			<SidebarFooter>
+				<span className="text-xs text-muted-foreground text-center">
+					v{packageData.version}
+				</span>
+			</SidebarFooter>
 		</Sidebar>
 	);
 }

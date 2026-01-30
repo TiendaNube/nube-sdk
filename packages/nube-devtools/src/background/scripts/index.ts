@@ -1,4 +1,3 @@
-export { getApps } from "./get-apps";
 export { handleEvents } from "./handle-events";
 export { highlightElement } from "./highlight-element";
 export { injectWindowVariable } from "./inject-window-variable";

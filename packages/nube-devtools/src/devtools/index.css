@@ -134,3 +134,43 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+/* JSON Viewer highlight styles for modified nodes */
+.json-modified {
+	animation: json-highlight 2s ease-out;
+	border-radius: 2px;
+}
+
+@keyframes json-highlight {
+	0% {
+		background-color: oklch(0.828 0.189 84.429 / 0.6);
+		box-shadow: 0 0 0 2px oklch(0.828 0.189 84.429 / 0.3);
+	}
+	50% {
+		background-color: oklch(0.828 0.189 84.429 / 0.4);
+		box-shadow: 0 0 0 1px oklch(0.828 0.189 84.429 / 0.2);
+	}
+	100% {
+		background-color: transparent;
+		box-shadow: none;
+	}
+}
+
+.dark .json-modified {
+	animation: json-highlight-dark 2s ease-out;
+}
+
+@keyframes json-highlight-dark {
+	0% {
+		background-color: oklch(0.627 0.265 303.9 / 0.6);
+		box-shadow: 0 0 0 2px oklch(0.627 0.265 303.9 / 0.3);
+	}
+	50% {
+		background-color: oklch(0.627 0.265 303.9 / 0.4);
+		box-shadow: 0 0 0 1px oklch(0.627 0.265 303.9 / 0.2);
+	}
+	100% {
+		background-color: transparent;
+		box-shadow: none;
+	}
+}

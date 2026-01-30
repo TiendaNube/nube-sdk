@@ -41,12 +41,18 @@ import type {
 	NubeComponentGProps,
 	NubeComponentIcon,
 	NubeComponentIconProps,
+	NubeComponentIframe,
+	NubeComponentIframeProps,
 	NubeComponentImage,
 	NubeComponentImageProps,
 	NubeComponentLine,
 	NubeComponentLineProps,
 	NubeComponentLinearGradient,
 	NubeComponentLinearGradientProps,
+	NubeComponentLink,
+	NubeComponentLinkProps,
+	NubeComponentMarkdown,
+	NubeComponentMarkdownProps,
 	NubeComponentMask,
 	NubeComponentMaskProps,
 	NubeComponentNumberField,
@@ -59,6 +65,8 @@ import type {
 	NubeComponentPolygonProps,
 	NubeComponentPolyline,
 	NubeComponentPolylineProps,
+	NubeComponentProgress,
+	NubeComponentProgressProps,
 	NubeComponentRadialGradient,
 	NubeComponentRadialGradientProps,
 	NubeComponentRect,
@@ -67,6 +75,8 @@ import type {
 	NubeComponentRowProps,
 	NubeComponentSelect,
 	NubeComponentSelectProps,
+	NubeComponentSideScroll,
+	NubeComponentSideScrollProps,
 	NubeComponentStop,
 	NubeComponentStopProps,
 	NubeComponentSvg,
@@ -102,10 +112,15 @@ import {
 	field,
 	fragment,
 	icon,
+	iframe,
 	image,
+	link,
+	markdown,
 	numberfield,
+	progress,
 	row,
 	select,
+	sideScroll,
 	svgCircle,
 	svgClipPath,
 	svgDefs,
@@ -226,6 +241,21 @@ export function Button(props: NubeComponentButtonProps): NubeComponentButton {
 }
 
 /**
+ * Creates a `Link` component.
+ *
+ * The `Link` component is used for navigation links. It supports properties such as
+ * `href`, `target`, `rel`, `disabled`, `variant`, and `onClick` event handling.
+ * Links can be styled with different variants (primary, secondary, transparent)
+ * and support both internal and external navigation.
+ *
+ * @param props - The properties for configuring the link component.
+ * @returns A `NubeComponentLink` object representing the link component.
+ */
+export function Link(props: NubeComponentLinkProps): NubeComponentLink {
+	return link(props);
+}
+
+/**
  * Creates a `Fragment` component.
  *
  * The `Fragment` component is a logical grouping element that allows multiple children
@@ -331,6 +361,35 @@ export function Image(props: NubeComponentImageProps): NubeComponentImage {
 }
 
 /**
+ * Creates a `Progress` component.
+ *
+ * A `Progress` represents the completion progress of a task. It supports properties such as `value` and `max`
+ * to define the progress range and current state. When no value is provided, the progress bar
+ * displays in an indeterminate state.
+ *
+ * @param props - The properties for configuring the progress component.
+ * @returns A `NubeComponentProgress` object representing the progress component.
+ */
+export function Progress(
+	props: NubeComponentProgressProps,
+): NubeComponentProgress {
+	return progress(props);
+}
+
+/**
+ * Creates an `Iframe` component.
+ *
+ * The `Iframe` component is used to embed external content. It supports properties such as
+ * `src`, `width`, `height`, `sandbox`, and `style`.
+ *
+ * @param props - The properties for configuring the iframe component.
+ * @returns A `NubeComponentIframe` object representing the iframe component.
+ */
+export function Iframe(props: NubeComponentIframeProps): NubeComponentIframe {
+	return iframe(props);
+}
+
+/**
  * Creates a `Select` component.
  *
  * A `Select` represents a dropdown menu that allows users to select one option from a list.
@@ -341,6 +400,37 @@ export function Image(props: NubeComponentImageProps): NubeComponentImage {
  */
 export function Select(props: NubeComponentSelectProps): NubeComponentSelect {
 	return select(props);
+}
+
+/**
+ * Creates a `SideScroll` component.
+ *
+ * A `SideScroll` is a horizontal scrolling container that allows users to scroll through content
+ * that extends beyond the container's visible width. It supports customizable gap between items
+ * and can optionally hide the scrollbar for a cleaner appearance.
+ *
+ * @param props - The properties for configuring the sidescroll component.
+ * @returns A `NubeComponentSideScroll` object representing the sidescroll component.
+ */
+export function SideScroll(
+	props: NubeComponentSideScrollProps,
+): NubeComponentSideScroll {
+	return sideScroll(props);
+}
+
+/**
+ * Creates a `Markdown` component.
+ *
+ * The `Markdown` component is used to render markdown content.
+ * It supports properties such as `content` for the markdown string.
+ *
+ * @param props - The properties for configuring the markdown component.
+ * @returns A `NubeComponentMarkdown` object representing the markdown component.
+ */
+export function Markdown(
+	props: NubeComponentMarkdownProps,
+): NubeComponentMarkdown {
+	return markdown(props);
 }
 
 /**

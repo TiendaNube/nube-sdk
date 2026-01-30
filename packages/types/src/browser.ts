@@ -1,3 +1,4 @@
+import type { JsonObject, NubeComponent } from "./components";
 import type { AsyncNubeStorage } from "./storage";
 
 /**
@@ -19,4 +20,11 @@ export type NubeBrowserAPIs = {
 	 * @param route The route to navigate to. Must start with '/'.
 	 */
 	navigate: (route: `/${string}`) => void;
+
+	/**
+	 * Posts a message to the iframe.
+	 * @param iframe The iframe component to post the message to.
+	 * @param message The message to post to the iframe.
+	 */
+	postMessageToIframe: (iframe: NubeComponent, message: JsonObject) => void;
 };
