@@ -154,11 +154,19 @@ async function main(): Promise<void> {
 		return;
 	}
 
+	const shouldInitGit = await prompts.confirm({
+		message: "Initialize git repository?",
+		initialValue: true,
+	});
+	if (prompts.isCancel(shouldInitGit)) return cancel();
+
+	if (shouldInitGit) {
+		const gitSuccess = await initGit(dest);
+		if (!gitSuccess) return;
+	}
+
 	const success = await installDependencies(pkgManager, dest, projectName);
 	if (!success) return;
-
-	const gitSuccess = await initGit(dest);
-	if (!gitSuccess) return;
 
 	let message = "🚀 Done. Now run:\n";
 	message += `\n  cd ${projectName}`;
