@@ -71,13 +71,14 @@ async function installDependencies(
 async function initGit(dest: string): Promise<boolean> {
 	const execAsync = promisify(exec);
 
+	const spinner = prompts.spinner();
 	try {
 		await execAsync("git --version");
 	} catch (error) {
+		prompts.log.warn("Git not found. Skipping git initialization.");
 		return true;
 	}
 
-	const spinner = prompts.spinner();
 	spinner.start("Initializing git...");
 	try {
 		await execAsync("git init", {
@@ -117,11 +118,12 @@ async function main(): Promise<void> {
 	const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent);
 	const pkgManager = pkgInfo ? pkgInfo.name : "npm";
 
+	prompts.intro("NubeSDK App");
 	const promptProjectName = await prompts.text({
 		message: "What is the project's name?",
 		defaultValue,
 		placeholder: defaultValue,
-		validate: validateProjectName,
+		validate: (value) => validateProjectName(value ?? defaultValue),
 	});
 	const projectName = formatProjectName(
 		typeof promptProjectName === "string" ? promptProjectName : "",
