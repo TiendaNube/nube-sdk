@@ -4,8 +4,13 @@ import { onCheckoutStep, onPage, pageMatch } from "./page-match.js";
 import type { CheckoutStepHandlers, PageHandlers } from "./page-match.js";
 
 function createMockSDK(): NubeSDK {
+	const mockState: NubeSDKState = {
+		location: { url: "", page: { type: "home", data: undefined }, queries: {} },
+	} as NubeSDKState;
+
 	const mockSDK = {
 		on: vi.fn(),
+		getState: vi.fn(() => mockState),
 	} as Partial<NubeSDK>;
 
 	return mockSDK as NubeSDK;
@@ -32,18 +37,19 @@ describe("page-match", () => {
 	});
 
 	describe("pageMatch", () => {
-		it("dispatches to product handler with state and data", () => {
+		it("dispatches to product handler with state and product data", () => {
 			const productHandler = vi.fn();
 			const handlers = { product: productHandler } as const;
-			const state = makeState({ type: "product", data: { id: 1 } });
+			const productData = { id: 1 };
+			const state = makeState({
+				type: "product",
+				data: { product: productData },
+			});
 
 			pageMatch(state, handlers);
 
 			expect(productHandler).toHaveBeenCalledTimes(1);
-			expect(productHandler).toHaveBeenCalledWith(
-				state,
-				state.location.page.data,
-			);
+			expect(productHandler).toHaveBeenCalledWith(state, productData);
 		});
 
 		it("dispatches to checkout handler when page is checkout", () => {
@@ -78,6 +84,20 @@ describe("page-match", () => {
 				state,
 				state.location.page.data,
 			);
+		});
+
+		it("dispatches to home handler when page is home", () => {
+			const homeHandler = vi.fn();
+			const handlers = { home: homeHandler } as const;
+			const state = makeState({
+				type: "home",
+				data: { sections: [] },
+			});
+
+			pageMatch(state, handlers);
+
+			expect(homeHandler).toHaveBeenCalledTimes(1);
+			expect(homeHandler).toHaveBeenCalledWith(state, state.location.page.data);
 		});
 
 		it("does nothing if handler for page type is not provided", () => {

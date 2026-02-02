@@ -1,91 +1,106 @@
+import type { Page } from "@tiendanube/nube-sdk-types";
 import { describe, expect, it } from "vitest";
 import {
-	isDefined,
-	isNonEmptyString,
-	isObject,
-	isPlainObject,
-	isValidNumber,
+	hasProductList,
+	hasSections,
+	hasSingleProduct,
+	isCategoryPage,
+	isCheckoutPage,
+	isHomePage,
+	isProductPage,
+	isSectionWithProducts,
 } from "./typeguards.js";
 
 describe("Type Guards", () => {
-	describe("isObject", () => {
-		it("should return true for any object (including arrays, dates, etc.)", () => {
-			expect(isObject({})).toBe(true);
-			expect(isObject({ key: "value" })).toBe(true);
-			expect(isObject([])).toBe(true);
-			expect(isObject(new Date())).toBe(true);
-			expect(isObject(/test/)).toBe(true);
+	describe("Page type guards", () => {
+		it("isProductPage returns true for product page", () => {
+			const page = {
+				type: "product",
+				data: { product: { id: 1 } },
+			} as unknown as Page;
+			expect(isProductPage(page)).toBe(true);
 		});
 
-		it("should return false for null and primitive values", () => {
-			expect(isObject(null)).toBe(false);
-			expect(isObject(undefined)).toBe(false);
-			expect(isObject("string")).toBe(false);
-			expect(isObject(123)).toBe(false);
-			expect(isObject(true)).toBe(false);
-		});
-	});
-
-	describe("isPlainObject", () => {
-		it("should return true for plain objects only", () => {
-			expect(isPlainObject({})).toBe(true);
-			expect(isPlainObject({ key: "value" })).toBe(true);
+		it("isProductPage returns false for other page types", () => {
+			expect(
+				isProductPage({ type: "category", data: {} } as unknown as Page),
+			).toBe(false);
+			expect(
+				isProductPage({ type: "checkout", data: {} } as unknown as Page),
+			).toBe(false);
+			expect(isProductPage({ type: "home", data: {} } as unknown as Page)).toBe(
+				false,
+			);
 		});
 
-		it("should return false for arrays, dates, and other built-in objects", () => {
-			expect(isPlainObject(null)).toBe(false);
-			expect(isPlainObject(undefined)).toBe(false);
-			expect(isPlainObject("string")).toBe(false);
-			expect(isPlainObject(123)).toBe(false);
-			expect(isPlainObject([])).toBe(false);
-			expect(isPlainObject(new Date())).toBe(false);
-			expect(isPlainObject(/test/)).toBe(false);
-		});
-	});
-
-	describe("isNonEmptyString", () => {
-		it("should return true for non-empty strings", () => {
-			expect(isNonEmptyString("hello")).toBe(true);
-			expect(isNonEmptyString("  test  ")).toBe(true);
+		it("isCategoryPage returns true for category page", () => {
+			expect(
+				isCategoryPage({ type: "category", data: {} } as unknown as Page),
+			).toBe(true);
 		});
 
-		it("should return false for empty or non-string values", () => {
-			expect(isNonEmptyString("")).toBe(false);
-			expect(isNonEmptyString("   ")).toBe(false);
-			expect(isNonEmptyString(null)).toBe(false);
-			expect(isNonEmptyString(undefined)).toBe(false);
-			expect(isNonEmptyString(123)).toBe(false);
+		it("isCheckoutPage returns true for checkout page", () => {
+			expect(
+				isCheckoutPage({ type: "checkout", data: {} } as unknown as Page),
+			).toBe(true);
+		});
+
+		it("isHomePage returns true for home page", () => {
+			expect(isHomePage({ type: "home", data: {} } as unknown as Page)).toBe(
+				true,
+			);
 		});
 	});
 
-	describe("isValidNumber", () => {
-		it("should return true for valid numbers", () => {
-			expect(isValidNumber(0)).toBe(true);
-			expect(isValidNumber(123)).toBe(true);
-			expect(isValidNumber(-456)).toBe(true);
-			expect(isValidNumber(3.14)).toBe(true);
+	describe("Data shape guards", () => {
+		it("hasProductList returns true for object with products array", () => {
+			expect(hasProductList({ products: [] })).toBe(true);
+			expect(
+				hasProductList({
+					products: [{ id: 1, name: {}, description: {}, handle: {} }],
+				}),
+			).toBe(true);
 		});
 
-		it("should return false for invalid numbers and non-numbers", () => {
-			expect(isValidNumber(Number.NaN)).toBe(false);
-			expect(isValidNumber("123")).toBe(false);
-			expect(isValidNumber(null)).toBe(false);
-			expect(isValidNumber(undefined)).toBe(false);
-		});
-	});
-
-	describe("isDefined", () => {
-		it("should return true for defined values", () => {
-			expect(isDefined(0)).toBe(true);
-			expect(isDefined("")).toBe(true);
-			expect(isDefined(false)).toBe(true);
-			expect(isDefined({})).toBe(true);
-			expect(isDefined([])).toBe(true);
+		it("hasProductList returns false for non-array or missing products", () => {
+			expect(hasProductList({})).toBe(false);
+			expect(hasProductList({ products: "not array" })).toBe(false);
+			expect(hasProductList(null)).toBe(false);
 		});
 
-		it("should return false for null and undefined", () => {
-			expect(isDefined(null)).toBe(false);
-			expect(isDefined(undefined)).toBe(false);
+		it("hasSections returns true for object with sections array", () => {
+			expect(hasSections({ sections: [] })).toBe(true);
+			expect(hasSections({ sections: [{ type: "banner" }] })).toBe(true);
+		});
+
+		it("hasSections returns false for non-array or missing sections", () => {
+			expect(hasSections({})).toBe(false);
+			expect(hasSections(null)).toBe(false);
+		});
+
+		it("hasSingleProduct returns true for object with product having id", () => {
+			expect(hasSingleProduct({ product: { id: 1 } })).toBe(true);
+		});
+
+		it("hasSingleProduct returns false when product or id missing", () => {
+			expect(hasSingleProduct({})).toBe(false);
+			expect(hasSingleProduct({ product: {} })).toBe(false);
+			expect(hasSingleProduct(null)).toBe(false);
+		});
+
+		it("isSectionWithProducts returns true for object with products array", () => {
+			expect(isSectionWithProducts({ products: [] })).toBe(true);
+			expect(
+				isSectionWithProducts({
+					type: "featured_products",
+					products: [{ id: 1 }],
+				}),
+			).toBe(true);
+		});
+
+		it("isSectionWithProducts returns false when products missing", () => {
+			expect(isSectionWithProducts({ type: "banner" })).toBe(false);
+			expect(isSectionWithProducts(null)).toBe(false);
 		});
 	});
 });

@@ -9,10 +9,16 @@
 import type {
 	Category,
 	Checkout,
+	Home,
 	NubeSDKState,
 	ProductDetails,
 } from "@tiendanube/nube-sdk-types";
-import { isCategoryPage, isCheckoutPage, isProductPage } from "./typeguards";
+import {
+	isCategoryPage,
+	isCheckoutPage,
+	isHomePage,
+	isProductPage,
+} from "./typeguards";
 
 /**
  * Maps each page type to its specific data payload.
@@ -40,6 +46,7 @@ export type PageDataMap = {
 	product: ProductDetails;
 	category: Category;
 	checkout: Checkout;
+	home: Home;
 };
 
 /**
@@ -120,7 +127,7 @@ export function pageMatch(state: NubeSDKState, handlers: PageHandlers): void {
 	const { page } = state.location;
 
 	if (isProductPage(page)) {
-		handlers.product?.(state, page.data);
+		handlers.product?.(state, page.data.product);
 		return;
 	}
 
@@ -131,6 +138,11 @@ export function pageMatch(state: NubeSDKState, handlers: PageHandlers): void {
 
 	if (isCheckoutPage(page)) {
 		handlers.checkout?.(state, page.data);
+		return;
+	}
+
+	if (isHomePage(page)) {
+		handlers.home?.(state, page.data);
 		return;
 	}
 }
@@ -162,7 +174,9 @@ export function onPage(handlers: PageHandlers): void {
 
 	pageMatch(currentState, handlers);
 
-	nube.on("location:updated", (state) => pageMatch(state, handlers));
+	nube.on("location:updated", (state: NubeSDKState) =>
+		pageMatch(state, handlers),
+	);
 }
 
 /**
@@ -228,6 +242,7 @@ export function onCheckoutStep(handlers: CheckoutStepHandlers): void {
 	nube.on("checkout:ready", (state: NubeSDKState) => {
 		const { page } = state.location;
 		if (page.type !== "checkout") return;
-		handlers[page.data.step]?.(state);
+		const step: CheckoutStep = page.data.step;
+		handlers[step]?.(state);
 	});
 }

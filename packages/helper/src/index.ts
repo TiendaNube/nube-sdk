@@ -15,5 +15,6 @@
 export * from "./browser";
 export * from "./getters";
 export * from "./page-match";
+export * from "./render";
 export * from "./typeguards";
 export * from "./utils";
