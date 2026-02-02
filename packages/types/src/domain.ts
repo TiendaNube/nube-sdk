@@ -1,6 +1,53 @@
 import type { DeepPartial, Nullable, Prettify } from "./utility";
 
 /**
+ * Represents the type of device.
+ */
+export type DeviceType = "mobile" | "desktop";
+
+/**
+ * Represents the orientation of the screen.
+ */
+export type DeviceScreenOrientation = "portrait" | "landscape";
+
+/**
+ * Represents the screen state of the device.
+ */
+export type DeviceScreen = {
+	/** The width of the screen in pixels. */
+	width: number;
+	/** The height of the screen in pixels. */
+	height: number;
+	/**
+	 * The orientation of the screen.
+	 * @example "portrait" | "landscape"
+	 */
+	orientation: DeviceScreenOrientation;
+	/** The pixel ratio of the screen. */
+	pixelRatio: number;
+	/** The width of the inner window in pixels. */
+	innerWidth: number;
+	/** The height of the inner window in pixels. */
+	innerHeight: number;
+};
+
+/**
+ * Represents the device state.
+ */
+export type Device = {
+	/**
+	 * The screen state of the device.
+	 * @example { width: 100, height: 100, orientation: "portrait" }
+	 */
+	screen: DeviceScreen;
+	/**
+	 * The type of device.
+	 * @example "mobile" | "desktop"
+	 */
+	type: DeviceType;
+};
+
+/**
  * Represents a Cart Item.
  * This type maintains compatibility with the API response format.
  */
@@ -204,6 +251,9 @@ export type Prices = {
 
 	/** Final total price after all discounts and shipping. */
 	total: number;
+
+	/** Subtotal before discounts and shipping, without taxes. */
+	subtotal_without_taxes: number;
 };
 
 /**
@@ -262,6 +312,28 @@ export type Cart = {
 
 	/** Optional coupon applied to the cart. */
 	coupon: DeepPartial<Coupon>;
+
+	/** Indicates if the cart is a subscription. */
+	is_subscription: boolean;
+};
+
+export type OrderTrackingStatus = {
+	/** Type of the tracking status. */
+	type: "shipped" | "packed" | "shipping_failure";
+
+	/** Title of the tracking status. */
+	title: string;
+
+	/** Timestamp of the tracking status. */
+	timestamp: string;
+};
+
+export type Order = {
+	/** Status of the order. */
+	status?: Nullable<"open" | "closed" | "cancelled">;
+
+	/** Tracking statuses of the order. */
+	tracking_statuses?: OrderTrackingStatus[];
 };
 
 /**
@@ -284,6 +356,44 @@ export type Store = {
 	language: LanguageKey;
 };
 
+type FixedProductListSectionName =
+	| "featured_products"
+	| "new_products"
+	| "sale_products";
+type ProductSpecificProductListSectionName =
+	| "alternative_products"
+	| "complementary_products"
+	| "related_products";
+
+export type SectionablePage =
+	| HomePage
+	| CategoryPage
+	| AllProductsPage
+	| ProductPage;
+
+type ProductListSectionName<T extends SectionablePage["type"]> =
+	T extends ProductPage["type"]
+		? ProductSpecificProductListSectionName
+		: FixedProductListSectionName;
+
+type ProductListSection<T extends SectionablePage["type"]> = {
+	type: ProductListSectionName<T>;
+	products: ProductDetails[];
+};
+
+// Other sections will be added on demand
+export type Section<T extends SectionablePage["type"]> = ProductListSection<T>;
+
+/**
+ * Represents data that may contain a list of sections.
+ */
+export type WithSections<T extends SectionablePage["type"]> = {
+	sections?: Section<T>[];
+};
+
+/**
+ * Represents data that may contain a list of products.
+ */
 export type WithProductList = { products?: ProductDetails[] };
 
 /**
@@ -302,9 +412,21 @@ export type Search = { q: string };
 export type Checkout = { step: "start" | "payment" | "success" };
 
 /**
+ * Represents the homepage data.
+ */
+export type Home = undefined | WithSections<"home">;
+
+/**
+ * Represents the product page data.
+ */
+export type ProductPageData = {
+	product: ProductDetails;
+} & WithSections<"product">;
+
+/**
  * Represents a product page.
  */
-export type ProductPage = { type: "product"; data: ProductDetails };
+export type ProductPage = { type: "product"; data: ProductPageData };
 
 /**
  * Represents a category page.
@@ -330,19 +452,53 @@ export type AllProductsPage = {
 export type SearchPage = { type: "search"; data: Search & WithProductList };
 
 /**
+ * Represents the account data.
+ */
+export type Account = {
+	customerId: Nullable<number>;
+	loggedIn: boolean;
+};
+
+/**
+ * Represents the data for a custom page.
+ */
+export type CustomPageData = { name: string };
+
+/**
  * Represents a checkout page.
  */
 export type CheckoutPage = { type: "checkout"; data: Checkout };
 
 /**
+ * Represents the homepage.
+ */
+export type HomePage = { type: "home"; data: Home };
+
+/**
+ * Represents Account Page
+ */
+export type AccountPage = { type: "account"; data: Account };
+
+/**
+ * Represents a custom page step.
+ */
+export type CustomPage = {
+	type: "custom_page";
+	data: CustomPageData;
+};
+
+/**
  * Represents a page within the application.
  */
 export type Page =
+	| HomePage
 	| CheckoutPage
 	| ProductPage
 	| CategoryPage
 	| AllProductsPage
-	| SearchPage;
+	| SearchPage
+	| AccountPage
+	| CustomPage;
 
 /**
  * Represents the user's current location within the application.
@@ -380,7 +536,7 @@ export type ShippingOption = {
 	id: string;
 	original_name: Nullable<string>;
 	name: Nullable<string>;
-	code: Nullable<string>;
+	code: Nullable<string | number>;
 	reference: Nullable<string>;
 	type: Nullable<string>;
 	price: number;
@@ -439,6 +595,16 @@ export type ShippingOption = {
 };
 
 /**
+ * Represents a custom label for a shipping option.
+ */
+export type CustomLabel =
+	| string
+	| {
+			title?: Nullable<string>;
+			description?: Nullable<string>;
+	  };
+
+/**
  * Represents shipping information in checkout.
  */
 export type Shipping = {
@@ -447,7 +613,7 @@ export type Shipping = {
 	/** List of available shipping options. */
 	options?: ShippingOption[];
 	/** Custom labels assigned to shipping options. */
-	custom_labels?: Record<string, string>;
+	custom_labels?: Record<string, CustomLabel>;
 };
 
 /**
@@ -552,4 +718,12 @@ export type SelectedPayment = {
 export type Payment = {
 	status: Nullable<PaymentStatus>;
 	selected: Nullable<SelectedPayment>;
+};
+
+/**
+ * Represents the session information.
+ */
+export type Session = {
+	/** Unique identifier for the session. */
+	id: Nullable<string>;
 };

@@ -61,3 +61,11 @@ packages/doc/.vitepress/cache
 # Operating system
 .DS_Store
 Thumbs.db
+
+# IDEs
+
+.idea
+.cursor
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.cursor/rules/snyk_rules.mdc

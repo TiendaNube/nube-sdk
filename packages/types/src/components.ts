@@ -259,7 +259,7 @@ export type NubeComponentField = Prettify<
 
 export type NubeComponentNumberFieldEventHandler = NubeComponentEventHandler<
 	"change" | "focus" | "blur" | "increment" | "decrement",
-	number
+	string
 >;
 
 /**
@@ -455,6 +455,7 @@ export type NubeComponentButtonProps = Prettify<
 			height: Size;
 			style?: NubeComponentStyle;
 			onClick: NubeComponentButtonEventHandler;
+			ariaLabel: string;
 		}>
 >;
 
@@ -465,6 +466,39 @@ export type NubeComponentButton = Prettify<
 	NubeComponentBase &
 		NubeComponentButtonProps & {
 			type: "button";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Link Component                                  */
+/* -------------------------------------------------------------------------- */
+
+export type NubeComponentLinkEventHandler = NubeComponentEventHandler<
+	"click",
+	string
+>;
+
+/**
+ * Represents the properties available for a `link` component.
+ */
+export type NubeComponentLinkProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			children: NubeComponentChildren;
+			href: string;
+			target?: "_blank";
+			variant?: "primary" | "secondary" | "transparent" | "link";
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `link` component, used for navigation links.
+ */
+export type NubeComponentLink = Prettify<
+	NubeComponentBase &
+		NubeComponentLinkProps & {
+			type: "link";
 		}
 >;
 
@@ -582,6 +616,92 @@ export type NubeComponentImage = Prettify<
 	NubeComponentBase &
 		NubeComponentImageProps & {
 			type: "img";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                         Progress Component                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents ARIA properties for accessibility in progress components.
+ */
+export type ProgressAriaProps = {
+	"aria-valuemax"?: number;
+	"aria-valuemin"?: number;
+	"aria-valuenow"?: number;
+	"aria-label"?: string;
+};
+
+/**
+ * Represents the properties available for a `progress` component.
+ */
+export type NubeComponentProgressProps = Prettify<
+	NubeComponentBase &
+		ProgressAriaProps & {
+			value?: number;
+			max?: number;
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `progress` component, used to display completion progress of a task.
+ */
+export type NubeComponentProgress = Prettify<
+	NubeComponentBase &
+		NubeComponentProgressProps & {
+			type: "progress";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                         Iframe Component                                  */
+/* -------------------------------------------------------------------------- */
+
+export type JsonValue =
+	| string
+	| number
+	| boolean
+	| null
+	| JsonValue[]
+	| { [key: string]: JsonValue };
+
+export type JsonObject = { [key: string]: JsonValue };
+
+export type NubeComponentIframeEventHandler = NubeComponentEventHandler<
+	"message",
+	JsonObject
+>;
+
+/**
+ * Represents the properties available for an `iframe` component.
+ * Designed for third-party content integration in e-commerce stores.
+ */
+export type NubeComponentIframeProps = Prettify<
+	NubeComponentBase & {
+		/** Third-party content URL (HTTPS only for security) */
+		src: SecurityURL;
+		/** Widget width (controlled by third-party) */
+		width?: Size;
+		/** Widget height (controlled by third-party) */
+		height?: Size;
+		/** Security sandbox restrictions (defaults to safe third-party settings) */
+		sandbox?: string;
+		/** Basic styling within platform theme constraints */
+		style?: NubeComponentStyle;
+		/** Event handler for messages from the iframe */
+		onMessage?: NubeComponentIframeEventHandler;
+	}
+>;
+
+/**
+ * Represents an `iframe` component, used to embed external content.
+ */
+export type NubeComponentIframe = Prettify<
+	NubeComponentBase &
+		NubeComponentIframeProps & {
+			type: "iframe";
 		}
 >;
 
@@ -899,6 +1019,848 @@ export type NubeComponentIcon = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           SVG Components                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for an `svg` component.
+ */
+export type NubeComponentSvgProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			width: string | number;
+			height: string | number;
+			viewBox: string;
+			version: string;
+			fill: string;
+			stroke: string;
+			strokeWidth: number | string;
+			preserveAspectRatio: string;
+			style?: NubeComponentStyle;
+			xmlns?: string;
+		}>
+>;
+
+/**
+ * Represents an `svg` component, used as the root container for SVG graphics.
+ */
+export type NubeComponentSvg = Prettify<
+	NubeComponentBase &
+		NubeComponentSvgProps & {
+			type: "svgRoot";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Circle Component                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `circle` component.
+ */
+export type NubeComponentCircleProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			cx: number | string;
+			cy: number | string;
+			r: number | string;
+			fill: string;
+			stroke: string;
+			strokeWidth: number | string;
+			strokeDasharray: string;
+			strokeDashoffset: number | string;
+			strokeLinecap: "butt" | "round" | "square";
+			strokeLinejoin: "miter" | "round" | "bevel";
+			opacity: number;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `circle` component, used for drawing circles in SVG.
+ */
+export type NubeComponentCircle = Prettify<
+	NubeComponentBase &
+		NubeComponentCircleProps & {
+			type: "svgCircle";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Path Component                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `path` component.
+ */
+export type NubeComponentPathProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			d: string;
+			fill: string;
+			stroke: string;
+			strokeWidth: number | string;
+			strokeDasharray: string;
+			strokeDashoffset: number | string;
+			strokeLinecap: "butt" | "round" | "square";
+			strokeLinejoin: "miter" | "round" | "bevel";
+			fillRule: "nonzero" | "evenodd";
+			clipRule: "nonzero" | "evenodd";
+			opacity: number;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `path` component, used for drawing custom paths in SVG.
+ */
+export type NubeComponentPath = Prettify<
+	NubeComponentBase &
+		NubeComponentPathProps & {
+			type: "svgPath";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           G Component                                      */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `g` component.
+ */
+export type NubeComponentGProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			transform: string;
+			opacity: number;
+			style?: NubeComponentStyle;
+			stroke: string;
+			strokeWidth: number | string;
+			strokeDasharray: string;
+			strokeDashoffset: number | string;
+			strokeLinecap: "butt" | "round" | "square";
+			strokeLinejoin: "miter" | "round" | "bevel";
+			fill: string;
+		}>
+>;
+
+/**
+ * Represents a `g` component, used for grouping SVG elements.
+ */
+export type NubeComponentG = Prettify<
+	NubeComponentBase &
+		NubeComponentGProps & {
+			type: "svgG";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Rect Component                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `rect` component.
+ */
+export type NubeComponentRectProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			x: number | string;
+			y: number | string;
+			width: number | string;
+			height: number | string;
+			rx: number | string;
+			ry: number | string;
+			fill: string;
+			stroke: string;
+			strokeWidth: number | string;
+			strokeDasharray: string;
+			clipPath: string;
+			strokeDashoffset: number | string;
+			strokeLinecap: "butt" | "round" | "square";
+			strokeLinejoin: "miter" | "round" | "bevel";
+			opacity: number;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `rect` component, used for drawing rectangles in SVG.
+ */
+export type NubeComponentRect = Prettify<
+	NubeComponentBase &
+		NubeComponentRectProps & {
+			type: "svgRect";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Line Component                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `line` component.
+ */
+export type NubeComponentLineProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			x1: number | string;
+			y1: number | string;
+			x2: number | string;
+			y2: number | string;
+			stroke: string;
+			strokeWidth: number | string;
+			strokeDasharray: string;
+			strokeDashoffset: number | string;
+			strokeLinecap: "butt" | "round" | "square";
+			opacity: number;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `line` component, used for drawing lines in SVG.
+ */
+export type NubeComponentLine = Prettify<
+	NubeComponentBase &
+		NubeComponentLineProps & {
+			type: "svgLine";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Ellipse Component                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for an `ellipse` component.
+ */
+export type NubeComponentEllipseProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			cx: number | string;
+			cy: number | string;
+			rx: number | string;
+			ry: number | string;
+			fill: string;
+			stroke: string;
+			strokeWidth: number | string;
+			strokeDasharray: string;
+			strokeDashoffset: number | string;
+			strokeLinecap: "butt" | "round" | "square";
+			strokeLinejoin: "miter" | "round" | "bevel";
+			opacity: number;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents an `ellipse` component, used for drawing ellipses in SVG.
+ */
+export type NubeComponentEllipse = Prettify<
+	NubeComponentBase &
+		NubeComponentEllipseProps & {
+			type: "svgEllipse";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Polygon Component                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `polygon` component.
+ */
+export type NubeComponentPolygonProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			points: string;
+			fill: string;
+			stroke: string;
+			strokeWidth: number | string;
+			strokeDasharray: string;
+			strokeDashoffset: number | string;
+			strokeLinecap: "butt" | "round" | "square";
+			strokeLinejoin: "miter" | "round" | "bevel";
+			fillRule: "nonzero" | "evenodd";
+			opacity: number;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `polygon` component, used for drawing polygons in SVG.
+ */
+export type NubeComponentPolygon = Prettify<
+	NubeComponentBase &
+		NubeComponentPolygonProps & {
+			type: "svgPolygon";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Polyline Component                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `polyline` component.
+ */
+export type NubeComponentPolylineProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			points: string;
+			fill: string;
+			stroke: string;
+			strokeWidth: number | string;
+			strokeDasharray: string;
+			strokeDashoffset: number | string;
+			strokeLinecap: "butt" | "round" | "square";
+			strokeLinejoin: "miter" | "round" | "bevel";
+			opacity: number;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `polyline` component, used for drawing polylines in SVG.
+ */
+export type NubeComponentPolyline = Prettify<
+	NubeComponentBase &
+		NubeComponentPolylineProps & {
+			type: "svgPolyline";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Text Component                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `text` component in SVG.
+ */
+export type NubeComponentSvgTextProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			x: number | string;
+			y: number | string;
+			dx: number | string;
+			dy: number | string;
+			textAnchor: "start" | "middle" | "end";
+			fontSize: number | string;
+			fontFamily: string;
+			fontWeight: string | number;
+			fontStyle: "normal" | "italic" | "oblique";
+			textDecoration: string;
+			fill: string;
+			stroke: string;
+			strokeWidth: number | string;
+			opacity: number;
+			style?: NubeComponentStyle;
+			children?: string;
+			strokeDasharray: string;
+			strokeDashoffset: number | string;
+			strokeLinecap: "butt" | "round" | "square";
+			strokeLinejoin: "miter" | "round" | "bevel";
+		}>
+>;
+
+/**
+ * Represents a `text` component in SVG, used for displaying text.
+ */
+export type NubeComponentSvgText = Prettify<
+	NubeComponentBase &
+		NubeComponentSvgTextProps & {
+			type: "svgText";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           TSpan Component                                  */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `tspan` component.
+ */
+export type NubeComponentTSpanProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			x: number | string;
+			y: number | string;
+			dx: number | string;
+			dy: number | string;
+			fontSize: number | string;
+			fontFamily: string;
+			fontWeight: string | number;
+			fontStyle: "normal" | "italic" | "oblique";
+			fill: string;
+			stroke: string;
+			strokeWidth: number | string;
+			opacity: number;
+			style?: NubeComponentStyle;
+			children?: string;
+		}>
+>;
+
+/**
+ * Represents a `tspan` component, used for text spans within SVG text.
+ */
+export type NubeComponentTSpan = Prettify<
+	NubeComponentBase &
+		NubeComponentTSpanProps & {
+			type: "svgTspan";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Defs Component                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `defs` component.
+ */
+export type NubeComponentDefsProps = Prettify<
+	NubeComponentBase & ChildrenProps
+>;
+
+/**
+ * Represents a `defs` component, used for defining reusable elements in SVG.
+ */
+export type NubeComponentDefs = Prettify<
+	NubeComponentBase &
+		NubeComponentDefsProps & {
+			type: "svgDefs";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Stop Component                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `stop` component.
+ */
+export type NubeComponentStopProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			offset: number | string;
+			stopColor: string;
+			stopOpacity: number | string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `stop` component, used in gradients.
+ */
+export type NubeComponentStop = Prettify<
+	NubeComponentBase &
+		NubeComponentStopProps & {
+			type: "svgStop";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           LinearGradient Component                         */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `linearGradient` component.
+ */
+export type NubeComponentLinearGradientProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			id: string;
+			x1: number | string;
+			y1: number | string;
+			x2: number | string;
+			y2: number | string;
+			gradientUnits: "userSpaceOnUse" | "objectBoundingBox";
+			gradientTransform: string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `linearGradient` component, used for linear gradients.
+ */
+export type NubeComponentLinearGradient = Prettify<
+	NubeComponentBase &
+		NubeComponentLinearGradientProps & {
+			type: "svgLinearGradient";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           RadialGradient Component                         */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `radialGradient` component.
+ */
+export type NubeComponentRadialGradientProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			id: string;
+			cx: number | string;
+			cy: number | string;
+			r: number | string;
+			fx: number | string;
+			fy: number | string;
+			rx: number | string;
+			ry: number | string;
+			gradientUnits: "userSpaceOnUse" | "objectBoundingBox";
+			gradientTransform: string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `radialGradient` component, used for radial gradients.
+ */
+export type NubeComponentRadialGradient = Prettify<
+	NubeComponentBase &
+		NubeComponentRadialGradientProps & {
+			type: "svgRadialGradient";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Mask Component                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `mask` component.
+ */
+export type NubeComponentMaskProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			id: string;
+			x: number | string;
+			y: number | string;
+			width: number | string;
+			height: number | string;
+			maskUnits: "userSpaceOnUse" | "objectBoundingBox";
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `mask` component, used for masking SVG elements.
+ */
+export type NubeComponentMask = Prettify<
+	NubeComponentBase &
+		NubeComponentMaskProps & {
+			type: "svgMask";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           ClipPath Component                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `clipPath` component.
+ */
+export type NubeComponentClipPathProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			id: string;
+			clipPathUnits: "userSpaceOnUse" | "objectBoundingBox";
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `clipPath` component, used for clipping SVG elements.
+ */
+export type NubeComponentClipPath = Prettify<
+	NubeComponentBase &
+		NubeComponentClipPathProps & {
+			type: "svgClipPath";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Use Component                                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `use` component.
+ */
+export type NubeComponentUseProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			href: string;
+			x: number | string;
+			y: number | string;
+			width: number | string;
+			height: number | string;
+			transform: string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `use` component, used for reusing SVG elements.
+ */
+export type NubeComponentUse = Prettify<
+	NubeComponentBase &
+		NubeComponentUseProps & {
+			type: "svgUse";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Symbol Component                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `symbol` component.
+ */
+export type NubeComponentSymbolProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			id: string;
+			viewBox: string;
+			preserveAspectRatio: string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `symbol` component, used for defining reusable symbols.
+ */
+export type NubeComponentSymbol = Prettify<
+	NubeComponentBase &
+		NubeComponentSymbolProps & {
+			type: "svgSymbol";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Pattern Component                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `pattern` component.
+ */
+export type NubeComponentPatternProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			id: string;
+			x: number | string;
+			y: number | string;
+			width: number | string;
+			height: number | string;
+			patternUnits: "userSpaceOnUse" | "objectBoundingBox";
+			patternTransform: string;
+			viewBox: string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `pattern` component, used for creating patterns.
+ */
+export type NubeComponentPattern = Prettify<
+	NubeComponentBase &
+		NubeComponentPatternProps & {
+			type: "svgPattern";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Filter Component                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `filter` component.
+ */
+export type NubeComponentFilterProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			id: string;
+			x: number | string;
+			y: number | string;
+			width: number | string;
+			height: number | string;
+			filterUnits: "userSpaceOnUse" | "objectBoundingBox";
+			primitiveUnits: "userSpaceOnUse" | "objectBoundingBox";
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `filter` component, used for applying filters to SVG elements.
+ */
+export type NubeComponentFilter = Prettify<
+	NubeComponentBase &
+		NubeComponentFilterProps & {
+			type: "svgFilter";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           FeGaussianBlur Component                         */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `feGaussianBlur` component.
+ */
+export type NubeComponentFeGaussianBlurProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			stdDeviation: number | string;
+			edgeMode: "duplicate" | "wrap" | "none";
+			in: string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `feGaussianBlur` component, used for blur effects.
+ */
+export type NubeComponentFeGaussianBlur = Prettify<
+	NubeComponentBase &
+		NubeComponentFeGaussianBlurProps & {
+			type: "svgFeGaussianBlur";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           FeOffset Component                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `feOffset` component.
+ */
+export type NubeComponentFeOffsetProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			dx: number | string;
+			dy: number | string;
+			in: string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `feOffset` component, used for offset effects.
+ */
+export type NubeComponentFeOffset = Prettify<
+	NubeComponentBase &
+		NubeComponentFeOffsetProps & {
+			type: "svgFeOffset";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           FeMerge Component                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `feMerge` component.
+ */
+export type NubeComponentFeMergeProps = Prettify<
+	NubeComponentBase & ChildrenProps
+>;
+
+/**
+ * Represents a `feMerge` component, used for merging filter effects.
+ */
+export type NubeComponentFeMerge = Prettify<
+	NubeComponentBase &
+		NubeComponentFeMergeProps & {
+			type: "svgFeMerge";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           FeMergeNode Component                            */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `feMergeNode` component.
+ */
+export type NubeComponentFeMergeNodeProps = Prettify<
+	NubeComponentBase &
+		Partial<{
+			in: string;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `feMergeNode` component, used within feMerge.
+ */
+export type NubeComponentFeMergeNode = Prettify<
+	NubeComponentBase &
+		NubeComponentFeMergeNodeProps & {
+			type: "svgFeMergeNode";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           SideScroll Component                             */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `sidescroll` component.
+ */
+export type NubeComponentSideScrollProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			gap?: Size;
+			hideScrollbar?: boolean;
+			step?: number;
+			style?: NubeComponentStyle;
+			width?: Size;
+		}>
+>;
+
+/**
+ * Represents a `sidescroll` component, used for horizontal scrolling containers.
+ */
+export type NubeComponentSideScroll = Prettify<
+	NubeComponentBase &
+		NubeComponentSideScrollProps & {
+			type: "sidescroll";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Markdown Component                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `markdown` component.
+ */
+export type NubeComponentMarkdownProps = Prettify<
+	NubeComponentBase & {
+		content: string;
+	}
+>;
+
+/**
+ * Represents a `markdown` component, used for rendering markdown content.
+ */
+export type NubeComponentMarkdown = Prettify<
+	NubeComponentBase &
+		NubeComponentMarkdownProps & {
+			type: "markdown";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                         Basic Definitions                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -943,10 +1905,13 @@ export type NubeComponent =
 	| NubeComponentNumberField
 	| NubeComponentFragment
 	| NubeComponentImage
+	| NubeComponentProgress
+	| NubeComponentIframe
 	| NubeComponentText
 	| NubeComponentCheckbox
 	| NubeComponentTextarea
 	| NubeComponentButton
+	| NubeComponentLink
 	| NubeComponentSelect
 	| NubeComponentAccordionRoot
 	| NubeComponentAccordionItem
@@ -955,7 +1920,34 @@ export type NubeComponent =
 	| NubeComponentToastRoot
 	| NubeComponentToastTitle
 	| NubeComponentToastDescription
-	| NubeComponentIcon;
+	| NubeComponentIcon
+	| NubeComponentSideScroll
+	| NubeComponentMarkdown
+	| NubeComponentSvg
+	| NubeComponentCircle
+	| NubeComponentPath
+	| NubeComponentG
+	| NubeComponentRect
+	| NubeComponentLine
+	| NubeComponentEllipse
+	| NubeComponentPolygon
+	| NubeComponentPolyline
+	| NubeComponentSvgText
+	| NubeComponentTSpan
+	| NubeComponentDefs
+	| NubeComponentStop
+	| NubeComponentLinearGradient
+	| NubeComponentRadialGradient
+	| NubeComponentMask
+	| NubeComponentClipPath
+	| NubeComponentUse
+	| NubeComponentSymbol
+	| NubeComponentPattern
+	| NubeComponentFilter
+	| NubeComponentFeGaussianBlur
+	| NubeComponentFeOffset
+	| NubeComponentFeMerge
+	| NubeComponentFeMergeNode;
 
 /**
  * Represents the children of a UI component.
@@ -971,7 +1963,20 @@ export type NubeComponentChildren =
 export type NubeComponentWithChildren =
 	| NubeComponentBox
 	| NubeComponentColumn
-	| NubeComponentRow;
+	| NubeComponentRow
+	| NubeComponentLink
+	| NubeComponentSideScroll
+	| NubeComponentSvg
+	| NubeComponentG
+	| NubeComponentDefs
+	| NubeComponentLinearGradient
+	| NubeComponentRadialGradient
+	| NubeComponentMask
+	| NubeComponentClipPath
+	| NubeComponentSymbol
+	| NubeComponentPattern
+	| NubeComponentFilter
+	| NubeComponentFeMerge;
 
 /**
  * Represents the value of a UI component, typically used for form inputs.

@@ -1,3 +1,5 @@
+import type { JsonObject } from "./components";
+
 export type NubeStorageEvent =
 	| "internal:storage:get"
 	| "internal:storage:get:response"
@@ -5,7 +7,8 @@ export type NubeStorageEvent =
 	| "internal:storage:set:response"
 	| "internal:storage:remove"
 	| "internal:storage:remove:response"
-	| "internal:navigate";
+	| "internal:navigate"
+	| "internal:iframe:message";
 
 export type NubeStorageId = "local-storage" | "session-storage";
 
@@ -53,6 +56,12 @@ export type NubeStorageEventData =
 
 export type NubeNavigateEventData = {
 	route: `/${string}`;
+};
+
+export type NubeIframeMessageEventData = {
+	iframeId: string;
+	message: JsonObject;
+	src?: string;
 };
 
 export interface AsyncNubeStorage {
