@@ -246,9 +246,9 @@ export type NubeSDK = {
 	/**
 	 * Retrieves the app settings values for the current app.
 	 *
-	 * @returns A promise that resolves to the app settings values, or an empty object if not available.
+	 * @returns The app settings values, or an empty object if not available.
 	 */
-	getAppSettings(): Promise<AppSettingsValues>;
+	getAppSettings(): AppSettingsValues;
 };
 
 /**
