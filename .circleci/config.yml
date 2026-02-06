@@ -127,17 +127,17 @@ workflows:
   build-and-publish:
     jobs:
       - install_dependencies:
-          context: microservices
+          context: productivity-context
       - check_style:
-          context: microservices
+          context: productivity-context
           requires:
             - install_dependencies
       - run_tests:
-          context: microservices
+          context: productivity-context
           requires:
             - check_style
       - build:
-          context: microservices
+          context: productivity-context
           requires:
             - run_tests
       - approval-publish-types:
