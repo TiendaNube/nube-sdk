@@ -1,6 +1,6 @@
 {
 	"name": "@tiendanube/nube-sdk-types",
-	"version": "0.53.0-settins-support",
+	"version": "0.53.0-settings-support",
 	"description": "Type definition of NubeSDK",
 	"type": "module",
 	"main": "./src/index.ts",
