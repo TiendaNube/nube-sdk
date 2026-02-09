@@ -15,7 +15,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
 		"@tiendanube/nube-sdk-ui": "^0.17.0",
-		"@tiendanube/nube-sdk-types": "^0.52.0",
+		"@tiendanube/nube-sdk-types": "^0.53.0",
 		"@vitest/coverage-v8": "^3.0.9",
 		"concurrently": "^9.1.2",
 		"serve": "^14.2.4",
