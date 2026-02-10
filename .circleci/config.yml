@@ -127,17 +127,17 @@ workflows:
   build-and-publish:
     jobs:
       - install_dependencies:
-          context: productivity-context
+          context: extensibility-context
       - check_style:
-          context: productivity-context
+          context: extensibility-context
           requires:
             - install_dependencies
       - run_tests:
-          context: productivity-context
+          context: extensibility-context
           requires:
             - check_style
       - build:
-          context: productivity-context
+          context: extensibility-context
           requires:
             - run_tests
       - approval-publish-types:
