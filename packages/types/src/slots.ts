@@ -91,6 +91,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_add_to_cart_pdp"} AFTER_ADD_TO_CART_PDP - After the add to cart button on product detail page.
  * @property {"product_detail_image_top_left"} PRODUCT_DETAIL_IMAGE_TOP_LEFT - Top left corner of product detail images.
  * @property {"product_detail_image_top_right"} PRODUCT_DETAIL_IMAGE_TOP_RIGHT - Top right corner of product detail images.
+ * @property {"product_detail_image_bottom_left"} PRODUCT_DETAIL_IMAGE_BOTTOM_LEFT - Bottom left corner of product detail images.
+ * @property {"product_detail_image_bottom_right"} PRODUCT_DETAIL_IMAGE_BOTTOM_RIGHT - Bottom right corner of product detail images.
  * @property {"after_product_detail_name"} AFTER_PRODUCT_DETAIL_NAME - After the product name in product detail.
  * @property {"before_product_detail_name"} BEFORE_PRODUCT_DETAIL_NAME - Before the product name in product detail.
  * @property {"after_product_description"} AFTER_PRODUCT_DESCRIPTION - After the product description.
@@ -119,11 +121,13 @@ export const STOREFRONT_UI_SLOT = {
 	BEFORE_ADD_TO_CART_PDP: "before_add_to_cart_pdp",
 	AFTER_ADD_TO_CART_PDP: "after_add_to_cart_pdp",
 	PRODUCT_DETAIL_IMAGE_TOP_LEFT: "product_detail_image_top_left",
+	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
+	PRODUCT_DETAIL_IMAGE_BOTTOM_LEFT: "product_detail_image_bottom_left",
+	PRODUCT_DETAIL_IMAGE_BOTTOM_RIGHT: "product_detail_image_bottom_right",
 	AFTER_PRODUCT_DETAIL_NAME: "after_product_detail_name",
 	AFTER_PRODUCT_DESCRIPTION: "after_product_description",
 	BEFORE_PRICE_PDP: "before_price_pdp",
 	AFTER_PRICE_PDP: "after_price_pdp",
-	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
 	AFTER_PRODUCT_GRID_ITEM_NAME: "after_product_grid_item_name",
 	BEFORE_PRODUCT_GRID_ITEM_NAME: "before_product_grid_item_name",
 	AFTER_PRODUCT_GRID_ITEM_PRICE: "after_product_grid_item_price",
