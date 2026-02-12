@@ -4,6 +4,10 @@ interface NubeSDKEventDetail {
 	data: unknown[];
 }
 
+interface NubeSDKErrorEventDetail {
+	data: unknown[];
+}
+
 window.addEventListener("load", () => {
 	chrome.runtime.sendMessage({
 		action: "nube-devtools-initialize-sdk",
@@ -27,6 +31,14 @@ if (document.readyState === "loading") {
 window.addEventListener("NubeSDKEvents", ((event) => {
 	const port = chrome.runtime.connect({ name: "nube-devtools-events" });
 	const payload = event as CustomEvent<NubeSDKEventDetail>;
+	port.postMessage({
+		payload: payload.detail,
+	});
+}) as EventListener);
+
+window.addEventListener("NubeSDKErrorEvents", ((event) => {
+	const port = chrome.runtime.connect({ name: "nube-devtools-error-events" });
+	const payload = event as CustomEvent;
 	port.postMessage({
 		payload: payload.detail,
 	});
