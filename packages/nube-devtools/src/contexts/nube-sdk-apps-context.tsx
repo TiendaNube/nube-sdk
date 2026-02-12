@@ -1,13 +1,10 @@
+import type { NubeSDKApp } from "@/background/types";
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 
 export interface NubeSDKEvent {
 	id: string;
-	data: {
-		id: string;
-		registered: boolean;
-		script: string;
-	};
+	data: NubeSDKApp;
 }
 
 type NubeSDKAppsContextType = {

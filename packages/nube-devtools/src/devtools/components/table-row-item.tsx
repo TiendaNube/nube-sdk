@@ -1,6 +1,7 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge, type badgeVariants } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TableCell } from "@/components/ui/table";
+import type { VariantProps } from "class-variance-authority";
 import { Repeat } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -14,6 +15,7 @@ type TableRowItemProps<T> = {
 	title: string;
 	badge1?: string;
 	badge2?: string;
+	badge2Variant?: VariantProps<typeof badgeVariants>["variant"];
 	isSelected: boolean;
 	onSelect: (event: Event<T>) => void;
 	onResend?: (event: Event<T>) => void;
@@ -27,6 +29,7 @@ export function TableRowItem<T>({
 	title: text,
 	badge1,
 	badge2,
+	badge2Variant = "outline",
 }: TableRowItemProps<T>) {
 	const [isHighlighted, setIsHighlighted] = useState(true);
 
@@ -61,7 +64,7 @@ export function TableRowItem<T>({
 						</Badge>
 					)}
 					{badge2 && (
-						<Badge className="text-[10px] px-1 py-0.5" variant="outline">
+						<Badge className="text-[10px] px-1 py-0.5" variant={badge2Variant}>
 							{badge2}
 						</Badge>
 					)}

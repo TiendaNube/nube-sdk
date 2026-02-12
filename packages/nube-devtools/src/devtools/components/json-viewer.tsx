@@ -103,7 +103,7 @@ export function JsonViewer({
 				collapsed={collapsed}
 				displayDataTypes={false}
 				iconStyle="circle"
-				enableClipboard={false}
+				enableClipboard
 				style={{
 					backgroundColor: "transparent",
 				}}

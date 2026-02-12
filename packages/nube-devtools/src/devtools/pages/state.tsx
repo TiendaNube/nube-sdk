@@ -82,21 +82,23 @@ export function State() {
 	return (
 		<Layout>
 			<div className="flex h-full flex-col">
-				<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px] shrink-0">
-					<SidebarTrigger />
-					<div className="flex items-center gap-2">
-						<UpdatedAt timestamp={updatedAt} />
-						<Button
-							variant="ghost"
-							size="icon"
-							className="h-6 w-6"
-							onClick={fetchState}
-							disabled={loading}
-						>
-							<RefreshCwIcon
-								className={`size-3 ${loading ? "animate-spin" : ""}`}
-							/>
-						</Button>
+				<nav className="flex items-center justify-between px-1.5 py-1 border-b h-[33px] shrink-0">
+					<div className="flex items-center">
+						<SidebarTrigger />
+						<Divider />
+						<div className="flex items-center gap-2">
+							<Button
+								variant="ghost"
+								size="icon"
+								className="h-6 w-6"
+								onClick={fetchState}
+								disabled={loading}
+							>
+								<RefreshCwIcon
+									className={`size-3 ${loading ? "animate-spin" : ""}`}
+								/>
+							</Button>
+						</div>
 					</div>
 				</nav>
 				<div className="flex-1 overflow-y-auto p-2">

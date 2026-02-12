@@ -2,6 +2,7 @@ export type NubeSDKApp = {
 	id: string;
 	registered: boolean;
 	script: string;
+	errors?: string[];
 };
 
 export type NubeSDKComponent = {
