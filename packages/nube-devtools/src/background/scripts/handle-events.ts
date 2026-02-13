@@ -13,6 +13,14 @@ export const handleEvents = () => {
 		);
 	});
 
+	window.nubeSDK.on("WebWorkerError", (...state: NubeSDKState[]) => {
+		window.dispatchEvent(
+			new CustomEvent("NubeSDKErrorEvents", {
+				detail: state,
+			}),
+		);
+	});
+
 	const getStorageProxy = (type: "localStorage" | "sessionStorage") =>
 		new Proxy(window[type], {
 			get(target, prop: string | symbol) {

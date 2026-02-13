@@ -33,12 +33,12 @@ export const Unavailable = () => {
 				<p className="text-gray-300 text-center mt-4">
 					Check out our{" "}
 					<a
-						href="https://github.com/TiendaNube/nube-sdk"
+						href="https://dev.nuvemshop.com.br/docs/applications/nube-sdk/overview"
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-gray-300 hover:text-gray-400 font-bold"
 					>
-						GitHub repository
+						documentation
 					</a>{" "}
 					to learn more about the NubeSDK.
 				</p>
