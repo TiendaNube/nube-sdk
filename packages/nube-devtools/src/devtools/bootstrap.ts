@@ -4,9 +4,4 @@ chrome.devtools.panels.create(
 	`NubeSDK${isDev ? " - DEV" : ""}`,
 	"",
 	"panel.html",
-	() => {
-		chrome.devtools.network.onNavigated.addListener(() => {
-			window.location.reload();
-		});
-	},
 );
