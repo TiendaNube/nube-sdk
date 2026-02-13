@@ -3,7 +3,7 @@
 	"description": "Create Nube App",
 	"author": "Tiendanube / Nuvemshop",
 	"license": "MIT",
-	"version": "0.22.0",
+	"version": "0.23.0",
 	"bin": {
 		"create-nube-app": "dist/index.js"
 	},
@@ -14,7 +14,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@clack/prompts": "^0.10.0",
+		"@clack/prompts": "^1.0.0",
 		"fs-extra": "^11.1.1"
 	},
 	"devDependencies": {
@@ -30,7 +30,6 @@
 		"README.md",
 		"CHANGELOG.md",
 		"LICENSE",
-		"./templates",
-		"./templates/**/.gitignore"
+		"./templates"
 	]
 }
