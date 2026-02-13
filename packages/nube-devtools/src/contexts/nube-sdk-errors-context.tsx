@@ -18,7 +18,7 @@ export const NubeSDKErrorsProvider = ({
 
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
-			if (port.name === "nube-devtools-events") {
+			if (port.name === "nube-devtools-error-events") {
 				port.onMessage.addListener((message) => {
 					if (message.payload) {
 						const apps = message.payload[0]?.apps as
