@@ -18,18 +18,24 @@ export const NubeSDKErrorsProvider = ({
 
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
-			if (port.name === "nube-devtools-error-events") {
+			if (port.name === "nube-devtools-events") {
 				port.onMessage.addListener((message) => {
 					if (message.payload) {
-						const appId = message.payload[2] as string;
-						if (appId) {
-							const errors = message.payload[0]?.apps?.[appId]?.errors;
-							if (errors && Array.isArray(errors)) {
-								setAppsErrors((prev) => ({
-									...prev,
-									[appId]: errors,
-								}));
+						const apps = message.payload[0]?.apps as
+							| Record<string, { errors?: unknown[] }>
+							| undefined;
+						if (apps) {
+							const updatedErrors: Record<string, unknown[]> = {};
+							for (const [appId, app] of Object.entries(apps)) {
+								if (
+									app?.errors &&
+									Array.isArray(app.errors) &&
+									app.errors.length > 0
+								) {
+									updatedErrors[appId] = app.errors;
+								}
 							}
+							setAppsErrors(updatedErrors);
 						}
 					}
 				});
