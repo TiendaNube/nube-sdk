@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { TableCell } from "@/components/ui/table";
 import { Repeat } from "lucide-react";
+import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 type Event<T> = {
@@ -17,6 +17,7 @@ type TableRowItemProps<T> = {
 	isSelected: boolean;
 	onSelect: (event: Event<T>) => void;
 	onResend?: (event: Event<T>) => void;
+	rightContent?: ReactNode;
 };
 
 export function TableRowItem<T>({
@@ -27,6 +28,7 @@ export function TableRowItem<T>({
 	title: text,
 	badge1,
 	badge2,
+	rightContent,
 }: TableRowItemProps<T>) {
 	const [isHighlighted, setIsHighlighted] = useState(true);
 
@@ -46,36 +48,44 @@ export function TableRowItem<T>({
 
 	return (
 		<TableCell
-			className={`p-0 transition-colors duration-1000 ${isHighlighted ? "bg-amber-500/20" : ""}`}
+			onClick={() => onSelect(event)}
+			className={`p-0 cursor-pointer transition-colors duration-1000 ${isHighlighted ? "bg-amber-500/20" : ""} ${isSelected ? "shadow-[inset_2px_0_0_0_rgb(180,83,9)]" : ""}`}
 		>
-			<div className="flex items-center justify-between w-full">
-				<Button
-					onClick={() => onSelect(event)}
-					variant="ghost"
-					className={`relative cursor-pointer flex-1 justify-start rounded-none ${isSelected ? "shadow-[inset_2px_0_0_0_rgb(180,83,9)]" : ""}`}
-				>
-					{text}
+			<div className="flex items-center w-full min-w-0">
+				<div className="flex-1 flex items-center gap-1 min-w-0 shrink overflow-hidden px-3 py-2">
+					<span className="truncate block">{text}</span>
 					{badge1 && (
-						<Badge className="text-[10px] px-1 py-0.5" variant="outline">
+						<Badge
+							className="text-[10px] px-1 py-0.5 shrink-0"
+							variant="outline"
+						>
 							{badge1}
 						</Badge>
 					)}
 					{badge2 && (
-						<Badge className="text-[10px] px-1 py-0.5" variant="outline">
+						<Badge
+							className="text-[10px] px-1 py-0.5 shrink-0"
+							variant="outline"
+						>
 							{badge2}
 						</Badge>
 					)}
-				</Button>
-				{onResend && (
-					<Button
-						variant="outline"
-						onClick={handleResend}
-						size="sm"
-						className="h-6 w-6 p-0 absolute right-2"
-					>
-						<Repeat className="h-3 w-3 transition-all duration-300 ease-in-out" />
-					</Button>
-				)}
+				</div>
+				<div className="flex items-center gap-1 pr-2 shrink-0">
+					{rightContent}
+					{onResend && (
+						<button
+							type="button"
+							onClick={(e) => {
+								e.stopPropagation();
+								handleResend();
+							}}
+							className="h-6 w-6 p-0 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm hover:bg-accent hover:text-accent-foreground"
+						>
+							<Repeat className="h-3 w-3 transition-all duration-300 ease-in-out" />
+						</button>
+					)}
+				</div>
 			</div>
 		</TableCell>
 	);
