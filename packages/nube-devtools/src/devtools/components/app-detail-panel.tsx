@@ -45,7 +45,7 @@ function CopyableValue({ value }: { value: string }) {
 			<span className="min-w-0 flex-1 break-all font-mono text-xs">
 				{value}
 			</span>
-			<span className="shrink-0 opacity-0 transition-opacity group-hover/copy:opacity-100">
+			<span className="shrink-0 opacity-0 transition-opacity group-hover/copy:opacity-100 group-focus-within/copy:opacity-100">
 				<Copy className="h-3.5 w-3.5 text-muted-foreground" />
 			</span>
 		</button>
