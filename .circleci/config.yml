@@ -15,6 +15,12 @@ filter-prd: &filter-prd
     ignore:
       - /.*/
 
+filter-unstable: &filter-unstable
+  branches:
+    only: /unstable/
+    ignore:
+      - /.*/
+
 ##### Jobs
 jobs:
   install_dependencies:
@@ -121,23 +127,104 @@ jobs:
             npm run build
             npm publish --workspace packages/create-nube-app --access public
 
+  publish-types-unstable:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Set unstable version
+          command: |
+            COMMIT_HASH=${CIRCLE_SHA1:0:7}
+            npm version prerelease --preid=unstable.${COMMIT_HASH} --no-git-tag-version --workspace packages/types
+      - run:
+          name: Publish @tiendanube/nube-sdk-types (unstable)
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm publish --workspace packages/types --access public --tag unstable
+
+  publish-ui-unstable:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Build @tiendanube/nube-sdk-ui
+          command: npm run build --workspace packages/ui
+      - run:
+          name: Set unstable version
+          command: |
+            COMMIT_HASH=${CIRCLE_SHA1:0:7}
+            npm version prerelease --preid=unstable.${COMMIT_HASH} --no-git-tag-version --workspace packages/ui
+      - run:
+          name: Publish @tiendanube/nube-sdk-ui (unstable)
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm publish --workspace packages/ui --access public --tag unstable
+
+  publish-jsx-unstable:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Build packages
+          command: npm run build
+      - run:
+          name: Set unstable version
+          command: |
+            COMMIT_HASH=${CIRCLE_SHA1:0:7}
+            npm version prerelease --preid=unstable.${COMMIT_HASH} --no-git-tag-version --workspace packages/jsx
+      - run:
+          name: Publish @tiendanube/nube-sdk-jsx (unstable)
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm publish --workspace packages/jsx --access public --tag unstable
+
+  publish-create-nube-app-unstable:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Build packages
+          command: npm run build
+      - run:
+          name: Set unstable version
+          command: |
+            COMMIT_HASH=${CIRCLE_SHA1:0:7}
+            npm version prerelease --preid=unstable.${COMMIT_HASH} --no-git-tag-version --workspace packages/create-nube-app
+      - run:
+          name: Publish create-nube-app (unstable)
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm publish --workspace packages/create-nube-app --access public --tag unstable
+
 ##### Workflows
 workflows:
   version: 2
   build-and-publish:
     jobs:
       - install_dependencies:
-          context: microservices
+          context: extensibility-context
       - check_style:
-          context: microservices
+          context: extensibility-context
           requires:
             - install_dependencies
       - run_tests:
-          context: microservices
+          context: extensibility-context
           requires:
             - check_style
       - build:
-          context: microservices
+          context: extensibility-context
           requires:
             - run_tests
       - approval-publish-types:
@@ -180,3 +267,44 @@ workflows:
           context: NPM_TOKEN_SDK
           requires:
             - approval-publish-create-nube-app
+      # Unstable publishes
+      - approval-publish-types-unstable:
+          type: approval
+          requires:
+            - build
+          filters:
+            <<: *filter-unstable
+      - approval-publish-ui-unstable:
+          type: approval
+          requires:
+            - build
+          filters:
+            <<: *filter-unstable
+      - approval-publish-jsx-unstable:
+          type: approval
+          requires:
+            - build
+          filters:
+            <<: *filter-unstable
+      - approval-publish-create-nube-app-unstable:
+          type: approval
+          requires:
+            - build
+          filters:
+            <<: *filter-unstable
+      - publish-types-unstable:
+          context: NPM_TOKEN_SDK
+          requires:
+            - approval-publish-types-unstable
+      - publish-ui-unstable:
+          context: NPM_TOKEN_SDK
+          requires:
+            - approval-publish-ui-unstable
+      - publish-jsx-unstable:
+          context: NPM_TOKEN_SDK
+          requires:
+            - approval-publish-jsx-unstable
+      - publish-create-nube-app-unstable:
+          context: NPM_TOKEN_SDK
+          requires:
+            - approval-publish-create-nube-app-unstable

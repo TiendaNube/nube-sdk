@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 export const PAGES = {
 	EVENTS: "events",
+	ERRORS: "errors",
 	STORAGES: "storages",
 	APPS: "apps",
 	COMPONENTS: "components",

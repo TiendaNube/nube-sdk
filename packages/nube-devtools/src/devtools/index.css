@@ -135,6 +135,13 @@
 	}
 }
 
+/* Hide the ✔ checkmark that ReactJsonView renders after copying.
+   There is no prop to disable this. When copied, the library renders
+   .copy-icon + <span>✔</span> as siblings, so we target the sibling. */
+.copy-to-clipboard-container .copy-icon + span {
+	display: none !important;
+}
+
 /* JSON Viewer highlight styles for modified nodes */
 .json-modified {
 	animation: json-highlight 2s ease-out;
