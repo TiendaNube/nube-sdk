@@ -11,6 +11,7 @@ import { Table, TableBody, TableRow } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import { useNubeSDKAppsContext } from "@/contexts/nube-sdk-apps-context";
 import Layout from "@/devtools/components/layout";
+import { getPageSessionStorage } from "@/utils";
 import { Circle, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -23,6 +24,14 @@ import {
 import { TableRowItem } from "../components/table-row-item";
 
 const STORAGE_KEY = "nube-devtools-apps-panel-size";
+const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
+	"nube-devtools-application-server";
+
+type LocalModeStoredData = {
+	appId?: string;
+	type?: "new" | "existing";
+	connected?: boolean;
+};
 
 const getApps = (): Record<string, NubeSDKApp> => {
 	if (window.nubeSDK) {
@@ -34,6 +43,8 @@ const getApps = (): Record<string, NubeSDKApp> => {
 export function Apps() {
 	const { apps, setApps } = useNubeSDKAppsContext();
 	const [selectedApp, setSelectedApp] = useState<NubeSDKEvent | null>(null);
+	const [localModeData, setLocalModeData] =
+		useState<LocalModeStoredData | null>(null);
 
 	const fetchApps = useCallback(() => {
 		chrome.scripting.executeScript(
@@ -74,6 +85,31 @@ export function Apps() {
 	useEffect(() => {
 		fetchApps();
 	}, [fetchApps]);
+
+	useEffect(() => {
+		let cancelled = false;
+		getPageSessionStorage(PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION).then(
+			(stored) => {
+				if (cancelled || !stored) {
+					if (!cancelled) setLocalModeData(null);
+					return;
+				}
+				try {
+					const data = JSON.parse(stored) as LocalModeStoredData;
+					if (data.connected === true && data.appId && data.type) {
+						setLocalModeData({ appId: data.appId, type: data.type });
+					} else {
+						setLocalModeData(null);
+					}
+				} catch {
+					setLocalModeData(null);
+				}
+			},
+		);
+		return () => {
+			cancelled = true;
+		};
+	}, []);
 
 	const handleOnSelect = (event: NubeSDKEvent) => {
 		setSelectedApp(event);
@@ -116,6 +152,25 @@ export function Apps() {
 		return script.includes("localhost") || script.includes("127.0.0.1");
 	};
 
+	const renderScriptStatusRightContent = (
+		scriptStatus: ScriptStatus | undefined,
+	) => {
+		if (!scriptStatus) return null;
+		return (
+			<Badge
+				variant="outline"
+				className={`text-[10px] px-1.5 py-0 gap-1 ${getScriptStatusColor(scriptStatus)}`}
+			>
+				{scriptStatus === "checking" ? (
+					<Loader2 className="h-1.5 w-1.5 animate-spin" />
+				) : (
+					<Circle className="h-1.5 w-1.5 fill-current" />
+				)}
+				{getScriptStatusLabel(scriptStatus)}
+			</Badge>
+		);
+	};
+
 	return (
 		<Layout>
 			<div className="flex h-full flex-col">
@@ -152,39 +207,38 @@ export function Apps() {
 								<div className="overflow-hidden w-full">
 									<Table className="table-fixed">
 										<TableBody className="[&_tr:last-child]:border-b">
-											{apps.map((app) => (
-												<TableRow key={app.id}>
-													<TableRowItem
-														isSelected={app.id === selectedApp?.id}
-														title={app.data.id}
-														badge1={
-															isDevMode(app.data.script)
-																? "dev mode"
-																: undefined
-														}
-														event={app}
-														onSelect={handleOnSelect}
-														rightContent={
-															scriptStatuses[app.data.script] && (
-																<Badge
-																	variant="outline"
-																	className={`text-[10px] px-1.5 py-0 gap-1 ${getScriptStatusColor(scriptStatuses[app.data.script])}`}
-																>
-																	{scriptStatuses[app.data.script] ===
-																	"checking" ? (
-																		<Loader2 className="h-1.5 w-1.5 animate-spin" />
-																	) : (
-																		<Circle className="h-1.5 w-1.5 fill-current" />
-																	)}
-																	{getScriptStatusLabel(
-																		scriptStatuses[app.data.script],
-																	)}
-																</Badge>
-															)
-														}
-													/>
-												</TableRow>
-											))}
+											{apps.map((app) => {
+												const isLocalModeApp =
+													localModeData?.appId === app.data.id;
+												const localModeBadge1 = isLocalModeApp
+													? "Local Mode"
+													: undefined;
+												const localModeBadge2 =
+													isLocalModeApp && localModeData?.type === "existing"
+														? "Replaced Script"
+														: undefined;
+
+												return (
+													<TableRow key={app.id}>
+														<TableRowItem
+															isSelected={app.id === selectedApp?.id}
+															title={app.data.id}
+															badge1={
+																localModeBadge1 ??
+																(isDevMode(app.data.script)
+																	? "dev mode"
+																	: undefined)
+															}
+															badge2={localModeBadge2}
+															event={app}
+															onSelect={handleOnSelect}
+															rightContent={renderScriptStatusRightContent(
+																scriptStatuses[app.data.script],
+															)}
+														/>
+													</TableRow>
+												);
+											})}
 										</TableBody>
 									</Table>
 								</div>

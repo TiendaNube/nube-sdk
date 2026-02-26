@@ -111,7 +111,7 @@ export function Errors() {
 						direction="horizontal"
 					>
 						<ResizablePanel defaultSize={40}>
-							<div className="h-full overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 dark:[&::-webkit-scrollbar-thumb:hover]:bg-gray-600">
+							<div className="h-full overflow-x-hidden overflow-y-auto">
 								{appIds.length === 0 ? (
 									<EmptyState
 										text="No errors found"
@@ -206,12 +206,12 @@ export function Errors() {
 										</Button>
 									</div>
 								)}
-								<div className="flex flex-1 overflow-y-auto [scrollbar-width:none]">
+								<div className="flex flex-1 overflow-y-auto">
 									{selectedError ? (
 										<textarea
 											ref={textareaRef}
 											readOnly
-											className="w-full h-full p-3 text-sm font-mono bg-transparent resize-none border-none outline-none text-foreground [scrollbar-width:thin]"
+											className="w-full h-full p-3 text-sm font-mono bg-transparent resize-none border-none outline-none text-foreground"
 											value={getErrorText(selectedError.error)}
 										/>
 									) : (
