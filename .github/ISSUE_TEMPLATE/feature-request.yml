@@ -1,0 +1,77 @@
+name: Feature Request
+description: Suggest a new feature or improvement for NubeSDK
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Describe the problem
+        Thank you for suggesting an improvement! Please describe what you'd like to see in NubeSDK.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? What limitation are you facing?
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Proposed solution
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like this to work? Describe your ideal solution.
+      placeholder: I'd like to be able to...
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Use case and priority
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Describe the specific scenario where this feature would be used.
+      placeholder: In my app, I need to...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Low
+        - Medium
+        - High
+        - Urgent
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Alternatives and context
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions or workarounds?
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or examples about the feature request.

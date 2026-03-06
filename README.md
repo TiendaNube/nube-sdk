@@ -83,6 +83,12 @@ For more details about NubeSDK and how to build apps, check out our **official d
 
 ## Contributing
 
+We welcome bug reports and feature requests from the community! See our **[Contributing Guide](CONTRIBUTING.md)** for details on how to:
+
+- Report bugs
+- Request features
+- Ask questions
+
 ### Releasing an Unstable Version
 
 1. Merge your feature branch into `unstable` and push
@@ -99,8 +105,10 @@ For more details about NubeSDK and how to build apps, check out our **official d
 
 ## Support
 
-- **Questions?** Use [GitHub Issues](https://github.com/TiendaNube/nube-sdk/issues).
-- **Found a bug?** Open an issue with a reproducible example.
+- **Questions?** Use [GitHub Discussions Q&A](https://github.com/TiendaNube/nube-sdk/discussions/categories/q-a).
+- **Found a bug?** [Open a bug report](https://github.com/TiendaNube/nube-sdk/issues/new?template=bug-report.yml).
+- **Feature idea?** [Open a feature request](https://github.com/TiendaNube/nube-sdk/issues/new?template=feature-request.yml).
+- **Changelog:** See [CHANGELOG.md](CHANGELOG.md) or follow [Announcements](https://github.com/TiendaNube/nube-sdk/discussions/categories/announcements) for release updates.
 
 ---
 
