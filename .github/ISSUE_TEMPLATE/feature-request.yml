@@ -10,6 +10,19 @@ body:
       description: Your application ID, if you already have one.
       placeholder: "e.g. 12345"
 
+  - type: dropdown
+    id: request-type
+    attributes:
+      label: Request Type
+      description: What type of request is this?
+      options:
+        - Slot
+        - Component
+        - Event
+        - Other
+    validations:
+      required: true
+
   - type: input
     id: app-name
     attributes:
