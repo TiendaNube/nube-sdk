@@ -1,6 +1,6 @@
 name: Feature Request
 description: Suggest a new feature or improvement for NubeSDK
-title: "[Feature]: "
+title: "[REQUEST] "
 labels: ["enhancement"]
 body:
   - type: textarea
