@@ -121,7 +121,7 @@ jobs:
             }
 
             const updateQuery = `
-              mutation($issueId: ID!, $priority: Int!) {
+              mutation($issueId: String!, $priority: Int!) {
                 issueUpdate(id: $issueId, input: { priority: $priority }) {
                   success
                   issue {
