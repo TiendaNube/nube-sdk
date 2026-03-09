@@ -1,0 +1,136 @@
+name: Sync Severity to Linear Priority
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: read
+
+jobs:
+  sync-priority:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'bug')
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          LINEAR_TEAM_ID: ${{ secrets.LINEAR_TEAM_ID }}
+        with:
+          script: |
+            const body = context.payload.issue.body || '';
+            const issueNumber = context.payload.issue.number;
+
+            const severityMap = {
+              'Urgent': 1,
+              'High': 2,
+              'Medium': 3,
+              'Low': 4,
+            };
+
+            let priority = null;
+            for (const [key, value] of Object.entries(severityMap)) {
+              if (body.includes(`${key} -`)) {
+                priority = value;
+                break;
+              }
+            }
+
+            if (!priority) {
+              core.info('No severity selected, skipping priority sync.');
+              return;
+            }
+
+            core.info(`Severity detected: priority level ${priority}`);
+
+            const linearApiKey = process.env.LINEAR_API_KEY;
+            const linearTeamId = process.env.LINEAR_TEAM_ID;
+
+            if (!linearApiKey || !linearTeamId) {
+              core.setFailed('LINEAR_API_KEY or LINEAR_TEAM_ID secret is not configured.');
+              return;
+            }
+
+            const maxAttempts = 5;
+            const delayMs = 10000;
+            let linearIssueId = null;
+
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+              core.info(`Attempt ${attempt}: searching for issue #${issueNumber} in Linear...`);
+
+              const searchQuery = `
+                query($teamId: String!) {
+                  issues(filter: {
+                    team: { id: { eq: $teamId } }
+                    attachments: { url: { contains: "${context.repo.repo}/issues/${issueNumber}" } }
+                  }) {
+                    nodes {
+                      id
+                      identifier
+                    }
+                  }
+                }
+              `;
+
+              const response = await fetch('https://api.linear.app/graphql', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': linearApiKey,
+                },
+                body: JSON.stringify({
+                  query: searchQuery,
+                  variables: { teamId: linearTeamId },
+                }),
+              });
+
+              const data = await response.json();
+
+              if (data.data?.issues?.nodes?.length > 0) {
+                linearIssueId = data.data.issues.nodes[0].id;
+                core.info(`Found Linear issue: ${data.data.issues.nodes[0].identifier} (${linearIssueId})`);
+                break;
+              }
+
+              if (attempt < maxAttempts) {
+                core.info(`Issue not found in Linear yet, waiting ${delayMs / 1000}s...`);
+                await new Promise(r => setTimeout(r, delayMs));
+              }
+            }
+
+            if (!linearIssueId) {
+              core.warning(`Could not find GitHub issue #${issueNumber} in Linear after ${maxAttempts} attempts.`);
+              return;
+            }
+
+            const updateQuery = `
+              mutation($issueId: String!, $priority: Int!) {
+                issueUpdate(id: $issueId, input: { priority: $priority }) {
+                  success
+                  issue {
+                    identifier
+                    priority
+                  }
+                }
+              }
+            `;
+
+            const updateResponse = await fetch('https://api.linear.app/graphql', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': linearApiKey,
+              },
+              body: JSON.stringify({
+                query: updateQuery,
+                variables: { issueId: linearIssueId, priority: priority },
+              }),
+            });
+
+            const updateData = await updateResponse.json();
+
+            if (updateData.data?.issueUpdate?.success) {
+              core.info(`Priority updated to ${priority} for ${updateData.data.issueUpdate.issue.identifier}`);
+            } else {
+              core.setFailed(`Failed to update priority: ${JSON.stringify(updateData)}`);
+            }
