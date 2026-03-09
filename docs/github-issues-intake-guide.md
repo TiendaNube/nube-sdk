@@ -138,36 +138,60 @@ O titulo e pre-preenchido com `[REQUEST] ` e o campo de descricao vem com um tem
 
 ---
 
-## 3. Perguntas (Q&A)
+## 3. Q&A (Forum da comunidade)
+
+### O que e
+
+O Q&A funciona como um **forum da comunidade** do NubeSDK. E um espaco aberto onde qualquer pessoa pode criar discussoes, fazer perguntas, compartilhar experiencias e trocar conhecimento.
+
+Diferente de bugs e feature requests (que sao issues e vao para o Linear), o Q&A e um espaco de conversa e colaboracao que vive apenas no GitHub.
 
 ### Quando usar
 
 - Duvidas sobre como usar o NubeSDK
 - Perguntas tecnicas sobre implementacao
 - Nao sabe se e bug ou se esta usando errado
+- Quer discutir uma abordagem ou compartilhar uma solucao
+- Topicos de discussao abertos com a comunidade
 
 ### Como abrir
 
-Quando alguem clica em "New issue" no repositorio, ve tres opcoes. **Questions & Help** redireciona para Discussions Q&A.
+Qualquer usuario logado no GitHub pode criar uma nova discussao na categoria Q&A.
+
+Quando alguem clica em "New issue" no repositorio, a opcao **Questions & Help** redireciona para o forum.
 
 **URL direta:** https://github.com/TiendaNube/nube-sdk/discussions/categories/q-a
 
-### O que acontece
+### Como funciona
 
-- A pergunta fica na aba Discussions do GitHub
+- Qualquer pessoa pode abrir uma nova discussao
+- Qualquer pessoa pode responder e participar
+- O autor da pergunta pode marcar uma resposta como "accepted answer"
+- Discussoes ficam organizadas e pesquisaveis na aba Discussions do GitHub
 - **Nao cria nada no Linear** (discussions nao sao sincronizadas)
-- A comunidade e o time podem responder
-- O autor pode marcar uma resposta como "accepted answer"
 
 ---
 
-## 4. Announcements
+## 4. Announcements (Changelog do SDK)
 
-A categoria Announcements nas Discussions e usada pelo time de Extensibility para comunicar releases, novidades e mudancas do NubeSDK.
+### O que e
+
+A categoria Announcements funciona como o **changelog publico** do NubeSDK. E onde o time de Extensibility comunica o que foi entregue: novos slots, componentes, eventos, melhorias, correcoes e qualquer mudanca relevante.
+
+### Quando usar
+
+- Publicar o que foi entregue em cada release ou ciclo
+- Comunicar mudancas importantes (breaking changes, deprecations)
+- Anunciar novas funcionalidades disponiveis para partners
+
+### Como funciona
+
+- **Apenas membros do time** com permissao podem criar posts
+- Partners e a comunidade podem comentar e reagir aos posts
+- Cada post funciona como uma entrada de changelog com detalhes sobre o que mudou
+- Fica acessivel publicamente para qualquer pessoa acompanhar a evolucao do SDK
 
 **URL:** https://github.com/TiendaNube/nube-sdk/discussions/categories/announcements
-
-Apenas membros do time com permissao podem criar posts nessa categoria.
 
 ---
 
@@ -199,17 +223,6 @@ Issues em branco estao desabilitadas. Todo pedido passa por um template.
 | `Event` | Feature request tipo Event (action) | Sim, mapeia para `Event` |
 | `Other` | Feature request tipo Other (action) | Sim, mapeia para `Other` |
 
-### Labels manuais (uso interno do time)
-
-| Label | Uso |
-|-------|-----|
-| `documentation` | Melhorias em docs |
-| `duplicate` | Issue duplicada |
-| `help wanted` | Precisa de atencao extra |
-| `invalid` | Issue invalida |
-| `question` | Pedido de informacao |
-| `wontdo` | Nao sera implementado |
-
 **Importante:** A sincronizacao de labels entre GitHub e Linear e **case-sensitive**. O nome do label precisa ser exatamente igual nos dois sistemas. Se alguem renomear um label em qualquer um dos lados, a sincronizacao quebra.
 
 ---
@@ -222,17 +235,6 @@ Issues em branco estao desabilitadas. Todo pedido passa por um template.
 | Auto Label Request Type | `auto-label-request-type.yml` | Issue aberta com label `Partner Request` | Le o Request Type do body e aplica o label correspondente |
 | Welcome | `welcome.yml` | Primeira issue de um usuario | Posta mensagem de boas-vindas com links uteis |
 | Stale Issues | `stale-issues.yml` | Toda segunda-feira 9h UTC | Marca issues inativas (60 dias) como stale, fecha apos 14 dias |
-
-### Secrets necessarios
-
-A action `sync-severity-to-linear` depende de dois secrets configurados no repositorio:
-
-| Secret | Descricao | Onde obter |
-|--------|-----------|------------|
-| `LINEAR_API_KEY` | API key do Linear com permissao de escrita | Linear > Settings > API > Personal API Keys |
-| `LINEAR_TEAM_ID` | UUID do time no Linear (time EXT) | Via API do Linear (query `teams`) |
-
-Config: https://github.com/TiendaNube/nube-sdk/settings/secrets/actions
 
 ---
 
@@ -292,4 +294,3 @@ No futuro, isso pode ser integrado com a feature **Customers** do Linear para te
 | Contributing guide | https://github.com/TiendaNube/nube-sdk/blob/main/CONTRIBUTING.md |
 | Changelog | https://github.com/TiendaNube/nube-sdk/blob/main/CHANGELOG.md |
 | Actions (logs) | https://github.com/TiendaNube/nube-sdk/actions |
-| Secrets config | https://github.com/TiendaNube/nube-sdk/settings/secrets/actions |
