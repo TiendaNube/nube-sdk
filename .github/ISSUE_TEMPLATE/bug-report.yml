@@ -3,6 +3,22 @@ description: Report a bug in NubeSDK
 title: "[BUG] "
 labels: ["bug"]
 body:
+  - type: input
+    id: app-id
+    attributes:
+      label: App ID
+      description: Your application ID.
+      placeholder: "e.g. 12345"
+    validations:
+      required: true
+
+  - type: input
+    id: app-name
+    attributes:
+      label: App name
+      description: Your application name (optional).
+      placeholder: "e.g. My Payments App"
+
   - type: textarea
     id: bug-description
     attributes:

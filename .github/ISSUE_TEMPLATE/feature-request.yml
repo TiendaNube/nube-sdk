@@ -3,6 +3,20 @@ description: Suggest a new feature or improvement for NubeSDK
 title: "[REQUEST] "
 labels: ["enhancement"]
 body:
+  - type: input
+    id: app-id
+    attributes:
+      label: App ID
+      description: Your application ID, if you already have one.
+      placeholder: "e.g. 12345"
+
+  - type: input
+    id: app-name
+    attributes:
+      label: App name
+      description: Your application name (optional).
+      placeholder: "e.g. My Payments App"
+
   - type: textarea
     id: feature-description
     attributes:
