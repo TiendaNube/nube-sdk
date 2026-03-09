@@ -10,6 +10,13 @@ body:
       description: Your application ID, if you already have one.
       placeholder: "e.g. 12345"
 
+  - type: input
+    id: app-name
+    attributes:
+      label: App name
+      description: Your application name (optional).
+      placeholder: "e.g. My Payments App"
+
   - type: dropdown
     id: request-type
     attributes:
@@ -22,13 +29,6 @@ body:
         - Other
     validations:
       required: true
-
-  - type: input
-    id: app-name
-    attributes:
-      label: App name
-      description: Your application name (optional).
-      placeholder: "e.g. My Payments App"
 
   - type: textarea
     id: feature-description
