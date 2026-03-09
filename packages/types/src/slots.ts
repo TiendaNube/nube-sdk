@@ -147,7 +147,8 @@ export const STOREFRONT_UI_SLOT = {
 	PRODUCT_GRID_ITEM_IMAGE_TOP_CENTER: "product_dgrid_item_image_top_center",
 	PRODUCT_GRID_ITEM_IMAGE_LEFT_CENTER: "product_grid_item_image_left_center",
 	PRODUCT_GRID_ITEM_IMAGE_RIGHT_CENTER: "product_grid_item_image_right_center",
-	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_CENTER: "product_grid_item_image_bottom_center",
+	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_CENTER:
+		"product_grid_item_image_bottom_center",
 	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
 	AFTER_GO_TO_CHECKOUT: "after_go_to_checkout",
 	AFTER_CART_SUMMARY: "after_cart_summary",
