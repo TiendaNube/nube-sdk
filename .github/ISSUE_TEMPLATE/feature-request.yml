@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest a new feature or improvement for NubeSDK
 title: "[REQUEST] "
-labels: ["enhancement"]
+labels: ["Partner Request"]
 body:
   - type: input
     id: app-id
