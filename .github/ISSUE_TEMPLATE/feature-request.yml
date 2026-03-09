@@ -8,17 +8,17 @@ body:
     attributes:
       label: Feature Description
       description: Tell us what you'd like to see in NubeSDK.
-      placeholder: |
+      value: |
         **What problem does this solve?**
-        Describe the limitation or pain point.
+
 
         **Proposed solution**
-        How would you like this to work?
+
 
         **Use case (optional)**
-        Describe the scenario where this would help.
+
 
         **Alternatives considered (optional)**
-        Have you tried any workarounds?
+
     validations:
       required: true

@@ -8,22 +8,22 @@ body:
     attributes:
       label: Bug Description
       description: Tell us what happened. The more detail you provide, the faster we can help.
-      placeholder: |
+      value: |
         **What happened?**
-        Describe the bug clearly.
+
 
         **Steps to reproduce**
-        1. ...
-        2. ...
-        3. ...
+        1.
+        2.
+        3.
 
         **Expected behavior**
-        What did you expect to happen?
+
 
         **Environment (optional)**
-        NubeSDK version, browser, OS, etc.
+
 
         **Logs or screenshots (optional)**
-        Paste any relevant error messages or attach screenshots.
+
     validations:
       required: true
