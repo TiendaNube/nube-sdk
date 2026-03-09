@@ -19,6 +19,17 @@ body:
       description: Your application name (optional).
       placeholder: "e.g. My Payments App"
 
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - "Urgent - My app and stores are impacted right now"
+        - "High - Core functionality is broken but there is a workaround"
+        - "Medium - Something is not working as expected but does not block usage"
+        - "Low - Minor issue or visual glitch"
+
   - type: textarea
     id: bug-description
     attributes:
