@@ -73,7 +73,7 @@ jobs:
               core.info(`Attempt ${attempt}/${maxAttempts}: searching for issue in Linear...`);
 
               const searchQuery = `
-                query($teamId: String!, $title: String!) {
+                query($teamId: ID!, $title: String!) {
                   issues(
                     filter: {
                       team: { id: { eq: $teamId } }
@@ -121,7 +121,7 @@ jobs:
             }
 
             const updateQuery = `
-              mutation($issueId: String!, $priority: Int!) {
+              mutation($issueId: ID!, $priority: Int!) {
                 issueUpdate(id: $issueId, input: { priority: $priority }) {
                   success
                   issue {
