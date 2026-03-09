@@ -27,14 +27,4 @@ You can also check the **[official NubeSDK documentation](https://dev.tiendanube
 
 ## Issue Lifecycle
 
-When you open an issue, it enters our triage process. You can track its progress through labels applied to the issue.
-
-### Status Labels
-
-| Label | Meaning |
-|---|---|
-| `status:in-review` | The issue is being reviewed by the team |
-| `status:planned` | The issue has been accepted and is planned for development |
-| `status:in-progress` | The issue is actively being worked on |
-| `status:completed` | The issue has been resolved |
-| `status:rejected` | The issue has been declined (a reason will be provided) |
+When you open an issue, it enters our triage process. You can track its progress through the issue's open/closed status on GitHub.
