@@ -18,10 +18,10 @@ jobs:
             const body = context.payload.issue.body || '';
 
             const typeMap = {
-              'Slot': 'request:slot',
-              'Component': 'request:component',
-              'Event': 'request:event',
-              'Other': 'request:other',
+              'Slot': 'Slot',
+              'Component': 'Component',
+              'Event': 'Event',
+              'Other': 'Other',
             };
 
             for (const [value, label] of Object.entries(typeMap)) {
