@@ -38,12 +38,3 @@ When you open an issue, it enters our triage process. You can track its progress
 | `status:in-progress` | The issue is actively being worked on |
 | `status:completed` | The issue has been resolved |
 | `status:rejected` | The issue has been declined (a reason will be provided) |
-
-### Priority Labels
-
-| Label | Meaning |
-|---|---|
-| `priority:urgent` | Critical issue requiring immediate attention |
-| `priority:high` | Important issue to be addressed soon |
-| `priority:medium` | Standard priority |
-| `priority:low` | Nice to have, will be addressed when possible |
