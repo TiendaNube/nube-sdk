@@ -1,109 +1,29 @@
 name: Bug Report
-description: Report a bug to help us improve NubeSDK
+description: Report a bug in NubeSDK
 title: "[Bug]: "
 labels: ["bug"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        ### Describe the bug
-        Thank you for taking the time to report a bug! Please fill out the information below so we can investigate.
-
   - type: textarea
-    id: description
+    id: bug-description
     attributes:
-      label: Description
-      description: A clear and concise description of what the bug is.
-      placeholder: Describe the bug...
-    validations:
-      required: true
-
-  - type: markdown
-    attributes:
-      value: |
-        ### Steps to reproduce
-
-  - type: textarea
-    id: steps
-    attributes:
-      label: Steps to Reproduce
-      description: Provide the steps needed to reproduce the issue.
+      label: Bug Description
+      description: Tell us what happened. The more detail you provide, the faster we can help.
       placeholder: |
-        1. Go to '...'
-        2. Click on '...'
-        3. See error
+        **What happened?**
+        Describe the bug clearly.
+
+        **Steps to reproduce**
+        1. ...
+        2. ...
+        3. ...
+
+        **Expected behavior**
+        What did you expect to happen?
+
+        **Environment (optional)**
+        NubeSDK version, browser, OS, etc.
+
+        **Logs or screenshots (optional)**
+        Paste any relevant error messages or attach screenshots.
     validations:
       required: true
-
-  - type: markdown
-    attributes:
-      value: |
-        ### Expected vs Actual behavior
-
-  - type: textarea
-    id: expected
-    attributes:
-      label: Expected Behavior
-      description: What did you expect to happen?
-      placeholder: I expected...
-    validations:
-      required: true
-
-  - type: textarea
-    id: actual
-    attributes:
-      label: Actual Behavior
-      description: What actually happened?
-      placeholder: Instead, what happened was...
-    validations:
-      required: true
-
-  - type: markdown
-    attributes:
-      value: |
-        ### Environment
-
-  - type: input
-    id: version
-    attributes:
-      label: NubeSDK Version
-      description: Which version of NubeSDK are you using?
-      placeholder: e.g. 1.2.0
-    validations:
-      required: true
-
-  - type: dropdown
-    id: environment
-    attributes:
-      label: Environment
-      description: Where does this issue occur?
-      options:
-        - Production
-        - Staging / Preview
-        - Local Development
-    validations:
-      required: true
-
-  - type: markdown
-    attributes:
-      value: |
-        ### Additional context
-
-  - type: textarea
-    id: logs
-    attributes:
-      label: Logs / Error Output
-      description: If applicable, paste any relevant logs or error messages.
-      render: shell
-
-  - type: textarea
-    id: screenshots
-    attributes:
-      label: Screenshots
-      description: If applicable, add screenshots to help explain the problem.
-
-  - type: textarea
-    id: additional
-    attributes:
-      label: Additional Context
-      description: Any other context about the problem.
