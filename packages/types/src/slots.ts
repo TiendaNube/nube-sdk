@@ -150,7 +150,7 @@ export const STOREFRONT_UI_SLOT = {
 	PRODUCT_GRID_ITEM_IMAGE_CENTER_RIGHT: "product_grid_item_image_center_right",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_CENTER:
 		"product_grid_item_image_bottom_center",
-	PRODUCT_GRID_ITEM_IMAGE_CENTER_CENTER: 
+	PRODUCT_GRID_ITEM_IMAGE_CENTER_CENTER:
 		"product_grid_item_image_center_center",
 	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
 	AFTER_GO_TO_CHECKOUT: "after_go_to_checkout",
