@@ -145,7 +145,7 @@ export const STOREFRONT_UI_SLOT = {
 	PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT: "product_grid_item_image_top_left",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT: "product_grid_item_image_bottom_right",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT: "product_grid_item_image_bottom_left",
-	PRODUCT_GRID_ITEM_IMAGE_TOP_CENTER: "product_dgrid_item_image_top_center",
+	PRODUCT_GRID_ITEM_IMAGE_TOP_CENTER: "product_grid_item_image_top_center",
 	PRODUCT_GRID_ITEM_IMAGE_CENTER_LEFT: "product_grid_item_image_center_left",
 	PRODUCT_GRID_ITEM_IMAGE_CENTER_RIGHT: "product_grid_item_image_center_right",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_CENTER:
