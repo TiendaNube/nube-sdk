@@ -17,6 +17,19 @@ body:
       description: Your application name (optional).
       placeholder: "e.g. My Payments App"
 
+  - type: dropdown
+    id: request-type
+    attributes:
+      label: Request Type
+      description: What type of request is this?
+      options:
+        - Slot
+        - Component
+        - Event
+        - Other
+    validations:
+      required: true
+
   - type: textarea
     id: feature-description
     attributes:
