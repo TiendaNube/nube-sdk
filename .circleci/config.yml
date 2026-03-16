@@ -127,6 +127,19 @@ jobs:
             npm run build
             npm publish --workspace packages/create-nube-app --access public
 
+  publish-snippet:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Publish @tiendanube/nube-sdk-snippet
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm publish --workspace packages/snippet --access public
+
   publish-types-unstable:
     executor: default
     steps:
@@ -208,6 +221,24 @@ jobs:
             npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
             npm publish --workspace packages/create-nube-app --access public --tag unstable
 
+  publish-snippet-unstable:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Set unstable version
+          command: |
+            COMMIT_HASH=${CIRCLE_SHA1:0:7}
+            npm version prerelease --preid=unstable.${COMMIT_HASH} --no-git-tag-version --workspace packages/snippet
+      - run:
+          name: Publish @tiendanube/nube-sdk-snippet (unstable)
+          command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN_SDK
+            npm publish --workspace packages/snippet --access public --tag unstable
+
 ##### Workflows
 workflows:
   version: 2
@@ -251,6 +282,12 @@ workflows:
             - build
           filters:
             <<: *filter-prd
+      - approval-publish-snippet:
+          type: approval
+          requires:
+            - build
+          filters:
+            <<: *filter-prd
       - publish-types:
           context: NPM_TOKEN_SDK
           requires:
@@ -267,6 +304,10 @@ workflows:
           context: NPM_TOKEN_SDK
           requires:
             - approval-publish-create-nube-app
+      - publish-snippet:
+          context: NPM_TOKEN_SDK
+          requires:
+            - approval-publish-snippet
       # Unstable publishes
       - approval-publish-types-unstable:
           type: approval
@@ -292,6 +333,12 @@ workflows:
             - build
           filters:
             <<: *filter-unstable
+      - approval-publish-snippet-unstable:
+          type: approval
+          requires:
+            - build
+          filters:
+            <<: *filter-unstable
       - publish-types-unstable:
           context: NPM_TOKEN_SDK
           requires:
@@ -308,3 +355,7 @@ workflows:
           context: NPM_TOKEN_SDK
           requires:
             - approval-publish-create-nube-app-unstable
+      - publish-snippet-unstable:
+          context: NPM_TOKEN_SDK
+          requires:
+            - approval-publish-snippet-unstable
