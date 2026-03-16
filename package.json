@@ -10,6 +10,7 @@
     "packages/types",
     "packages/ui",
     "packages/jsx",
+    "packages/snippet",
     "packages/create-nube-app",
     "packages/doc",
     "packages/nube-devtools"
