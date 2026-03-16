@@ -28,6 +28,6 @@
     "fix": "npm run check:fix --workspaces --if-present"
   },
   "dependencies": {
-    "@biomejs/biome": "^1.9.4"
+    "@biomejs/biome": "1.8.3"
   }
 }
