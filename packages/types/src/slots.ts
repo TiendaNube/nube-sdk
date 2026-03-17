@@ -109,8 +109,12 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_start_checkout_button"} BEFORE_START_CHECKOUT_BUTTON - Before the start checkout button.
  * @property {"after_go_to_checkout"} AFTER_GO_TO_CHECKOUT - After the go to checkout button.
  * @property {"after_cart_summary"} AFTER_CART_SUMMARY - After the cart summary.
- * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
+ * @property {"after_section_newsletter"} AFTER_SECTION_NEWSLETTER - After the newsletter section on the home page.
+ * @property {"before_section_newsletter"} BEFORE_SECTION_NEWSLETTER - Before the newsletter section on the home page.
+ * @property {"before_section_products_sale"} BEFORE_SECTION_PRODUCTS_SALE - Before the products sale section on the home page.
+ * @property {"after_section_products_sale"} AFTER_SECTION_PRODUCTS_SALE - After the products sale section on the home page.
  * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item.
+ * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -124,6 +128,11 @@ export const STOREFRONT_UI_SLOT = {
 	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
 	PRODUCT_DETAIL_IMAGE_BOTTOM_LEFT: "product_detail_image_bottom_left",
 	PRODUCT_DETAIL_IMAGE_BOTTOM_RIGHT: "product_detail_image_bottom_right",
+	PRODUCT_DETAIL_IMAGE_TOP_CENTER: "product_detail_image_top_center",
+	PRODUCT_DETAIL_IMAGE_CENTER_LEFT: "product_detail_image_center_left",
+	PRODUCT_DETAIL_IMAGE_CENTER_RIGHT: "product_detail_image_center_right",
+	PRODUCT_DETAIL_IMAGE_BOTTOM_CENTER: "product_detail_image_bottom_center",
+	PRODUCT_DETAIL_IMAGE_CENTER_CENTER: "product_detail_image_center_center",
 	AFTER_PRODUCT_DETAIL_NAME: "after_product_detail_name",
 	AFTER_PRODUCT_DESCRIPTION: "after_product_description",
 	BEFORE_PRICE_PDP: "before_price_pdp",
@@ -136,10 +145,21 @@ export const STOREFRONT_UI_SLOT = {
 	PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT: "product_grid_item_image_top_left",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT: "product_grid_item_image_bottom_right",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT: "product_grid_item_image_bottom_left",
+	PRODUCT_GRID_ITEM_IMAGE_TOP_CENTER: "product_grid_item_image_top_center",
+	PRODUCT_GRID_ITEM_IMAGE_CENTER_LEFT: "product_grid_item_image_center_left",
+	PRODUCT_GRID_ITEM_IMAGE_CENTER_RIGHT: "product_grid_item_image_center_right",
+	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_CENTER:
+		"product_grid_item_image_bottom_center",
+	PRODUCT_GRID_ITEM_IMAGE_CENTER_CENTER:
+		"product_grid_item_image_center_center",
 	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
 	AFTER_GO_TO_CHECKOUT: "after_go_to_checkout",
 	AFTER_CART_SUMMARY: "after_cart_summary",
+	AFTER_SECTION_NEWSLETTER: "after_section_newsletter",
 	BEFORE_FOOTER: "before_footer",
+	BEFORE_SECTION_NEWSLETTER: "before_section_newsletter",
+	BEFORE_SECTION_PRODUCTS_SALE: "before_section_products_sale",
+	AFTER_SECTION_PRODUCTS_SALE: "after_section_products_sale",
 	CART_LINE_ITEM_TOP: "cart_line_item_top",
 	BEFORE_PRODUCT_DETAIL_NAME: "before_product_detail_name",
 } as const;
