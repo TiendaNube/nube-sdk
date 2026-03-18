@@ -675,6 +675,16 @@ export type NubeComponentIframeEventHandler = NubeComponentEventHandler<
 >;
 
 /**
+ * Payload the iframe document may `postMessage` to the host when `autoresize` is enabled.
+ * Dimensions are applied in pixels on the host iframe element.
+ */
+export type NubeIframeResizePostMessage = {
+	type: "resize";
+	height?: number;
+	width?: number;
+};
+
+/**
  * Represents the properties available for an `iframe` component.
  * Designed for third-party content integration in e-commerce stores.
  */
@@ -690,6 +700,11 @@ export type NubeComponentIframeProps = Prettify<
 		sandbox?: string;
 		/** Basic styling within platform theme constraints */
 		style?: NubeComponentStyle;
+		/**
+		 * When `true`, the host listens for child `postMessage` with {@link NubeIframeResizePostMessage}
+		 * and updates the iframe size (px). Independent of `onMessage`. Requires stable iframe identity
+		 */
+		autoresize?: boolean;
 		/** Event handler for messages from the iframe */
 		onMessage?: NubeComponentIframeEventHandler;
 	}
