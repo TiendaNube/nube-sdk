@@ -87,17 +87,24 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_quick_buy_add_to_cart"} BEFORE_QUICK_BUY_ADD_TO_CART - Before the quick buy add to cart button.
  * @property {"before_product_detail_add_to_cart"} BEFORE_PRODUCT_DETAIL_ADD_TO_CART - Before the product detail add to cart button.
  * @property {"after_product_detail_add_to_cart"} AFTER_PRODUCT_DETAIL_ADD_TO_CART - After the product detail add to cart button.
- * @property {"before_add_to_cart_pdp"} BEFORE_ADD_TO_CART_PDP - Before the add to cart button on product detail page.
- * @property {"after_add_to_cart_pdp"} AFTER_ADD_TO_CART_PDP - After the add to cart button on product detail page.
+ * @property {"before_add_to_cart_pdp"} BEFORE_ADD_TO_CART_PDP - Before the add to cart button on product detail page. Deprecated; use BEFORE_PRODUCT_DETAIL_ADD_TO_CART instead.
+ * @property {"after_add_to_cart_pdp"} AFTER_ADD_TO_CART_PDP - After the add to cart button on product detail page. Deprecated; use AFTER_PRODUCT_DETAIL_ADD_TO_CART instead.
  * @property {"product_detail_image_top_left"} PRODUCT_DETAIL_IMAGE_TOP_LEFT - Top left corner of product detail images.
  * @property {"product_detail_image_top_right"} PRODUCT_DETAIL_IMAGE_TOP_RIGHT - Top right corner of product detail images.
  * @property {"product_detail_image_bottom_left"} PRODUCT_DETAIL_IMAGE_BOTTOM_LEFT - Bottom left corner of product detail images.
  * @property {"product_detail_image_bottom_right"} PRODUCT_DETAIL_IMAGE_BOTTOM_RIGHT - Bottom right corner of product detail images.
+ * @property {"product_detail_image_top_center"} PRODUCT_DETAIL_IMAGE_TOP_CENTER - Top center of product detail images.
+ * @property {"product_detail_image_center_left"} PRODUCT_DETAIL_IMAGE_CENTER_LEFT - Center left of product detail images.
+ * @property {"product_detail_image_center_right"} PRODUCT_DETAIL_IMAGE_CENTER_RIGHT - Center right of product detail images.
+ * @property {"product_detail_image_bottom_center"} PRODUCT_DETAIL_IMAGE_BOTTOM_CENTER - Bottom center of product detail images.
+ * @property {"product_detail_image_center_center"} PRODUCT_DETAIL_IMAGE_CENTER_CENTER - Center of product detail images.
  * @property {"after_product_detail_name"} AFTER_PRODUCT_DETAIL_NAME - After the product name in product detail.
  * @property {"before_product_detail_name"} BEFORE_PRODUCT_DETAIL_NAME - Before the product name in product detail.
  * @property {"after_product_description"} AFTER_PRODUCT_DESCRIPTION - After the product description.
- * @property {"before_price_pdp"} BEFORE_PRICE_PDP - Before the price on product detail page.
- * @property {"after_price_pdp"} AFTER_PRICE_PDP - After the price on product detail page.
+ * @property {"before_product_detail_price"} BEFORE_PRODUCT_DETAIL_PRICE - Before the product detail price.
+ * @property {"after_product_detail_price"} AFTER_PRODUCT_DETAIL_PRICE - After the product detail price.
+ * @property {"before_price_pdp"} BEFORE_PRICE_PDP - Before the price on product detail page. Deprecated; use BEFORE_PRODUCT_DETAIL_PRICE instead.
+ * @property {"after_price_pdp"} AFTER_PRICE_PDP - After the price on product detail page. Deprecated; use AFTER_PRODUCT_DETAIL_PRICE instead.
  * @property {"after_product_grid_item_name"} AFTER_PRODUCT_GRID_ITEM_NAME - After the product name in grid items.
  * @property {"before_product_grid_item_name"} BEFORE_PRODUCT_GRID_ITEM_NAME - Before the product name in grid items.
  * @property {"after_product_grid_item_price"} AFTER_PRODUCT_GRID_ITEM_PRICE - After the product price in grid items.
@@ -106,14 +113,21 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"product_grid_item_image_top_left"} PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT - Top left corner of product grid item images.
  * @property {"product_grid_item_image_bottom_right"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT - Bottom right corner of product grid item images.
  * @property {"product_grid_item_image_bottom_left"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT - Bottom left corner of product grid item images.
- * @property {"before_start_checkout_button"} BEFORE_START_CHECKOUT_BUTTON - Before the start checkout button.
+ * @property {"product_grid_item_image_top_center"} PRODUCT_GRID_ITEM_IMAGE_TOP_CENTER - Top center of product grid item images.
+ * @property {"product_grid_item_image_center_left"} PRODUCT_GRID_ITEM_IMAGE_CENTER_LEFT - Center left of product grid item images.
+ * @property {"product_grid_item_image_center_right"} PRODUCT_GRID_ITEM_IMAGE_CENTER_RIGHT - Center right of product grid item images.
+ * @property {"product_grid_item_image_bottom_center"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_CENTER - Bottom center of product grid item images.
+ * @property {"product_grid_item_image_center_center"} PRODUCT_GRID_ITEM_IMAGE_CENTER_CENTER - Center of product grid item images.
+ * @property {"before_go_to_checkout"} BEFORE_GO_TO_CHECKOUT - Before the go to checkout button.
+ * @property {"before_start_checkout_button"} BEFORE_START_CHECKOUT_BUTTON - Before the start checkout button. Deprecated; use BEFORE_GO_TO_CHECKOUT instead.
  * @property {"after_go_to_checkout"} AFTER_GO_TO_CHECKOUT - After the go to checkout button.
  * @property {"after_cart_summary"} AFTER_CART_SUMMARY - After the cart summary.
  * @property {"after_section_newsletter"} AFTER_SECTION_NEWSLETTER - After the newsletter section on the home page.
  * @property {"before_section_newsletter"} BEFORE_SECTION_NEWSLETTER - Before the newsletter section on the home page.
  * @property {"before_section_products_sale"} BEFORE_SECTION_PRODUCTS_SALE - Before the products sale section on the home page.
  * @property {"after_section_products_sale"} AFTER_SECTION_PRODUCTS_SALE - After the products sale section on the home page.
- * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item.
+ * @property {"before_line_item"} BEFORE_LINE_ITEM - Before each cart line item.
+ * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item. Deprecated; use BEFORE_LINE_ITEM instead.
  * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
@@ -122,7 +136,9 @@ export const STOREFRONT_UI_SLOT = {
 	BEFORE_QUICK_BUY_ADD_TO_CART: "before_quick_buy_add_to_cart",
 	BEFORE_PRODUCT_DETAIL_ADD_TO_CART: "before_product_detail_add_to_cart",
 	AFTER_PRODUCT_DETAIL_ADD_TO_CART: "after_product_detail_add_to_cart",
+	/** @deprecated Use BEFORE_PRODUCT_DETAIL_ADD_TO_CART instead. */
 	BEFORE_ADD_TO_CART_PDP: "before_add_to_cart_pdp",
+	/** @deprecated Use AFTER_PRODUCT_DETAIL_ADD_TO_CART instead. */
 	AFTER_ADD_TO_CART_PDP: "after_add_to_cart_pdp",
 	PRODUCT_DETAIL_IMAGE_TOP_LEFT: "product_detail_image_top_left",
 	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
@@ -135,7 +151,11 @@ export const STOREFRONT_UI_SLOT = {
 	PRODUCT_DETAIL_IMAGE_CENTER_CENTER: "product_detail_image_center_center",
 	AFTER_PRODUCT_DETAIL_NAME: "after_product_detail_name",
 	AFTER_PRODUCT_DESCRIPTION: "after_product_description",
+	BEFORE_PRODUCT_DETAIL_PRICE: "before_product_detail_price",
+	AFTER_PRODUCT_DETAIL_PRICE: "after_product_detail_price",
+	/** @deprecated Use BEFORE_PRODUCT_DETAIL_PRICE instead. */
 	BEFORE_PRICE_PDP: "before_price_pdp",
+	/** @deprecated Use AFTER_PRODUCT_DETAIL_PRICE instead. */
 	AFTER_PRICE_PDP: "after_price_pdp",
 	AFTER_PRODUCT_GRID_ITEM_NAME: "after_product_grid_item_name",
 	BEFORE_PRODUCT_GRID_ITEM_NAME: "before_product_grid_item_name",
@@ -152,14 +172,18 @@ export const STOREFRONT_UI_SLOT = {
 		"product_grid_item_image_bottom_center",
 	PRODUCT_GRID_ITEM_IMAGE_CENTER_CENTER:
 		"product_grid_item_image_center_center",
-	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
+	BEFORE_GO_TO_CHECKOUT: "before_go_to_checkout",
 	AFTER_GO_TO_CHECKOUT: "after_go_to_checkout",
+	/** @deprecated Use BEFORE_GO_TO_CHECKOUT instead. */
+	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
 	AFTER_CART_SUMMARY: "after_cart_summary",
 	AFTER_SECTION_NEWSLETTER: "after_section_newsletter",
 	BEFORE_FOOTER: "before_footer",
 	BEFORE_SECTION_NEWSLETTER: "before_section_newsletter",
 	BEFORE_SECTION_PRODUCTS_SALE: "before_section_products_sale",
 	AFTER_SECTION_PRODUCTS_SALE: "after_section_products_sale",
+	BEFORE_LINE_ITEM: "before_line_item",
+	/** @deprecated Use BEFORE_LINE_ITEM instead. */
 	CART_LINE_ITEM_TOP: "cart_line_item_top",
 	BEFORE_PRODUCT_DETAIL_NAME: "before_product_detail_name",
 } as const;
