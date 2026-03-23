@@ -1,0 +1,47 @@
+{
+  "name": "@tiendanube/nube-sdk-snippet",
+  "version": "0.1.0",
+  "description": "Type definitions and utilities for NubeSDK snippets",
+  "type": "module",
+  "types": "./snippet-env.d.ts",
+  "exports": {
+    ".": {
+      "types": "./snippet-env.d.ts"
+    }
+  },
+  "scripts": {
+    "check": "biome check snippet-env.d.ts",
+    "check:fix": "biome check --write snippet-env.d.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TiendaNube/nube-sdk.git"
+  },
+  "author": "Tiendanube / Nuvemshop",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TiendaNube/nube-sdk/issues"
+  },
+  "homepage": "https://www.tiendanube.com",
+  "peerDependencies": {
+    "@tiendanube/nube-sdk-jsx": "*",
+    "@tiendanube/nube-sdk-types": "*",
+    "@tiendanube/nube-sdk-ui": "*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "typescript": "^5.6.2"
+  },
+  "files": [
+    "./snippet-env.d.ts",
+    "README.md"
+  ],
+  "keywords": [
+    "tiendanube",
+    "nuvemshop",
+    "nube-sdk",
+    "ecommerce",
+    "sdk",
+    "snippet"
+  ]
+}

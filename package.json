@@ -10,6 +10,7 @@
     "packages/types",
     "packages/ui",
     "packages/jsx",
+    "packages/snippet",
     "packages/create-nube-app",
     "packages/doc",
     "packages/nube-devtools"
@@ -27,6 +28,6 @@
     "fix": "npm run check:fix --workspaces --if-present"
   },
   "dependencies": {
-    "@biomejs/biome": "^1.9.4"
+    "@biomejs/biome": "1.8.3"
   }
 }
