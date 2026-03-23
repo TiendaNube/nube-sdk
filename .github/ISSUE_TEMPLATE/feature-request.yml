@@ -11,7 +11,7 @@ body:
     id: architecture-check
     attributes:
       label: "⚠️ Architecture Notice"
-      description: "NubeSDK apps run in **Web Workers** — direct DOM access and script injection are **not supported by design**. [Learn more](https://dev.tiendanube.com/docs/applications/nube-sdk/overview) · [Discussions Q&A](https://github.com/TiendaNube/nube-sdk/discussions/categories/q-a)"
+      description: "NubeSDK apps run in **Web Workers**, direct DOM access and script injection are **not supported by design**. [Learn more](https://dev.tiendanube.com/docs/applications/nube-sdk/overview) · [Discussions Q&A](https://github.com/TiendaNube/nube-sdk/discussions/categories/q-a)"
       options:
         - label: "My request does NOT require direct DOM access or script injection."
           required: true
