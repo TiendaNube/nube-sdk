@@ -6,15 +6,10 @@ body:
   - type: checkboxes
     id: architecture-check
     attributes:
-      label: "⚠️ Before you submit"
-      description: "[Learn more about NubeSDK architecture](https://dev.tiendanube.com/docs/applications/nube-sdk/overview) · [Discussions Q&A](https://github.com/TiendaNube/nube-sdk/discussions/categories/q-a)"
+      label: " "
       options:
-        - label: "I understand that NubeSDK apps run in Web Workers and my request does NOT require direct DOM access or script injection."
+        - label: "I understand that NubeSDK apps run in Web Workers and my request does NOT require direct DOM access or script injection. [Learn more](https://dev.tiendanube.com/docs/applications/nube-sdk/overview) · [Q&A](https://github.com/TiendaNube/nube-sdk/discussions/categories/q-a)"
           required: true
-
-  - type: markdown
-    attributes:
-      value: "---"
 
   - type: input
     id: app-id
