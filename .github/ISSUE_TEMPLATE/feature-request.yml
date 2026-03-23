@@ -12,6 +12,10 @@ body:
         - label: "My request does NOT require direct DOM access or script injection."
           required: true
 
+  - type: markdown
+    attributes:
+      value: "---"
+
   - type: input
     id: app-id
     attributes:
