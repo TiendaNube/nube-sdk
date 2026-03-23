@@ -3,6 +3,19 @@ description: Suggest a new feature or improvement for NubeSDK
 title: "[REQUEST] "
 labels: ["Partner Request"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        > **⚠️ NubeSDK apps run in Web Workers** — direct DOM access, localStorage/cookies, and script injection are **not supported by design**. [Learn more](https://dev.tiendanube.com/docs/applications/nube-sdk/overview) · [Discussions Q&A](https://github.com/TiendaNube/nube-sdk/discussions/categories/q-a)
+
+  - type: checkboxes
+    id: architecture-check
+    attributes:
+      label: Architecture Compatibility
+      options:
+        - label: "My request does NOT require direct DOM access, localStorage/cookies, or script injection."
+          required: true
+
   - type: input
     id: app-id
     attributes:
