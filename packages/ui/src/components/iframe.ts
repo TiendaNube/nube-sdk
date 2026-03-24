@@ -7,8 +7,9 @@ import { generateInternalId } from "./generateInternalId";
 /**
  * Creates an `iframe` component.
  *
- * The `iframe` component is used to embed external content. It supports properties such as
- * `src`, `width`, `height`, `sandbox`, and `style`.
+ * Embeds external content. Supports `src`, `width`, `height`, `sandbox`, `style`,
+ * `onMessage` (runtime receives child messages), and `autoresize` (host resizes the iframe
+ * when the child posts `{ type: "resize", height?, width? }`).
  *
  * @param props - The properties for configuring the iframe component.
  * @returns A `NubeComponentIframe` object representing the iframe component.
