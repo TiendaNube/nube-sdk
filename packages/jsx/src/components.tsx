@@ -379,8 +379,8 @@ export function Progress(
 /**
  * Creates an `Iframe` component.
  *
- * The `Iframe` component is used to embed external content. It supports properties such as
- * `src`, `width`, `height`, `sandbox`, and `style`.
+ * Embeds external content. Supports `src`, `width`, `height`, `sandbox`, `style`,
+ * `onMessage`, and `autoresize` (host resizes when the child posts a resize message).
  *
  * @param props - The properties for configuring the iframe component.
  * @returns A `NubeComponentIframe` object representing the iframe component.
