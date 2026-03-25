@@ -14,6 +14,10 @@ export default defineManifest({
 		48: "img/logo-48.png",
 		128: "img/logo-128.png",
 	},
+	action: {
+		default_popup: "popup.html",
+		default_icon: "img/logo-48.png",
+	},
 	devtools_page: "devtools.html",
 	background: {
 		service_worker: "src/background/index.ts",
@@ -33,6 +37,7 @@ export default defineManifest({
 				"img/logo-32.png",
 				"img/logo-48.png",
 				"img/logo-128.png",
+				"inject-extension-flag.js",
 			],
 			matches: [],
 		},

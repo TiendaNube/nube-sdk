@@ -129,15 +129,20 @@
 @layer base {
 	* {
 		@apply border-border outline-ring/50;
-		scrollbar-width: thin;
-		scrollbar-color: oklch(0.7 0 0 / 30%) transparent;
-	}
-	.dark * {
-		scrollbar-color: oklch(0.5 0 0 / 40%) transparent;
 	}
 	body {
 		@apply bg-background text-foreground;
 	}
+}
+
+body {
+	min-width: 23rem;
+	margin: 0;
+}
+
+body #app {
+	display: flex;
+	flex-direction: column;
 }
 
 /* Hide the ✔ checkmark that ReactJsonView renders after copying.

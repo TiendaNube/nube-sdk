@@ -10,6 +10,7 @@ import {
 import { useNubeStatus } from "../hooks/use-nube-status";
 
 import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
+import { LocalModePage } from "./pages/LocalMode";
 import { Apps } from "./pages/apps";
 import { Components } from "./pages/components";
 import { Errors } from "./pages/errors";
@@ -21,6 +22,7 @@ import { Unavailable } from "./pages/unavailable";
 
 const PAGE_COMPONENTS = {
 	[PAGES.APPS]: Apps,
+	[PAGES.LOCAL_MODE]: LocalModePage,
 	[PAGES.COMPONENTS]: Components,
 	[PAGES.ERRORS]: Errors,
 	[PAGES.EVENTS]: Events,

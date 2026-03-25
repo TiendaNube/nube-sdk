@@ -1,7 +1,6 @@
 import {
 	handleEvents,
 	highlightElement,
-	injectWindowVariable,
 	resendEvent,
 	scrollToElement,
 } from "./scripts";
@@ -45,14 +44,6 @@ export const handleDevToolsEvents = async ({ tabId }: { tabId: number }) => {
 		target: { tabId },
 		world: "MAIN",
 		func: handleEvents,
-	});
-};
-
-export const handleDevToolsInjectWindowVariable = (tabId: number) => {
-	chrome.scripting.executeScript({
-		target: { tabId },
-		world: "MAIN",
-		func: injectWindowVariable,
 	});
 };
 
