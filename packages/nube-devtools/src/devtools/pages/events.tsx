@@ -160,10 +160,7 @@ export function Events() {
 						direction="horizontal"
 					>
 						<ResizablePanel defaultSize={40}>
-							<div
-								ref={tableContainerRef}
-								className="h-full overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 dark:[&::-webkit-scrollbar-thumb:hover]:bg-gray-600"
-							>
+							<div ref={tableContainerRef} className="h-full overflow-y-auto">
 								{events.length === 0 ? (
 									<EmptyState
 										text="No events found"
@@ -195,7 +192,7 @@ export function Events() {
 						<ResizablePanel>
 							<div ref={panelContainerRef} className="h-full">
 								<div
-									className="flex h-full overflow-y-auto [scrollbar-width:none]"
+									className="flex h-full overflow-y-auto"
 									style={{ width: `${panelWidth}px` }}
 								>
 									{selectedEvent && (

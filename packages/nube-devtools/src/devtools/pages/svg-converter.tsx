@@ -129,15 +129,7 @@ export function SvgConverter() {
 									</Button>
 								</div>
 							)}
-							<div
-								className="h-full"
-								style={{
-									scrollbarWidth: "thin",
-									scrollbarColor: isDarkMode
-										? "#090909 #141414"
-										: "#f8f9fa #f8f9fa",
-								}}
-							>
+							<div className="h-full">
 								<SyntaxHighlighter
 									language="tsx"
 									style={isDarkMode ? oneDark : oneLight}
@@ -159,7 +151,7 @@ export function SvgConverter() {
 									showLineNumbers={true}
 									wrapLines={true}
 									wrapLongLines={true}
-									className="custom-scrollbar"
+									className=""
 								>
 									{outputCode || "// Converted code will appear here..."}
 								</SyntaxHighlighter>
