@@ -334,6 +334,9 @@ export type Order = {
 
 	/** Tracking statuses of the order. */
 	tracking_statuses?: OrderTrackingStatus[];
+
+	/** Additional metadata for the order, set by partner apps. */
+	extra?: Record<string, string>;
 };
 
 /**
