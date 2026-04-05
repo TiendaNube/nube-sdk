@@ -24,6 +24,7 @@
   "scripts": {
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
+    "build:local": "bash scripts/deploy-local.sh",
     "check": "npm run check --workspaces --if-present",
     "fix": "npm run check:fix --workspaces --if-present"
   },
