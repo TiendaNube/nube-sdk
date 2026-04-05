@@ -12,6 +12,13 @@ fi
 
 LIGHTSPEED_DIR="$(cd "$LIGHTSPEED_DIR" && pwd)"
 TYPES_SRC="packages/types/src"
+
+if [ ! -d "$TYPES_SRC" ]; then
+  echo "ERROR: Source directory not found at '$TYPES_SRC'"
+  echo "       Run this script from the nube-sdk repository root."
+  exit 1
+fi
+
 LS_TYPES_DIR="$LIGHTSPEED_DIR/node_modules/@tiendanube/nube-sdk-types/src"
 
 if [ -d "$LS_TYPES_DIR" ]; then
