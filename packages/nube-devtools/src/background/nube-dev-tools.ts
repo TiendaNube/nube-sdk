@@ -69,7 +69,10 @@ export const handleDevToolsGetComponents = ({
 					return Object.keys(apps).reduce<
 						Record<string, Record<string, NubeSDKComponent>>
 					>((acc, appId) => {
-						acc[appId] = apps[appId].ui.slots;
+						const slots = apps[appId]?.ui?.slots;
+						if (slots) {
+							acc[appId] = slots;
+						}
 						return acc;
 					}, {});
 				}

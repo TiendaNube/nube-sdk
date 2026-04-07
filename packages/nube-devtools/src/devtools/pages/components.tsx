@@ -72,16 +72,18 @@ export function Components() {
 						<RefreshCcw className="size-3" />
 					</Button>
 				</div>
-				{selectedApp && (
-					<span className="text-xs">
-						{Object.keys(components[selectedApp]).length}{" "}
-						{Object.keys(components[selectedApp]).length === 1
-							? "slot"
-							: "slots"}
-					</span>
-				)}
+			{selectedApp && components[selectedApp] && (
+				<span className="text-xs">
+					{Object.keys(components[selectedApp]).length}{" "}
+					{Object.keys(components[selectedApp]).length === 1
+						? "slot"
+						: "slots"}
+				</span>
+			)}
 			</nav>
-			{selectedApp && <TreeView data={components[selectedApp]} />}
+			{selectedApp && components[selectedApp] && (
+			<TreeView data={components[selectedApp]} />
+		)}
 			{apps.length > 0 && !selectedApp && (
 				<div className="pl-4 pt-4">
 					<Select onValueChange={(value) => setSelectedApp(value)}>
