@@ -11,12 +11,21 @@ export default defineConfig(({ mode }) => {
     build: {
       emptyOutDir: true,
       outDir: 'build',
+      cssCodeSplit: false,
       rollupOptions: {
         input: {
           panel: 'panel.html',
         },
         output: {
           chunkFileNames: 'assets/chunk-[hash].js',
+          manualChunks(id) {
+            if (id.includes('react-syntax-highlighter') || id.includes('refractor') || id.includes('prismjs')) {
+              return 'syntax-highlighter'
+            }
+            if (id.includes('react-dom')) {
+              return 'react-vendor'
+            }
+          },
         },
       },
     },
