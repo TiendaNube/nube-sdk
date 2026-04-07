@@ -1,5 +1,3 @@
-import { Suspense, lazy } from "react";
-
 import { Toaster } from "@/components/ui/sonner";
 import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
 import { NubeSDKErrorsProvider } from "@/contexts/nube-sdk-errors-context";
@@ -19,11 +17,8 @@ import { Errors } from "./pages/errors";
 import { Events } from "./pages/events";
 import { State } from "./pages/state";
 import { Storages } from "./pages/storages";
+import { SvgConverter } from "./pages/svg-converter";
 import { Unavailable } from "./pages/unavailable";
-
-const LazySvgConverter = lazy(() =>
-	import("./pages/svg-converter").then((m) => ({ default: m.SvgConverter })),
-);
 
 const PAGE_COMPONENTS = {
 	[PAGES.APPS]: Apps,
@@ -32,7 +27,7 @@ const PAGE_COMPONENTS = {
 	[PAGES.ERRORS]: Errors,
 	[PAGES.EVENTS]: Events,
 	[PAGES.STORAGES]: Storages,
-	[PAGES.SVG_CONVERT]: LazySvgConverter,
+	[PAGES.SVG_CONVERT]: SvgConverter,
 	[PAGES.STATE]: State,
 } as const;
 
@@ -45,11 +40,7 @@ const AppContent = () => {
 	}
 
 	const PageComponent = PAGE_COMPONENTS[currentPage] || Apps;
-	return (
-		<Suspense>
-			<PageComponent />
-		</Suspense>
-	);
+	return <PageComponent />;
 };
 
 export const App = () => {
