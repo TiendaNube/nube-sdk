@@ -41,12 +41,10 @@
     "react-syntax-highlighter": "^15.6.6",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.2.0",
-    "tw-animate-css": "^1.2.5",
-    "uuid": "^11.1.0"
+    "tw-animate-css": "^1.2.5"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
-    "@types/uuid": "^10.0.0",
     "@crxjs/vite-plugin": "^2.0.0-beta.26",
     "@tailwindcss/postcss": "^4.1.3",
     "@tiendanube/nube-sdk-types": "^0.50.0",

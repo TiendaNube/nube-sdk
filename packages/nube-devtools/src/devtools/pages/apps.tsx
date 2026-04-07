@@ -14,7 +14,6 @@ import Layout from "@/devtools/components/layout";
 import { getPageSessionStorage } from "@/utils";
 import { Circle, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import {
 	AppDetailPanel,
 	type ScriptStatus,
@@ -63,7 +62,7 @@ export function Apps() {
 					if (appsKeys.length > 0 && appsResult) {
 						const apps = Object.keys(appsResult).map((key) => {
 							return {
-								id: uuidv4(),
+								id: crypto.randomUUID(),
 								data: appsResult[key],
 							};
 						});
