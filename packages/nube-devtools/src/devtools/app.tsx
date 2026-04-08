@@ -10,11 +10,11 @@ import {
 } from "../contexts/navigation-context";
 import { useNubeStatus } from "../hooks/use-nube-status";
 
-import { LocalModePage } from "./pages/local-mode";
 import { Apps } from "./pages/apps";
 import { Components } from "./pages/components";
 import { Errors } from "./pages/errors";
 import { Events } from "./pages/events";
+import { LocalModePage } from "./pages/local-mode";
 import { State } from "./pages/state";
 import { Storages } from "./pages/storages";
 import { SvgConverter } from "./pages/svg-converter";
