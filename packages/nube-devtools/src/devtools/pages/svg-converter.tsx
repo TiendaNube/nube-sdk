@@ -7,12 +7,15 @@ import { useDynamicWidth } from "@/devtools/hooks";
 import { convertSvgToNubeSDK, copyToClipboard, downloadFile } from "@/utils";
 import { Copy, Download } from "lucide-react";
 import { useState } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
+import tsx from "react-syntax-highlighter/dist/esm/languages/prism/tsx";
 import {
 	oneDark,
 	oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { toast } from "sonner";
+
+SyntaxHighlighter.registerLanguage("tsx", tsx);
 
 export function SvgConverter() {
 	const [inputSvg, setInputSvg] = useState<string>("");

@@ -1,6 +1,7 @@
 import { DevToolsThemeProvider } from "@/contexts/devtools-theme-context";
 import ReactDOM from "react-dom/client";
 import { App } from "./app";
+import "../styles/globals.css";
 import "./index.css";
 
 chrome.devtools.network.onNavigated.addListener(() => {
