@@ -10,7 +10,7 @@ import {
 } from "../contexts/navigation-context";
 import { useNubeStatus } from "../hooks/use-nube-status";
 
-import { LocalModePage } from "./pages/LocalMode";
+import { LocalModePage } from "./pages/local-mode";
 import { Apps } from "./pages/apps";
 import { Components } from "./pages/components";
 import { Errors } from "./pages/errors";
