@@ -1,4 +1,7 @@
+import { analyze } from "@/analyzer";
+import type { AnalysisReport } from "@/analyzer";
 import type { NubeSDKApp } from "@/background/types";
+import { BundleAnalysisPanel } from "@/components/bundle-analysis-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,6 +9,7 @@ import {
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Table, TableBody, TableRow } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
@@ -45,6 +49,10 @@ export function Apps() {
 	const [selectedApp, setSelectedApp] = useState<NubeSDKEvent | null>(null);
 	const [localModeData, setLocalModeData] =
 		useState<LocalModeStoredData | null>(null);
+	const [analysisReport, setAnalysisReport] =
+		useState<AnalysisReport | null>(null);
+	const [isAnalyzing, setIsAnalyzing] = useState(false);
+	const analysisIdRef = useRef(0);
 
 	const fetchApps = useCallback(() => {
 		chrome.scripting.executeScript(
@@ -111,9 +119,34 @@ export function Apps() {
 		};
 	}, []);
 
+	const runAnalysis = useCallback(async (scriptUrl: string) => {
+		const currentId = ++analysisIdRef.current;
+		setIsAnalyzing(true);
+		setAnalysisReport(null);
+		try {
+			const report = await analyze({ url: scriptUrl, rules: [] });
+			if (analysisIdRef.current === currentId) {
+				setAnalysisReport(report);
+			}
+		} finally {
+			if (analysisIdRef.current === currentId) {
+				setIsAnalyzing(false);
+			}
+		}
+	}, []);
+
 	const handleOnSelect = (event: NubeSDKEvent) => {
 		setSelectedApp(event);
 	};
+
+	useEffect(() => {
+		if (selectedApp?.data.script) {
+			runAnalysis(selectedApp.data.script);
+		} else {
+			setAnalysisReport(null);
+			setIsAnalyzing(false);
+		}
+	}, [selectedApp, runAnalysis]);
 
 	const [scriptStatuses, setScriptStatuses] = useState<
 		Record<string, ScriptStatus>
@@ -245,16 +278,36 @@ export function Apps() {
 							)}
 						</ResizablePanel>
 						<ResizableHandle />
-						<ResizablePanel>
-							{selectedApp && (
+					<ResizablePanel>
+						{selectedApp && (
+							<div className="h-full overflow-y-auto">
 								<AppDetailPanel
 									id={selectedApp.data.id}
 									registered={selectedApp.data.registered}
 									script={selectedApp.data.script}
 									scriptStatus={scriptStatuses[selectedApp.data.script]}
 								/>
-							)}
-						</ResizablePanel>
+								<Separator />
+								{analysisReport && !isAnalyzing ? (
+									<div className="p-4">
+										<BundleAnalysisPanel
+											analysis={analysisReport}
+											onRetryAnalysis={() =>
+												runAnalysis(selectedApp.data.script)
+											}
+										/>
+									</div>
+								) : (
+									<div className="flex items-center justify-center gap-2 p-8">
+										<Loader2 className="size-5 animate-spin text-zinc-500" />
+										<span className="text-sm text-zinc-500">
+											Analyzing bundle…
+										</span>
+									</div>
+								)}
+							</div>
+						)}
+					</ResizablePanel>
 					</ResizablePanelGroup>
 				</div>
 			</div>

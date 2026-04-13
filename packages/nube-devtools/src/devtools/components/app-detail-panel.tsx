@@ -42,7 +42,7 @@ export function AppDetailPanel({
 	scriptStatus,
 }: AppDetailPanelProps) {
 	return (
-		<div className="flex h-full flex-col overflow-y-auto p-4">
+		<div className="flex flex-col p-4">
 			<div className="space-y-2">
 				<DetailField
 					label="ID"
