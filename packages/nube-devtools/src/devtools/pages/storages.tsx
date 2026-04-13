@@ -12,7 +12,6 @@ import { useNubeSDKStorage } from "@/contexts/nube-sdk-storage-context";
 import Layout from "@/devtools/components/layout";
 import { TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { JsonViewer } from "../components/json-viewer";
 import { TableRowItem } from "../components/table-row-item";
 
@@ -31,7 +30,7 @@ export function Storages() {
 						setEvents((prevEvents) => [
 							...prevEvents,
 							{
-								id: uuidv4(),
+								id: crypto.randomUUID(),
 								data: message.payload,
 							},
 						]);
