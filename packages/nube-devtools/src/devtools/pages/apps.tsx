@@ -48,8 +48,9 @@ export function Apps() {
 	const [selectedApp, setSelectedApp] = useState<NubeSDKEvent | null>(null);
 	const [localModeData, setLocalModeData] =
 		useState<LocalModeStoredData | null>(null);
-	const [analysisReport, setAnalysisReport] =
-		useState<AnalysisReport | null>(null);
+	const [analysisReport, setAnalysisReport] = useState<AnalysisReport | null>(
+		null,
+	);
 	const [isAnalyzing, setIsAnalyzing] = useState(false);
 	const analysisIdRef = useRef(0);
 
@@ -277,36 +278,36 @@ export function Apps() {
 							)}
 						</ResizablePanel>
 						<ResizableHandle />
-					<ResizablePanel>
-						{selectedApp && (
-							<div className="h-full overflow-y-auto">
-								<AppDetailPanel
-									id={selectedApp.data.id}
-									registered={selectedApp.data.registered}
-									script={selectedApp.data.script}
-									scriptStatus={scriptStatuses[selectedApp.data.script]}
-								/>
-								<Separator />
-								{analysisReport && !isAnalyzing ? (
-									<div className="p-4">
-										<BundleAnalysisPanel
-											analysis={analysisReport}
-											onRetryAnalysis={() =>
-												runAnalysis(selectedApp.data.script)
-											}
-										/>
-									</div>
-								) : (
-									<div className="flex items-center justify-center gap-2 p-8">
-										<Loader2 className="size-5 animate-spin text-zinc-500" />
-										<span className="text-sm text-zinc-500">
-											Analyzing bundle…
-										</span>
-									</div>
-								)}
-							</div>
-						)}
-					</ResizablePanel>
+						<ResizablePanel>
+							{selectedApp && (
+								<div className="h-full overflow-y-auto">
+									<AppDetailPanel
+										id={selectedApp.data.id}
+										registered={selectedApp.data.registered}
+										script={selectedApp.data.script}
+										scriptStatus={scriptStatuses[selectedApp.data.script]}
+									/>
+									<Separator />
+									{analysisReport && !isAnalyzing ? (
+										<div className="p-4">
+											<BundleAnalysisPanel
+												analysis={analysisReport}
+												onRetryAnalysis={() =>
+													runAnalysis(selectedApp.data.script)
+												}
+											/>
+										</div>
+									) : (
+										<div className="flex items-center justify-center gap-2 p-8">
+											<Loader2 className="size-5 animate-spin text-zinc-500" />
+											<span className="text-sm text-zinc-500">
+												Analyzing bundle…
+											</span>
+										</div>
+									)}
+								</div>
+							)}
+						</ResizablePanel>
 					</ResizablePanelGroup>
 				</div>
 			</div>
