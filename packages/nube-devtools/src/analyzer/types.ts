@@ -10,6 +10,7 @@ export type AnalyzeRuleType =
   | 'function-constructor'
   | 'xhr'
   | 'console'
+  | 'browser-storage'
 
 export interface AnalyzeRule {
   type: AnalyzeRuleType

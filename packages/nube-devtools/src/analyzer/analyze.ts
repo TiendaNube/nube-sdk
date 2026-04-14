@@ -41,6 +41,8 @@ const DOM_QUERY_METHODS = new Set([
 
 const WORKER_RISKY_GLOBALS = new Set(['window', 'document', 'parent', 'frames', 'frameElement'])
 
+const BROWSER_STORAGE_GLOBALS = new Set(['localStorage', 'sessionStorage'])
+
 /** Default severity per emitted rule id when not overridden by `rules`. */
 const DEFAULT_SEVERITY_BY_RULE: Record<string, AnalysisSeverity> = {
   'dom-query': 'error',
@@ -52,6 +54,7 @@ const DEFAULT_SEVERITY_BY_RULE: Record<string, AnalysisSeverity> = {
   'import-scripts': 'warning',
   xhr: 'info',
   console: 'info',
+  'browser-storage': 'warning',
 }
 
 const INTERNAL_RULE_TO_USER_TYPE: Record<string, AnalyzeRuleType> = {
@@ -64,6 +67,7 @@ const INTERNAL_RULE_TO_USER_TYPE: Record<string, AnalyzeRuleType> = {
   'function-constructor': 'function-constructor',
   xhr: 'xhr',
   console: 'console',
+  'browser-storage': 'browser-storage',
 }
 
 type RuleRuntime =
@@ -535,6 +539,20 @@ async function analyzeSource(source: string, options: SourceAnalysisOptions): Pr
             obj === 'window' || obj === 'document'
               ? 'Not on dedicated WorkerGlobalScope; use self/globalThis or remove from the app bundle.'
               : 'Behavior may differ; remove from the app if this access is unintended.',
+            node,
+          )
+        }
+        if (BROWSER_STORAGE_GLOBALS.has(obj)) {
+          const prop =
+            !node.computed && node.property.type === 'Identifier'
+              ? node.property.name
+              : node.computed
+                ? '[computed]'
+                : '?'
+          push(
+            'browser-storage',
+            `Access ${obj}.${prop}`,
+            `Direct ${obj} access is not available; use nube.getBrowserAPIs() from NubeSDK instead.`,
             node,
           )
         }
