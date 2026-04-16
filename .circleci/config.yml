@@ -139,8 +139,12 @@ jobs:
       - run:
           name: Publish @tiendanube/nube-sdk-snippet using OIDC
           command: |
+            # Obtenemos el token dinámico
             export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
-            npx npm@11 publish --workspace packages/snippet --access public
+            
+            # CORRECCIÓN: Usamos el nombre del paquete (@tiendanube/nube-sdk-snippet)
+            # Esto evita que npm falle si no encuentra la ruta exacta en la caché
+            npx npm@11 publish --workspace @tiendanube/nube-sdk-snippet --access public
 
   # --- JOBS UNSTABLE (OIDC) ---
 
