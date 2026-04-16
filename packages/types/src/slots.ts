@@ -192,10 +192,13 @@ export const STOREFRONT_UI_SLOT = {
 	/** @deprecated Use BEFORE_LINE_ITEM instead. */
 	CART_LINE_ITEM_TOP: "cart_line_item_top",
 	BEFORE_PRODUCT_DETAIL_NAME: "before_product_detail_name",
-	BEFORE_PRODUCT_DETAIL_PAYMENT_OPTIONS: "before_product_detail_payment_options",
+	BEFORE_PRODUCT_DETAIL_PAYMENT_OPTIONS:
+		"before_product_detail_payment_options",
 	AFTER_PRODUCT_DETAIL_PAYMENT_OPTIONS: "after_product_detail_payment_options",
-	BEFORE_PRODUCT_DETAIL_SHIPPING_CALCULATOR: "before_product_detail_shipping_calculator",
-	AFTER_PRODUCT_DETAIL_SHIPPING_CALCULATOR: "after_product_detail_shipping_calculator",
+	BEFORE_PRODUCT_DETAIL_SHIPPING_CALCULATOR:
+		"before_product_detail_shipping_calculator",
+	AFTER_PRODUCT_DETAIL_SHIPPING_CALCULATOR:
+		"after_product_detail_shipping_calculator",
 	BEFORE_CART_SHIPPING_CALCULATOR: "before_cart_shipping_calculator",
 	AFTER_CART_SHIPPING_CALCULATOR: "after_cart_shipping_calculator",
 } as const;
