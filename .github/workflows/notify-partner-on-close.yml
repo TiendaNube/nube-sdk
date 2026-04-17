@@ -1,0 +1,95 @@
+name: Notify Partner on Close
+
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  issues: write
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const MARKER = '<!-- notify-partner-on-close -->';
+
+            if (issue.state_reason !== 'completed') {
+              core.info(`Skip: state_reason is "${issue.state_reason}", expected "completed".`);
+              return;
+            }
+
+            const author = issue.user;
+            if (!author) {
+              core.info('Skip: issue has no author (deleted user).');
+              return;
+            }
+
+            if (author.type === 'Bot' || author.login.endsWith('[bot]')) {
+              core.info(`Skip: author "${author.login}" is a bot (issue likely mirrored from Linear).`);
+              return;
+            }
+
+            const externalAssociations = ['NONE', 'CONTRIBUTOR', 'FIRST_TIME_CONTRIBUTOR'];
+            if (!externalAssociations.includes(issue.author_association)) {
+              core.info(`Skip: author_association is "${issue.author_association}" (internal member).`);
+              return;
+            }
+
+            const closedBy = context.payload.sender?.login;
+            if (closedBy && closedBy === author.login) {
+              core.info(`Skip: author "${author.login}" closed their own issue.`);
+              return;
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              per_page: 100,
+            });
+
+            const alreadyNotified = comments.some(c => c.body && c.body.includes(MARKER));
+            if (alreadyNotified) {
+              core.info('Skip: issue already has a notify-partner-on-close comment (idempotency).');
+              return;
+            }
+
+            const labels = (issue.labels || []).map(l => (typeof l === 'string' ? l : l.name));
+            const isBug = labels.includes('bug');
+
+            const bugBody = `${MARKER}
+            Hi @${author.login}!
+
+            The fix for this bug has been delivered. Could you confirm that the issue is resolved on your side?
+
+            If you still see the problem, please reopen this issue with the latest details so we can investigate further.
+
+            best,
+            Extensibility Team`;
+
+            const requestBody = `${MARKER}
+            Hi @${author.login}!
+
+            Good news, your request has been delivered and is now available.
+
+            Could you take a few minutes to test it and let us know if it works as expected? Any feedback on the implementation is very welcome.
+
+            If something isn't working as expected, feel free to reopen this issue or open a new one.
+
+            best,
+            Extensibility Team`;
+
+            const body = (isBug ? bugBody : requestBody).replace(/^            /gm, '');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body,
+            });
+
+            core.info(`Posted notify-partner-on-close comment (${isBug ? 'bug' : 'request'}) on issue #${issue.number} for @${author.login}.`);
