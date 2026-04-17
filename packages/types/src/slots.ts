@@ -129,6 +129,12 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_line_item"} BEFORE_LINE_ITEM - Before each cart line item.
  * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item. Deprecated; use BEFORE_LINE_ITEM instead.
  * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
+ * @property {"before_product_detail_payment_options"} BEFORE_PRODUCT_DETAIL_PAYMENT_OPTIONS - Before the payment options accordion on the product detail page.
+ * @property {"after_product_detail_payment_options"} AFTER_PRODUCT_DETAIL_PAYMENT_OPTIONS - After the payment options accordion on the product detail page.
+ * @property {"before_product_detail_shipping_calculator"} BEFORE_PRODUCT_DETAIL_SHIPPING_CALCULATOR - Before the shipping calculator on the product detail page.
+ * @property {"after_product_detail_shipping_calculator"} AFTER_PRODUCT_DETAIL_SHIPPING_CALCULATOR - After the shipping calculator on the product detail page.
+ * @property {"before_cart_shipping_calculator"} BEFORE_CART_SHIPPING_CALCULATOR - Before the shipping calculator on the cart page.
+ * @property {"after_cart_shipping_calculator"} AFTER_CART_SHIPPING_CALCULATOR - After the shipping calculator on the cart page.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -186,6 +192,15 @@ export const STOREFRONT_UI_SLOT = {
 	/** @deprecated Use BEFORE_LINE_ITEM instead. */
 	CART_LINE_ITEM_TOP: "cart_line_item_top",
 	BEFORE_PRODUCT_DETAIL_NAME: "before_product_detail_name",
+	BEFORE_PRODUCT_DETAIL_PAYMENT_OPTIONS:
+		"before_product_detail_payment_options",
+	AFTER_PRODUCT_DETAIL_PAYMENT_OPTIONS: "after_product_detail_payment_options",
+	BEFORE_PRODUCT_DETAIL_SHIPPING_CALCULATOR:
+		"before_product_detail_shipping_calculator",
+	AFTER_PRODUCT_DETAIL_SHIPPING_CALCULATOR:
+		"after_product_detail_shipping_calculator",
+	BEFORE_CART_SHIPPING_CALCULATOR: "before_cart_shipping_calculator",
+	AFTER_CART_SHIPPING_CALCULATOR: "after_cart_shipping_calculator",
 } as const;
 
 /**
