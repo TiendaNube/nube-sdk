@@ -133,12 +133,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_product_detail_payment_options"} AFTER_PRODUCT_DETAIL_PAYMENT_OPTIONS - After the payment options accordion on the product detail page.
  * @property {"before_product_detail_shipping_options"} BEFORE_PRODUCT_DETAIL_SHIPPING_OPTIONS - Before the shipping options on the product detail page.
  * @property {"after_product_detail_shipping_options"} AFTER_PRODUCT_DETAIL_SHIPPING_OPTIONS - After the shipping options on the product detail page.
- * @property {"before_product_detail_shipping_calculator"} BEFORE_PRODUCT_DETAIL_SHIPPING_CALCULATOR - Before the shipping options on the product detail page. Deprecated; use BEFORE_PRODUCT_DETAIL_SHIPPING_OPTIONS instead.
- * @property {"after_product_detail_shipping_calculator"} AFTER_PRODUCT_DETAIL_SHIPPING_CALCULATOR - After the shipping options on the product detail page. Deprecated; use AFTER_PRODUCT_DETAIL_SHIPPING_OPTIONS instead.
  * @property {"before_cart_shipping_options"} BEFORE_CART_SHIPPING_OPTIONS - Before the shipping options on the cart page.
  * @property {"after_cart_shipping_options"} AFTER_CART_SHIPPING_OPTIONS - After the shipping options on the cart page.
- * @property {"before_cart_shipping_calculator"} BEFORE_CART_SHIPPING_CALCULATOR - Before the shipping options on the cart page. Deprecated; use BEFORE_CART_SHIPPING_OPTIONS instead.
- * @property {"after_cart_shipping_calculator"} AFTER_CART_SHIPPING_CALCULATOR - After the shipping options on the cart page. Deprecated; use AFTER_CART_SHIPPING_OPTIONS instead.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -203,18 +199,8 @@ export const STOREFRONT_UI_SLOT = {
 		"before_product_detail_shipping_options",
 	AFTER_PRODUCT_DETAIL_SHIPPING_OPTIONS:
 		"after_product_detail_shipping_options",
-	/** @deprecated Use BEFORE_PRODUCT_DETAIL_SHIPPING_OPTIONS instead. */
-	BEFORE_PRODUCT_DETAIL_SHIPPING_CALCULATOR:
-		"before_product_detail_shipping_calculator",
-	/** @deprecated Use AFTER_PRODUCT_DETAIL_SHIPPING_OPTIONS instead. */
-	AFTER_PRODUCT_DETAIL_SHIPPING_CALCULATOR:
-		"after_product_detail_shipping_calculator",
 	BEFORE_CART_SHIPPING_OPTIONS: "before_cart_shipping_options",
 	AFTER_CART_SHIPPING_OPTIONS: "after_cart_shipping_options",
-	/** @deprecated Use BEFORE_CART_SHIPPING_OPTIONS instead. */
-	BEFORE_CART_SHIPPING_CALCULATOR: "before_cart_shipping_calculator",
-	/** @deprecated Use AFTER_CART_SHIPPING_OPTIONS instead. */
-	AFTER_CART_SHIPPING_CALCULATOR: "after_cart_shipping_calculator",
 } as const;
 
 /**
