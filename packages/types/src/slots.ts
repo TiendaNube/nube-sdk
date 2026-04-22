@@ -131,8 +131,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
  * @property {"before_product_detail_payment_options"} BEFORE_PRODUCT_DETAIL_PAYMENT_OPTIONS - Before the payment options accordion on the product detail page.
  * @property {"after_product_detail_payment_options"} AFTER_PRODUCT_DETAIL_PAYMENT_OPTIONS - After the payment options accordion on the product detail page.
- * @property {"before_product_detail_shipping_calculator"} BEFORE_PRODUCT_DETAIL_SHIPPING_CALCULATOR - Before the shipping calculator on the product detail page.
- * @property {"after_product_detail_shipping_calculator"} AFTER_PRODUCT_DETAIL_SHIPPING_CALCULATOR - After the shipping calculator on the product detail page.
+ * @property {"before_product_detail_shipping_options"} BEFORE_PRODUCT_DETAIL_SHIPPING_OPTIONS - Before the shipping options on the product detail page.
+ * @property {"after_product_detail_shipping_options"} AFTER_PRODUCT_DETAIL_SHIPPING_OPTIONS - After the shipping options on the product detail page.
  * @property {"before_cart_shipping_options"} BEFORE_CART_SHIPPING_OPTIONS - Before the shipping options on the cart page.
  * @property {"after_cart_shipping_options"} AFTER_CART_SHIPPING_OPTIONS - After the shipping options on the cart page.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
@@ -195,10 +195,10 @@ export const STOREFRONT_UI_SLOT = {
 	BEFORE_PRODUCT_DETAIL_PAYMENT_OPTIONS:
 		"before_product_detail_payment_options",
 	AFTER_PRODUCT_DETAIL_PAYMENT_OPTIONS: "after_product_detail_payment_options",
-	BEFORE_PRODUCT_DETAIL_SHIPPING_CALCULATOR:
-		"before_product_detail_shipping_calculator",
-	AFTER_PRODUCT_DETAIL_SHIPPING_CALCULATOR:
-		"after_product_detail_shipping_calculator",
+	BEFORE_PRODUCT_DETAIL_SHIPPING_OPTIONS:
+		"before_product_detail_shipping_options",
+	AFTER_PRODUCT_DETAIL_SHIPPING_OPTIONS:
+		"after_product_detail_shipping_options",
 	BEFORE_CART_SHIPPING_OPTIONS: "before_cart_shipping_options",
 	AFTER_CART_SHIPPING_OPTIONS: "after_cart_shipping_options",
 } as const;
