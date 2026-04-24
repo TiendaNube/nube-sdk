@@ -7,12 +7,15 @@ import { useDynamicWidth } from "@/devtools/hooks";
 import { convertSvgToNubeSDK, copyToClipboard, downloadFile } from "@/utils";
 import { Copy, Download } from "lucide-react";
 import { useState } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
+import tsx from "react-syntax-highlighter/dist/esm/languages/prism/tsx";
 import {
 	oneDark,
 	oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { toast } from "sonner";
+
+SyntaxHighlighter.registerLanguage("tsx", tsx);
 
 export function SvgConverter() {
 	const [inputSvg, setInputSvg] = useState<string>("");
@@ -129,15 +132,7 @@ export function SvgConverter() {
 									</Button>
 								</div>
 							)}
-							<div
-								className="h-full"
-								style={{
-									scrollbarWidth: "thin",
-									scrollbarColor: isDarkMode
-										? "#090909 #141414"
-										: "#f8f9fa #f8f9fa",
-								}}
-							>
+							<div className="h-full">
 								<SyntaxHighlighter
 									language="tsx"
 									style={isDarkMode ? oneDark : oneLight}
@@ -159,7 +154,7 @@ export function SvgConverter() {
 									showLineNumbers={true}
 									wrapLines={true}
 									wrapLongLines={true}
-									className="custom-scrollbar"
+									className=""
 								>
 									{outputCode || "// Converted code will appear here..."}
 								</SyntaxHighlighter>

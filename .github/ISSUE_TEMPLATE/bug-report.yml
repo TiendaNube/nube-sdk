@@ -3,6 +3,11 @@ description: Report a bug in NubeSDK
 title: "[BUG] "
 labels: ["bug"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        > **Please report one bug per issue.** If you found multiple bugs, open a separate issue for each, it helps us fix them faster.
+
   - type: input
     id: app-id
     attributes:
@@ -34,7 +39,7 @@ body:
     id: bug-description
     attributes:
       label: Bug Description
-      description: Tell us what happened. The more detail you provide, the faster we can help.
+      description: Describe one bug. For multiple bugs, open separate issues.
       value: |
         **What happened?**
 

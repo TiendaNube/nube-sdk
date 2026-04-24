@@ -6,6 +6,7 @@ import {
 	ComponentIcon,
 	Database,
 	Package,
+	Server,
 } from "lucide-react";
 
 import { Badge as BadgeComponent } from "@/components/ui/badge";
@@ -44,6 +45,11 @@ const menu: {
 		title: "Apps",
 		page: PAGES.APPS,
 		icon: Package,
+	},
+	{
+		title: "Local Mode",
+		page: PAGES.LOCAL_MODE,
+		icon: Server,
 	},
 	{
 		title: "Components",

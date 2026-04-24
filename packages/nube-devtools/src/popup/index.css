@@ -1,0 +1,9 @@
+body {
+	min-width: 23rem;
+	margin: 0;
+}
+
+body #app {
+	display: flex;
+	flex-direction: column;
+}

@@ -11,12 +11,10 @@ export default defineConfig(({ mode }) => {
     build: {
       emptyOutDir: true,
       outDir: 'build',
+      cssCodeSplit: false,
       rollupOptions: {
         input: {
           panel: 'panel.html',
-        },
-        output: {
-          chunkFileNames: 'assets/chunk-[hash].js',
         },
       },
     },

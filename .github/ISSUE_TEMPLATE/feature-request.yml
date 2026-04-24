@@ -3,6 +3,11 @@ description: Suggest a new feature or improvement for NubeSDK
 title: "[REQUEST] "
 labels: ["Partner Request"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        > **Please open one issue per request.** If you have multiple requests, open a separate issue for each, it helps us resolve them faster.
+
   - type: input
     id: app-id
     attributes:
@@ -34,7 +39,7 @@ body:
     id: feature-description
     attributes:
       label: Feature Description
-      description: Tell us what you'd like to see in NubeSDK.
+      description: Describe one feature. For multiple requests, open separate issues.
       value: |
         **What problem does this solve?**
 

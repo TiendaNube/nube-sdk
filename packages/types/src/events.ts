@@ -23,6 +23,7 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  * @property {"coupon:add"} COUPON_ADD - Used to add a coupon to the cart.
  * @property {"coupon:remove"} COUPON_REMOVE - Used to remove a coupon from the cart.
  * @property {"shipping:select"} SHIPPING_SELECT - Used to select shipping option.
+ * @property {"order:add:extra"} ORDER_ADD_EXTRA - Used to add additional metadata to an order.
  */
 export const SENDABLE_EVENT = {
 	CART_VALIDATE: "cart:validate",
@@ -32,6 +33,7 @@ export const SENDABLE_EVENT = {
 	UI_SLOT_SET: "ui:slot:set",
 	SHIPPING_UPDATE_LABEL: "shipping:update:label",
 	ORDER_ADD_TRACKING_STATUSES: "order:add:tracking_statuses",
+	ORDER_ADD_EXTRA: "order:add:extra",
 	COUPON_ADD: "coupon:add",
 	COUPON_REMOVE: "coupon:remove",
 	SHIPPING_SELECT: "shipping:select",

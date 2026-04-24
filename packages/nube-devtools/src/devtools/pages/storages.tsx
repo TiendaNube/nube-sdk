@@ -12,7 +12,6 @@ import { useNubeSDKStorage } from "@/contexts/nube-sdk-storage-context";
 import Layout from "@/devtools/components/layout";
 import { TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { JsonViewer } from "../components/json-viewer";
 import { TableRowItem } from "../components/table-row-item";
 
@@ -31,7 +30,7 @@ export function Storages() {
 						setEvents((prevEvents) => [
 							...prevEvents,
 							{
-								id: uuidv4(),
+								id: crypto.randomUUID(),
 								data: message.payload,
 							},
 						]);
@@ -104,10 +103,7 @@ export function Storages() {
 						direction="horizontal"
 					>
 						<ResizablePanel defaultSize={40}>
-							<div
-								ref={tableContainerRef}
-								className="h-full overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 dark:[&::-webkit-scrollbar-thumb:hover]:bg-gray-600"
-							>
+							<div ref={tableContainerRef} className="h-full overflow-y-auto">
 								{events.length === 0 ? (
 									<div className="flex h-full flex-col items-center justify-center gap-2">
 										<p className="text-sm">No storage data found</p>
@@ -144,7 +140,7 @@ export function Storages() {
 						</ResizablePanel>
 						<ResizableHandle />
 						<ResizablePanel>
-							<div className="flex h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+							<div className="flex h-full overflow-y-auto">
 								{selectedEvent && (
 									<div className="text-sm">
 										<JsonViewer className="p-2" data={parsedEventData} />
