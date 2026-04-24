@@ -135,6 +135,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_product_detail_shipping_options"} AFTER_PRODUCT_DETAIL_SHIPPING_OPTIONS - After the shipping options on the product detail page.
  * @property {"before_cart_shipping_options"} BEFORE_CART_SHIPPING_OPTIONS - Before the shipping options on the cart page.
  * @property {"after_cart_shipping_options"} AFTER_CART_SHIPPING_OPTIONS - After the shipping options on the cart page.
+ * @property {"before_register_form"} BEFORE_REGISTER_FORM - Before the customer registration form on the storefront register page.
+ * @property {"after_register_form"} AFTER_REGISTER_FORM - After the customer registration form on the storefront register page.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -201,6 +203,8 @@ export const STOREFRONT_UI_SLOT = {
 		"after_product_detail_shipping_options",
 	BEFORE_CART_SHIPPING_OPTIONS: "before_cart_shipping_options",
 	AFTER_CART_SHIPPING_OPTIONS: "after_cart_shipping_options",
+	BEFORE_REGISTER_FORM: "before_register_form",
+	AFTER_REGISTER_FORM: "after_register_form",
 } as const;
 
 /**
