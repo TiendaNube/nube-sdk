@@ -357,6 +357,9 @@ export type Store = {
 
 	/** Language code of the store (e.g., "en", "es"). */
 	language: LanguageKey;
+
+	/** The store's theme template (e.g., "recife", "morelia", "rio"). */
+	theme: string;
 };
 
 type FixedProductListSectionName =
