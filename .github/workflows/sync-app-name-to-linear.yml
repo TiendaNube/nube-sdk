@@ -1,4 +1,4 @@
-name: Sync Severity to Linear Priority
+name: Sync App Name to Linear Title
 
 on:
   issues:
@@ -8,9 +8,9 @@ permissions:
   issues: write
 
 jobs:
-  sync-priority:
+  sync-title:
     runs-on: ubuntu-latest
-    if: contains(github.event.issue.labels.*.name, 'bug')
+    if: contains(github.event.issue.labels.*.name, 'Partner Request')
     steps:
       - uses: actions/github-script@v7
         env:
@@ -26,47 +26,22 @@ jobs:
             const appNameMatch = body.match(/### App name\s*\n+([^\n#]+)/);
             const appName = appNameMatch ? appNameMatch[1].trim() : null;
 
-            // Compute new title and rename GitHub issue if app name is provided
-            let newTitle = null;
-            if (appName) {
-              const titleText = issueTitle.replace(/^\[(BUG|REQUEST)\]\s*/i, '');
-              newTitle = `[${appName}] ${titleText}`.trim();
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issueNumber,
-                title: newTitle,
-              });
-              core.info(`Renamed issue title to: "${newTitle}"`);
-            }
-
-            const severityMap = {
-              'Urgent': 1,
-              'High': 2,
-              'Medium': 3,
-              'Low': 4,
-            };
-
-            let priority = null;
-            for (const [key, value] of Object.entries(severityMap)) {
-              if (body.includes(`${key} -`)) {
-                priority = value;
-                break;
-              }
-            }
-
-            if (priority === null && !newTitle) {
-              core.info('No severity selected and no app name provided, skipping Linear sync.');
+            if (!appName) {
+              core.info('No app name provided, skipping title sync.');
               return;
             }
 
-            if (priority === null) {
-              core.info('No severity selected, will only update title in Linear.');
-            } else {
-              core.info(`Severity detected: priority level ${priority}`);
-            }
+            const titleText = issueTitle.replace(/^\[(BUG|REQUEST)\]\s*/i, '');
+            const newTitle = `[${appName}] ${titleText}`.trim();
 
-            core.info(`Looking for Linear issue with title: "${issueTitle}"`);
+            // Rename GitHub issue title
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              title: newTitle,
+            });
+            core.info(`Renamed issue title to: "${newTitle}"`);
 
             const linearApiKey = process.env.LINEAR_API_KEY;
             const linearTeamId = process.env.LINEAR_TEAM_ID;
@@ -87,6 +62,8 @@ jobs:
               });
               return response.json();
             }
+
+            core.info(`Looking for Linear issue with title: "${issueTitle}"`);
 
             // Only match issues created recently to avoid picking up old issues with similar titles
             const issueCreatedAt = context.payload.issue.created_at;
@@ -145,44 +122,30 @@ jobs:
             }
 
             if (!linearIssueId) {
-              core.warning(`Could not find Linear issue matching title "${issueTitle}" after ${maxAttempts} attempts. The team may need to set priority/title manually.`);
+              core.warning(`Could not find Linear issue matching title "${issueTitle}" after ${maxAttempts} attempts. The team may need to update the title manually.`);
               return;
             }
 
-            // Build update input dynamically — only send fields that need updating
-            const mutationVarDecls = ['$issueId: String!'];
-            const mutationInputFields = [];
-            const mutationVars = { issueId: linearIssueId };
-
-            if (priority !== null) {
-              mutationVarDecls.push('$priority: Int!');
-              mutationInputFields.push('priority: $priority');
-              mutationVars.priority = priority;
-            }
-            if (newTitle) {
-              mutationVarDecls.push('$title: String!');
-              mutationInputFields.push('title: $title');
-              mutationVars.title = newTitle;
-            }
-
             const updateQuery = `
-              mutation(${mutationVarDecls.join(', ')}) {
-                issueUpdate(id: $issueId, input: { ${mutationInputFields.join(', ')} }) {
+              mutation($issueId: String!, $title: String!) {
+                issueUpdate(id: $issueId, input: { title: $title }) {
                   success
                   issue {
                     identifier
-                    priority
                     title
                   }
                 }
               }
             `;
 
-            const updateData = await queryLinear(updateQuery, mutationVars);
+            const updateData = await queryLinear(updateQuery, {
+              issueId: linearIssueId,
+              title: newTitle,
+            });
 
             if (updateData.data?.issueUpdate?.success) {
               const updated = updateData.data.issueUpdate.issue;
-              core.info(`Updated Linear issue ${updated.identifier}: priority=${updated.priority}, title="${updated.title}"`);
+              core.info(`Updated Linear issue ${updated.identifier}: title="${updated.title}"`);
             } else {
-              core.setFailed(`Failed to update Linear issue: ${JSON.stringify(updateData)}`);
+              core.setFailed(`Failed to update Linear title: ${JSON.stringify(updateData)}`);
             }
