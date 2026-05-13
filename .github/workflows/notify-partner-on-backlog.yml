@@ -1,0 +1,194 @@
+name: Notify Partner on Backlog
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # diário às 22:00 UTC (19h BRT, fim de expediente)
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+
+concurrency:
+  group: notify-partner-on-backlog
+  cancel-in-progress: false
+
+env:
+  # ISO 8601 — só notifica issues que transicionaram pra Backlog APÓS esta data.
+  # Atualize antes do merge para um timestamp imediatamente anterior ao deploy.
+  BACKLOG_CUTOFF: '2026-05-13T00:00:00Z'
+  TARGET_STATE_TYPE: 'backlog'
+  REQUIRED_FROM_STATE_TYPE: 'triage'
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          LINEAR_TEAM_ID: ${{ secrets.LINEAR_TEAM_ID }}
+        with:
+          script: |
+            const CUTOFF = new Date(process.env.BACKLOG_CUTOFF);
+            const TARGET_TYPE = process.env.TARGET_STATE_TYPE;
+            const FROM_TYPE = process.env.REQUIRED_FROM_STATE_TYPE;
+            const MARKER = '<!-- notify-partner-on-backlog -->';
+            const EXTERNAL_ASSOC = ['NONE', 'CONTRIBUTOR', 'FIRST_TIME_CONTRIBUTOR', 'FIRST_TIMER'];
+
+            if (!process.env.LINEAR_API_KEY || !process.env.LINEAR_TEAM_ID) {
+              core.setFailed('Missing LINEAR_API_KEY or LINEAR_TEAM_ID secret.');
+              return;
+            }
+            if (isNaN(CUTOFF.getTime())) {
+              core.setFailed(`Invalid BACKLOG_CUTOFF: "${process.env.BACKLOG_CUTOFF}"`);
+              return;
+            }
+
+            const query = `
+              query BacklogIssues($teamId: ID!, $targetType: String!) {
+                issues(
+                  filter: {
+                    team: { id: { eq: $teamId } }
+                    state: { type: { eq: $targetType } }
+                    attachments: { sourceType: { eq: "github" } }
+                  }
+                  first: 100
+                ) {
+                  nodes {
+                    id
+                    identifier
+                    title
+                    url
+                    history(first: 50) {
+                      nodes {
+                        createdAt
+                        fromState { name type }
+                        toState   { name type }
+                      }
+                    }
+                    attachments(first: 20) {
+                      nodes { url sourceType }
+                    }
+                  }
+                }
+              }
+            `;
+
+            const linearRes = await fetch('https://api.linear.app/graphql', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': process.env.LINEAR_API_KEY,
+              },
+              body: JSON.stringify({
+                query,
+                variables: {
+                  teamId: process.env.LINEAR_TEAM_ID,
+                  targetType: TARGET_TYPE,
+                },
+              }),
+            });
+
+            if (!linearRes.ok) {
+              core.setFailed(`Linear API HTTP ${linearRes.status}: ${await linearRes.text()}`);
+              return;
+            }
+
+            const { data, errors } = await linearRes.json();
+            if (errors) {
+              core.setFailed(`Linear GraphQL errors: ${JSON.stringify(errors)}`);
+              return;
+            }
+
+            const issues = data?.issues?.nodes ?? [];
+            core.info(`Fetched ${issues.length} Linear backlog issues with GitHub attachments.`);
+
+            let notified = 0;
+            let skipped = 0;
+
+            for (const issue of issues) {
+              const transitions = (issue.history?.nodes ?? [])
+                .filter(h => h.toState?.type === TARGET_TYPE)
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+              const lastTransition = transitions[0];
+
+              if (!lastTransition) {
+                core.info(`Skip ${issue.identifier}: no transition into target state found.`);
+                skipped++;
+                continue;
+              }
+              if (new Date(lastTransition.createdAt) < CUTOFF) {
+                core.info(`Skip ${issue.identifier}: transition predates cutoff (${lastTransition.createdAt}).`);
+                skipped++;
+                continue;
+              }
+              if (lastTransition.fromState?.type !== FROM_TYPE) {
+                core.info(`Skip ${issue.identifier}: fromState.type="${lastTransition.fromState?.type}" (expected "${FROM_TYPE}").`);
+                skipped++;
+                continue;
+              }
+
+              const ghAttachment = (issue.attachments?.nodes ?? []).find(a => a.sourceType === 'github');
+              if (!ghAttachment) {
+                core.info(`Skip ${issue.identifier}: no GitHub attachment.`);
+                skipped++;
+                continue;
+              }
+              const m = ghAttachment.url.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/);
+              if (!m) {
+                core.info(`Skip ${issue.identifier}: attachment URL not an issue link (${ghAttachment.url}).`);
+                skipped++;
+                continue;
+              }
+              const [, owner, repo, num] = m;
+              const issue_number = Number(num);
+
+              let gh;
+              try {
+                ({ data: gh } = await github.rest.issues.get({ owner, repo, issue_number }));
+              } catch (err) {
+                core.warning(`Failed to fetch ${owner}/${repo}#${issue_number} for Linear ${issue.identifier}: ${err.message}`);
+                skipped++;
+                continue;
+              }
+
+              if (gh.state === 'closed') {
+                core.info(`Skip ${owner}/${repo}#${issue_number}: GH issue is closed.`);
+                skipped++;
+                continue;
+              }
+              if (gh.user?.type === 'Bot' || gh.user?.login.endsWith('[bot]')) {
+                core.info(`Skip ${owner}/${repo}#${issue_number}: author is a bot (${gh.user?.login}).`);
+                skipped++;
+                continue;
+              }
+              if (!EXTERNAL_ASSOC.includes(gh.author_association)) {
+                core.info(`Skip ${owner}/${repo}#${issue_number}: author_association="${gh.author_association}" not external.`);
+                skipped++;
+                continue;
+              }
+
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner, repo, issue_number, per_page: 100,
+              });
+              if (comments.some(c => c.body?.includes(MARKER))) {
+                core.info(`Skip ${owner}/${repo}#${issue_number}: marker already present.`);
+                skipped++;
+                continue;
+              }
+
+              const body = `${MARKER}
+              Hi @${gh.user.login},
+
+              Quick update. We've reviewed your request and moved it to our backlog. You'll get a comment here as soon as it ships.
+
+              Thanks for helping us improve the SDK.
+
+              — Extensibility Team`.replace(/^              /gm, '');
+
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              core.info(`Notified ${owner}/${repo}#${issue_number} for Linear ${issue.identifier}.`);
+              notified++;
+            }
+
+            core.info(`Done. Notified: ${notified}. Skipped: ${skipped}.`);
