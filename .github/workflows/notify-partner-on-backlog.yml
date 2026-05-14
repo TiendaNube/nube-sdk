@@ -22,6 +22,7 @@ env:
 jobs:
   notify:
     runs-on: ubuntu-latest
+    if: false # desativado temporariamente — remover esta linha para reativar
     steps:
       - uses: actions/github-script@v7
         env:
