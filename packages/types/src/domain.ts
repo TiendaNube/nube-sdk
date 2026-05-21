@@ -533,7 +533,7 @@ export type AppLocation = {
 	* Equivalent to `document.referrer`. The URL of the previous page in
    	* the storefront SPA (or the external referrer for the landing page).
    	* Null on the very first pageview when there is no referrer. */
-	previousUrl: string | null;
+	referrer: string | null;
 };
 
 /**
