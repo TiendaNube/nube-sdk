@@ -523,6 +523,17 @@ export type AppLocation = {
 	 * value represents the value of that query parameter.
 	 */
 	queries: Record<string, string>;
+
+	/**
+	 * Equivalent to `document.title` on the storefront main thread,
+	 * captured by the SDK at the moment the location changed. */
+	title: string;
+
+	/**
+	 * Equivalent to `document.referrer`. The URL of the previous page in
+	 * the storefront SPA (or the external referrer for the landing page).
+	 * Null on the very first pageview when there is no referrer. */
+	referrer: string | null;
 };
 
 /**
