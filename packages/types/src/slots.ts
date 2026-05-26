@@ -15,6 +15,10 @@ import type { ObjectValues, Prettify } from "./utility";
  * @property {"corner_top_right"} CORNER_TOP_RIGHT - Top right corner of the page.
  * @property {"corner_bottom_left"} CORNER_BOTTOM_LEFT - Bottom left corner of the page.
  * @property {"corner_bottom_right"} CORNER_BOTTOM_RIGHT - Bottom right corner of the page.
+ * @property {"edge_top_center"} EDGE_TOP_CENTER - Top edge, horizontally centered.
+ * @property {"edge_bottom_center"} EDGE_BOTTOM_CENTER - Bottom edge, horizontally centered.
+ * @property {"edge_left_center"} EDGE_LEFT_CENTER - Left edge, vertically centered.
+ * @property {"edge_right_center"} EDGE_RIGHT_CENTER - Right edge, vertically centered.
  * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
  * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  * @property {"after_header"} AFTER_HEADER - After the header.
@@ -29,6 +33,10 @@ export const COMMON_UI_SLOT = {
 	CORNER_TOP_RIGHT: "corner_top_right",
 	CORNER_BOTTOM_LEFT: "corner_bottom_left",
 	CORNER_BOTTOM_RIGHT: "corner_bottom_right",
+	EDGE_TOP_CENTER: "edge_top_center",
+	EDGE_BOTTOM_CENTER: "edge_bottom_center",
+	EDGE_LEFT_CENTER: "edge_left_center",
+	EDGE_RIGHT_CENTER: "edge_right_center",
 	BEFORE_LINE_ITEMS: "before_line_items",
 	AFTER_LINE_ITEMS: "after_line_items",
 	AFTER_HEADER: "after_header",
