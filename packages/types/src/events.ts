@@ -78,7 +78,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"location:updated"} LOCATION_UPDATED - Fired when the location is updated.
  * @property {"quickbuy:open"} QUICKBUY_OPEN - Fired when the quickbuy modal is opened.
  * @property {"quickbuy:close"} QUICKBUY_CLOSE - Fired when the quickbuy modal is closed.
- * @property {"product_variant:selected"} PRODUCT_VARIANT_SELECTED - Fired when a product variant is selected.
+ * @property {"product:variant_selected"} PRODUCT_VARIANT_SELECTED - Fired when a product variant is selected.
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
 export const EVENT = {
@@ -105,7 +105,7 @@ export const EVENT = {
 	LOCATION_UPDATED: "location:updated",
 	QUICKBUY_OPEN: "quickbuy:open",
 	QUICKBUY_CLOSE: "quickbuy:close",
-	PRODUCT_VARIANT_SELECTED: "product_variant:selected",
+	PRODUCT_VARIANT_SELECTED: "product:variant_selected",
 	...SENDABLE_EVENT,
 } as const;
 
