@@ -908,7 +908,7 @@ export type NubeComponentFormRootProps = Prettify<
 		ChildrenProps & {
 			/** HTTP method used for the submission. Defaults to `POST`. */
 			method?: FormHTTPMethod;
-			/** Destination URL. Must start with `/`. */
+			/** Destination URL. */
 			target: string;
 			/**
 			 * Fires after every native `change` event from a descendant
