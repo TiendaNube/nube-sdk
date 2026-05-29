@@ -5,7 +5,7 @@
  * the SDK instance, current state and application data.
  */
 
-import type { NubeSDK, NubeSDKState } from "@tiendanube/nube-sdk-types";
+import type { NubeSDK, NubeSDKState, Nullable } from "@tiendanube/nube-sdk-types";
 
 /**
  * Gets the main NubeSDK instance.
@@ -64,3 +64,63 @@ export function getAppData(): Readonly<{
 }> {
 	return self.__APP_DATA__;
 }
+
+const CACHED_SCRIPT_URL = Object.freeze(new URL(self.__APP_DATA__.script));
+
+/**
+ * Gets the parsed URL of the application script.
+ *
+ * @returns The readonly URL instance of the application script
+ *
+ * @example
+ * ```typescript
+ * const url = getScriptURL();
+ * console.log('Script origin:', url.origin);
+ * console.log('Script pathname:', url.pathname);
+ * ```
+ *
+ * @since 0.1.0
+ */
+export function getScriptURL(): Readonly<URL> {
+	return CACHED_SCRIPT_URL;
+}
+
+/**
+ * Gets the search parameters of the application script URL.
+ *
+ * @returns The readonly URLSearchParams instance from the script URL
+ *
+ * @example
+ * ```typescript
+ * const params = getScriptSearchParams();
+ * for (const [key, value] of params) {
+ *   console.log(`${key}: ${value}`);
+ * }
+ * ```
+ *
+ * @since 0.1.0
+ */
+export function getScriptSearchParams(): Readonly<URLSearchParams> {
+	return getScriptURL().searchParams;
+}
+
+/**
+ * Gets a specific search parameter from the application script URL.
+ *
+ * @param key - The name of the search parameter to retrieve
+ * @returns The value of the search parameter, or null if not present
+ *
+ * @example
+ * ```typescript
+ * const version = getScriptParam('version');
+ * if (version) {
+ *   console.log('Script version:', version);
+ * }
+ * ```
+ *
+ * @since 0.1.0
+ */
+export function getScriptParam(key: string): Nullable<string> {
+	return getScriptSearchParams().get(key);
+}
+
