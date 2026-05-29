@@ -15,6 +15,10 @@ import type { ObjectValues, Prettify } from "./utility";
  * @property {"corner_top_right"} CORNER_TOP_RIGHT - Top right corner of the page.
  * @property {"corner_bottom_left"} CORNER_BOTTOM_LEFT - Bottom left corner of the page.
  * @property {"corner_bottom_right"} CORNER_BOTTOM_RIGHT - Bottom right corner of the page.
+ * @property {"edge_top_center"} EDGE_TOP_CENTER - Top edge, horizontally centered.
+ * @property {"edge_bottom_center"} EDGE_BOTTOM_CENTER - Bottom edge, horizontally centered.
+ * @property {"edge_left_center"} EDGE_LEFT_CENTER - Left edge, vertically centered.
+ * @property {"edge_right_center"} EDGE_RIGHT_CENTER - Right edge, vertically centered.
  * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
  * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  * @property {"after_header"} AFTER_HEADER - After the header.
@@ -29,6 +33,10 @@ export const COMMON_UI_SLOT = {
 	CORNER_TOP_RIGHT: "corner_top_right",
 	CORNER_BOTTOM_LEFT: "corner_bottom_left",
 	CORNER_BOTTOM_RIGHT: "corner_bottom_right",
+	EDGE_TOP_CENTER: "edge_top_center",
+	EDGE_BOTTOM_CENTER: "edge_bottom_center",
+	EDGE_LEFT_CENTER: "edge_left_center",
+	EDGE_RIGHT_CENTER: "edge_right_center",
 	BEFORE_LINE_ITEMS: "before_line_items",
 	AFTER_LINE_ITEMS: "after_line_items",
 	AFTER_HEADER: "after_header",
@@ -57,6 +65,10 @@ export const COMMON_UI_SLOT = {
  * @property {"before_shipping_form"} BEFORE_SHIPPING_FORM - Before the shipping form in checkout.
  * @property {"after_shipping_form"} AFTER_SHIPPING_FORM - After the shipping form in checkout.
  * @property {"after_shipping_description"} AFTER_SHIPPING_DESCRIPTION - After the shipping description in checkout.
+ * @property {"before_order_number"} BEFORE_ORDER_NUMBER - Before the order number in checkout.
+ * @property {"after_order_number"} AFTER_ORDER_NUMBER - After the order number in checkout.
+ * @property {"before_order_summary"} BEFORE_ORDER_SUMMARY - Before the order summary in checkout.
+ * @property {"after_order_summary"} AFTER_ORDER_SUMMARY - After the order summary in checkout.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const CHECKOUT_UI_SLOT = {
@@ -73,6 +85,10 @@ export const CHECKOUT_UI_SLOT = {
 	BEFORE_SHIPPING_FORM: "before_shipping_form",
 	AFTER_SHIPPING_FORM: "after_shipping_form",
 	AFTER_SHIPPING_DESCRIPTION: "after_shipping_description",
+	BEFORE_ORDER_NUMBER: "before_order_number",
+	AFTER_ORDER_NUMBER: "after_order_number",
+	BEFORE_ORDER_SUMMARY: "before_order_summary",
+	AFTER_ORDER_SUMMARY: "after_order_summary",
 } as const;
 
 /**
