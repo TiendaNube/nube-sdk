@@ -1,7 +1,4 @@
-import type {
-	NubeComponent,
-	NubeComponentProps,
-} from "@tiendanube/nube-sdk-types";
+import type { NubeComponent } from "@tiendanube/nube-sdk-types";
 import { describe, expect, it } from "vitest";
 import { box } from "../components/box";
 import { text } from "../components/text";
