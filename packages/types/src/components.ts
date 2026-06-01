@@ -834,6 +834,374 @@ export type NubeComponentToastDescription = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                            Form Components                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * HTTP methods supported by `formRoot` submissions.
+ */
+export type FormHTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+/**
+ * Input types supported by `formField`. Mirrors the subset of `<input type>`
+ * values that can be safely materialized and validated on the host DOM.
+ */
+export type FormFieldInputType = "text" | "email" | "tel" | "number" | "file";
+
+/**
+ * Keys of the native `ValidityState` interface that `formField` exposes to
+ * `formFieldError` via the `match` prop. `rangeOverflow` is reused for the
+ * custom `maxSize` validation on `file` fields.
+ */
+export type FormFieldValidityStateKey =
+	| "valueMissing"
+	| "typeMismatch"
+	| "tooShort"
+	| "tooLong"
+	| "patternMismatch"
+	| "rangeOverflow"
+	| "rangeUnderflow";
+
+/**
+ * Event handler for every event `formRoot` emits — mirrors the alias
+ * convention used by `Field`/`Select`/`Check`/`Button` (one handler type
+ * per component covering all of its events). The `value` is always a
+ * string because UI values cross the worker boundary as strings:
+ *  - on `"change"`: JSON-stringified `NubeFormData` snapshot of the form
+ *  - on `"success"`: HTTP status code as a string
+ *  - on `"fail"`: the error message
+ */
+export type NubeComponentFormRootEventHandler = NubeComponentEventHandler<
+	"change" | "success" | "fail",
+	string
+>;
+
+/**
+ * Shape of the data carried in the JSON-stringified `value` delivered to
+ * `formRoot.onChange`. Keyed by the `name` prop of each descendant field.
+ * For `formField` instances with `inputType: "file"`, the value is the
+ * file name only — the underlying `Blob` is never transferred across the
+ * worker boundary.
+ *
+ * `formRoot.onChange` follows the same wire shape as `field.onChange` /
+ * `select.onChange` / `check.onChange` — a `NubeComponentEventHandler`
+ * with a string `value`. Consumers JSON-parse the value when they need a
+ * structured snapshot:
+ *
+ *     onChange: (event) => {
+ *       const data = JSON.parse(event.value ?? "{}") as NubeFormData;
+ *       // …
+ *     }
+ */
+export type NubeFormData = Record<string, string>;
+
+/**
+ * Represents the properties available for a `formRoot` component.
+ *
+ * `formRoot` declares a native HTML form whose submission is handled on the
+ * main thread (the worker only describes it). On submit the adapter builds a
+ * `FormData`, calls `fetch(target, { method, body })`, and dispatches the
+ * outcome back to the worker through `onSuccess`/`onFail`.
+ */
+export type NubeComponentFormRootProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			/** HTTP method used for the submission. Defaults to `POST`. */
+			method?: FormHTTPMethod;
+			/** Destination URL. */
+			target: string;
+			/**
+			 * Fires after every native `change` event from a descendant
+			 * field. Mirrors the standard handler shape used by `field`,
+			 * `select` and `check`: `event.value` is a JSON-stringified
+			 * snapshot of the form keyed by each field's `name`. Files
+			 * contribute only their `name` string (Blobs do not cross the
+			 * worker boundary). Parse the value when you need structured
+			 * access (see {@link NubeFormData}).
+			 *
+			 * The `react-adapter` coalesces bursts of change events through
+			 * a 100 ms trailing-edge debounce so a single keystroke run
+			 * results in a single call.
+			 */
+			onChange?: NubeComponentFormRootEventHandler;
+			/** Callback invoked after a successful submit (value is the HTTP status). */
+			onSuccess?: NubeComponentFormRootEventHandler;
+			/** Callback invoked when the submit fails (value is the error message). */
+			onFail?: NubeComponentFormRootEventHandler;
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `formRoot` component, used as the container for declarative
+ * forms whose submit is executed on the main thread.
+ */
+export type NubeComponentFormRoot = Prettify<
+	NubeComponentBase & NubeComponentFormRootProps & { type: "formRoot" }
+>;
+
+/**
+ * Represents the properties available for a `formField` component.
+ *
+ * A `formField` is the declarative counterpart of an HTML `<input>` bound to
+ * the surrounding `formRoot`. Validation uses the native Constraint
+ * Validation API; `maxSize` for `inputType: "file"` is handled by the adapter
+ * and mapped to `rangeOverflow`.
+ *
+ * Note: the HTML `type` attribute is exposed as `inputType` to avoid
+ * collision with the component discriminator (`type: "formField"`).
+ */
+export type NubeComponentFormFieldProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			/** HTML `<input>` type. */
+			inputType: FormFieldInputType;
+			/** Field name as it appears in the submitted `FormData`. */
+			name: string;
+			/** Floating label rendered next to the input (mirrors `Field.label`). */
+			label: string;
+			required?: boolean;
+			minLength?: number;
+			maxLength?: number;
+			/** Regular expression source used for `pattern` validation. */
+			pattern?: string;
+			/** Accepted file types, only for `inputType: "file"`. */
+			accept?: string;
+			/** Maximum file size in bytes, only for `inputType: "file"`. */
+			maxSize?: number;
+			/** Style slots, same shape as `Field.style` for visual parity. */
+			style?: {
+				container?: NubeComponentStyle;
+				label?: NubeComponentStyle;
+				input?: NubeComponentStyle;
+			};
+		}
+>;
+
+/**
+ * Represents a `formField` component, used for inputs inside a `formRoot`.
+ */
+export type NubeComponentFormField = Prettify<
+	NubeComponentBase & NubeComponentFormFieldProps & { type: "formField" }
+>;
+
+/**
+ * Represents the properties available for a `formFieldError` component.
+ *
+ * Must be a direct child of `formField`. The error stays in the DOM at all
+ * times and its visibility is controlled via CSS, using the parent
+ * `formField`'s `data-validity-state` / `data-validity-error` attributes.
+ */
+export type NubeComponentFormFieldErrorProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			/** The ValidityState key that activates this message. */
+			match: FormFieldValidityStateKey;
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `formFieldError` component, used for inline validation
+ * messages associated with a single `formField`.
+ */
+export type NubeComponentFormFieldError = Prettify<
+	NubeComponentBase &
+		NubeComponentFormFieldErrorProps & { type: "formFieldError" }
+>;
+
+/**
+ * Represents the properties available for a `formSelect` component.
+ *
+ * Dropdown counterpart of `formField`. Mirrors the public `select` props but
+ * adds Form-driven validation. `valueMissing` is the only failing key
+ * produced by default (when `required` and no option selected).
+ */
+export type NubeComponentFormSelectProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			/** Field name as it appears in the submitted `FormData`. */
+			name: string;
+			/** Floating label rendered next to the select. */
+			label: string;
+			/** Selectable options (mirrors `select.options`). */
+			options: { label: string; value: string }[];
+			/** Default selected value. */
+			value?: string;
+			required?: boolean;
+			disabled?: boolean;
+			/** Style slots, same shape as `select.style`. */
+			style?: {
+				container?: NubeComponentStyle;
+				label?: NubeComponentStyle;
+				select?: NubeComponentStyle;
+			};
+		}
+>;
+
+/**
+ * Represents a `formSelect` component, used for select inputs inside a
+ * `formRoot`.
+ */
+export type NubeComponentFormSelect = Prettify<
+	NubeComponentBase & NubeComponentFormSelectProps & { type: "formSelect" }
+>;
+
+/**
+ * Represents the properties available for a `formCheckbox` component.
+ *
+ * Single checkbox bound to the surrounding `formRoot`. Mirrors the public
+ * `checkbox` props but adds Form-driven validation. `valueMissing` is the
+ * only failing key produced by default (when `required` and unchecked).
+ */
+export type NubeComponentFormCheckboxProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			/** Field name as it appears in the submitted `FormData`. */
+			name: string;
+			/** Label displayed next to the checkbox. */
+			label: string;
+			/** Initial checked state. */
+			checked?: boolean;
+			/** Value submitted when checked (defaults to the browser's `"on"`). */
+			value?: string;
+			required?: boolean;
+			disabled?: boolean;
+			/** Style slots, same shape as `checkbox.style`. */
+			style?: {
+				container?: NubeComponentStyle;
+				label?: NubeComponentStyle;
+				checkbox?: NubeComponentStyle;
+			};
+		}
+>;
+
+/**
+ * Represents a `formCheckbox` component, used for single checkboxes inside a
+ * `formRoot`.
+ */
+export type NubeComponentFormCheckbox = Prettify<
+	NubeComponentBase & NubeComponentFormCheckboxProps & { type: "formCheckbox" }
+>;
+
+/**
+ * Shared shape for the conditional `formRoot` content blocks
+ * (`formSuccess`, `formFailure`, `formSending`). Each is a simple
+ * container; the rendering gate lives in `formRoot`, which only mounts
+ * the matching block in non-`idle` states.
+ */
+type NubeComponentFormConditionalProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents the properties available for a `formSuccess` component.
+ * Mounted by `formRoot` when the submit fetch resolves with `ok: true`.
+ */
+export type NubeComponentFormSuccessProps = NubeComponentFormConditionalProps;
+
+/**
+ * Represents a `formSuccess` component — replaces the form's children
+ * with success feedback when the submit succeeds.
+ */
+export type NubeComponentFormSuccess = Prettify<
+	NubeComponentBase & NubeComponentFormSuccessProps & { type: "formSuccess" }
+>;
+
+/**
+ * Represents the properties available for a `formFailure` component.
+ * Mounted by `formRoot` when the submit fetch rejects or the response
+ * is not `ok`.
+ */
+export type NubeComponentFormFailureProps = NubeComponentFormConditionalProps;
+
+/**
+ * Represents a `formFailure` component — replaces the form's children
+ * with error feedback when the submit fails.
+ */
+export type NubeComponentFormFailure = Prettify<
+	NubeComponentBase & NubeComponentFormFailureProps & { type: "formFailure" }
+>;
+
+/**
+ * Represents the properties available for a `formSending` component.
+ * Mounted by `formRoot` while the submit fetch is in flight (typically
+ * used for loaders / skeletons).
+ */
+export type NubeComponentFormSendingProps = NubeComponentFormConditionalProps;
+
+/**
+ * Represents a `formSending` component — replaces the form's children
+ * with a "loading" UI while the submit request is pending.
+ */
+export type NubeComponentFormSending = Prettify<
+	NubeComponentBase & NubeComponentFormSendingProps & { type: "formSending" }
+>;
+
+/**
+ * Represents the properties available for a `formResetter` component.
+ *
+ * Equivalent to `<button type="reset">`. Children render as the button
+ * label. Mirrors the style surface of `formSubmitter` exactly except
+ * `onClick`, which is owned by the surrounding `formRoot` (the click maps
+ * to the native form reset, which `formRoot` listens to via `onReset` and
+ * walks its registered fields to clear React-controlled state).
+ */
+export type NubeComponentFormResetterProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			disabled: boolean;
+			variant: "primary" | "secondary" | "transparent" | "link";
+			width: Size;
+			height: Size;
+			style: NubeComponentStyle;
+			ariaLabel: string;
+		}>
+>;
+
+/**
+ * Represents a `formResetter` component, used to clear all descendant form
+ * fields back to their initial state.
+ */
+export type NubeComponentFormResetter = Prettify<
+	NubeComponentBase & NubeComponentFormResetterProps & { type: "formResetter" }
+>;
+
+/**
+ * Represents the properties available for a `formSubmitter` component.
+ *
+ * Equivalent to `<button type="submit">`. Children render as the button
+ * label. Mirrors the style surface of the platform's `button` component —
+ * `variant`, `disabled`, `width`, `height`, `style`, `ariaLabel` — except
+ * `onClick`, since submission is owned by the surrounding `formRoot`.
+ */
+export type NubeComponentFormSubmitterProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			disabled: boolean;
+			variant: "primary" | "secondary" | "transparent" | "link";
+			width: Size;
+			height: Size;
+			style: NubeComponentStyle;
+			ariaLabel: string;
+		}>
+>;
+
+/**
+ * Represents a `formSubmitter` component, used to trigger submission of the
+ * surrounding `formRoot`.
+ */
+export type NubeComponentFormSubmitter = Prettify<
+	NubeComponentBase &
+		NubeComponentFormSubmitterProps & { type: "formSubmitter" }
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                          Fragment Component                                */
 /* -------------------------------------------------------------------------- */
 
@@ -1962,7 +2330,17 @@ export type NubeComponent =
 	| NubeComponentFeGaussianBlur
 	| NubeComponentFeOffset
 	| NubeComponentFeMerge
-	| NubeComponentFeMergeNode;
+	| NubeComponentFeMergeNode
+	| NubeComponentFormRoot
+	| NubeComponentFormField
+	| NubeComponentFormFieldError
+	| NubeComponentFormSelect
+	| NubeComponentFormCheckbox
+	| NubeComponentFormResetter
+	| NubeComponentFormSubmitter
+	| NubeComponentFormSuccess
+	| NubeComponentFormFailure
+	| NubeComponentFormSending;
 
 /**
  * Represents the children of a UI component.
@@ -1991,7 +2369,17 @@ export type NubeComponentWithChildren =
 	| NubeComponentSymbol
 	| NubeComponentPattern
 	| NubeComponentFilter
-	| NubeComponentFeMerge;
+	| NubeComponentFeMerge
+	| NubeComponentFormRoot
+	| NubeComponentFormField
+	| NubeComponentFormFieldError
+	| NubeComponentFormSelect
+	| NubeComponentFormCheckbox
+	| NubeComponentFormResetter
+	| NubeComponentFormSubmitter
+	| NubeComponentFormSuccess
+	| NubeComponentFormFailure
+	| NubeComponentFormSending;
 
 /**
  * Represents the value of a UI component, typically used for form inputs.
