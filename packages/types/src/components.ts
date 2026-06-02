@@ -866,7 +866,15 @@ export type NubeComponentPopoverRoot = Prettify<
  * which is managed internally to toggle the popover content.
  */
 export type NubeComponentPopoverButtonProps = Prettify<
-	Omit<NubeComponentButtonProps, "onClick">
+	Omit<NubeComponentButtonProps, "onClick"> &
+		Partial<{
+			/**
+			 * When `true`, the popover button does not render its own `button`
+			 * element. Instead, it merges the trigger behavior onto its single
+			 * child element, letting you provide a custom trigger.
+			 */
+			asChild: boolean;
+		}>
 >;
 
 /**
