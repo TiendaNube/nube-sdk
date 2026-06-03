@@ -20,14 +20,28 @@ const CustomButton = ({
 }: CustomButtonProps) => {
 	return (
 		<Button
+			asChild
 			size="sm"
 			className={`flex items-center w-full justify-start p-0 h-[24px] rounded-none ${className}`}
 			variant="ghost"
-			onClick={onClick}
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 		>
-			{children}
+			{/* Rendered as a div (not a button) because it contains the
+			    ExpandableNode toggle button, and nested buttons are invalid HTML. */}
+			<div
+				role="button"
+				tabIndex={0}
+				onClick={onClick}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						onClick();
+					}
+				}}
+				onMouseEnter={onMouseEnter}
+				onMouseLeave={onMouseLeave}
+			>
+				{children}
+			</div>
 		</Button>
 	);
 };
@@ -40,7 +54,7 @@ export type LeafNode = {
 
 export type TreeNode = {
 	type: string;
-	children?: Array<TreeNode | LeafNode> | TreeNode | LeafNode;
+	children?: Array<TreeNode | LeafNode | string> | TreeNode | LeafNode | string;
 	__internalId?: string;
 };
 
@@ -62,15 +76,17 @@ const componentNames = {
 	button: "Button",
 };
 
-const isTreeNode = (node: TreeNode | LeafNode): node is TreeNode => {
+const isTreeNode = (node: TreeNode | LeafNode | string): node is TreeNode => {
 	return (
+		typeof node === "object" &&
+		node !== null &&
 		"children" in node &&
 		(Array.isArray(node.children) || typeof node.children === "object")
 	);
 };
 
 const TreeNode: FC<{
-	node: TreeNode | LeafNode;
+	node: TreeNode | LeafNode | string;
 	index: number;
 	onSelectNode?: (node: TreeNode | LeafNode) => void;
 }> = ({ node, index, onSelectNode }) => {
@@ -81,10 +97,23 @@ const TreeNode: FC<{
 	};
 
 	const title = useMemo(() => {
+		if (typeof node === "string") return node;
 		return (
 			componentNames[node.type as keyof typeof componentNames] || node.type
 		);
-	}, [node.type]);
+	}, [node]);
+
+	// A bare string child is text content with no id — render it as plain text.
+	if (typeof node === "string") {
+		return (
+			<span
+				style={{ paddingLeft: `${index * 12 + 16}px` }}
+				className="block text-[12px] h-[24px] leading-[24px] text-light"
+			>
+				{node}
+			</span>
+		);
+	}
 
 	const handleHighlight = (type: "enter" | "leave") => {
 		chrome.runtime.sendMessage({
@@ -166,9 +195,13 @@ const TreeNode: FC<{
 			</CustomButton>
 			{isExpanded && children.length > 0 && (
 				<div>
-					{children.map((child) => (
+					{children.map((child, childIndex) => (
 						<TreeNode
-							key={child.__internalId}
+							key={
+								typeof child === "string"
+									? `text-${childIndex}`
+									: child.__internalId ?? `node-${childIndex}`
+							}
 							node={child}
 							index={index + 1}
 							onSelectNode={onSelectNode}
