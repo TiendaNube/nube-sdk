@@ -10,7 +10,8 @@ export type NubeStorageEvent =
 	| "internal:navigate"
 	| "internal:iframe:message"
 	| "internal:form:submit"
-	| "internal:form:reset";
+	| "internal:form:reset"
+	| "internal:page:scroll_to";
 
 export type NubeStorageId = "local-storage" | "session-storage";
 
@@ -58,6 +59,12 @@ export type NubeStorageEventData =
 
 export type NubeNavigateEventData = {
 	route: `/${string}`;
+};
+
+export type NubeScrollToEventData = {
+	top?: number;
+	left?: number;
+	behavior?: "smooth" | "auto" | "instant";
 };
 
 export type NubeIframeMessageEventData = {

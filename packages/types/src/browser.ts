@@ -1,5 +1,5 @@
 import type { JsonObject, NubeComponent } from "./components";
-import type { AsyncNubeStorage } from "./storage";
+import type { AsyncNubeStorage, NubeScrollToEventData } from "./storage";
 
 /**
  * Represents the main interface for browser APIs that are usually not available in web workers.
@@ -51,4 +51,13 @@ export type NubeBrowserAPIs = {
 	 * @param form The `Form.Root` component to reset.
 	 */
 	resetForm: (form: NubeComponent) => void;
+
+	/**
+	* Scrolls the page to the given position.
+	 * @param options Scroll options compatible with the native ScrollToOptions interface.
+	 *   - top: Vertical scroll position in pixels.
+	 *   - left: Horizontal scroll position in pixels.
+	 *   - behavior: Scroll animation ("smooth", "auto", or "instant"). Defaults to "auto".
+	 */
+	scrollTo: (options?: NubeScrollToEventData) => void;
 };
