@@ -27,4 +27,28 @@ export type NubeBrowserAPIs = {
 	 * @param message The message to post to the iframe.
 	 */
 	postMessageToIframe: (iframe: NubeComponent, message: JsonObject) => void;
+
+	/**
+	 * Programmatically submits the given `Form.Root` as if its
+	 * `Form.Submitter` had been clicked. Runs the same validation and
+	 * fetch pipeline. The app may only submit forms it owns — the
+	 * main-thread handler validates ownership via the `__internalId`
+	 * prefix and silently ignores cross-app calls.
+	 *
+	 * Accepts the generic `NubeComponent` so the JSX expression
+	 * `<MyForm />` can be passed directly (the JSX runtime erases the
+	 * specific return type into `NubeComponent`). The runtime validates
+	 * that the resolved DOM element is an `HTMLFormElement`.
+	 * @param form The `Form.Root` component to submit.
+	 */
+	submitForm: (form: NubeComponent) => void;
+
+	/**
+	 * Programmatically resets the given `Form.Root`, clearing every
+	 * descendant `Form.Field` / `Form.Select` / `Form.Checkbox` back to
+	 * its initial state. Ownership is validated the same way as
+	 * `submitForm`.
+	 * @param form The `Form.Root` component to reset.
+	 */
+	resetForm: (form: NubeComponent) => void;
 };
