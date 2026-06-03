@@ -175,7 +175,10 @@ export function Events() {
 						<ResizablePanel>
 							<div className="h-full overflow-auto">
 								{selectedEvent && (
-									<JsonViewer className="p-2 text-sm overflow-x-auto" data={selectedEvent.data} />
+									<JsonViewer
+										className="p-2 text-sm overflow-x-auto"
+										data={selectedEvent.data}
+									/>
 								)}
 							</div>
 						</ResizablePanel>
