@@ -53,7 +53,7 @@ export type NubeBrowserAPIs = {
 	resetForm: (form: NubeComponent) => void;
 
 	/**
-	* Scrolls the page to the given position.
+	 * Scrolls the page to the given position.
 	 * @param options Scroll options compatible with the native ScrollToOptions interface.
 	 *   - top: Vertical scroll position in pixels.
 	 *   - left: Horizontal scroll position in pixels.
