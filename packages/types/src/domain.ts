@@ -360,6 +360,18 @@ export type Store = {
 
 	/** The store's theme template (e.g., "recife", "morelia", "rio"). */
 	theme: string;
+
+	/** Character used to separate the decimal part of a value (e.g., ","). */
+	cents_separator: string;
+
+	/** Character used to separate thousands in a value (e.g., "."). */
+	thousands_separator: string;
+
+	/** Long form of the currency symbol (e.g., "R$"). */
+	display_long: string;
+
+	/** Short form of the currency symbol (e.g., "R$"). */
+	display_short: string;
 };
 
 type FixedProductListSectionName =
