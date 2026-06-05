@@ -2,6 +2,7 @@ import type {
 	NubeFormActionEventData,
 	NubeIframeMessageEventData,
 	NubeNavigateEventData,
+	NubeScrollToEventData,
 	NubeStorageEvent,
 	NubeStorageEventData,
 } from "./storage";
@@ -12,7 +13,8 @@ export type NubeSdkInternalEventData =
 	| NubeStorageEventData
 	| NubeNavigateEventData
 	| NubeIframeMessageEventData
-	| NubeFormActionEventData;
+	| NubeFormActionEventData
+	| NubeScrollToEventData;
 
 export const NubeSdkInternalEventPrefix = "internal:";
 
