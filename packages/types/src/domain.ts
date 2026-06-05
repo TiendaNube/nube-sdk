@@ -376,7 +376,7 @@ export type Store = {
 	/**
 	 * Currency code used in the store (e.g., "USD", "EUR").
 	 *
-	 * @deprecated Use {@link Store.currency_details} instead, which exposes the
+	 * @deprecated Use {@link Store.currency_details.code} instead, which exposes the
 	 * currency code along with its formatting rules.
 	 */
 	currency: string;
