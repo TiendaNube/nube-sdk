@@ -217,6 +217,10 @@ export const STOREFRONT_UI_SLOT = {
 		"before_product_detail_shipping_options",
 	AFTER_PRODUCT_DETAIL_SHIPPING_OPTIONS:
 		"after_product_detail_shipping_options",
+	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
+		"before_product_detail_related_products",
+	AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS:
+		"after_product_detail_related_products",
 	BEFORE_CART_SHIPPING_OPTIONS: "before_cart_shipping_options",
 	AFTER_CART_SHIPPING_OPTIONS: "after_cart_shipping_options",
 	BEFORE_REGISTER_FORM: "before_register_form",
