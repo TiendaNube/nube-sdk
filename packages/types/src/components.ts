@@ -1202,6 +1202,78 @@ export type NubeComponentFormSubmitter = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                          Popover Component                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Represents the properties available for a `popover` root component.
+ */
+export type NubeComponentPopoverRootProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps &
+		Partial<{
+			defaultOpen: boolean;
+			style?: NubeComponentStyle;
+		}>
+>;
+
+/**
+ * Represents a `popover` root component, used as the container that controls
+ * the visibility of its content when the trigger button is clicked.
+ */
+export type NubeComponentPopoverRoot = Prettify<
+	NubeComponentBase &
+		NubeComponentPopoverRootProps & {
+			type: "popoverRoot";
+		}
+>;
+
+/**
+ * Represents the properties available for a `popover` button component.
+ * Inherits the style and props of the `button` component, except for `onClick`,
+ * which is managed internally to toggle the popover content.
+ */
+export type NubeComponentPopoverButtonProps = Prettify<
+	Omit<NubeComponentButtonProps, "onClick"> &
+		Partial<{
+			/**
+			 * When `true`, the popover button does not render its own `button`
+			 * element. Instead, it merges the trigger behavior onto its single
+			 * child element, letting you provide a custom trigger.
+			 */
+			asChild: boolean;
+		}>
+>;
+
+/**
+ * Represents a `popover` button component, used as the trigger that toggles
+ * the visibility of the popover content.
+ */
+export type NubeComponentPopoverButton = Prettify<
+	NubeComponentBase &
+		NubeComponentPopoverButtonProps & {
+			type: "popoverButton";
+		}
+>;
+
+/**
+ * Represents the properties available for a `popover` content component.
+ * Inherits the style and props of the `box` component.
+ */
+export type NubeComponentPopoverContentProps = Prettify<NubeComponentBoxProps>;
+
+/**
+ * Represents a `popover` content component, used to display the floating
+ * content that becomes visible when the popover button is clicked.
+ */
+export type NubeComponentPopoverContent = Prettify<
+	NubeComponentBase &
+		NubeComponentPopoverContentProps & {
+			type: "popoverContent";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                          Fragment Component                                */
 /* -------------------------------------------------------------------------- */
 
@@ -2303,6 +2375,9 @@ export type NubeComponent =
 	| NubeComponentToastRoot
 	| NubeComponentToastTitle
 	| NubeComponentToastDescription
+	| NubeComponentPopoverRoot
+	| NubeComponentPopoverButton
+	| NubeComponentPopoverContent
 	| NubeComponentIcon
 	| NubeComponentSideScroll
 	| NubeComponentMarkdown
@@ -2359,6 +2434,8 @@ export type NubeComponentWithChildren =
 	| NubeComponentRow
 	| NubeComponentLink
 	| NubeComponentSideScroll
+	| NubeComponentPopoverRoot
+	| NubeComponentPopoverContent
 	| NubeComponentSvg
 	| NubeComponentG
 	| NubeComponentDefs

@@ -85,6 +85,12 @@ import type {
 	NubeComponentPolygonProps,
 	NubeComponentPolyline,
 	NubeComponentPolylineProps,
+	NubeComponentPopoverButton,
+	NubeComponentPopoverButtonProps,
+	NubeComponentPopoverContent,
+	NubeComponentPopoverContentProps,
+	NubeComponentPopoverRoot,
+	NubeComponentPopoverRootProps,
 	NubeComponentProgress,
 	NubeComponentProgressProps,
 	NubeComponentRadialGradient,
@@ -147,6 +153,9 @@ import {
 	link,
 	markdown,
 	numberfield,
+	popoverButton,
+	popoverContent,
+	popoverRoot,
 	progress,
 	row,
 	select,
@@ -548,6 +557,60 @@ export const Toast = {
 	Root: ToastRoot,
 	Title: ToastTitle,
 	Description: ToastDescription,
+};
+
+/**
+ * Creates a `Popover` root component.
+ *
+ * The `Popover` is a floating container whose content becomes visible when its
+ * trigger button is clicked. The `Root` acts as the wrapper that holds both the
+ * `Popover.Button` and the `Popover.Content`.
+ *
+ * @param props - The properties for configuring the popover root component.
+ * @returns A `NubeComponentPopoverRoot` object representing the popover root component.
+ */
+function PopoverRoot(
+	props: NubeComponentPopoverRootProps,
+): NubeComponentPopoverRoot {
+	return popoverRoot(props);
+}
+
+/**
+ * Creates a `Popover` button component.
+ *
+ * The `Popover.Button` is the trigger that toggles the visibility of the popover
+ * content. It inherits the style and props of the `Button` component, except for
+ * `onClick`, which is managed internally to control the popover.
+ *
+ * @param props - The properties for configuring the popover button component.
+ * @returns A `NubeComponentPopoverButton` object representing the popover button component.
+ */
+function PopoverButton(
+	props: NubeComponentPopoverButtonProps,
+): NubeComponentPopoverButton {
+	return popoverButton(props);
+}
+
+/**
+ * Creates a `Popover` content component.
+ *
+ * The `Popover.Content` holds the floating content that becomes visible when the
+ * popover button is clicked. It inherits the style and props of the `Box`
+ * component and uses theme variables for its default background, border and box shadow.
+ *
+ * @param props - The properties for configuring the popover content component.
+ * @returns A `NubeComponentPopoverContent` object representing the popover content component.
+ */
+function PopoverContent(
+	props: NubeComponentPopoverContentProps,
+): NubeComponentPopoverContent {
+	return popoverContent(props);
+}
+
+export const Popover = {
+	Root: PopoverRoot,
+	Button: PopoverButton,
+	Content: PopoverContent,
 };
 
 /**
