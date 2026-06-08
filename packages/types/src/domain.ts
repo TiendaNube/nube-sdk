@@ -371,6 +371,27 @@ export type Order = {
 };
 
 /**
+ * Represents the currency used by a store, including its code and the
+ * formatting rules used to display monetary values.
+ */
+export type CurrencyDetails = {
+	/** Currency code used in the store (e.g., "USD", "EUR", "BRL"). */
+	code: string;
+
+	/** Character used to separate the decimal part of a value (e.g., ","). */
+	cents_separator: string;
+
+	/** Character used to separate thousands in a value (e.g., "."). */
+	thousands_separator: string;
+
+	/** Long form of the currency symbol (e.g., "R$"). */
+	display_long: string;
+
+	/** Short form of the currency symbol (e.g., "R$"). */
+	display_short: string;
+};
+
+/**
  * Represents information about the current store.
  */
 export type Store = {
@@ -383,8 +404,16 @@ export type Store = {
 	/** Domain name associated with the store. */
 	domain: string;
 
-	/** Currency code used in the store (e.g., "USD", "EUR"). */
+	/**
+	 * Currency code used in the store (e.g., "USD", "EUR").
+	 *
+	 * @deprecated Use {@link Store.currency_details.code} instead, which exposes the
+	 * currency code along with its formatting rules.
+	 */
 	currency: string;
+
+	/** Currency used by the store, including its formatting rules. */
+	currency_details: CurrencyDetails;
 
 	/** Language code of the store (e.g., "en", "es"). */
 	language: LanguageKey;
