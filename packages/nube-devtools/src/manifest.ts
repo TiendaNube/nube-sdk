@@ -20,7 +20,7 @@ export default defineManifest({
 	},
 	devtools_page: "devtools.html",
 	background: {
-		service_worker: "src/background/index.ts",
+		service_worker: "src/background/service-worker.ts",
 		type: "module",
 	},
 	content_scripts: [
