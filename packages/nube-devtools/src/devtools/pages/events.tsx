@@ -28,8 +28,6 @@ export function Events() {
 		return localStorage.getItem(SEARCH_STORAGE_KEY) || "";
 	});
 	const tableContainerRef = useRef<HTMLDivElement>(null);
-	const panelContainerRef = useRef<HTMLDivElement>(null);
-	const [panelWidth, setPanelWidth] = useState<number>(0);
 
 	useEffect(() => {
 		setFilteredEvents(events.filter((event) => event.data[1].includes(search)));
@@ -38,22 +36,6 @@ export function Events() {
 	useEffect(() => {
 		localStorage.setItem(SEARCH_STORAGE_KEY, search);
 	}, [search]);
-
-	useEffect(() => {
-		if (panelContainerRef.current) {
-			const resizeObserver = new ResizeObserver((entries) => {
-				for (const entry of entries) {
-					setPanelWidth(entry.contentRect.width);
-				}
-			});
-
-			resizeObserver.observe(panelContainerRef.current);
-
-			return () => {
-				resizeObserver.disconnect();
-			};
-		}
-	}, []);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -171,7 +153,7 @@ export function Events() {
 										}}
 									/>
 								) : (
-									<Table>
+									<Table className="table-fixed">
 										<TableBody>
 											{filteredEvents.map((event) => (
 												<TableRow key={event.id}>
@@ -191,17 +173,13 @@ export function Events() {
 						</ResizablePanel>
 						<ResizableHandle />
 						<ResizablePanel>
-							<div ref={panelContainerRef} className="h-full">
-								<div
-									className="flex h-full overflow-y-auto"
-									style={{ width: `${panelWidth}px` }}
-								>
-									{selectedEvent && (
-										<div className="text-sm w-full">
-											<JsonViewer className="p-2" data={selectedEvent.data} />
-										</div>
-									)}
-								</div>
+							<div className="h-full overflow-auto">
+								{selectedEvent && (
+									<JsonViewer
+										className="p-2 text-sm overflow-x-auto"
+										data={selectedEvent.data}
+									/>
+								)}
 							</div>
 						</ResizablePanel>
 					</ResizablePanelGroup>
