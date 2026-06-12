@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { createMockSDK, createMockState } from "../internal/test-utils.js";
 import {
 	getAppData,
 	getCurrentState,
@@ -7,7 +8,6 @@ import {
 	getScriptURL,
 } from "./getters.js";
 import { clearNubeInstance, setNubeInstance } from "./instance.js";
-import { createMockSDK, createMockState } from "./test-utils.js";
 
 interface GlobalWithAppData {
 	self: { __APP_DATA__: { id: string; script: string } };

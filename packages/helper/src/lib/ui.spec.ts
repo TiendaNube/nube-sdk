@@ -1,7 +1,7 @@
 import type { NubeSDK } from "@tiendanube/nube-sdk-types";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { createMockSDK } from "../internal/test-utils.js";
 import { clearNubeInstance, setNubeInstance } from "./instance.js";
-import { createMockSDK } from "./test-utils.js";
 import { ui } from "./ui.js";
 
 describe("ui", () => {

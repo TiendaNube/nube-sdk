@@ -1,11 +1,11 @@
 import type { NubeSDK } from "@tiendanube/nube-sdk-types";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { createMockSDK } from "../internal/test-utils.js";
 import {
 	clearNubeInstance,
 	getNubeInstance,
 	setNubeInstance,
 } from "./instance.js";
-import { createMockSDK } from "./test-utils.js";
 
 interface GlobalWithSDK {
 	self?: { __SDK_INSTANCE__?: NubeSDK };

@@ -1,8 +1,8 @@
 import type { NubeBrowserAPIs, NubeSDK } from "@tiendanube/nube-sdk-types";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createMockSDK } from "../internal/test-utils.js";
 import { browser, clearBrowserCache, navigate } from "./browser.js";
 import { clearNubeInstance, setNubeInstance } from "./instance.js";
-import { createMockSDK } from "./test-utils.js";
 
 function createSDKWithBrowserAPIs(): {
 	sdk: NubeSDK;

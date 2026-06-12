@@ -1,12 +1,25 @@
-# @tiendanube/nube-sdk-helper
+# `@tiendanube/nube-sdk-helper`
 
-Utility functions, type guards, and instance management for building NubeSDK apps.
+**Utility functions, type guards, and SDK instance management for building NubeSDK apps.**
+
+## About
+
+`@tiendanube/nube-sdk-helper` centralizes the repetitive patterns that NubeSDK
+apps need: registering and accessing the SDK instance, reading state with
+selectors, runtime type guards, page/checkout handling, rendering, and event
+subscriptions. The goal is less boilerplate and stronger type safety.
+
+Apps in NubeSDK run **inside isolated web workers**, without direct access to the
+DOM. All helpers are designed for that environment and interact with the
+platform exclusively through the SDK instance.
 
 ## Installation
 
-```bash
-npm install @tiendanube/nube-sdk-helper
+```sh
+npm install @tiendanube/nube-sdk-helper @tiendanube/nube-sdk-types
 ```
+
+> Note: `@tiendanube/nube-sdk-types` is a peer dependency and must be installed alongside this package.
 
 ## Instance management
 

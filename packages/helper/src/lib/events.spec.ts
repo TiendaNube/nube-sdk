@@ -1,8 +1,8 @@
 import type { NubeSDK, NubeSDKState } from "@tiendanube/nube-sdk-types";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createMockSDK, createMockState } from "../internal/test-utils.js";
 import { onEvent, toastOn } from "./events.js";
 import { clearNubeInstance, setNubeInstance } from "./instance.js";
-import { createMockSDK, createMockState } from "./test-utils.js";
 
 describe("events", () => {
 	let sdk: NubeSDK;

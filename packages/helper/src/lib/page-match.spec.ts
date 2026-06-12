@@ -1,9 +1,9 @@
 import type { NubeSDK, NubeSDKState } from "@tiendanube/nube-sdk-types";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createMockSDK, createMockState } from "../internal/test-utils.js";
 import { clearNubeInstance, setNubeInstance } from "./instance.js";
 import { onCheckoutStep, onPage, pageMatch } from "./page-match.js";
 import type { CheckoutStepHandlers, PageHandlers } from "./page-match.js";
-import { createMockSDK, createMockState } from "./test-utils.js";
 
 function registerMockSDK(): NubeSDK {
 	const sdk = createMockSDK(createMockState());

@@ -7,8 +7,8 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup",
-    "check": "biome check src/*",
-    "check:fix": "biome check --write src/*",
+    "check": "biome check src",
+    "check:fix": "biome check --write src",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -17,7 +17,7 @@
     "type": "git",
     "url": "git+https://github.com/TiendaNube/nube-sdk.git"
   },
-  "author": "Tiendanube / Nuvemshop",
+  "author": "Nuvemshop / TiendaNube",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/TiendaNube/nube-sdk/issues"

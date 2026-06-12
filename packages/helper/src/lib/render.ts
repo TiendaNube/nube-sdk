@@ -15,7 +15,7 @@ import {
 	hasSections,
 	hasSingleProduct,
 	isSectionWithProducts,
-} from "./typeguards";
+} from "./guards";
 
 /**
  * Extracts all products from the NubeSDK state, regardless of the page type.

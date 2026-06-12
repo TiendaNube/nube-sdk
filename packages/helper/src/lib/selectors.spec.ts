@@ -1,5 +1,6 @@
 import type { NubeSDKState } from "@tiendanube/nube-sdk-types";
 import { afterEach, describe, expect, it } from "vitest";
+import { createMockSDK, createMockState } from "../internal/test-utils.js";
 import { clearNubeInstance, setNubeInstance } from "./instance.js";
 import {
 	getCart,
@@ -7,7 +8,6 @@ import {
 	getCustomer,
 	getPageType,
 } from "./selectors.js";
-import { createMockSDK, createMockState } from "./test-utils.js";
 
 const items = [{ id: 1 }, { id: 2 }] as never;
 const customer = { id: 7 } as never;

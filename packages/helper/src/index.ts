@@ -11,14 +11,5 @@
  * @since 0.1.0
  */
 
-// Export all utility functions and type guards
-export * from "./browser";
-export * from "./events";
-export * from "./getters";
-export * from "./instance";
-export * from "./page-match";
-export * from "./render";
-export * from "./selectors";
-export * from "./typeguards";
-export * from "./ui";
-export * from "./utils";
+// Public API surface. Implementation lives in ./lib; ./internal is never exported.
+export * from "./lib";

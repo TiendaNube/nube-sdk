@@ -13,13 +13,13 @@ import type {
 	NubeSDKState,
 	ProductDetails,
 } from "@tiendanube/nube-sdk-types";
-import { getNubeInstance } from "./instance";
 import {
 	isCategoryPage,
 	isCheckoutPage,
 	isHomePage,
 	isProductPage,
-} from "./typeguards";
+} from "./guards";
+import { getNubeInstance } from "./instance";
 
 /**
  * Maps each page type to its specific data payload.
