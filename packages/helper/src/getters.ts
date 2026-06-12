@@ -69,7 +69,7 @@ export function getAppData(): Readonly<{
 	return self.__APP_DATA__;
 }
 
-const CACHED_SCRIPT_URL = Object.freeze(new URL(self.__APP_DATA__.script));
+let cachedScriptURL: Readonly<URL> | undefined;
 
 /**
  * Gets the parsed URL of the application script.
@@ -86,7 +86,10 @@ const CACHED_SCRIPT_URL = Object.freeze(new URL(self.__APP_DATA__.script));
  * @since 0.1.0
  */
 export function getScriptURL(): Readonly<URL> {
-	return CACHED_SCRIPT_URL;
+	if (!cachedScriptURL) {
+		cachedScriptURL = Object.freeze(new URL(self.__APP_DATA__.script));
+	}
+	return cachedScriptURL;
 }
 
 /**
