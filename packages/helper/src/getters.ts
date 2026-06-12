@@ -5,7 +5,11 @@
  * the SDK instance, current state and application data.
  */
 
-import type { NubeSDK, NubeSDKState, Nullable } from "@tiendanube/nube-sdk-types";
+import type {
+	NubeSDK,
+	NubeSDKState,
+	Nullable,
+} from "@tiendanube/nube-sdk-types";
 
 /**
  * Gets the main NubeSDK instance.
@@ -123,4 +127,3 @@ export function getScriptSearchParams(): Readonly<URLSearchParams> {
 export function getScriptParam(key: string): Nullable<string> {
 	return getScriptSearchParams().get(key);
 }
-
