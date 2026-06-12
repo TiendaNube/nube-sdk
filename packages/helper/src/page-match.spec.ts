@@ -1,29 +1,13 @@
 import type { NubeSDK, NubeSDKState } from "@tiendanube/nube-sdk-types";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { clearNubeInstance, setNubeInstance } from "./instance.js";
 import { onCheckoutStep, onPage, pageMatch } from "./page-match.js";
 import type { CheckoutStepHandlers, PageHandlers } from "./page-match.js";
+import { createMockSDK, createMockState } from "./test-utils.js";
 
-function createMockSDK(): NubeSDK {
-	const mockState: NubeSDKState = {
-		location: { url: "", page: { type: "home", data: undefined }, queries: {} },
-	} as NubeSDKState;
-
-	const mockSDK = {
-		on: vi.fn(),
-		getState: vi.fn(() => mockState),
-	} as Partial<NubeSDK>;
-
-	return mockSDK as NubeSDK;
-}
-
-function setMockSDKOnGlobal(): NubeSDK {
-	const sdk = createMockSDK();
-	interface GlobalWithSDK {
-		self: { __SDK_INSTANCE__: NubeSDK };
-	}
-	(globalThis as unknown as GlobalWithSDK).self = {
-		__SDK_INSTANCE__: sdk,
-	};
+function registerMockSDK(): NubeSDK {
+	const sdk = createMockSDK(createMockState());
+	setNubeInstance(sdk);
 	return sdk;
 }
 
@@ -33,7 +17,11 @@ function makeState(page: unknown): NubeSDKState {
 
 describe("page-match", () => {
 	beforeEach(() => {
-		setMockSDKOnGlobal();
+		registerMockSDK();
+	});
+
+	afterEach(() => {
+		clearNubeInstance();
 	});
 
 	describe("pageMatch", () => {
@@ -119,7 +107,7 @@ describe("page-match", () => {
 
 	describe("onPage", () => {
 		it("subscribes to location:updated event", () => {
-			const sdk = setMockSDKOnGlobal();
+			const sdk = registerMockSDK();
 			const productHandler = vi.fn();
 
 			onPage({ product: productHandler });
@@ -130,11 +118,28 @@ describe("page-match", () => {
 				expect.any(Function),
 			);
 		});
+
+		it("returns an unsubscribe that detaches the same listener", () => {
+			const sdk = registerMockSDK();
+
+			const unsubscribe = onPage({ product: vi.fn() });
+			const registeredListener = (sdk.on as ReturnType<typeof vi.fn>).mock
+				.calls[0][1];
+
+			expect(typeof unsubscribe).toBe("function");
+
+			unsubscribe();
+
+			expect(sdk.off).toHaveBeenCalledWith(
+				"location:updated",
+				registeredListener,
+			);
+		});
 	});
 
 	describe("onCheckoutStep", () => {
 		it("subscribes to checkout:ready event", () => {
-			const sdk = setMockSDKOnGlobal();
+			const sdk = registerMockSDK();
 			const successHandler = vi.fn();
 
 			onCheckoutStep({ success: successHandler } as CheckoutStepHandlers);
@@ -147,7 +152,7 @@ describe("page-match", () => {
 		});
 
 		it("registers handler for specific checkout step", () => {
-			const sdk = setMockSDKOnGlobal();
+			const sdk = registerMockSDK();
 			const successHandler = vi.fn();
 			const paymentHandler = vi.fn();
 
@@ -160,6 +165,23 @@ describe("page-match", () => {
 			expect(sdk.on).toHaveBeenCalledWith(
 				"checkout:ready",
 				expect.any(Function),
+			);
+		});
+
+		it("returns an unsubscribe that detaches the same listener", () => {
+			const sdk = registerMockSDK();
+
+			const unsubscribe = onCheckoutStep({
+				success: vi.fn(),
+			} as CheckoutStepHandlers);
+			const registeredListener = (sdk.on as ReturnType<typeof vi.fn>).mock
+				.calls[0][1];
+
+			unsubscribe();
+
+			expect(sdk.off).toHaveBeenCalledWith(
+				"checkout:ready",
+				registeredListener,
 			);
 		});
 	});

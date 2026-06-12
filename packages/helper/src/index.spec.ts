@@ -9,5 +9,12 @@ describe("index exports", () => {
 		expect(typeof mod.deepClone).toBe("function");
 		expect(typeof mod.getProductsFromState).toBe("function");
 		expect(typeof mod.isProductPage).toBe("function");
+		// instance management + ergonomic helpers
+		expect(typeof mod.setNubeInstance).toBe("function");
+		expect(typeof mod.getNubeInstance).toBe("function");
+		expect(typeof mod.getCart).toBe("function");
+		expect(typeof mod.onEvent).toBe("function");
+		expect(typeof mod.toastOn).toBe("function");
+		expect(typeof mod.ui).toBe("object");
 	});
 });
