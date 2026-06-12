@@ -6,14 +6,17 @@
  */
 
 /**
- * Deep clones an object using JSON serialization.
+ * Deep clones a value.
  *
- * Note: This method has limitations with functions, dates, symbols, undefined,
- * and other non-JSON-serializable values.
+ * Uses the structured clone algorithm when available (it is, in the NubeSDK
+ * Web Worker runtime), which correctly handles `Date`, `Map`, `Set`, typed
+ * arrays and circular references. Falls back to JSON serialization in
+ * environments without `structuredClone` (with the usual JSON limitations:
+ * functions, symbols and `undefined` are dropped).
  *
- * @template T - The type of the object to clone
- * @param obj - The object to deep clone
- * @returns A deep clone of the input object
+ * @template T - The type of the value to clone
+ * @param obj - The value to deep clone
+ * @returns A deep clone of the input value
  *
  * @example
  * ```typescript
@@ -32,6 +35,9 @@
 export function deepClone<T>(obj: T): T {
 	if (obj === null || typeof obj !== "object") {
 		return obj;
+	}
+	if (typeof structuredClone === "function") {
+		return structuredClone(obj);
 	}
 	return JSON.parse(JSON.stringify(obj));
 }

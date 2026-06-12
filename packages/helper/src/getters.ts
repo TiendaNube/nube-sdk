@@ -5,30 +5,8 @@
  * the SDK instance, current state and application data.
  */
 
-import type {
-	NubeSDK,
-	NubeSDKState,
-	Nullable,
-} from "@tiendanube/nube-sdk-types";
-
-/**
- * Gets the main NubeSDK instance.
- *
- * @returns The readonly NubeSDK instance
- *
- * @example
- * ```typescript
- * const nube = getNubeInstance();
- * nube.on('location:updated', (state) => {
- *   console.log('Page updated:', state.location.page);
- * });
- * ```
- *
- * @since 0.1.0
- */
-export function getNubeInstance(): Readonly<NubeSDK> {
-	return self.__SDK_INSTANCE__;
-}
+import type { NubeSDKState, Nullable } from "@tiendanube/nube-sdk-types";
+import { getNubeInstance } from "./instance";
 
 /**
  * Gets the current NubeSDK state.
@@ -45,7 +23,7 @@ export function getNubeInstance(): Readonly<NubeSDK> {
  * @since 0.1.0
  */
 export function getCurrentState(): Readonly<NubeSDKState> {
-	return self.__SDK_INSTANCE__.getState();
+	return getNubeInstance().getState();
 }
 
 /**

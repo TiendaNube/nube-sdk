@@ -6,6 +6,7 @@
  */
 
 import type { NubeBrowserAPIs } from "@tiendanube/nube-sdk-types";
+import { getNubeInstance } from "./instance";
 
 // Cache for the browser APIs instance
 let instance: Readonly<NubeBrowserAPIs> | null = null;
@@ -35,7 +36,7 @@ export const browser = new Proxy({} as Readonly<NubeBrowserAPIs>, {
 	get(_, prop: keyof NubeBrowserAPIs) {
 		// Lazy load: create instance only when a property is accessed
 		if (instance === null) {
-			instance = self.__SDK_INSTANCE__.getBrowserAPIs();
+			instance = getNubeInstance().getBrowserAPIs();
 		}
 
 		// Return the property from the cached instance

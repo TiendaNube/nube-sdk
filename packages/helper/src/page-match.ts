@@ -13,6 +13,7 @@ import type {
 	NubeSDKState,
 	ProductDetails,
 } from "@tiendanube/nube-sdk-types";
+import { getNubeInstance } from "./instance";
 import {
 	isCategoryPage,
 	isCheckoutPage,
@@ -154,29 +155,34 @@ export function pageMatch(state: NubeSDKState, handlers: PageHandlers): void {
  * corresponding handler whenever navigation updates occur.
  *
  * @param handlers - Handlers mapped by page type
+ * @returns An unsubscribe function that stops listening for navigation changes
  *
  * @example
  * ```typescript
- * onPage({
+ * const unsubscribe = onPage({
  *   product: (state, data) => trackProductView(data.id),
  *   checkout: (state, data) => {
  *     if (data.step === 'success') trackPurchase();
  *   }
  * });
+ *
+ * // Later, to stop listening:
+ * unsubscribe();
  * ```
  *
  * @since 0.1.0
  */
-export function onPage(handlers: PageHandlers): void {
-	const nube = self.__SDK_INSTANCE__;
+export function onPage(handlers: PageHandlers): () => void {
+	const nube = getNubeInstance();
 
 	const currentState = nube.getState();
 
 	pageMatch(currentState, handlers);
 
-	nube.on("location:updated", (state: NubeSDKState) =>
-		pageMatch(state, handlers),
-	);
+	const listener = (state: NubeSDKState) => pageMatch(state, handlers);
+	nube.on("location:updated", listener);
+
+	return () => nube.off("location:updated", listener);
 }
 
 /**
@@ -212,10 +218,11 @@ export type CheckoutStepHandlers = Partial<
  * invokes the handler registered for the current `Checkout.step`.
  *
  * @param handlers - Handlers keyed by checkout step
+ * @returns An unsubscribe function that stops listening for checkout steps
  *
  * @example
  * ```typescript
- * onCheckoutStep({
+ * const unsubscribe = onCheckoutStep({
  *   cart: (state) => {
  *     console.log('User is in cart step');
  *     trackCartView();
@@ -225,12 +232,15 @@ export type CheckoutStepHandlers = Partial<
  *     trackPurchase();
  *   }
  * });
+ *
+ * // Later, to stop listening:
+ * unsubscribe();
  * ```
  *
  * @since 0.1.0
  */
-export function onCheckoutStep(handlers: CheckoutStepHandlers): void {
-	const nube = self.__SDK_INSTANCE__;
+export function onCheckoutStep(handlers: CheckoutStepHandlers): () => void {
+	const nube = getNubeInstance();
 
 	const currentState = nube.getState();
 	const currentPage = currentState.location.page;
@@ -239,10 +249,13 @@ export function onCheckoutStep(handlers: CheckoutStepHandlers): void {
 		handlers[currentPage?.data?.step]?.(currentState);
 	}
 
-	nube.on("checkout:ready", (state: NubeSDKState) => {
+	const listener = (state: NubeSDKState) => {
 		const { page } = state.location;
 		if (page.type !== "checkout") return;
 		const step: CheckoutStep = page.data.step;
 		handlers[step]?.(state);
-	});
+	};
+	nube.on("checkout:ready", listener);
+
+	return () => nube.off("checkout:ready", listener);
 }
