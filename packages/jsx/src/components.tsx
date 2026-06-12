@@ -35,6 +35,26 @@ import type {
 	NubeComponentFieldProps,
 	NubeComponentFilter,
 	NubeComponentFilterProps,
+	NubeComponentFormCheckbox,
+	NubeComponentFormCheckboxProps,
+	NubeComponentFormFailure,
+	NubeComponentFormFailureProps,
+	NubeComponentFormField,
+	NubeComponentFormFieldError,
+	NubeComponentFormFieldErrorProps,
+	NubeComponentFormFieldProps,
+	NubeComponentFormResetter,
+	NubeComponentFormResetterProps,
+	NubeComponentFormRoot,
+	NubeComponentFormRootProps,
+	NubeComponentFormSelect,
+	NubeComponentFormSelectProps,
+	NubeComponentFormSending,
+	NubeComponentFormSendingProps,
+	NubeComponentFormSubmitter,
+	NubeComponentFormSubmitterProps,
+	NubeComponentFormSuccess,
+	NubeComponentFormSuccessProps,
 	NubeComponentFragment,
 	NubeComponentFragmentProps,
 	NubeComponentG,
@@ -65,6 +85,12 @@ import type {
 	NubeComponentPolygonProps,
 	NubeComponentPolyline,
 	NubeComponentPolylineProps,
+	NubeComponentPopoverButton,
+	NubeComponentPopoverButtonProps,
+	NubeComponentPopoverContent,
+	NubeComponentPopoverContentProps,
+	NubeComponentPopoverRoot,
+	NubeComponentPopoverRootProps,
 	NubeComponentProgress,
 	NubeComponentProgressProps,
 	NubeComponentRadialGradient,
@@ -110,6 +136,16 @@ import {
 	checkbox,
 	column,
 	field,
+	formCheckbox,
+	formFailure,
+	formField,
+	formFieldError,
+	formResetter,
+	formRoot,
+	formSelect,
+	formSending,
+	formSubmitter,
+	formSuccess,
 	fragment,
 	icon,
 	iframe,
@@ -117,6 +153,9 @@ import {
 	link,
 	markdown,
 	numberfield,
+	popoverButton,
+	popoverContent,
+	popoverRoot,
 	progress,
 	row,
 	select,
@@ -379,8 +418,8 @@ export function Progress(
 /**
  * Creates an `Iframe` component.
  *
- * The `Iframe` component is used to embed external content. It supports properties such as
- * `src`, `width`, `height`, `sandbox`, and `style`.
+ * Embeds external content. Supports `src`, `width`, `height`, `sandbox`, `style`,
+ * `onMessage`, and `autoresize` (host resizes when the child posts a resize message).
  *
  * @param props - The properties for configuring the iframe component.
  * @returns A `NubeComponentIframe` object representing the iframe component.
@@ -518,6 +557,60 @@ export const Toast = {
 	Root: ToastRoot,
 	Title: ToastTitle,
 	Description: ToastDescription,
+};
+
+/**
+ * Creates a `Popover` root component.
+ *
+ * The `Popover` is a floating container whose content becomes visible when its
+ * trigger button is clicked. The `Root` acts as the wrapper that holds both the
+ * `Popover.Button` and the `Popover.Content`.
+ *
+ * @param props - The properties for configuring the popover root component.
+ * @returns A `NubeComponentPopoverRoot` object representing the popover root component.
+ */
+function PopoverRoot(
+	props: NubeComponentPopoverRootProps,
+): NubeComponentPopoverRoot {
+	return popoverRoot(props);
+}
+
+/**
+ * Creates a `Popover` button component.
+ *
+ * The `Popover.Button` is the trigger that toggles the visibility of the popover
+ * content. It inherits the style and props of the `Button` component, except for
+ * `onClick`, which is managed internally to control the popover.
+ *
+ * @param props - The properties for configuring the popover button component.
+ * @returns A `NubeComponentPopoverButton` object representing the popover button component.
+ */
+function PopoverButton(
+	props: NubeComponentPopoverButtonProps,
+): NubeComponentPopoverButton {
+	return popoverButton(props);
+}
+
+/**
+ * Creates a `Popover` content component.
+ *
+ * The `Popover.Content` holds the floating content that becomes visible when the
+ * popover button is clicked. It inherits the style and props of the `Box`
+ * component and uses theme variables for its default background, border and box shadow.
+ *
+ * @param props - The properties for configuring the popover content component.
+ * @returns A `NubeComponentPopoverContent` object representing the popover content component.
+ */
+function PopoverContent(
+	props: NubeComponentPopoverContentProps,
+): NubeComponentPopoverContent {
+	return popoverContent(props);
+}
+
+export const Popover = {
+	Root: PopoverRoot,
+	Button: PopoverButton,
+	Content: PopoverContent,
 };
 
 /**
@@ -891,4 +984,179 @@ export const Svg = {
 	FeOffset: SvgFeOffset,
 	FeMerge: SvgFeMerge,
 	FeMergeNode: SvgFeMergeNode,
+};
+
+/**
+ * JSX-facing props for `Form.Field`.
+ *
+ * Exposes the input's HTML `type` attribute under the natural prop name
+ * `type`. Internally this is mapped to `inputType` because the JSON tree
+ * reserves `type` for the component discriminator (`"formField"`).
+ */
+export type FormFieldProps = Omit<NubeComponentFormFieldProps, "inputType"> & {
+	type: NubeComponentFormFieldProps["inputType"];
+};
+
+/**
+ * Creates a `Form.Root` component.
+ *
+ * `Form.Root` declares a native HTML form whose submission is handled on the
+ * main thread. On submit the host adapter builds a `FormData` from the
+ * descendant `Form.Field` inputs, calls `fetch(target, { method, body })`,
+ * and dispatches the outcome through `onSuccess` / `onFail`.
+ *
+ * @param props - The properties for configuring the form root component.
+ * @returns A `NubeComponentFormRoot` object representing the form container.
+ */
+function FormRoot(props: NubeComponentFormRootProps): NubeComponentFormRoot {
+	return formRoot(props);
+}
+
+/**
+ * Creates a `Form.Field` component.
+ *
+ * `Form.Field` is the declarative counterpart of an HTML `<input>` bound to
+ * the surrounding `Form.Root`. The JSX `type` prop corresponds to the
+ * `<input type>` attribute (text/email/tel/number/file). Validation uses the
+ * native Constraint Validation API; `maxSize` for `type="file"` is handled
+ * by the adapter and mapped to `rangeOverflow`.
+ *
+ * @param props - The properties for configuring the form field component.
+ * @returns A `NubeComponentFormField` object representing the form input.
+ */
+function FormField(props: FormFieldProps): NubeComponentFormField {
+	const { type, ...rest } = props;
+	return formField({ inputType: type, ...rest });
+}
+
+/**
+ * Creates a `Form.FieldError` component.
+ *
+ * `Form.FieldError` is an inline validation message associated with a
+ * single `Form.Field`. It must be a direct child of `Form.Field`. The error
+ * remains in the DOM at all times and its visibility is controlled via CSS
+ * using the parent's `data-validity-state` / `data-validity-error`
+ * attributes.
+ *
+ * @param props - The properties for configuring the field error component.
+ * @returns A `NubeComponentFormFieldError` object representing the message.
+ */
+function FormFieldError(
+	props: NubeComponentFormFieldErrorProps,
+): NubeComponentFormFieldError {
+	return formFieldError(props);
+}
+
+/**
+ * Creates a `Form.Select` component.
+ *
+ * Dropdown bound to the surrounding `Form.Root`. Mirrors the platform's
+ * `Select` markup and adds Form-driven validation: pristine→valid/invalid on
+ * blur, force-validated on submit, `valueMissing` surfaced through
+ * `Form.FieldError match="valueMissing"`.
+ *
+ * @param props - The properties for configuring the form select component.
+ * @returns A `NubeComponentFormSelect` object representing the select.
+ */
+function FormSelect(
+	props: NubeComponentFormSelectProps,
+): NubeComponentFormSelect {
+	return formSelect(props);
+}
+
+/**
+ * Creates a `Form.Checkbox` component.
+ *
+ * Single checkbox bound to the surrounding `Form.Root`. Mirrors the
+ * platform's `Checkbox` markup and adds Form-driven validation: a `required`
+ * checkbox that is left unchecked produces a `valueMissing` validity error
+ * routed to the matching `Form.FieldError`.
+ *
+ * @param props - The properties for configuring the form checkbox component.
+ * @returns A `NubeComponentFormCheckbox` object representing the checkbox.
+ */
+function FormCheckbox(
+	props: NubeComponentFormCheckboxProps,
+): NubeComponentFormCheckbox {
+	return formCheckbox(props);
+}
+
+/**
+ * Creates a `Form.Resetter` component.
+ *
+ * `Form.Resetter` is equivalent to `<button type="reset">` and clears every
+ * descendant `Form.Field` / `Form.Select` / `Form.Checkbox` back to its
+ * initial value. The browser fires the form's native `reset` event, which
+ * the surrounding `Form.Root` listens to in order to also restore each
+ * field's React-controlled validity state to `"pristine"`. No worker
+ * round-trip is involved.
+ *
+ * @param props - The properties for configuring the form resetter component.
+ * @returns A `NubeComponentFormResetter` object representing the button.
+ */
+function FormResetter(
+	props: NubeComponentFormResetterProps,
+): NubeComponentFormResetter {
+	return formResetter(props);
+}
+
+/**
+ * Creates a `Form.Submitter` component.
+ *
+ * `Form.Submitter` is equivalent to `<button type="submit">` and triggers
+ * the submission of the surrounding `Form.Root`. Children render as the
+ * button label.
+ *
+ * @param props - The properties for configuring the submitter component.
+ * @returns A `NubeComponentFormSubmitter` object representing the button.
+ */
+function FormSubmitter(
+	props: NubeComponentFormSubmitterProps,
+): NubeComponentFormSubmitter {
+	return formSubmitter(props);
+}
+
+/**
+ * Creates a `Form.Success` component — conditional block rendered by
+ * `Form.Root` when the submit succeeds. Replaces the regular form
+ * children. Place a `Form.Resetter` inside to return to the idle state.
+ */
+function FormSuccess(
+	props: NubeComponentFormSuccessProps,
+): NubeComponentFormSuccess {
+	return formSuccess(props);
+}
+
+/**
+ * Creates a `Form.Failure` component — conditional block rendered by
+ * `Form.Root` when the submit fails. Replaces the regular form
+ * children. Place a `Form.Resetter` inside for "try again" UX.
+ */
+function FormFailure(
+	props: NubeComponentFormFailureProps,
+): NubeComponentFormFailure {
+	return formFailure(props);
+}
+
+/**
+ * Creates a `Form.Sending` component — conditional block rendered by
+ * `Form.Root` while the submit fetch is in flight (loaders / skeletons).
+ */
+function FormSending(
+	props: NubeComponentFormSendingProps,
+): NubeComponentFormSending {
+	return formSending(props);
+}
+
+export const Form = {
+	Root: FormRoot,
+	Field: FormField,
+	FieldError: FormFieldError,
+	Select: FormSelect,
+	Checkbox: FormCheckbox,
+	Resetter: FormResetter,
+	Submitter: FormSubmitter,
+	Success: FormSuccess,
+	Failure: FormFailure,
+	Sending: FormSending,
 };

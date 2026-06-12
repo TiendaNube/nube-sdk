@@ -17,8 +17,6 @@ import { TableRowItem } from "@/devtools/components/table-row-item";
 import { TrashIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { v4 as uuidv4 } from "uuid";
-
 const STORAGE_KEY = "nube-devtools-events-page-width";
 const SEARCH_STORAGE_KEY = "nube-devtools-filter-search";
 
@@ -30,8 +28,6 @@ export function Events() {
 		return localStorage.getItem(SEARCH_STORAGE_KEY) || "";
 	});
 	const tableContainerRef = useRef<HTMLDivElement>(null);
-	const panelContainerRef = useRef<HTMLDivElement>(null);
-	const [panelWidth, setPanelWidth] = useState<number>(0);
 
 	useEffect(() => {
 		setFilteredEvents(events.filter((event) => event.data[1].includes(search)));
@@ -41,22 +37,6 @@ export function Events() {
 		localStorage.setItem(SEARCH_STORAGE_KEY, search);
 	}, [search]);
 
-	useEffect(() => {
-		if (panelContainerRef.current) {
-			const resizeObserver = new ResizeObserver((entries) => {
-				for (const entry of entries) {
-					setPanelWidth(entry.contentRect.width);
-				}
-			});
-
-			resizeObserver.observe(panelContainerRef.current);
-
-			return () => {
-				resizeObserver.disconnect();
-			};
-		}
-	}, []);
-
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
@@ -64,7 +44,10 @@ export function Events() {
 				port.onMessage.addListener((message) => {
 					if (message.payload as NubeSDKEventData) {
 						setEvents((prevEvents) => {
-							return [...prevEvents, { id: uuidv4(), data: message.payload }];
+							return [
+								...prevEvents,
+								{ id: crypto.randomUUID(), data: message.payload },
+							];
 						});
 
 						port.disconnect();
@@ -160,10 +143,7 @@ export function Events() {
 						direction="horizontal"
 					>
 						<ResizablePanel defaultSize={40}>
-							<div
-								ref={tableContainerRef}
-								className="h-full overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 dark:[&::-webkit-scrollbar-thumb:hover]:bg-gray-600"
-							>
+							<div ref={tableContainerRef} className="h-full overflow-y-auto">
 								{events.length === 0 ? (
 									<EmptyState
 										text="No events found"
@@ -173,7 +153,7 @@ export function Events() {
 										}}
 									/>
 								) : (
-									<Table>
+									<Table className="table-fixed">
 										<TableBody>
 											{filteredEvents.map((event) => (
 												<TableRow key={event.id}>
@@ -193,17 +173,13 @@ export function Events() {
 						</ResizablePanel>
 						<ResizableHandle />
 						<ResizablePanel>
-							<div ref={panelContainerRef} className="h-full">
-								<div
-									className="flex h-full overflow-y-auto [scrollbar-width:none]"
-									style={{ width: `${panelWidth}px` }}
-								>
-									{selectedEvent && (
-										<div className="text-sm w-full">
-											<JsonViewer className="p-2" data={selectedEvent.data} />
-										</div>
-									)}
-								</div>
+							<div className="h-full overflow-auto">
+								{selectedEvent && (
+									<JsonViewer
+										className="p-2 text-sm overflow-x-auto"
+										data={selectedEvent.data}
+									/>
+								)}
 							</div>
 						</ResizablePanel>
 					</ResizablePanelGroup>

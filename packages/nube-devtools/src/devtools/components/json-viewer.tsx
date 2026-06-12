@@ -1,6 +1,7 @@
 import { useDevToolsTheme } from "@/contexts/devtools-theme-context";
-import ReactJsonView from "@microlink/react-json-view";
+import ReactJsonView, { type OnCopyProps } from "@microlink/react-json-view";
 import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 interface JsonViewerProps {
 	data: object;
@@ -95,6 +96,10 @@ export function JsonViewer({
 		return () => clearTimeout(timeoutId);
 	}, [data, modifiedPaths]);
 
+	const handleCopy = (copy: OnCopyProps) => {
+		toast.success("Copied to clipboard");
+	};
+
 	return (
 		<div ref={containerRef} className={className}>
 			<ReactJsonView
@@ -103,7 +108,9 @@ export function JsonViewer({
 				collapsed={collapsed}
 				displayDataTypes={false}
 				iconStyle="circle"
-				enableClipboard={false}
+				enableClipboard={handleCopy}
+				showComma={false}
+				displayObjectSize
 				style={{
 					backgroundColor: "transparent",
 				}}

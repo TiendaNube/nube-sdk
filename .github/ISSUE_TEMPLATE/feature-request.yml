@@ -1,0 +1,56 @@
+name: Feature Request
+description: Suggest a new feature or improvement for NubeSDK
+title: "[REQUEST] "
+labels: ["Request", "Partner"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > **Please open one issue per request.** If you have multiple requests, open a separate issue for each, it helps us resolve them faster.
+
+  - type: input
+    id: app-id
+    attributes:
+      label: App ID
+      description: Your application ID, if you already have one.
+      placeholder: "e.g. 12345"
+
+  - type: input
+    id: app-name
+    attributes:
+      label: App name
+      description: Your application name (optional).
+      placeholder: "e.g. My Payments App"
+
+  - type: dropdown
+    id: request-type
+    attributes:
+      label: Request Type
+      description: What type of request is this?
+      options:
+        - Slot
+        - Component
+        - Event
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: Describe one feature. For multiple requests, open separate issues.
+      value: |
+        **What problem does this solve?**
+
+
+        **Proposed solution**
+
+
+        **Use case (optional)**
+
+
+        **Alternatives considered (optional)**
+
+    validations:
+      required: true

@@ -81,10 +81,34 @@ For more details about NubeSDK and how to build apps, check out our **official d
 
 **[NubeSDK Documentation](https://dev.tiendanube.com/docs/applications/nube-sdk/overview)**
 
+## Contributing
+
+We welcome bug reports and feature requests from the community! See our **[Contributing Guide](CONTRIBUTING.md)** for details on how to:
+
+- Report bugs
+- Request features
+- Ask questions
+
+### Releasing an Unstable Version
+
+1. Merge your feature branch into `unstable` and push
+2. A Tiendanube/Nuvemshop team member approves the publish job(s) in CircleCI
+3. Install with `npm install @tiendanube/nube-sdk-types@unstable`
+
+> **Tip:** If `unstable` is stale, reset it first: `git reset --hard origin/main`
+
+### Releasing a Stable Version
+
+1. Bump the version in the package's `package.json`
+2. Merge to `main` and push
+3. A Tiendanube/Nuvemshop team member approves the publish job(s) in CircleCI
+
 ## Support
 
-- **Questions?** Use [GitHub Issues](https://github.com/TiendaNube/nube-sdk/issues).
-- **Found a bug?** Open an issue with a reproducible example.
+- **Questions?** Use [GitHub Discussions Q&A](https://github.com/TiendaNube/nube-sdk/discussions/categories/q-a).
+- **Found a bug?** [Open a bug report](https://github.com/TiendaNube/nube-sdk/issues/new?template=bug-report.yml).
+- **Feature idea?** [Open a feature request](https://github.com/TiendaNube/nube-sdk/issues/new?template=feature-request.yml).
+- **Changelog:** See [CHANGELOG.md](CHANGELOG.md) or follow [Announcements](https://github.com/TiendaNube/nube-sdk/discussions/categories/announcements) for release updates.
 
 ---
 

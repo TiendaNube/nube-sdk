@@ -1,0 +1,61 @@
+name: Bug Report
+description: Report a bug in NubeSDK
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > **Please report one bug per issue.** If you found multiple bugs, open a separate issue for each, it helps us fix them faster.
+
+  - type: input
+    id: app-id
+    attributes:
+      label: App ID
+      description: Your application ID.
+      placeholder: "e.g. 12345"
+    validations:
+      required: true
+
+  - type: input
+    id: app-name
+    attributes:
+      label: App name
+      description: Your application name (optional).
+      placeholder: "e.g. My Payments App"
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - "Urgent - My app and stores are impacted right now"
+        - "High - Core functionality is broken but there is a workaround"
+        - "Medium - Something is not working as expected but does not block usage"
+        - "Low - Minor issue or visual glitch"
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: Describe one bug. For multiple bugs, open separate issues.
+      value: |
+        **What happened?**
+
+
+        **Steps to reproduce**
+        1.
+        2.
+        3.
+
+        **Expected behavior**
+
+
+        **Environment (optional)**
+
+
+        **Logs or screenshots (optional)**
+
+    validations:
+      required: true

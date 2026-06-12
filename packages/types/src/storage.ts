@@ -8,7 +8,10 @@ export type NubeStorageEvent =
 	| "internal:storage:remove"
 	| "internal:storage:remove:response"
 	| "internal:navigate"
-	| "internal:iframe:message";
+	| "internal:iframe:message"
+	| "internal:form:submit"
+	| "internal:form:reset"
+	| "internal:page:scroll_to";
 
 export type NubeStorageId = "local-storage" | "session-storage";
 
@@ -58,10 +61,27 @@ export type NubeNavigateEventData = {
 	route: `/${string}`;
 };
 
+export type NubeScrollToEventData = {
+	top?: number;
+	left?: number;
+	behavior?: "smooth" | "auto" | "instant";
+};
+
 export type NubeIframeMessageEventData = {
 	iframeId: string;
 	message: JsonObject;
 	src?: string;
+};
+
+/**
+ * Payload carried by the `internal:form:submit` / `internal:form:reset`
+ * events fired by `browser.submitForm` / `browser.resetForm`. The
+ * `formId` is the `__internalId` of the target `Form.Root` and encodes the
+ * app id by construction (`formRoot-<appId>-<hash>`), so the main-thread
+ * handler can validate ownership with a string-prefix check.
+ */
+export type NubeFormActionEventData = {
+	formId: string;
 };
 
 export interface AsyncNubeStorage {

@@ -3,8 +3,10 @@ import type { ReactNode } from "react";
 
 export const PAGES = {
 	EVENTS: "events",
+	ERRORS: "errors",
 	STORAGES: "storages",
 	APPS: "apps",
+	LOCAL_MODE: "local-mode",
 	COMPONENTS: "components",
 	SVG_CONVERT: "svg-convert",
 	STATE: "state",

@@ -48,6 +48,31 @@ export type Device = {
 };
 
 /**
+ * Represents a sub-item that composes a kit product in the cart.
+ */
+export type CartSubItem = {
+	/** Name of the sub-item. */
+	name: string;
+
+	/** Quantity of this sub-item in the kit. */
+	quantity: number;
+
+	/** Variant details of the sub-item, usually a combination of selected attributes. */
+	variant_name: string;
+
+	/** URL of the sub-item's page. */
+	url: string;
+
+	/** Image of the sub-item. */
+	image: {
+		/** Source URL of the image. */
+		src: string;
+		/** Alternative text for the image for accessibility. */
+		alt: string;
+	};
+};
+
+/**
  * Represents a Cart Item.
  * This type maintains compatibility with the API response format.
  */
@@ -90,6 +115,12 @@ export type CartItem = {
 
 	/** Indicates whether the product is eligible for Ahora 12 financing. */
 	is_ahora_12_eligible: boolean;
+
+	/** Indicates whether the product is a kit composed of sub-items. */
+	is_kit: boolean;
+
+	/** List of sub-items that compose the kit (when `is_kit` is true). */
+	sub_items: CartSubItem[];
 };
 
 /**
@@ -334,6 +365,30 @@ export type Order = {
 
 	/** Tracking statuses of the order. */
 	tracking_statuses?: OrderTrackingStatus[];
+
+	/** Additional metadata for the order, set by partner apps. */
+	extra?: Record<string, string>;
+};
+
+/**
+ * Represents the currency used by a store, including its code and the
+ * formatting rules used to display monetary values.
+ */
+export type CurrencyDetails = {
+	/** Currency code used in the store (e.g., "USD", "EUR", "BRL"). */
+	code: string;
+
+	/** Character used to separate the decimal part of a value (e.g., ","). */
+	cents_separator: string;
+
+	/** Character used to separate thousands in a value (e.g., "."). */
+	thousands_separator: string;
+
+	/** Long form of the currency symbol (e.g., "R$"). */
+	display_long: string;
+
+	/** Short form of the currency symbol (e.g., "R$"). */
+	display_short: string;
 };
 
 /**
@@ -349,11 +404,22 @@ export type Store = {
 	/** Domain name associated with the store. */
 	domain: string;
 
-	/** Currency code used in the store (e.g., "USD", "EUR"). */
+	/**
+	 * Currency code used in the store (e.g., "USD", "EUR").
+	 *
+	 * @deprecated Use {@link Store.currency_details.code} instead, which exposes the
+	 * currency code along with its formatting rules.
+	 */
 	currency: string;
+
+	/** Currency used by the store, including its formatting rules. */
+	currency_details: CurrencyDetails;
 
 	/** Language code of the store (e.g., "en", "es"). */
 	language: LanguageKey;
+
+	/** The store's theme template (e.g., "recife", "morelia", "rio"). */
+	theme: string;
 };
 
 type FixedProductListSectionName =
@@ -517,6 +583,17 @@ export type AppLocation = {
 	 * value represents the value of that query parameter.
 	 */
 	queries: Record<string, string>;
+
+	/**
+	 * Equivalent to `document.title` on the storefront main thread,
+	 * captured by the SDK at the moment the location changed. */
+	title: string;
+
+	/**
+	 * Equivalent to `document.referrer`. The URL of the previous page in
+	 * the storefront SPA (or the external referrer for the landing page).
+	 * Null on the very first pageview when there is no referrer. */
+	referrer: string | null;
 };
 
 /**

@@ -1,7 +1,6 @@
 import {
 	handleEvents,
 	highlightElement,
-	injectWindowVariable,
 	resendEvent,
 	scrollToElement,
 } from "./scripts";
@@ -48,14 +47,6 @@ export const handleDevToolsEvents = async ({ tabId }: { tabId: number }) => {
 	});
 };
 
-export const handleDevToolsInjectWindowVariable = (tabId: number) => {
-	chrome.scripting.executeScript({
-		target: { tabId },
-		world: "MAIN",
-		func: injectWindowVariable,
-	});
-};
-
 export const handleDevToolsGetComponents = ({
 	tabId,
 	sendResponse,
@@ -78,7 +69,10 @@ export const handleDevToolsGetComponents = ({
 					return Object.keys(apps).reduce<
 						Record<string, Record<string, NubeSDKComponent>>
 					>((acc, appId) => {
-						acc[appId] = apps[appId].ui.slots;
+						const slots = apps[appId]?.ui?.slots;
+						if (slots) {
+							acc[appId] = slots;
+						}
 						return acc;
 					}, {});
 				}

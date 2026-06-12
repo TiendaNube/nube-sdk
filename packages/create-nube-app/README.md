@@ -10,6 +10,8 @@
 - TypeScript configuration
 - Bundler configuration (tsup)
 - Required dependencies
+- Testing setup (Vitest)
+- Linting and formatting (Biome)
 - Basic code examples
 
 ## Installation
@@ -25,6 +27,7 @@ With Yarn:
 ```sh
 yarn create nube-app
 ```
+
 With PNPM:
 
 ```sh
@@ -33,20 +36,27 @@ pnpm create nube-app
 
 ## Usage
 
-After running the command, you'll be guided through an interactive process that allows you to:
+After running the command, you'll be guided through an interactive process:
 
-1. What is the project's name?
-2. Select a template:
+1. Choose the project name
+2. Select a template
+3. Initialize a git repository
 
 ### Usage Example
 
 ```
 $ npm create nube-app@latest
-What is the project's name?
-Select a template:
-    Minimal
-❯   Minimal with UI
-    Minimal with UI in JSX
+
+◆  What is the project's name?
+│  my-nube-app
+│
+◆  Select a template:
+│  ● Minimal
+│  ○ Minimal with UI
+│  ○ Minimal with UI in JSX
+│
+◇  Initialize git repository?
+│  Yes
 ```
 
 ## Project Structure
@@ -55,12 +65,19 @@ After creation, your project will have the following structure:
 
 ```
 my-nube-app/
+├── .vscode/
+│   ├── extensions.json
+│   └── settings.json
 ├── src/
-│   └── main.ts
+│   ├── main.ts
+│   └── main.test.ts
+├── .gitignore
+├── biome.json
 ├── package.json
+├── README.md
 ├── tsconfig.json
 ├── tsup.config.js
-└── biome.json
+└── vitest.config.ts
 ```
 
 ## Available Scripts
@@ -68,7 +85,12 @@ my-nube-app/
 The created project includes the following scripts:
 
 - `npm run build` → Builds the project using tsup
-- `npm run dev` → Starts the project in development mode, enabling features like hot reloading and source map support for easier debugging.
+- `npm run dev` → Starts the project in development mode with hot reloading and source maps
+- `npm run test` → Runs tests with Vitest
+- `npm run test:watch` → Runs tests in watch mode
+- `npm run test:coverage` → Runs tests with coverage report
+- `npm run lint` → Checks code with Biome
+- `npm run format` → Formats code with Biome
 
 ## Official Documentation
 
@@ -83,4 +105,4 @@ For more details about NubeSDK and how to build apps, check out our **official d
 
 ---
 
-© [Tiendanube / Nuvemshop](https://www.tiendanube.com), 2025. All rights reserved.
+© [Tiendanube / Nuvemshop](https://www.tiendanube.com), 2026. All rights reserved.

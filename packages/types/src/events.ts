@@ -23,6 +23,7 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  * @property {"coupon:add"} COUPON_ADD - Used to add a coupon to the cart.
  * @property {"coupon:remove"} COUPON_REMOVE - Used to remove a coupon from the cart.
  * @property {"shipping:select"} SHIPPING_SELECT - Used to select shipping option.
+ * @property {"order:add:extra"} ORDER_ADD_EXTRA - Used to add additional metadata to an order.
  */
 export const SENDABLE_EVENT = {
 	CART_VALIDATE: "cart:validate",
@@ -32,6 +33,7 @@ export const SENDABLE_EVENT = {
 	UI_SLOT_SET: "ui:slot:set",
 	SHIPPING_UPDATE_LABEL: "shipping:update:label",
 	ORDER_ADD_TRACKING_STATUSES: "order:add:tracking_statuses",
+	ORDER_ADD_EXTRA: "order:add:extra",
 	COUPON_ADD: "coupon:add",
 	COUPON_REMOVE: "coupon:remove",
 	SHIPPING_SELECT: "shipping:select",
@@ -76,6 +78,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"location:updated"} LOCATION_UPDATED - Fired when the location is updated.
  * @property {"quickbuy:open"} QUICKBUY_OPEN - Fired when the quickbuy modal is opened.
  * @property {"quickbuy:close"} QUICKBUY_CLOSE - Fired when the quickbuy modal is closed.
+ * @property {"product:variant_selected"} PRODUCT_VARIANT_SELECTED - Fired when a product variant is selected.
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
 export const EVENT = {
@@ -102,6 +105,7 @@ export const EVENT = {
 	LOCATION_UPDATED: "location:updated",
 	QUICKBUY_OPEN: "quickbuy:open",
 	QUICKBUY_CLOSE: "quickbuy:close",
+	PRODUCT_VARIANT_SELECTED: "product:variant_selected",
 	...SENDABLE_EVENT,
 } as const;
 

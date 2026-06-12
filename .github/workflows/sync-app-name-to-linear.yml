@@ -1,0 +1,151 @@
+name: Sync App Name to Linear Title
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  sync-title:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'Request')
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          LINEAR_TEAM_ID: ${{ secrets.LINEAR_TEAM_ID }}
+        with:
+          script: |
+            const body = context.payload.issue.body || '';
+            const issueTitle = context.payload.issue.title;
+            const issueNumber = context.payload.issue.number;
+
+            // Parse app name from issue form body
+            const appNameMatch = body.match(/### App name\s*\n+([^\n#]+)/);
+            const appName = appNameMatch ? appNameMatch[1].trim() : null;
+
+            if (!appName) {
+              core.info('No app name provided, skipping title sync.');
+              return;
+            }
+
+            const titleText = issueTitle.replace(/^\[(BUG|REQUEST)\]\s*/i, '');
+            const newTitle = `[${appName}] ${titleText}`.trim();
+
+            // Rename GitHub issue title
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              title: newTitle,
+            });
+            core.info(`Renamed issue title to: "${newTitle}"`);
+
+            const linearApiKey = process.env.LINEAR_API_KEY;
+            const linearTeamId = process.env.LINEAR_TEAM_ID;
+
+            if (!linearApiKey || !linearTeamId) {
+              core.setFailed('LINEAR_API_KEY or LINEAR_TEAM_ID secret is not configured.');
+              return;
+            }
+
+            async function queryLinear(query, variables = {}) {
+              const response = await fetch('https://api.linear.app/graphql', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': linearApiKey,
+                },
+                body: JSON.stringify({ query, variables }),
+              });
+              return response.json();
+            }
+
+            core.info(`Looking for Linear issue with title: "${issueTitle}"`);
+
+            // Only match issues created recently to avoid picking up old issues with similar titles
+            const issueCreatedAt = context.payload.issue.created_at;
+            const since = new Date(new Date(issueCreatedAt).getTime() - 30000).toISOString();
+
+            const maxAttempts = 6;
+            const delayMs = 15000;
+            let linearIssueId = null;
+
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+              core.info(`Attempt ${attempt}/${maxAttempts}: searching for issue in Linear...`);
+
+              const searchQuery = `
+                query($teamId: ID!, $title: String!, $since: DateTimeOrDuration!) {
+                  issues(
+                    filter: {
+                      team: { id: { eq: $teamId } }
+                      title: { containsIgnoreCase: $title }
+                      createdAt: { gte: $since }
+                    }
+                    orderBy: createdAt
+                    last: 5
+                  ) {
+                    nodes {
+                      id
+                      identifier
+                      title
+                      createdAt
+                    }
+                  }
+                }
+              `;
+
+              const data = await queryLinear(searchQuery, {
+                teamId: linearTeamId,
+                title: issueTitle,
+                since,
+              });
+
+              if (data.errors) {
+                core.warning(`Linear API error: ${JSON.stringify(data.errors)}`);
+              }
+
+              const nodes = data.data?.issues?.nodes || [];
+
+              if (nodes.length > 0) {
+                linearIssueId = nodes[0].id;
+                core.info(`Found Linear issue: ${nodes[0].identifier} - "${nodes[0].title}" (${linearIssueId})`);
+                break;
+              }
+
+              if (attempt < maxAttempts) {
+                core.info(`Issue not found in Linear yet, waiting ${delayMs / 1000}s...`);
+                await new Promise(r => setTimeout(r, delayMs));
+              }
+            }
+
+            if (!linearIssueId) {
+              core.warning(`Could not find Linear issue matching title "${issueTitle}" after ${maxAttempts} attempts. The team may need to update the title manually.`);
+              return;
+            }
+
+            const updateQuery = `
+              mutation($issueId: String!, $title: String!) {
+                issueUpdate(id: $issueId, input: { title: $title }) {
+                  success
+                  issue {
+                    identifier
+                    title
+                  }
+                }
+              }
+            `;
+
+            const updateData = await queryLinear(updateQuery, {
+              issueId: linearIssueId,
+              title: newTitle,
+            });
+
+            if (updateData.data?.issueUpdate?.success) {
+              const updated = updateData.data.issueUpdate.issue;
+              core.info(`Updated Linear issue ${updated.identifier}: title="${updated.title}"`);
+            } else {
+              core.setFailed(`Failed to update Linear title: ${JSON.stringify(updateData)}`);
+            }

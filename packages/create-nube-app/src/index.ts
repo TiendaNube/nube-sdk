@@ -68,8 +68,40 @@ async function installDependencies(
 	}
 }
 
-function copyTemplateFiles(src: string, dest: string): Promise<void> {
-	return fs.copy(src, dest);
+async function initGit(dest: string): Promise<boolean> {
+	const execAsync = promisify(exec);
+
+	const spinner = prompts.spinner();
+	try {
+		await execAsync("git --version");
+	} catch (error) {
+		prompts.log.warn("Git not found. Skipping git initialization.");
+		return true;
+	}
+
+	spinner.start("Initializing git...");
+	try {
+		await execAsync("git init", {
+			cwd: dest,
+		});
+		spinner.stop("🌱 Git initialized!");
+		return true;
+	} catch (error) {
+		spinner.stop("Git failed to initialize.");
+		return false;
+	}
+}
+
+async function copyTemplateFiles(src: string, dest: string): Promise<void> {
+	await fs.copy(src, dest);
+
+	// Rename gitignore to .gitignore (NPM ignores .gitignore files during publish)
+	const gitignorePath = path.join(dest, "gitignore");
+	const dotGitignorePath = path.join(dest, ".gitignore");
+
+	if (await fs.pathExists(gitignorePath)) {
+		await fs.move(gitignorePath, dotGitignorePath);
+	}
 }
 
 function cancel(message = "Operation cancelled") {
@@ -86,11 +118,12 @@ async function main(): Promise<void> {
 	const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent);
 	const pkgManager = pkgInfo ? pkgInfo.name : "npm";
 
+	prompts.intro("NubeSDK App");
 	const promptProjectName = await prompts.text({
 		message: "What is the project's name?",
 		defaultValue,
 		placeholder: defaultValue,
-		validate: validateProjectName,
+		validate: (value) => validateProjectName(value ?? defaultValue),
 	});
 	const projectName = formatProjectName(
 		typeof promptProjectName === "string" ? promptProjectName : "",
@@ -121,6 +154,17 @@ async function main(): Promise<void> {
 	} catch (error) {
 		cancel("Failed to copy template files.");
 		return;
+	}
+
+	const shouldInitGit = await prompts.confirm({
+		message: "Initialize git repository?",
+		initialValue: true,
+	});
+	if (prompts.isCancel(shouldInitGit)) return cancel();
+
+	if (shouldInitGit) {
+		const gitSuccess = await initGit(dest);
+		if (!gitSuccess) return;
 	}
 
 	const success = await installDependencies(pkgManager, dest, projectName);

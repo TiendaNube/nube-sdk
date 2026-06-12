@@ -1,10 +1,12 @@
 import {
 	Braces,
 	ChartNoAxesGantt,
+	CircleAlert,
 	CodeXml,
 	ComponentIcon,
 	Database,
 	Package,
+	Server,
 } from "lucide-react";
 
 import { Badge as BadgeComponent } from "@/components/ui/badge";
@@ -22,6 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { PAGES, type Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
+import { useNubeSDKErrorsContext } from "@/contexts/nube-sdk-errors-context";
 import packageData from "../../../package.json";
 
 const Badge = ({ text }: { text: string }) => {
@@ -44,9 +47,19 @@ const menu: {
 		icon: Package,
 	},
 	{
+		title: "Local Mode",
+		page: PAGES.LOCAL_MODE,
+		icon: Server,
+	},
+	{
 		title: "Components",
 		page: PAGES.COMPONENTS,
 		icon: ComponentIcon,
+	},
+	{
+		title: "Errors",
+		page: PAGES.ERRORS,
+		icon: CircleAlert,
 	},
 	{
 		title: "Events",
@@ -62,7 +75,6 @@ const menu: {
 		title: "SVG Converter",
 		page: PAGES.SVG_CONVERT,
 		icon: CodeXml,
-		badge: "beta",
 	},
 	{
 		title: "State",
@@ -73,6 +85,17 @@ const menu: {
 
 export function AppSidebar() {
 	const { currentPage, navigate } = useNavigation();
+	const { totalErrors } = useNubeSDKErrorsContext();
+
+	const getItemBadge = (item: (typeof menu)[number]) => {
+		if (item.page === PAGES.ERRORS && totalErrors > 0) {
+			return <Badge text={String(totalErrors)} />;
+		}
+		if (item.badge) {
+			return <Badge text={item.badge} />;
+		}
+		return null;
+	};
 
 	return (
 		<Sidebar>
@@ -102,16 +125,16 @@ export function AppSidebar() {
 										>
 											<item.icon />
 											{currentPage === item.page ? (
-												<div className="flex items-center gap-1">
+												<div className="flex items-center justify-between w-full">
 													<span className="font-bold text-primary">
 														{item.title}
 													</span>
-													{item.badge && <Badge text={item.badge} />}
+													{getItemBadge(item)}
 												</div>
 											) : (
-												<div className="flex items-center gap-1">
+												<div className="flex items-center justify-between w-full">
 													<span className="font-light">{item.title}</span>
-													{item.badge && <Badge text={item.badge} />}
+													{getItemBadge(item)}
 												</div>
 											)}
 										</Button>

@@ -15,9 +15,15 @@ import type { ObjectValues, Prettify } from "./utility";
  * @property {"corner_top_right"} CORNER_TOP_RIGHT - Top right corner of the page.
  * @property {"corner_bottom_left"} CORNER_BOTTOM_LEFT - Bottom left corner of the page.
  * @property {"corner_bottom_right"} CORNER_BOTTOM_RIGHT - Bottom right corner of the page.
+ * @property {"edge_top_center"} EDGE_TOP_CENTER - Top edge, horizontally centered.
+ * @property {"edge_bottom_center"} EDGE_BOTTOM_CENTER - Bottom edge, horizontally centered.
+ * @property {"edge_left_center"} EDGE_LEFT_CENTER - Left edge, vertically centered.
+ * @property {"edge_right_center"} EDGE_RIGHT_CENTER - Right edge, vertically centered.
  * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
  * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  * @property {"after_header"} AFTER_HEADER - After the header.
+ * @property {"drawer_left"} DRAWER_LEFT - Left drawer.
+ * @property {"drawer_right"} DRAWER_RIGHT - Right drawer.
  */
 export const COMMON_UI_SLOT = {
 	BEFORE_MAIN_CONTENT: "before_main_content",
@@ -27,9 +33,15 @@ export const COMMON_UI_SLOT = {
 	CORNER_TOP_RIGHT: "corner_top_right",
 	CORNER_BOTTOM_LEFT: "corner_bottom_left",
 	CORNER_BOTTOM_RIGHT: "corner_bottom_right",
+	EDGE_TOP_CENTER: "edge_top_center",
+	EDGE_BOTTOM_CENTER: "edge_bottom_center",
+	EDGE_LEFT_CENTER: "edge_left_center",
+	EDGE_RIGHT_CENTER: "edge_right_center",
 	BEFORE_LINE_ITEMS: "before_line_items",
 	AFTER_LINE_ITEMS: "after_line_items",
 	AFTER_HEADER: "after_header",
+	DRAWER_LEFT: "drawer_left",
+	DRAWER_RIGHT: "drawer_right",
 } as const;
 
 /**
@@ -53,6 +65,10 @@ export const COMMON_UI_SLOT = {
  * @property {"before_shipping_form"} BEFORE_SHIPPING_FORM - Before the shipping form in checkout.
  * @property {"after_shipping_form"} AFTER_SHIPPING_FORM - After the shipping form in checkout.
  * @property {"after_shipping_description"} AFTER_SHIPPING_DESCRIPTION - After the shipping description in checkout.
+ * @property {"before_order_number"} BEFORE_ORDER_NUMBER - Before the order number in checkout.
+ * @property {"after_order_number"} AFTER_ORDER_NUMBER - After the order number in checkout.
+ * @property {"before_order_summary"} BEFORE_ORDER_SUMMARY - Before the order summary in checkout.
+ * @property {"after_order_summary"} AFTER_ORDER_SUMMARY - After the order summary in checkout.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const CHECKOUT_UI_SLOT = {
@@ -69,6 +85,10 @@ export const CHECKOUT_UI_SLOT = {
 	BEFORE_SHIPPING_FORM: "before_shipping_form",
 	AFTER_SHIPPING_FORM: "after_shipping_form",
 	AFTER_SHIPPING_DESCRIPTION: "after_shipping_description",
+	BEFORE_ORDER_NUMBER: "before_order_number",
+	AFTER_ORDER_NUMBER: "after_order_number",
+	BEFORE_ORDER_SUMMARY: "before_order_summary",
+	AFTER_ORDER_SUMMARY: "after_order_summary",
 } as const;
 
 /**
@@ -83,15 +103,24 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_quick_buy_add_to_cart"} BEFORE_QUICK_BUY_ADD_TO_CART - Before the quick buy add to cart button.
  * @property {"before_product_detail_add_to_cart"} BEFORE_PRODUCT_DETAIL_ADD_TO_CART - Before the product detail add to cart button.
  * @property {"after_product_detail_add_to_cart"} AFTER_PRODUCT_DETAIL_ADD_TO_CART - After the product detail add to cart button.
- * @property {"before_add_to_cart_pdp"} BEFORE_ADD_TO_CART_PDP - Before the add to cart button on product detail page.
- * @property {"after_add_to_cart_pdp"} AFTER_ADD_TO_CART_PDP - After the add to cart button on product detail page.
+ * @property {"before_add_to_cart_pdp"} BEFORE_ADD_TO_CART_PDP - Before the add to cart button on product detail page. Deprecated; use BEFORE_PRODUCT_DETAIL_ADD_TO_CART instead.
+ * @property {"after_add_to_cart_pdp"} AFTER_ADD_TO_CART_PDP - After the add to cart button on product detail page. Deprecated; use AFTER_PRODUCT_DETAIL_ADD_TO_CART instead.
  * @property {"product_detail_image_top_left"} PRODUCT_DETAIL_IMAGE_TOP_LEFT - Top left corner of product detail images.
  * @property {"product_detail_image_top_right"} PRODUCT_DETAIL_IMAGE_TOP_RIGHT - Top right corner of product detail images.
+ * @property {"product_detail_image_bottom_left"} PRODUCT_DETAIL_IMAGE_BOTTOM_LEFT - Bottom left corner of product detail images.
+ * @property {"product_detail_image_bottom_right"} PRODUCT_DETAIL_IMAGE_BOTTOM_RIGHT - Bottom right corner of product detail images.
+ * @property {"product_detail_image_top_center"} PRODUCT_DETAIL_IMAGE_TOP_CENTER - Top center of product detail images.
+ * @property {"product_detail_image_center_left"} PRODUCT_DETAIL_IMAGE_CENTER_LEFT - Center left of product detail images.
+ * @property {"product_detail_image_center_right"} PRODUCT_DETAIL_IMAGE_CENTER_RIGHT - Center right of product detail images.
+ * @property {"product_detail_image_bottom_center"} PRODUCT_DETAIL_IMAGE_BOTTOM_CENTER - Bottom center of product detail images.
+ * @property {"product_detail_image_center_center"} PRODUCT_DETAIL_IMAGE_CENTER_CENTER - Center of product detail images.
  * @property {"after_product_detail_name"} AFTER_PRODUCT_DETAIL_NAME - After the product name in product detail.
  * @property {"before_product_detail_name"} BEFORE_PRODUCT_DETAIL_NAME - Before the product name in product detail.
  * @property {"after_product_description"} AFTER_PRODUCT_DESCRIPTION - After the product description.
- * @property {"before_price_pdp"} BEFORE_PRICE_PDP - Before the price on product detail page.
- * @property {"after_price_pdp"} AFTER_PRICE_PDP - After the price on product detail page.
+ * @property {"before_product_detail_price"} BEFORE_PRODUCT_DETAIL_PRICE - Before the product detail price.
+ * @property {"after_product_detail_price"} AFTER_PRODUCT_DETAIL_PRICE - After the product detail price.
+ * @property {"before_price_pdp"} BEFORE_PRICE_PDP - Before the price on product detail page. Deprecated; use BEFORE_PRODUCT_DETAIL_PRICE instead.
+ * @property {"after_price_pdp"} AFTER_PRICE_PDP - After the price on product detail page. Deprecated; use AFTER_PRODUCT_DETAIL_PRICE instead.
  * @property {"after_product_grid_item_name"} AFTER_PRODUCT_GRID_ITEM_NAME - After the product name in grid items.
  * @property {"before_product_grid_item_name"} BEFORE_PRODUCT_GRID_ITEM_NAME - Before the product name in grid items.
  * @property {"after_product_grid_item_price"} AFTER_PRODUCT_GRID_ITEM_PRICE - After the product price in grid items.
@@ -100,11 +129,34 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"product_grid_item_image_top_left"} PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT - Top left corner of product grid item images.
  * @property {"product_grid_item_image_bottom_right"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT - Bottom right corner of product grid item images.
  * @property {"product_grid_item_image_bottom_left"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT - Bottom left corner of product grid item images.
- * @property {"before_start_checkout_button"} BEFORE_START_CHECKOUT_BUTTON - Before the start checkout button.
+ * @property {"product_grid_item_image_top_center"} PRODUCT_GRID_ITEM_IMAGE_TOP_CENTER - Top center of product grid item images.
+ * @property {"product_grid_item_image_center_left"} PRODUCT_GRID_ITEM_IMAGE_CENTER_LEFT - Center left of product grid item images.
+ * @property {"product_grid_item_image_center_right"} PRODUCT_GRID_ITEM_IMAGE_CENTER_RIGHT - Center right of product grid item images.
+ * @property {"product_grid_item_image_bottom_center"} PRODUCT_GRID_ITEM_IMAGE_BOTTOM_CENTER - Bottom center of product grid item images.
+ * @property {"product_grid_item_image_center_center"} PRODUCT_GRID_ITEM_IMAGE_CENTER_CENTER - Center of product grid item images.
+ * @property {"before_go_to_checkout"} BEFORE_GO_TO_CHECKOUT - Before the go to checkout button.
+ * @property {"before_start_checkout_button"} BEFORE_START_CHECKOUT_BUTTON - Before the start checkout button. Deprecated; use BEFORE_GO_TO_CHECKOUT instead.
  * @property {"after_go_to_checkout"} AFTER_GO_TO_CHECKOUT - After the go to checkout button.
  * @property {"after_cart_summary"} AFTER_CART_SUMMARY - After the cart summary.
+ * @property {"after_section_newsletter"} AFTER_SECTION_NEWSLETTER - After the newsletter section on the home page.
+ * @property {"before_section_newsletter"} BEFORE_SECTION_NEWSLETTER - Before the newsletter section on the home page.
+ * @property {"before_section_products_sale"} BEFORE_SECTION_PRODUCTS_SALE - Before the products sale section on the home page.
+ * @property {"after_section_products_sale"} AFTER_SECTION_PRODUCTS_SALE - After the products sale section on the home page.
+ * @property {"before_section_products_new"} BEFORE_SECTION_PRODUCTS_NEW - Before the products new section on the home page.
+ * @property {"after_section_products_new"} AFTER_SECTION_PRODUCTS_NEW - After the products new section on the home page.
+ * @property {"before_section_products_featured"} BEFORE_SECTION_PRODUCTS_FEATURED - Before the products featured section on the home page.
+ * @property {"after_section_products_featured"} AFTER_SECTION_PRODUCTS_FEATURED - After the products featured section on the home page.
+ * @property {"before_line_item"} BEFORE_LINE_ITEM - Before each cart line item.
+ * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item. Deprecated; use BEFORE_LINE_ITEM instead.
  * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
- * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item.
+ * @property {"before_product_detail_payment_options"} BEFORE_PRODUCT_DETAIL_PAYMENT_OPTIONS - Before the payment options accordion on the product detail page.
+ * @property {"after_product_detail_payment_options"} AFTER_PRODUCT_DETAIL_PAYMENT_OPTIONS - After the payment options accordion on the product detail page.
+ * @property {"before_product_detail_shipping_options"} BEFORE_PRODUCT_DETAIL_SHIPPING_OPTIONS - Before the shipping options on the product detail page.
+ * @property {"after_product_detail_shipping_options"} AFTER_PRODUCT_DETAIL_SHIPPING_OPTIONS - After the shipping options on the product detail page.
+ * @property {"before_cart_shipping_options"} BEFORE_CART_SHIPPING_OPTIONS - Before the shipping options on the cart page.
+ * @property {"after_cart_shipping_options"} AFTER_CART_SHIPPING_OPTIONS - After the shipping options on the cart page.
+ * @property {"before_register_form"} BEFORE_REGISTER_FORM - Before the customer registration form on the storefront register page.
+ * @property {"after_register_form"} AFTER_REGISTER_FORM - After the customer registration form on the storefront register page.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -112,14 +164,27 @@ export const STOREFRONT_UI_SLOT = {
 	BEFORE_QUICK_BUY_ADD_TO_CART: "before_quick_buy_add_to_cart",
 	BEFORE_PRODUCT_DETAIL_ADD_TO_CART: "before_product_detail_add_to_cart",
 	AFTER_PRODUCT_DETAIL_ADD_TO_CART: "after_product_detail_add_to_cart",
+	/** @deprecated Use BEFORE_PRODUCT_DETAIL_ADD_TO_CART instead. */
 	BEFORE_ADD_TO_CART_PDP: "before_add_to_cart_pdp",
+	/** @deprecated Use AFTER_PRODUCT_DETAIL_ADD_TO_CART instead. */
 	AFTER_ADD_TO_CART_PDP: "after_add_to_cart_pdp",
 	PRODUCT_DETAIL_IMAGE_TOP_LEFT: "product_detail_image_top_left",
+	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
+	PRODUCT_DETAIL_IMAGE_BOTTOM_LEFT: "product_detail_image_bottom_left",
+	PRODUCT_DETAIL_IMAGE_BOTTOM_RIGHT: "product_detail_image_bottom_right",
+	PRODUCT_DETAIL_IMAGE_TOP_CENTER: "product_detail_image_top_center",
+	PRODUCT_DETAIL_IMAGE_CENTER_LEFT: "product_detail_image_center_left",
+	PRODUCT_DETAIL_IMAGE_CENTER_RIGHT: "product_detail_image_center_right",
+	PRODUCT_DETAIL_IMAGE_BOTTOM_CENTER: "product_detail_image_bottom_center",
+	PRODUCT_DETAIL_IMAGE_CENTER_CENTER: "product_detail_image_center_center",
 	AFTER_PRODUCT_DETAIL_NAME: "after_product_detail_name",
 	AFTER_PRODUCT_DESCRIPTION: "after_product_description",
+	BEFORE_PRODUCT_DETAIL_PRICE: "before_product_detail_price",
+	AFTER_PRODUCT_DETAIL_PRICE: "after_product_detail_price",
+	/** @deprecated Use BEFORE_PRODUCT_DETAIL_PRICE instead. */
 	BEFORE_PRICE_PDP: "before_price_pdp",
+	/** @deprecated Use AFTER_PRODUCT_DETAIL_PRICE instead. */
 	AFTER_PRICE_PDP: "after_price_pdp",
-	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
 	AFTER_PRODUCT_GRID_ITEM_NAME: "after_product_grid_item_name",
 	BEFORE_PRODUCT_GRID_ITEM_NAME: "before_product_grid_item_name",
 	AFTER_PRODUCT_GRID_ITEM_PRICE: "after_product_grid_item_price",
@@ -128,12 +193,42 @@ export const STOREFRONT_UI_SLOT = {
 	PRODUCT_GRID_ITEM_IMAGE_TOP_LEFT: "product_grid_item_image_top_left",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_RIGHT: "product_grid_item_image_bottom_right",
 	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_LEFT: "product_grid_item_image_bottom_left",
-	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
+	PRODUCT_GRID_ITEM_IMAGE_TOP_CENTER: "product_grid_item_image_top_center",
+	PRODUCT_GRID_ITEM_IMAGE_CENTER_LEFT: "product_grid_item_image_center_left",
+	PRODUCT_GRID_ITEM_IMAGE_CENTER_RIGHT: "product_grid_item_image_center_right",
+	PRODUCT_GRID_ITEM_IMAGE_BOTTOM_CENTER:
+		"product_grid_item_image_bottom_center",
+	PRODUCT_GRID_ITEM_IMAGE_CENTER_CENTER:
+		"product_grid_item_image_center_center",
+	BEFORE_GO_TO_CHECKOUT: "before_go_to_checkout",
 	AFTER_GO_TO_CHECKOUT: "after_go_to_checkout",
+	/** @deprecated Use BEFORE_GO_TO_CHECKOUT instead. */
+	BEFORE_START_CHECKOUT_BUTTON: "before_start_checkout_button",
 	AFTER_CART_SUMMARY: "after_cart_summary",
+	AFTER_SECTION_NEWSLETTER: "after_section_newsletter",
 	BEFORE_FOOTER: "before_footer",
+	BEFORE_SECTION_NEWSLETTER: "before_section_newsletter",
+	BEFORE_SECTION_PRODUCTS_SALE: "before_section_products_sale",
+	AFTER_SECTION_PRODUCTS_SALE: "after_section_products_sale",
+	BEFORE_SECTION_PRODUCTS_NEW: "before_section_products_new",
+	AFTER_SECTION_PRODUCTS_NEW: "after_section_products_new",
+	BEFORE_SECTION_PRODUCTS_FEATURED: "before_section_products_featured",
+	AFTER_SECTION_PRODUCTS_FEATURED: "after_section_products_featured",
+	BEFORE_LINE_ITEM: "before_line_item",
+	/** @deprecated Use BEFORE_LINE_ITEM instead. */
 	CART_LINE_ITEM_TOP: "cart_line_item_top",
 	BEFORE_PRODUCT_DETAIL_NAME: "before_product_detail_name",
+	BEFORE_PRODUCT_DETAIL_PAYMENT_OPTIONS:
+		"before_product_detail_payment_options",
+	AFTER_PRODUCT_DETAIL_PAYMENT_OPTIONS: "after_product_detail_payment_options",
+	BEFORE_PRODUCT_DETAIL_SHIPPING_OPTIONS:
+		"before_product_detail_shipping_options",
+	AFTER_PRODUCT_DETAIL_SHIPPING_OPTIONS:
+		"after_product_detail_shipping_options",
+	BEFORE_CART_SHIPPING_OPTIONS: "before_cart_shipping_options",
+	AFTER_CART_SHIPPING_OPTIONS: "after_cart_shipping_options",
+	BEFORE_REGISTER_FORM: "before_register_form",
+	AFTER_REGISTER_FORM: "after_register_form",
 } as const;
 
 /**
