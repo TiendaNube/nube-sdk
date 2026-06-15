@@ -43,6 +43,8 @@ import type {
 	NubeComponentFormFieldError,
 	NubeComponentFormFieldErrorProps,
 	NubeComponentFormFieldProps,
+	NubeComponentFormRadio,
+	NubeComponentFormRadioProps,
 	NubeComponentFormResetter,
 	NubeComponentFormResetterProps,
 	NubeComponentFormRoot,
@@ -140,6 +142,7 @@ import {
 	formFailure,
 	formField,
 	formFieldError,
+	formRadio,
 	formResetter,
 	formRoot,
 	formSelect,
@@ -1082,11 +1085,28 @@ function FormCheckbox(
 }
 
 /**
+ * Creates a `Form.Radio` component.
+ *
+ * Radio-group bound to the surrounding `Form.Root`. Renders a list of radio
+ * inputs sharing the same `name` and mirrors the `Form.Select` API shape
+ * (a list of `{ label, value }` options + an optional default `value`).
+ * Adds Form-driven validation: pristine→valid/invalid on blur,
+ * force-validated on submit, `valueMissing` surfaced through
+ * `Form.FieldError match="valueMissing"`.
+ *
+ * @param props - The properties for configuring the form radio component.
+ * @returns A `NubeComponentFormRadio` object representing the radio group.
+ */
+function FormRadio(props: NubeComponentFormRadioProps): NubeComponentFormRadio {
+	return formRadio(props);
+}
+
+/**
  * Creates a `Form.Resetter` component.
  *
  * `Form.Resetter` is equivalent to `<button type="reset">` and clears every
- * descendant `Form.Field` / `Form.Select` / `Form.Checkbox` back to its
- * initial value. The browser fires the form's native `reset` event, which
+ * descendant `Form.Field` / `Form.Select` / `Form.Checkbox` / `Form.Radio`
+ * back to its initial value. The browser fires the form's native `reset` event, which
  * the surrounding `Form.Root` listens to in order to also restore each
  * field's React-controlled validity state to `"pristine"`. No worker
  * round-trip is involved.
@@ -1154,6 +1174,7 @@ export const Form = {
 	FieldError: FormFieldError,
 	Select: FormSelect,
 	Checkbox: FormCheckbox,
+	Radio: FormRadio,
 	Resetter: FormResetter,
 	Submitter: FormSubmitter,
 	Success: FormSuccess,

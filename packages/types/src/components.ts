@@ -896,6 +896,24 @@ export type NubeComponentFormRootEventHandler = NubeComponentEventHandler<
 export type NubeFormData = Record<string, string>;
 
 /**
+ * Convenience alias for the parameter passed to `formRoot.onChange`.
+ * Equivalent to `Parameters<NubeComponentFormRootEventHandler>[0]` narrowed
+ * to the `"change"` event. The `value` field is the JSON-stringified
+ * {@link NubeFormData} snapshot of the form; parse it when you need
+ * structured access:
+ *
+ *     onChange: (event: NubeFormChangeEvent) => {
+ *       const data = JSON.parse(event.value ?? "{}") as NubeFormData;
+ *       // …
+ *     }
+ */
+export type NubeFormChangeEvent = {
+	type: "change";
+	state: NubeSDKState;
+	value?: string;
+};
+
+/**
  * Represents the properties available for a `formRoot` component.
  *
  * `formRoot` declares a native HTML form whose submission is handled on the
@@ -1045,6 +1063,45 @@ export type NubeComponentFormSelectProps = Prettify<
  */
 export type NubeComponentFormSelect = Prettify<
 	NubeComponentBase & NubeComponentFormSelectProps & { type: "formSelect" }
+>;
+
+/**
+ * Represents the properties available for a `formRadio` component.
+ *
+ * Radio-group counterpart of `formField`. Renders a group of radio inputs
+ * sharing the same `name` and adds Form-driven validation. `valueMissing`
+ * is the only failing key produced by default (when `required` and no
+ * option is selected).
+ */
+export type NubeComponentFormRadioProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			/** Field name as it appears in the submitted `FormData`. */
+			name: string;
+			/** Group label rendered above the options. */
+			label: string;
+			/** Selectable options (mirrors `select.options`). */
+			options: { label: string; value: string }[];
+			/** Default selected value. */
+			value?: string;
+			required?: boolean;
+			disabled?: boolean;
+			/** Style slots mirroring the group, label and individual options. */
+			style?: {
+				container?: NubeComponentStyle;
+				label?: NubeComponentStyle;
+				option?: NubeComponentStyle;
+				radio?: NubeComponentStyle;
+			};
+		}
+>;
+
+/**
+ * Represents a `formRadio` component, used for radio-group inputs inside a
+ * `formRoot`.
+ */
+export type NubeComponentFormRadio = Prettify<
+	NubeComponentBase & NubeComponentFormRadioProps & { type: "formRadio" }
 >;
 
 /**
@@ -2411,6 +2468,7 @@ export type NubeComponent =
 	| NubeComponentFormFieldError
 	| NubeComponentFormSelect
 	| NubeComponentFormCheckbox
+	| NubeComponentFormRadio
 	| NubeComponentFormResetter
 	| NubeComponentFormSubmitter
 	| NubeComponentFormSuccess
@@ -2452,6 +2510,7 @@ export type NubeComponentWithChildren =
 	| NubeComponentFormFieldError
 	| NubeComponentFormSelect
 	| NubeComponentFormCheckbox
+	| NubeComponentFormRadio
 	| NubeComponentFormResetter
 	| NubeComponentFormSubmitter
 	| NubeComponentFormSuccess
