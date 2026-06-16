@@ -146,6 +146,20 @@ jobs:
             # Esto evita que npm falle si no encuentra la ruta exacta en la caché
             npx npm@11 publish --workspace @tiendanube/nube-sdk-snippet --access public
 
+  publish-helper:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Publish @tiendanube/nube-sdk-helper using OIDC
+          command: |
+            npm run build --workspace packages/helper
+            export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
+            npx npm@11 publish --workspace packages/helper --access public
+
   # --- JOBS UNSTABLE (OIDC) ---
 
   publish-types-unstable:
@@ -247,6 +261,27 @@ jobs:
             export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
             npx npm@11 publish --workspace packages/snippet --access public --tag unstable
 
+  publish-helper-unstable:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Build @tiendanube/nube-sdk-helper
+          command: npm run build --workspace packages/helper
+      - run:
+          name: Set unstable version
+          command: |
+            COMMIT_HASH=${CIRCLE_SHA1:0:7}
+            npm version prerelease --preid=unstable.${COMMIT_HASH} --no-git-tag-version --workspace packages/helper
+      - run:
+          name: Publish @tiendanube/nube-sdk-helper (unstable) using OIDC
+          command: |
+            export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
+            npx npm@11 publish --workspace packages/helper --access public --tag unstable
+
 ##### Workflows
 workflows:
   version: 2
@@ -305,6 +340,14 @@ workflows:
           context: [npm_trusted]
           requires: [approval-publish-snippet]
 
+      - approval-publish-helper:
+          type: approval
+          requires: [build]
+          filters: { <<: *filter-prd }
+      - publish-helper:
+          context: [npm_trusted]
+          requires: [approval-publish-helper]
+
       # --- UNSTABLE ---
       - approval-publish-types-unstable:
           type: approval
@@ -345,3 +388,11 @@ workflows:
       - publish-snippet-unstable:
           context: [npm_trusted]
           requires: [approval-publish-snippet-unstable]
+
+      - approval-publish-helper-unstable:
+          type: approval
+          requires: [build]
+          filters: { <<: *filter-unstable }
+      - publish-helper-unstable:
+          context: [npm_trusted]
+          requires: [approval-publish-helper-unstable]
