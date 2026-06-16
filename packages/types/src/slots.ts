@@ -157,6 +157,10 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_cart_shipping_options"} AFTER_CART_SHIPPING_OPTIONS - After the shipping options on the cart page.
  * @property {"before_register_form"} BEFORE_REGISTER_FORM - Before the customer registration form on the storefront register page.
  * @property {"after_register_form"} AFTER_REGISTER_FORM - After the customer registration form on the storefront register page.
+ * @property {"before_register_form_fields"} BEFORE_REGISTER_FORM_FIELDS - Before the fields of the customer registration form on the storefront register page.
+ * @property {"after_register_form_fields"} AFTER_REGISTER_FORM_FIELDS - After the fields of the customer registration form on the storefront register page.
+ * @property {"before_register_form_submit"} BEFORE_REGISTER_FORM_SUBMIT - Before the submit button of the customer registration form on the storefront register page.
+ * @property {"after_register_form_submit"} AFTER_REGISTER_FORM_SUBMIT - After the submit button of the customer registration form on the storefront register page.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -229,6 +233,10 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_CART_SHIPPING_OPTIONS: "after_cart_shipping_options",
 	BEFORE_REGISTER_FORM: "before_register_form",
 	AFTER_REGISTER_FORM: "after_register_form",
+	BEFORE_REGISTER_FORM_FIELDS: "before_register_form_fields",
+	AFTER_REGISTER_FORM_FIELDS: "after_register_form_fields",
+	BEFORE_REGISTER_FORM_SUBMIT: "before_register_form_submit",
+	AFTER_REGISTER_FORM_SUBMIT: "after_register_form_submit",
 } as const;
 
 /**
