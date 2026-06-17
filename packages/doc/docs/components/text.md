@@ -38,6 +38,15 @@ text({
 | heading    | 1\|2\|3\|4\|5\|6             | No       | The heading level (h1-h6).                                              |
 | modifiers  | TxtModifier[]                | No       | Array of text formatting modifiers.                                     |
 | inline     | boolean                      | No       | Whether the text should be displayed inline.                            |
+| showCopyButton | boolean                  | No       | Renders a copy button that copies the text content to the clipboard.    |
+
+### Styling the copy button
+
+When `showCopyButton` is enabled, the copy icon exposes a `data-clipboard-state`
+attribute that reflects its state, so it can be styled per state via CSS:
+
+- `data-clipboard-state="idle"` — default (copy icon).
+- `data-clipboard-state="copied"` — right after a successful copy (check icon).
 
 ### Property values
 
