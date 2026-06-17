@@ -3,6 +3,7 @@ import { formCheckbox } from "./form-checkbox";
 import { formFailure } from "./form-failure";
 import { formField } from "./form-field";
 import { formFieldError } from "./form-field-error";
+import { formRadio } from "./form-radio";
 import { formResetter } from "./form-resetter";
 import { formRoot } from "./form-root";
 import { formSelect } from "./form-select";
@@ -160,6 +161,46 @@ describe("formSelect", () => {
 			options: [{ label: "A", value: "a" }],
 		});
 		const b = formSelect({
+			name: "x",
+			label: "X",
+			options: [{ label: "B", value: "b" }],
+		});
+
+		expect(a.__internalId).not.toBe(b.__internalId);
+	});
+});
+
+describe("formRadio", () => {
+	it("creates a formRadio with required props preserved", () => {
+		const options = [
+			{ label: "Daily", value: "daily" },
+			{ label: "Weekly", value: "weekly" },
+		];
+
+		const node = formRadio({
+			name: "frequency",
+			label: "Frequency",
+			options,
+			required: true,
+			value: "daily",
+		});
+
+		expect(node.type).toBe("formRadio");
+		expect(node.name).toBe("frequency");
+		expect(node.label).toBe("Frequency");
+		expect(node.options).toBe(options);
+		expect(node.required).toBe(true);
+		expect(node.value).toBe("daily");
+		expect(node.__internalId).toMatch(/^formRadio-test-app-id-[a-z0-9]+$/);
+	});
+
+	it("produces different ids for radios with different options", () => {
+		const a = formRadio({
+			name: "x",
+			label: "X",
+			options: [{ label: "A", value: "a" }],
+		});
+		const b = formRadio({
 			name: "x",
 			label: "X",
 			options: [{ label: "B", value: "b" }],

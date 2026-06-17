@@ -48,6 +48,31 @@ export type Device = {
 };
 
 /**
+ * Represents a sub-item that composes a kit product in the cart.
+ */
+export type CartSubItem = {
+	/** Name of the sub-item. */
+	name: string;
+
+	/** Quantity of this sub-item in the kit. */
+	quantity: number;
+
+	/** Variant details of the sub-item, usually a combination of selected attributes. */
+	variant_name: string;
+
+	/** URL of the sub-item's page. */
+	url: string;
+
+	/** Image of the sub-item. */
+	image: {
+		/** Source URL of the image. */
+		src: string;
+		/** Alternative text for the image for accessibility. */
+		alt: string;
+	};
+};
+
+/**
  * Represents a Cart Item.
  * This type maintains compatibility with the API response format.
  */
@@ -90,6 +115,12 @@ export type CartItem = {
 
 	/** Indicates whether the product is eligible for Ahora 12 financing. */
 	is_ahora_12_eligible: boolean;
+
+	/** Indicates whether the product is a kit composed of sub-items. */
+	is_kit: boolean;
+
+	/** List of sub-items that compose the kit (when `is_kit` is true). */
+	sub_items: CartSubItem[];
 };
 
 /**

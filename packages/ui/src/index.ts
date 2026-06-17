@@ -56,6 +56,7 @@ export * from "./components/form-field";
 export * from "./components/form-field-error";
 export * from "./components/form-select";
 export * from "./components/form-checkbox";
+export * from "./components/form-radio";
 export * from "./components/form-resetter";
 export * from "./components/form-submitter";
 export * from "./components/form-success";
