@@ -5,7 +5,8 @@ import type { ReactNode } from "react";
 export type NubeSDKEventData = [
 	data: NubeSDKState,
 	eventType: string,
-	action: string,
+	sender: string,
+	target: string | null,
 ];
 
 export type NubeSDKEvent = {

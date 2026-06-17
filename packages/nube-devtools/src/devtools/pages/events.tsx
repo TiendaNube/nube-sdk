@@ -3,17 +3,17 @@ import { Divider } from "@/components/ui/divider";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { ResizablePanelGroup } from "@/components/ui/resizable";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Table, TableBody, TableRow } from "@/components/ui/table";
+import { Table, TableBody } from "@/components/ui/table";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
 import type {
 	NubeSDKEvent,
 	NubeSDKEventData,
 } from "@/contexts/nube-sdk-events-context";
 import { EmptyState } from "@/devtools/components/empty-state";
+import { EventTableRow } from "@/devtools/components/event-table-row";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
 import { SearchInput } from "@/devtools/components/search-input";
-import { TableRowItem } from "@/devtools/components/table-row-item";
 import { TrashIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -143,8 +143,8 @@ export function Events() {
 						direction="horizontal"
 					>
 						<ResizablePanel defaultSize={40}>
-							<div ref={tableContainerRef} className="h-full overflow-y-auto">
-								{events.length === 0 ? (
+							{events.length === 0 ? (
+								<div className="h-full overflow-y-auto">
 									<EmptyState
 										text="No events found"
 										buttonText="Reload page"
@@ -152,24 +152,39 @@ export function Events() {
 											chrome.devtools.inspectedWindow.reload();
 										}}
 									/>
-								) : (
-									<Table className="table-fixed">
-										<TableBody>
-											{filteredEvents.map((event) => (
-												<TableRow key={event.id}>
-													<TableRowItem
-														isSelected={event.id === selectedEvent?.id}
-														title={event.data[1]}
-														onResend={(data) => handleReplayEvent(data.data)}
+								</div>
+							) : (
+								<div className="flex h-full flex-col">
+									<div className="flex items-center border-b text-xs text-muted-foreground shrink-0 h-7">
+										<div className="w-[30%] px-3 truncate border-r">sender</div>
+										<div className="w-[30%] px-3 truncate border-r">target</div>
+										<div className="flex-1 px-3 truncate">event</div>
+									</div>
+									<div
+										ref={tableContainerRef}
+										className="flex-1 overflow-y-auto"
+									>
+										<Table className="table-fixed">
+											<colgroup>
+												<col className="w-[30%]" />
+												<col className="w-[30%]" />
+												<col />
+											</colgroup>
+											<TableBody>
+												{filteredEvents.map((event) => (
+													<EventTableRow
+														key={event.id}
 														event={event}
+														isSelected={event.id === selectedEvent?.id}
 														onSelect={setSelectedEvent}
+														onResend={(e) => handleReplayEvent(e.data)}
 													/>
-												</TableRow>
-											))}
-										</TableBody>
-									</Table>
-								)}
-							</div>
+												))}
+											</TableBody>
+										</Table>
+									</div>
+								</div>
+							)}
 						</ResizablePanel>
 						<ResizableHandle />
 						<ResizablePanel>
@@ -177,7 +192,9 @@ export function Events() {
 								{selectedEvent && (
 									<JsonViewer
 										className="p-2 text-sm overflow-x-auto"
-										data={selectedEvent.data}
+										data={selectedEvent.data[0]}
+										name="state"
+										collapsed={1}
 									/>
 								)}
 							</div>

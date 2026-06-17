@@ -8,6 +8,7 @@ interface JsonViewerProps {
 	className?: string;
 	collapsed?: number;
 	modifiedPaths?: Set<string>;
+	name?: string | false;
 }
 
 export function JsonViewer({
@@ -15,6 +16,7 @@ export function JsonViewer({
 	className,
 	collapsed = 2,
 	modifiedPaths,
+	name,
 }: JsonViewerProps) {
 	const { theme } = useDevToolsTheme();
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -104,6 +106,7 @@ export function JsonViewer({
 		<div ref={containerRef} className={className}>
 			<ReactJsonView
 				src={data}
+				name={name}
 				theme={theme === "dark" ? "monokai" : "rjv-default"}
 				collapsed={collapsed}
 				displayDataTypes={false}
