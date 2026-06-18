@@ -162,7 +162,7 @@ jobs:
 
   # --- CHROME WEB STORE (extensión NubeSDK DevTools) ---
 
-  publish-devtools:
+  upload-devtools-draft:
     executor: default
     steps:
       - checkout
@@ -213,6 +213,27 @@ jobs:
               -H "Content-Type: application/zip" \
               --data-binary @"${ZIP_PATH}" \
               "${UPLOAD_URL}?name=${ZIP_NAME}"
+
+  publish-devtools-store:
+    executor: default
+    steps:
+      - run:
+          name: Publish NubeSDK DevTools draft to Chrome Web Store
+          command: |
+            # Promueve a público el borrador ya subido por publish-devtools.
+            # No vuelve a subir el zip: solo llama al endpoint /publish del item.
+            curl -sS -f -X POST https://oauth2.googleapis.com/token \
+              -d "client_id=${CHROME_CLIENT_ID}" \
+              -d "client_secret=${CHROME_CLIENT_SECRET}" \
+              -d "refresh_token=${CHROME_REFRESH_TOKEN}" \
+              -d "grant_type=refresh_token" -o token.json
+            ACCESS_TOKEN=$(node -p "require('./token.json').access_token")
+            curl -sS -f \
+              -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+              -H "x-goog-api-version: 2" \
+              -H "Content-Length: 0" \
+              -X POST \
+              "https://www.googleapis.com/chromewebstore/v1.1/items/${CHROME_EXTENSION_ID}/publish"
 
   # --- JOBS UNSTABLE (OIDC) ---
 
@@ -404,9 +425,26 @@ workflows:
 
       # --- CHROME WEB STORE (DevTools) ---
       # Se dispara al crear una tag nube-sdk-* (no por branch).
-      # Sube el zip como borrador y crea la release en GitHub con el zip adjunto.
-      - publish-devtools:
-          context: [chrome_webstore]
+      # 1) upload-devtools-draft: sube el zip como borrador y crea la release en GitHub.
+      # 2) approval: botón manual para promover el borrador a público.
+      # 3) publish-devtools-store: llama al endpoint /publish (solo tras aprobación).
+      # Secrets vienen de las Project Env Vars (CHROME_*, GITHUB_TOKEN), sin context.
+      - upload-devtools-draft:
+          filters:
+            tags:
+              only: /^nube-sdk-.*/
+            branches:
+              ignore: /.*/
+      - approval-publish-devtools:
+          type: approval
+          requires: [upload-devtools-draft]
+          filters:
+            tags:
+              only: /^nube-sdk-.*/
+            branches:
+              ignore: /.*/
+      - publish-devtools-store:
+          requires: [approval-publish-devtools]
           filters:
             tags:
               only: /^nube-sdk-.*/
