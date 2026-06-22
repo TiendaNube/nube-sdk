@@ -7,6 +7,7 @@
  */
 
 import type {
+	Account,
 	Category,
 	Checkout,
 	Home,
@@ -14,6 +15,7 @@ import type {
 	ProductDetails,
 } from "@tiendanube/nube-sdk-types";
 import {
+	isAccountPage,
 	isCategoryPage,
 	isCheckoutPage,
 	isHomePage,
@@ -48,6 +50,7 @@ export type PageDataMap = {
 	category: Category;
 	checkout: Checkout;
 	home: Home;
+	account: Account;
 };
 
 /**
@@ -144,6 +147,11 @@ export function pageMatch(state: NubeSDKState, handlers: PageHandlers): void {
 
 	if (isHomePage(page)) {
 		handlers.home?.(state, page.data);
+		return;
+	}
+
+	if (isAccountPage(page)) {
+		handlers.account?.(state, page.data);
 		return;
 	}
 }
