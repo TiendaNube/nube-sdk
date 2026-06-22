@@ -1,3 +1,4 @@
+import type { AnalyticsCommands } from "./analytics";
 import type { CheckoutCommands } from "./checkout";
 
 /**
@@ -7,7 +8,7 @@ import type { CheckoutCommands } from "./checkout";
  * across the worker / main thread boundary. Each adapter is materialized
  * lazily on first access and cached for the lifetime of the worker.
  *
- * Future integrations (analytics, marketing, etc.) extend this namespace
+ * Future integrations extend this namespace
  * with additional `get*()` factories.
  */
 export type NubeAPI = {
@@ -16,4 +17,10 @@ export type NubeAPI = {
 	 * instance — identity comparisons (`===`) hold.
 	 */
 	getCheckout(): CheckoutCommands;
+
+	/**
+	 * Returns the analytics adapter. Subsequent calls return the same
+	 * instance — identity comparisons (`===`) hold.
+	 */
+	getAnalytics(): AnalyticsCommands;
 };
