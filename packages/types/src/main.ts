@@ -1,3 +1,4 @@
+import type { NubeAPI } from "./api";
 import type { AppSettingsValues } from "./app-settings";
 import type { NubeBrowserAPIs } from "./browser";
 import type { NubeComponent, UI } from "./components";
@@ -249,6 +250,13 @@ export type NubeSDK = {
 	 * @returns The app settings values, or an empty object if not available.
 	 */
 	getAppSettings(): AppSettingsValues;
+
+	/**
+	 * Host-API namespace. Exposes typed adapters that invoke host-side
+	 * capabilities across the worker / main thread boundary
+	 * (e.g. `nube.api.getCheckout()`).
+	 */
+	api: NubeAPI;
 };
 
 /**
