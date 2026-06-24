@@ -740,19 +740,30 @@ export type BillingAddress = Prettify<
 >;
 
 /**
+ * Represents the contact information of a customer in the checkout process.
+ */
+export type CustomerContact = {
+	email: Nullable<string>;
+	name: Nullable<string>;
+	phone: Nullable<string>;
+	accepts_marketing: Nullable<boolean>;
+	accepts_marketing_updated_at: Nullable<string>;
+};
+
+/**
  * Represents a customer in the checkout process.
  */
 export type Customer = {
-	id: Nullable<number>;
-	contact: {
-		email: Nullable<string>;
-		name: Nullable<string>;
-		phone: Nullable<string>;
-		accepts_marketing: Nullable<boolean>;
-		accepts_marketing_updated_at: Nullable<string>;
-	};
-	shipping_address: ShippingAddress;
-	billing_address: BillingAddress;
+	id?: Nullable<number>;
+	contact?: Nullable<CustomerContact>;
+	shipping_address?: Nullable<ShippingAddress>;
+	billing_address?: Nullable<BillingAddress>;
+	name?: Nullable<string>;
+	email?: Nullable<string>;
+	phone?: Nullable<string>;
+	cpf_cnpj?: Nullable<string>;
+	business_name?: Nullable<string>;
+	billing_country?: Nullable<string>;
 };
 
 /**
