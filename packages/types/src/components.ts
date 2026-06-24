@@ -748,6 +748,11 @@ export type NubeComponentTextProps = Prettify<
 		inline?: boolean;
 		style?: NubeComponentStyle;
 		children?: NubeComponentChildren;
+		/**
+		 * When `true`, renders a copy button that copies the text content to the
+		 * clipboard.
+		 */
+		showCopyButton?: boolean;
 	}
 >;
 

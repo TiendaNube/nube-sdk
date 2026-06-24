@@ -1,6 +1,6 @@
 {
   "name": "@tiendanube/nube-sdk-helper",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Utility functions, type guards, and SDK instance management for NubeSDK apps",
   "type": "module",
   "main": "./dist/index.js",

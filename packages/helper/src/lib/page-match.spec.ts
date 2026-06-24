@@ -106,17 +106,14 @@ describe("page-match", () => {
 	});
 
 	describe("onPage", () => {
-		it("subscribes to location:updated event", () => {
+		it("subscribes to page:loaded event", () => {
 			const sdk = registerMockSDK();
 			const productHandler = vi.fn();
 
 			onPage({ product: productHandler });
 
 			expect(sdk.on).toHaveBeenCalledTimes(1);
-			expect(sdk.on).toHaveBeenCalledWith(
-				"location:updated",
-				expect.any(Function),
-			);
+			expect(sdk.on).toHaveBeenCalledWith("page:loaded", expect.any(Function));
 		});
 
 		it("returns an unsubscribe that detaches the same listener", () => {
@@ -124,16 +121,13 @@ describe("page-match", () => {
 
 			const unsubscribe = onPage({ product: vi.fn() });
 			const registeredListener = (sdk.on as ReturnType<typeof vi.fn>).mock
-				.calls[0][1];
+				.calls[0]?.[1];
 
 			expect(typeof unsubscribe).toBe("function");
 
 			unsubscribe();
 
-			expect(sdk.off).toHaveBeenCalledWith(
-				"location:updated",
-				registeredListener,
-			);
+			expect(sdk.off).toHaveBeenCalledWith("page:loaded", registeredListener);
 		});
 	});
 
@@ -175,7 +169,7 @@ describe("page-match", () => {
 				success: vi.fn(),
 			} as CheckoutStepHandlers);
 			const registeredListener = (sdk.on as ReturnType<typeof vi.fn>).mock
-				.calls[0][1];
+				.calls[0]?.[1];
 
 			unsubscribe();
 
