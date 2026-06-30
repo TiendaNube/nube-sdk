@@ -32,6 +32,19 @@ describe("events", () => {
 
 			expect(sdk.off).toHaveBeenCalledWith("cart:update", listener);
 		});
+
+		it("deduplicates: removes before re-adding when the same listener is registered twice", () => {
+			const listener = vi.fn();
+
+			onEvent("cart:update", listener);
+			onEvent("cart:update", listener);
+
+			// Each call removes before adding, so off is called twice and on is called twice,
+			// but the net effect is a single active registration (not two stacked ones).
+			expect(sdk.off).toHaveBeenCalledTimes(2);
+			expect(sdk.on).toHaveBeenCalledTimes(2);
+			expect(sdk.off).toHaveBeenCalledWith("cart:update", listener);
+		});
 	});
 
 	describe("toastOn", () => {
