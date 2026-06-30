@@ -42,6 +42,9 @@ export function onEvent<T extends NubeSDKListenableEvent>(
 	listener: EventListenerMap[T],
 ): () => void {
 	const nube = getNubeInstance();
+	// Guard against duplicate registration (e.g. after SPA navigation):
+	// remove first so the same listener is never attached more than once.
+	nube.off(event, listener);
 	nube.on(event, listener);
 	return () => nube.off(event, listener);
 }
