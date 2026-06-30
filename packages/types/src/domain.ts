@@ -165,14 +165,10 @@ export type ProductImage = {
 export type ProductVariant = {
 	/** Unique identifier for the variant. */
 	id: number;
-	/** Target age group for the product variant. */
-	age_group: "adult" | "infant" | "kids" | "newborn" | "toddler" | null;
 	/** Barcode identifier for the variant. */
 	barcode: null | string;
 	/** Original price before any discounts. */
 	compare_at_price: null | string;
-	/** Cost of the product for the merchant. */
-	cost: null | number;
 	/** Custom data associated with the variant. */
 	customData?: {
 		/** Color information for the variant. */
@@ -180,23 +176,8 @@ export type ProductVariant = {
 	};
 	/** Depth measurement of the product. */
 	depth: string;
-	/** Target gender for the product variant. */
-	gender: "female" | "male" | "unisex" | null;
 	/** Height measurement of the product. */
 	height: string;
-	/** ID of the associated image for this variant. */
-	image_id: null | number;
-	/** Inventory levels across different locations. */
-	inventory_levels: {
-		/** Unique identifier for the inventory level. */
-		id: number;
-		/** Location identifier where the stock is held. */
-		location_id: string;
-		/** Available stock quantity at this location. */
-		stock: null | number;
-		/** ID of the variant this inventory refers to. */
-		variant_id: number;
-	}[];
 	/** Manufacturer Part Number. */
 	mpn: null | number;
 	/** Position of this variant in the product's variant list. */
@@ -205,8 +186,6 @@ export type ProductVariant = {
 	price: null | string;
 	/** ID of the parent product. */
 	product_id: number;
-	/** Promotional or discounted price. */
-	promotional_price: null | string;
 	/** Stock Keeping Unit identifier. */
 	sku: null | string;
 	/** Total available stock for this variant. */
