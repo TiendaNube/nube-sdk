@@ -176,6 +176,8 @@ export type ProductVariant = {
 	};
 	/** Depth measurement of the product. */
 	depth: string;
+	/** Whether the variant has a promotional price. */
+	has_promotional_price: boolean;
 	/** Height measurement of the product. */
 	height: string;
 	/** Manufacturer Part Number. */
