@@ -151,6 +151,7 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_line_item"} BEFORE_LINE_ITEM - Before each cart line item.
  * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item. Deprecated; use BEFORE_LINE_ITEM instead.
  * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
+ * @property {"footer_seals"} FOOTER_SEALS - Inside footer seals.
  * @property {"before_product_detail_payment_options"} BEFORE_PRODUCT_DETAIL_PAYMENT_OPTIONS - Before the payment options accordion on the product detail page.
  * @property {"after_product_detail_payment_options"} AFTER_PRODUCT_DETAIL_PAYMENT_OPTIONS - After the payment options accordion on the product detail page.
  * @property {"before_product_detail_shipping_options"} BEFORE_PRODUCT_DETAIL_SHIPPING_OPTIONS - Before the shipping options on the product detail page.
@@ -213,6 +214,7 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_CART_SUMMARY: "after_cart_summary",
 	AFTER_SECTION_NEWSLETTER: "after_section_newsletter",
 	BEFORE_FOOTER: "before_footer",
+	FOOTER_SEALS: "footer_seals",
 	BEFORE_SECTION_NEWSLETTER: "before_section_newsletter",
 	BEFORE_SECTION_PRODUCTS_SALE: "before_section_products_sale",
 	AFTER_SECTION_PRODUCTS_SALE: "after_section_products_sale",
