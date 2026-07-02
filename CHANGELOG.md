@@ -8,3 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 For release announcements, see [Discussions > Announcements](https://github.com/TiendaNube/nube-sdk/discussions/categories/announcements).
 
 ## [Unreleased]
+
+### Added
+
+- `AFTER_HOME_HERO_BANNER` slot (`after_home_hero_banner`) for placing content after the main hero/banner section on the home page, with fallback to the top of homepage content when no hero/banner is present.
