@@ -163,6 +163,7 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_register_form_fields"} AFTER_REGISTER_FORM_FIELDS - After the fields of the customer registration form on the storefront register page.
  * @property {"before_register_form_submit"} BEFORE_REGISTER_FORM_SUBMIT - Before the submit button of the customer registration form on the storefront register page.
  * @property {"after_register_form_submit"} AFTER_REGISTER_FORM_SUBMIT - After the submit button of the customer registration form on the storefront register page.
+ * @property {"after_home_hero_banner"} AFTER_HOME_HERO_BANNER - After the main hero/banner section on the home page. If no hero/banner is present, renders at the top of homepage content.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -243,6 +244,7 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_REGISTER_FORM_FIELDS: "after_register_form_fields",
 	BEFORE_REGISTER_FORM_SUBMIT: "before_register_form_submit",
 	AFTER_REGISTER_FORM_SUBMIT: "after_register_form_submit",
+	AFTER_HOME_HERO_BANNER: "after_home_hero_banner",
 } as const;
 
 /**
