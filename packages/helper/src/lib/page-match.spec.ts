@@ -88,6 +88,23 @@ describe("page-match", () => {
 			expect(homeHandler).toHaveBeenCalledWith(state, state.location.page.data);
 		});
 
+		it("dispatches to account handler for any account page", () => {
+			const accountHandler = vi.fn();
+			const handlers = { account: accountHandler } as const;
+			const state = makeState({
+				type: "account.login",
+				data: { customerId: null, loggedIn: false },
+			});
+
+			pageMatch(state, handlers);
+
+			expect(accountHandler).toHaveBeenCalledTimes(1);
+			expect(accountHandler).toHaveBeenCalledWith(
+				state,
+				state.location.page.data,
+			);
+		});
+
 		it("does nothing if handler for page type is not provided", () => {
 			const handlers = {} as PageHandlers;
 			const state = makeState({ type: "category", data: { id: 10 } });
