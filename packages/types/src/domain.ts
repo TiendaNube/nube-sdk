@@ -190,6 +190,11 @@ export type ProductVariant = {
 	price: null | string;
 	/** ID of the parent product. */
 	product_id: number;
+	/**
+	 * Promotional or discounted price.
+	 * @deprecated Use `has_promotional_price` together with `price` or `compare_at_price` instead.
+	 */
+	promotional_price: null | string;
 	/** Stock Keeping Unit identifier. */
 	sku: null | string;
 	/** Total available stock for this variant. */
