@@ -20,7 +20,7 @@ import type {
 	NubeSDKSendableEvent,
 } from "./events";
 
-import type { UISlot } from "./slots";
+import type { UISlotArg } from "./slots";
 import type { DeepPartial, Nullable } from "./utility";
 
 /**
@@ -226,11 +226,12 @@ export type NubeSDK = {
 	 * The component can be either a static component or a function that receives the current state
 	 * and returns a component to render.
 	 *
-	 * @param slot - The UI slot where the component will be rendered.
+	 * @param slot - The UI slot where the component will be rendered. Custom
+	 * slot names (starting with `custom_`) are validated at the call site.
 	 * @param component - The component to render, either a static component or a function that returns a component based on the current state.
 	 */
-	render(
-		slot: UISlot,
+	render<const TSlot extends string>(
+		slot: UISlotArg<TSlot>,
 		component:
 			| NubeComponent
 			| NubeComponent[]
@@ -240,9 +241,10 @@ export type NubeSDK = {
 	/**
 	 * Clears a component from a specific UI slot, removing it from the NubeSDKState.
 	 *
-	 * @param slot - The UI slot from which the component will be cleared.
+	 * @param slot - The UI slot from which the component will be cleared. Custom
+	 * slot names (starting with `custom_`) are validated at the call site.
 	 */
-	clearSlot(slot: UISlot): void;
+	clearSlot<const TSlot extends string>(slot: UISlotArg<TSlot>): void;
 
 	/**
 	 * Retrieves the app settings values for the current app.

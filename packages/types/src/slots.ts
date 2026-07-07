@@ -286,7 +286,148 @@ export type CheckoutUISlot = ObjectValues<typeof CHECKOUT_UI_SLOT>;
 export type StorefrontUISlot = ObjectValues<typeof STOREFRONT_UI_SLOT>;
 
 /**
+ * The set of characters allowed in the body of a custom slot name
+ * (i.e. the part after the `custom_` prefix).
+ *
+ * Only lowercase letters, digits and underscores are considered valid,
+ * which also enforces the `lowercase` and `snake_case` conventions.
+ */
+type AllowedCustomUISlotChar =
+	| "a"
+	| "b"
+	| "c"
+	| "d"
+	| "e"
+	| "f"
+	| "g"
+	| "h"
+	| "i"
+	| "j"
+	| "k"
+	| "l"
+	| "m"
+	| "n"
+	| "o"
+	| "p"
+	| "q"
+	| "r"
+	| "s"
+	| "t"
+	| "u"
+	| "v"
+	| "w"
+	| "x"
+	| "y"
+	| "z"
+	| "0"
+	| "1"
+	| "2"
+	| "3"
+	| "4"
+	| "5"
+	| "6"
+	| "7"
+	| "8"
+	| "9"
+	| "_";
+
+/**
+ * Recursively checks whether every character of `S` is an
+ * {@link AllowedCustomUISlotChar}.
+ *
+ * Resolves to `true` only when `S` is non-empty and made up exclusively of
+ * lowercase letters, digits and underscores; otherwise resolves to `false`.
+ *
+ * The non-literal `string` type resolves to `true`, since a value that is not
+ * a string literal cannot be validated at the type level and must be accepted.
+ *
+ * @template S - The custom slot body to validate (without the `custom_` prefix).
+ */
+type IsValidCustomUISlotBody<S extends string> = string extends S
+	? true
+	: S extends `${infer Head}${infer Tail}`
+		? Head extends AllowedCustomUISlotChar
+			? Tail extends ""
+				? true
+				: IsValidCustomUISlotBody<Tail>
+			: false
+		: false;
+
+/**
+ * Represents a custom slot defined by the store theme developer.
+ *
+ * A custom slot lets a theme expose its own injection points, following these rules:
+ *
+ * 1. It must always start with the `custom_` prefix.
+ * 2. It must be written in `snake_case`.
+ * 3. It must be entirely lowercase.
+ * 4. Only letters, numbers and `_` are valid characters.
+ *
+ * When used without a type argument (for example, as part of the {@link UISlot}
+ * union) it behaves as the broad ``custom_${string}`` template, matching any
+ * custom slot. When a string literal is provided as `T`, the rules above are
+ * enforced at the type level: valid names resolve to the literal itself, while
+ * invalid ones resolve to `never`.
+ *
+ * @template T - The custom slot name to validate. Defaults to `string`, which
+ * yields the broad ``custom_${string}`` type.
+ *
+ * @example
+ * ```ts
+ * type A = CustomUISlot<"custom_promo_banner">; // "custom_promo_banner"
+ * type B = CustomUISlot<"custom_promoBanner">;  // never (not lowercase / snake_case)
+ * type C = CustomUISlot<"custom_promo-banner">; // never (invalid character "-")
+ * type D = CustomUISlot<"promo_banner">;        // never (missing "custom_" prefix)
+ * type E = CustomUISlot;                         // `custom_${string}`
+ * ```
+ */
+export type CustomUISlot<T extends string = string> = string extends T
+	? `custom_${string}`
+	: T extends `custom_${infer Body}`
+		? IsValidCustomUISlotBody<Body> extends true
+			? T
+			: never
+		: never;
+
+/**
  * Represents all possible UI slots where components can be dynamically injected.
  * This type combines checkout, storefront, and common UI slots.
  */
-export type UISlot = Prettify<CheckoutUISlot | StorefrontUISlot>;
+export type UISlot = Prettify<CheckoutUISlot | StorefrontUISlot | CustomUISlot>;
+
+/**
+ * Validates a UI slot name provided as a string literal `S`.
+ *
+ * Predefined checkout and storefront slots resolve to themselves. Custom slots
+ * (those starting with `custom_`) are validated against the {@link CustomUISlot}
+ * rules, resolving to `S` when valid or `never` when invalid. Any other string
+ * resolves to `never`.
+ *
+ * This is meant to be used to constrain slot arguments so that invalid custom
+ * slot names are rejected at the call site (see {@link NubeSDK.render}).
+ *
+ * @template S - The slot name to validate.
+ */
+export type ValidateUISlot<S extends string> = S extends
+	| CheckoutUISlot
+	| StorefrontUISlot
+	? S
+	: S extends CustomUISlot
+		? CustomUISlot<S>
+		: never;
+
+/**
+ * Type of a slot argument for APIs such as {@link NubeSDK.render} and
+ * {@link NubeSDK.clearSlot}.
+ *
+ * It keeps the predefined checkout and storefront slots as direct union
+ * members, so editors still offer autocomplete for the fixed slot names, while
+ * validating custom slot names (starting with `custom_`) through the generic
+ * `TSlot` parameter via {@link ValidateUISlot}.
+ *
+ * @template TSlot - The literal type inferred from the slot argument.
+ */
+export type UISlotArg<TSlot extends string> =
+	| CheckoutUISlot
+	| StorefrontUISlot
+	| (TSlot & ValidateUISlot<TSlot>);
