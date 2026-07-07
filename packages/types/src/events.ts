@@ -81,6 +81,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"quickbuy:open"} QUICKBUY_OPEN - Fired when the quickbuy modal is opened.
  * @property {"quickbuy:close"} QUICKBUY_CLOSE - Fired when the quickbuy modal is closed.
  * @property {"product:variant_selected"} PRODUCT_VARIANT_SELECTED - Fired when a product variant is selected.
+ * @property {"page:scroll"} PAGE_SCROLL - Fired when the page scroll position changes.
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
 export const EVENT = {
@@ -108,6 +109,7 @@ export const EVENT = {
 	QUICKBUY_OPEN: "quickbuy:open",
 	QUICKBUY_CLOSE: "quickbuy:close",
 	PRODUCT_VARIANT_SELECTED: "product:variant_selected",
+	PAGE_SCROLL: "page:scroll",
 	...SENDABLE_EVENT,
 } as const;
 
