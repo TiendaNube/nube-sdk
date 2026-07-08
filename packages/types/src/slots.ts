@@ -148,6 +148,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_products_featured"} AFTER_SECTION_PRODUCTS_FEATURED - After the products featured section on the home page.
  * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
  * @property {"after_product_detail_related_products"} AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS - After the related products section on the product detail page.
+ * @property {"before_product_detail_complementary_products"} BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - Before the complementary products section on the product detail page.
+ * @property {"after_product_detail_complementary_products"} AFTER_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - After the complementary products section on the product detail page.
  * @property {"before_line_item"} BEFORE_LINE_ITEM - Before each cart line item.
  * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item. Deprecated; use BEFORE_LINE_ITEM instead.
  * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
@@ -230,6 +232,10 @@ export const STOREFRONT_UI_SLOT = {
 		"before_product_detail_related_products",
 	AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS:
 		"after_product_detail_related_products",
+	BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS:
+		"before_product_detail_complementary_products",
+	AFTER_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS:
+		"after_product_detail_complementary_products",
 	BEFORE_LINE_ITEM: "before_line_item",
 	/** @deprecated Use BEFORE_LINE_ITEM instead. */
 	CART_LINE_ITEM_TOP: "cart_line_item_top",
