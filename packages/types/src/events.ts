@@ -81,6 +81,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"quickbuy:open"} QUICKBUY_OPEN - Fired when the quickbuy modal is opened.
  * @property {"quickbuy:close"} QUICKBUY_CLOSE - Fired when the quickbuy modal is closed.
  * @property {"product:variant_selected"} PRODUCT_VARIANT_SELECTED - Fired when a product variant is selected.
+ * @property {"page:scroll"} PAGE_SCROLL - Fired when the page scroll position changes.
  * @property {"page:exit_intent"} PAGE_EXIT_INTENT - Fired when the cursor leaves through the top edge of the viewport (desktop exit intent).
  * @property {"page:visibility_change"} PAGE_VISIBILITY_CHANGE - Fired when the store becomes hidden/backgrounded or the user switches tabs (mobile/touch).
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
@@ -110,6 +111,7 @@ export const EVENT = {
 	QUICKBUY_OPEN: "quickbuy:open",
 	QUICKBUY_CLOSE: "quickbuy:close",
 	PRODUCT_VARIANT_SELECTED: "product:variant_selected",
+	PAGE_SCROLL: "page:scroll",
 	PAGE_EXIT_INTENT: "page:exit_intent",
 	PAGE_VISIBILITY_CHANGE: "page:visibility_change",
 	...SENDABLE_EVENT,
