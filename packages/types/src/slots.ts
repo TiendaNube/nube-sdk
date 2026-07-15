@@ -1,6 +1,5 @@
 import type {
 	Digit,
-	IsKebabCase,
 	IsNumericString,
 	LowercaseLetter,
 	ObjectValues,
@@ -378,18 +377,20 @@ type DynamicUISlotPrefix = "before_dynamic_section_" | "after_dynamic_section_";
  * Validates the body of a dynamic slot (the part after the
  * {@link DynamicUISlotPrefix}).
  *
- * A valid body is a `kebab-case` name followed by a single underscore and a
- * trailing numeric sequence, e.g. ``single-shelf_1782228052519``. Because a
- * `kebab-case` name never contains an underscore, the first underscore always
- * separates the name from the numeric suffix.
+ * A valid body is any (non-empty) section name followed by a single underscore
+ * and a trailing numeric sequence, e.g. ``single-shelf_1782228052519``. The
+ * name itself is unrestricted, so the numeric suffix is matched against the
+ * part after the *last* underscore.
  *
  * @template Body - The dynamic slot body to validate.
  */
 type IsValidDynamicUISlotBody<Body extends string> =
-	Body extends `${infer Name}_${infer Sequence}`
-		? IsKebabCase<Name> extends true
-			? IsNumericString<Sequence>
-			: false
+	Body extends `${infer Name}_${infer Rest}`
+		? Name extends ""
+			? false
+			: Rest extends `${string}_${string}`
+				? IsValidDynamicUISlotBody<Rest>
+				: IsNumericString<Rest>
 		: false;
 
 /**
@@ -399,7 +400,7 @@ type IsValidDynamicUISlotBody<Body extends string> =
  *
  * 1. It must start with either the `before_dynamic_section_` or
  *    `after_dynamic_section_` prefix.
- * 2. The prefix is followed by a `kebab-case` section name.
+ * 2. The prefix is followed by a section name, which can be any string.
  * 3. It must always end with an underscore and a numeric sequence (the section
  *    instance id).
  *
@@ -419,8 +420,8 @@ type IsValidDynamicUISlotBody<Body extends string> =
  * type B = DynamicUISlot<"after_dynamic_section_single-shelf_1782228052519">;
  * //   => "after_dynamic_section_single-shelf_1782228052519"
  * type C = DynamicUISlot<"before_dynamic_section_single-shelf">; // never (no numeric suffix)
- * type D = DynamicUISlot<"before_dynamic_section_singleShelf_1">; // never (not kebab-case)
- * type E = DynamicUISlot<"before_dynamic_section_-shelf_1">;      // never (leading hyphen)
+ * type D = DynamicUISlot<"before_dynamic_section_singleShelf_1">; // "before_dynamic_section_singleShelf_1" (name is unrestricted)
+ * type E = DynamicUISlot<"before_dynamic_section_-shelf_1">;      // "before_dynamic_section_-shelf_1" (name is unrestricted)
  * type F = DynamicUISlot;                                          // `${DynamicUISlotPrefix}${string}`
  * ```
  */
