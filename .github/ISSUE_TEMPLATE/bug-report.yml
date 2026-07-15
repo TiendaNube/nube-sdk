@@ -11,7 +11,7 @@ body:
   - type: input
     id: app-id
     attributes:
-      label: App ID
+      label: App ID, numbers only
       description: Your application ID.
       placeholder: "e.g. 12345"
     validations:
@@ -21,8 +21,10 @@ body:
     id: app-name
     attributes:
       label: App name
-      description: Your application name (optional).
+      description: Your application name.
       placeholder: "e.g. My Payments App"
+    validations:
+      required: true
 
   - type: dropdown
     id: severity
