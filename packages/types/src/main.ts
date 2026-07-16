@@ -1,5 +1,6 @@
 import type { NubeAPI } from "./api";
 import type { AppSettingsValues } from "./app-settings";
+import type { DynamicSlot, StaticSlot } from "./available-slots";
 import type { NubeBrowserAPIs } from "./browser";
 import type { NubeComponent, UI } from "./components";
 import type {
@@ -226,12 +227,14 @@ export type NubeSDK = {
 	 * The component can be either a static component or a function that receives the current state
 	 * and returns a component to render.
 	 *
-	 * @param slot - The UI slot where the component will be rendered. Custom
-	 * slot names (starting with `custom_`) are validated at the call site.
+	 * @param slot - The UI slot where the component will be rendered. Accepts a
+	 * slot name (custom slot names starting with `custom_`, and dynamic slot
+	 * names, are validated at the call site) or a `StaticSlot` / `DynamicSlot`
+	 * object returned by `nube.api.getAvailableSlots()`.
 	 * @param component - The component to render, either a static component or a function that returns a component based on the current state.
 	 */
 	render<const TSlot extends string>(
-		slot: UISlotArg<TSlot>,
+		slot: UISlotArg<TSlot> | StaticSlot | DynamicSlot,
 		component:
 			| NubeComponent
 			| NubeComponent[]
@@ -241,10 +244,14 @@ export type NubeSDK = {
 	/**
 	 * Clears a component from a specific UI slot, removing it from the NubeSDKState.
 	 *
-	 * @param slot - The UI slot from which the component will be cleared. Custom
-	 * slot names (starting with `custom_`) are validated at the call site.
+	 * @param slot - The UI slot from which the component will be cleared. Accepts
+	 * a slot name (custom slot names starting with `custom_`, and dynamic slot
+	 * names, are validated at the call site) or a `StaticSlot` / `DynamicSlot`
+	 * object returned by `nube.api.getAvailableSlots()`.
 	 */
-	clearSlot<const TSlot extends string>(slot: UISlotArg<TSlot>): void;
+	clearSlot<const TSlot extends string>(
+		slot: UISlotArg<TSlot> | StaticSlot | DynamicSlot,
+	): void;
 
 	/**
 	 * Retrieves the app settings values for the current app.

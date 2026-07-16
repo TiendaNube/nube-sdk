@@ -1,4 +1,5 @@
 import type { AnalyticsCommands } from "./analytics";
+import type { AvailableSlotsCommands } from "./available-slots";
 import type { CheckoutCommands } from "./checkout";
 
 /**
@@ -23,4 +24,11 @@ export type NubeAPI = {
 	 * instance — identity comparisons (`===`) hold.
 	 */
 	getAnalytics(): AnalyticsCommands;
+
+	/**
+	 * Returns the available-slots adapter, used to discover the static and
+	 * dynamic slots present on the current page. Subsequent calls return the
+	 * same instance — identity comparisons (`===`) hold.
+	 */
+	getAvailableSlots(): AvailableSlotsCommands;
 };
