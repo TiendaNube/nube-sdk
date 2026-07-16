@@ -1,4 +1,10 @@
-import type { ObjectValues, Prettify } from "./utility";
+import type {
+	Digit,
+	IsNumericString,
+	LowercaseLetter,
+	ObjectValues,
+	Prettify,
+} from "./utility";
 
 /**
  * List of common UI slots available across different contexts.
@@ -298,44 +304,7 @@ export type StorefrontUISlot = ObjectValues<typeof STOREFRONT_UI_SLOT>;
  * Only lowercase letters, digits and underscores are considered valid,
  * which also enforces the `lowercase` and `snake_case` conventions.
  */
-type AllowedCustomUISlotChar =
-	| "a"
-	| "b"
-	| "c"
-	| "d"
-	| "e"
-	| "f"
-	| "g"
-	| "h"
-	| "i"
-	| "j"
-	| "k"
-	| "l"
-	| "m"
-	| "n"
-	| "o"
-	| "p"
-	| "q"
-	| "r"
-	| "s"
-	| "t"
-	| "u"
-	| "v"
-	| "w"
-	| "x"
-	| "y"
-	| "z"
-	| "0"
-	| "1"
-	| "2"
-	| "3"
-	| "4"
-	| "5"
-	| "6"
-	| "7"
-	| "8"
-	| "9"
-	| "_";
+type AllowedCustomUISlotChar = LowercaseLetter | Digit | "_";
 
 /**
  * Recursively checks whether every character of `S` is an
@@ -396,17 +365,90 @@ export type CustomUISlot<T extends string = string> = string extends T
 		: never;
 
 /**
- * Represents all possible UI slots where components can be dynamically injected.
- * This type combines checkout, storefront, and common UI slots.
+ * The prefixes that every dynamic-section slot must start with.
+ *
+ * A dynamic-section slot is created around a theme section that can be added,
+ * removed or reordered by the store owner, exposing an injection point right
+ * `before` or `after` that section.
  */
-export type UISlot = Prettify<CheckoutUISlot | StorefrontUISlot | CustomUISlot>;
+type DynamicUISlotPrefix = "before_dynamic_section_" | "after_dynamic_section_";
+
+/**
+ * Validates the body of a dynamic slot (the part after the
+ * {@link DynamicUISlotPrefix}).
+ *
+ * A valid body is any (non-empty) section name followed by a single underscore
+ * and a trailing numeric sequence, e.g. ``single-shelf_1782228052519``. The
+ * name itself is unrestricted, so the numeric suffix is matched against the
+ * part after the *last* underscore.
+ *
+ * @template Body - The dynamic slot body to validate.
+ */
+type IsValidDynamicUISlotBody<Body extends string> =
+	Body extends `${infer Name}_${infer Rest}`
+		? Name extends ""
+			? false
+			: Rest extends `${string}_${string}`
+				? IsValidDynamicUISlotBody<Rest>
+				: IsNumericString<Rest>
+		: false;
+
+/**
+ * Represents a slot injected around a dynamic theme section.
+ *
+ * A dynamic slot follows these rules:
+ *
+ * 1. It must start with either the `before_dynamic_section_` or
+ *    `after_dynamic_section_` prefix.
+ * 2. The prefix is followed by a section name, which can be any string.
+ * 3. It must always end with an underscore and a numeric sequence (the section
+ *    instance id).
+ *
+ * When used without a type argument (for example, as part of the {@link UISlot}
+ * union) it behaves as the broad ``${DynamicUISlotPrefix}${string}`` template,
+ * matching any dynamic slot. When a string literal is provided as `T`, the
+ * rules above are enforced at the type level: valid names resolve to the
+ * literal itself, while invalid ones resolve to `never`.
+ *
+ * @template T - The dynamic slot name to validate. Defaults to `string`, which
+ * yields the broad ``${DynamicUISlotPrefix}${string}`` type.
+ *
+ * @example
+ * ```ts
+ * type A = DynamicUISlot<"before_dynamic_section_single-shelf_1782228052519">;
+ * //   => "before_dynamic_section_single-shelf_1782228052519"
+ * type B = DynamicUISlot<"after_dynamic_section_single-shelf_1782228052519">;
+ * //   => "after_dynamic_section_single-shelf_1782228052519"
+ * type C = DynamicUISlot<"before_dynamic_section_single-shelf">; // never (no numeric suffix)
+ * type D = DynamicUISlot<"before_dynamic_section_singleShelf_1">; // "before_dynamic_section_singleShelf_1" (name is unrestricted)
+ * type E = DynamicUISlot<"before_dynamic_section_-shelf_1">;      // "before_dynamic_section_-shelf_1" (name is unrestricted)
+ * type F = DynamicUISlot;                                          // `${DynamicUISlotPrefix}${string}`
+ * ```
+ */
+export type DynamicUISlot<T extends string = string> = string extends T
+	? `${DynamicUISlotPrefix}${string}`
+	: T extends `${DynamicUISlotPrefix}${infer Body}`
+		? IsValidDynamicUISlotBody<Body> extends true
+			? T
+			: never
+		: never;
+
+/**
+ * Represents all possible UI slots where components can be dynamically injected.
+ * This type combines checkout, storefront, common, custom and dynamic UI slots.
+ */
+export type UISlot = Prettify<
+	CheckoutUISlot | StorefrontUISlot | CustomUISlot | DynamicUISlot
+>;
 
 /**
  * Validates a UI slot name provided as a string literal `S`.
  *
- * Predefined checkout and storefront slots resolve to themselves. Custom slots
- * (those starting with `custom_`) are validated against the {@link CustomUISlot}
- * rules, resolving to `S` when valid or `never` when invalid. Any other string
+ * Predefined checkout and storefront slots resolve to themselves. Dynamic slots
+ * (those starting with `before_dynamic_section_` / `after_dynamic_section_`) are
+ * validated against the {@link DynamicUISlot} rules, and custom slots (those
+ * starting with `custom_`) against the {@link CustomUISlot} rules, each
+ * resolving to `S` when valid or `never` when invalid. Any other string
  * resolves to `never`.
  *
  * This is meant to be used to constrain slot arguments so that invalid custom
@@ -418,9 +460,11 @@ export type ValidateUISlot<S extends string> = S extends
 	| CheckoutUISlot
 	| StorefrontUISlot
 	? S
-	: S extends CustomUISlot
-		? CustomUISlot<S>
-		: never;
+	: S extends DynamicUISlot
+		? DynamicUISlot<S>
+		: S extends CustomUISlot
+			? CustomUISlot<S>
+			: never;
 
 /**
  * Type of a slot argument for APIs such as {@link NubeSDK.render} and
