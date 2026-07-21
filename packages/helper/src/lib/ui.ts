@@ -1,7 +1,7 @@
 import type {
 	NubeComponent,
 	NubeSDKState,
-	UISlot,
+	UISlotArg,
 } from "@tiendanube/nube-sdk-types";
 import { getNubeInstance } from "./instance";
 
@@ -25,9 +25,15 @@ export type RenderableComponent =
 
 export type UIHelper = {
 	showToast: (message: string, variant?: ToastVariant) => void;
-	clear: (slot: UISlot) => void;
-	render: (slot: UISlot, component: RenderableComponent) => void;
-	renderAll: (slots: UISlot[], component: RenderableComponent) => void;
+	clear: <const TSlot extends string>(slot: UISlotArg<TSlot>) => void;
+	render: <const TSlot extends string>(
+		slot: UISlotArg<TSlot>,
+		component: RenderableComponent,
+	) => void;
+	renderAll: <const TSlot extends string>(
+		slots: UISlotArg<TSlot>[],
+		component: RenderableComponent,
+	) => void;
 };
 
 /**
@@ -48,19 +54,25 @@ export const ui: Readonly<UIHelper> = Object.freeze({
 	},
 
 	// Clear slot
-	clear(slot) {
-		getNubeInstance().clearSlot(slot);
+	clear<const TSlot extends string>(slot: UISlotArg<TSlot>) {
+		getNubeInstance().clearSlot<TSlot>(slot);
 	},
 
-	render(slot, component) {
-		getNubeInstance().render(slot, component);
+	render<const TSlot extends string>(
+		slot: UISlotArg<TSlot>,
+		component: RenderableComponent,
+	) {
+		getNubeInstance().render<TSlot>(slot, component);
 	},
 
 	// Render the same component across multiple slots in a single call.
-	renderAll(slots, component) {
+	renderAll<const TSlot extends string>(
+		slots: UISlotArg<TSlot>[],
+		component: RenderableComponent,
+	) {
 		const nube = getNubeInstance();
 		for (const slot of slots) {
-			nube.render(slot, component);
+			nube.render<TSlot>(slot, component);
 		}
 	},
 });
