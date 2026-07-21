@@ -230,6 +230,8 @@ export type NubeComponentFieldProps = Prettify<
 		name: string;
 		label: string;
 		value?: string;
+		placeholder?: string;
+		disabled?: boolean;
 		mask?: string;
 		autoFocus?: boolean;
 		style?: {
@@ -414,11 +416,12 @@ export type NubeComponentSelectProps = Prettify<
 		name: string;
 		label: string;
 		value?: string;
+		disabled?: boolean;
 		style?: {
 			label?: NubeComponentStyle;
 			select?: NubeComponentStyle;
 		};
-		options: { label: string; value: string }[];
+		options: { label: string; value: string; disabled?: boolean }[];
 		onChange?: NubeComponentSelectEventHandler;
 	}
 >;
