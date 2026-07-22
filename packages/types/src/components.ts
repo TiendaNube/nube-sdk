@@ -1216,6 +1216,8 @@ export type NubeComponentFormFieldProps = Prettify<
 			accept?: string;
 			/** Maximum file size in bytes, only for `inputType: "file"`. */
 			maxSize?: number;
+			/** Current value of the field. */
+			value?: string;
 			/** Style slots, same shape as `Field.style` for visual parity. */
 			style?: {
 				container?: NubeComponentStyle;
