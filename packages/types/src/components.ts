@@ -1207,8 +1207,11 @@ export type NubeComponentFormFieldProps = Prettify<
 			name: string;
 			/** Floating label rendered next to the input (mirrors `Field.label`). */
 			label: string;
+			/** Marks the field as required, failing with `valueMissing` when empty. */
 			required?: boolean;
+			/** Minimum number of characters, failing with `tooShort` when unmet. */
 			minLength?: number;
+			/** Maximum number of characters, failing with `tooLong` when exceeded. */
 			maxLength?: number;
 			/** Regular expression source used for `pattern` validation. */
 			pattern?: string;
@@ -1216,6 +1219,8 @@ export type NubeComponentFormFieldProps = Prettify<
 			accept?: string;
 			/** Maximum file size in bytes, only for `inputType: "file"`. */
 			maxSize?: number;
+			/** Current value of the field. */
+			value?: string;
 			/** Style slots, same shape as `Field.style` for visual parity. */
 			style?: {
 				container?: NubeComponentStyle;
