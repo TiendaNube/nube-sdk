@@ -160,6 +160,81 @@ jobs:
             export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
             npx npm@11 publish --workspace packages/helper --access public
 
+  # --- CHROME WEB STORE (extensión NubeSDK DevTools) ---
+
+  upload-devtools-draft:
+    executor: default
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: npm ci
+      - run:
+          name: Build & zip NubeSDK DevTools extension
+          command: npm run zip -w packages/nube-devtools
+      - run:
+          name: Resolve zip path
+          command: |
+            VERSION=$(node -p "require('./packages/nube-devtools/package.json').version")
+            echo "export EXT_VERSION=${VERSION}" >> "$BASH_ENV"
+            echo "export ZIP_PATH=packages/nube-devtools/package/NubeSDK-DevTools-${VERSION}.zip" >> "$BASH_ENV"
+            source "$BASH_ENV"
+            ls -la "$ZIP_PATH"
+      - run:
+          name: Upload draft to Chrome Web Store (sin publicar)
+          command: |
+            # Intercambiamos el refresh token por un access token de corta duración
+            curl -sS -f -X POST https://oauth2.googleapis.com/token \
+              -d "client_id=${CHROME_CLIENT_ID}" \
+              -d "client_secret=${CHROME_CLIENT_SECRET}" \
+              -d "refresh_token=${CHROME_REFRESH_TOKEN}" \
+              -d "grant_type=refresh_token" -o token.json
+            ACCESS_TOKEN=$(node -p "require('./token.json').access_token")
+            # Subimos el zip como borrador (no se llama al endpoint /publish)
+            curl -sS -f \
+              -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+              -H "x-goog-api-version: 2" \
+              -X PUT \
+              -T "${ZIP_PATH}" \
+              "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${CHROME_EXTENSION_ID}"
+      - run:
+          name: Create GitHub release with zip asset
+          command: |
+            curl -sS -f -X POST \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/releases" \
+              -d "{\"tag_name\":\"${CIRCLE_TAG}\",\"name\":\"${CIRCLE_TAG}\",\"body\":\"NubeSDK DevTools ${EXT_VERSION}\"}" \
+              -o release.json
+            UPLOAD_URL=$(node -p "require('./release.json').upload_url.replace(/{.*}$/, '')")
+            ZIP_NAME=$(basename "${ZIP_PATH}")
+            curl -sS -f -X POST \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              -H "Content-Type: application/zip" \
+              --data-binary @"${ZIP_PATH}" \
+              "${UPLOAD_URL}?name=${ZIP_NAME}"
+
+  publish-devtools-store:
+    executor: default
+    steps:
+      - run:
+          name: Publish NubeSDK DevTools draft to Chrome Web Store
+          command: |
+            # Promueve a público el borrador ya subido por publish-devtools.
+            # No vuelve a subir el zip: solo llama al endpoint /publish del item.
+            curl -sS -f -X POST https://oauth2.googleapis.com/token \
+              -d "client_id=${CHROME_CLIENT_ID}" \
+              -d "client_secret=${CHROME_CLIENT_SECRET}" \
+              -d "refresh_token=${CHROME_REFRESH_TOKEN}" \
+              -d "grant_type=refresh_token" -o token.json
+            ACCESS_TOKEN=$(node -p "require('./token.json').access_token")
+            curl -sS -f \
+              -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+              -H "x-goog-api-version: 2" \
+              -H "Content-Length: 0" \
+              -X POST \
+              "https://www.googleapis.com/chromewebstore/v1.1/items/${CHROME_EXTENSION_ID}/publish"
+
   # --- JOBS UNSTABLE (OIDC) ---
 
   publish-types-unstable:
@@ -347,6 +422,34 @@ workflows:
       - publish-helper:
           context: [npm_trusted]
           requires: [approval-publish-helper]
+
+      # --- CHROME WEB STORE (DevTools) ---
+      # Se dispara al crear una tag nube-sdk-* (no por branch).
+      # 1) upload-devtools-draft: sube el zip como borrador y crea la release en GitHub.
+      # 2) approval: botón manual para promover el borrador a público.
+      # 3) publish-devtools-store: llama al endpoint /publish (solo tras aprobación).
+      # Secrets vienen de las Project Env Vars (CHROME_*, GITHUB_TOKEN), sin context.
+      - upload-devtools-draft:
+          filters:
+            tags:
+              only: /^nube-sdk-.*/
+            branches:
+              ignore: /.*/
+      - approval-publish-devtools:
+          type: approval
+          requires: [upload-devtools-draft]
+          filters:
+            tags:
+              only: /^nube-sdk-.*/
+            branches:
+              ignore: /.*/
+      - publish-devtools-store:
+          requires: [approval-publish-devtools]
+          filters:
+            tags:
+              only: /^nube-sdk-.*/
+            branches:
+              ignore: /.*/
 
       # --- UNSTABLE ---
       - approval-publish-types-unstable:
