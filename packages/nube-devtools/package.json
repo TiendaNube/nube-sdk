@@ -1,65 +1,65 @@
 {
-  "name": "nube-devtools",
-  "displayName": "nube-devtools",
-  "version": "1.5.3",
-  "author": "Tiendanube / Nuvemshop",
-  "description": "Chrome DevTools extension for debugging and testing NubeSDK apps with real-time insights.",
-  "type": "module",
-  "license": "MIT",
-  "keywords": [
-    "chrome-extension",
-    "create-nube-app",
-    "nube-sdk",
-    "nube-devtools"
-  ],
-  "engines": {
-    "node": ">=14.18.0"
-  },
-  "scripts": {
-    "dev": "NODE_ENV=development vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "zip": "npm run build && node src/zip.js",
-    "check": "biome check",
-    "check:fix": "biome check --write"
-  },
-  "dependencies": {
-    "@microlink/react-json-view": "^1.31.20",
-    "@radix-ui/react-context-menu": "2.2.15",
-    "@radix-ui/react-dialog": "^1.1.15",
-    "@radix-ui/react-label": "^2.1.8",
-    "@radix-ui/react-select": "^2.2.6",
-    "@radix-ui/react-separator": "^1.1.8",
-    "@radix-ui/react-slot": "^1.2.4",
-    "@radix-ui/react-tabs": "^1.1.13",
-    "@radix-ui/react-tooltip": "^1.2.8",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.488.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-resizable-panels": "^2.1.9",
-    "react-syntax-highlighter": "^15.6.6",
-    "sonner": "^2.0.7",
-    "tailwind-merge": "^3.6.0",
-    "tw-animate-css": "^1.4.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.8.3",
-    "@crxjs/vite-plugin": "^2.4.0",
-    "@tailwindcss/postcss": "^4.3.0",
-    "@tiendanube/nube-sdk-types": "^0.50.0",
-    "@types/chrome": "^0.0.246",
-    "@types/react": "^18.2.28",
-    "@types/react-dom": "^18.2.13",
-    "@types/react-syntax-highlighter": "^15.5.13",
-    "@vitejs/plugin-react": "^4.7.0",
-    "autoprefixer": "^10.5.0",
-    "gulp": "^5.0.1",
-    "gulp-zip": "^6.0.0",
-    "postcss": "^8.5.15",
-    "tailwindcss": "^4.3.0",
-    "typescript": "^5.9.3",
-    "vite": "^5.0.0"
-  }
+	"name": "nube-devtools",
+	"displayName": "nube-devtools",
+	"version": "1.6.0",
+	"author": "Tiendanube / Nuvemshop",
+	"description": "Chrome DevTools extension for debugging and testing NubeSDK apps with real-time insights.",
+	"type": "module",
+	"license": "MIT",
+	"keywords": [
+		"chrome-extension",
+		"create-nube-app",
+		"nube-sdk",
+		"nube-devtools"
+	],
+	"engines": {
+		"node": ">=14.18.0"
+	},
+	"scripts": {
+		"dev": "NODE_ENV=development vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"zip": "npm run build && node src/zip.js",
+		"check": "biome check",
+		"check:fix": "biome check --write"
+	},
+	"dependencies": {
+		"@microlink/react-json-view": "^1.31.20",
+		"@radix-ui/react-context-menu": "2.2.15",
+		"@radix-ui/react-dialog": "^1.1.15",
+		"@radix-ui/react-label": "^2.1.8",
+		"@radix-ui/react-select": "^2.2.6",
+		"@radix-ui/react-separator": "^1.1.8",
+		"@radix-ui/react-slot": "^1.2.4",
+		"@radix-ui/react-tabs": "^1.1.13",
+		"@radix-ui/react-tooltip": "^1.2.8",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"lucide-react": "^0.488.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"react-resizable-panels": "^2.1.9",
+		"react-syntax-highlighter": "^15.6.6",
+		"sonner": "^2.0.7",
+		"tailwind-merge": "^3.6.0",
+		"tw-animate-css": "^1.4.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.8.3",
+		"@crxjs/vite-plugin": "^2.4.0",
+		"@tailwindcss/postcss": "^4.3.0",
+		"@tiendanube/nube-sdk-types": "^0.50.0",
+		"@types/chrome": "^0.0.246",
+		"@types/react": "^18.2.28",
+		"@types/react-dom": "^18.2.13",
+		"@types/react-syntax-highlighter": "^15.5.13",
+		"@vitejs/plugin-react": "^4.7.0",
+		"autoprefixer": "^10.5.0",
+		"gulp": "^5.0.1",
+		"gulp-zip": "^6.0.0",
+		"postcss": "^8.5.15",
+		"tailwindcss": "^4.3.0",
+		"typescript": "^5.9.3",
+		"vite": "^5.0.0"
+	}
 }
