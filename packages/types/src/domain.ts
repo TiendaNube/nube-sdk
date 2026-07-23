@@ -165,14 +165,10 @@ export type ProductImage = {
 export type ProductVariant = {
 	/** Unique identifier for the variant. */
 	id: number;
-	/** Target age group for the product variant. */
-	age_group: "adult" | "infant" | "kids" | "newborn" | "toddler" | null;
 	/** Barcode identifier for the variant. */
 	barcode: null | string;
 	/** Original price before any discounts. */
 	compare_at_price: null | string;
-	/** Cost of the product for the merchant. */
-	cost: null | number;
 	/** Custom data associated with the variant. */
 	customData?: {
 		/** Color information for the variant. */
@@ -180,23 +176,12 @@ export type ProductVariant = {
 	};
 	/** Depth measurement of the product. */
 	depth: string;
-	/** Target gender for the product variant. */
-	gender: "female" | "male" | "unisex" | null;
-	/** Height measurement of the product. */
-	height: string;
+	/** Whether the variant has a promotional price. */
+	has_promotional_price: boolean;
 	/** ID of the associated image for this variant. */
 	image_id: null | number;
-	/** Inventory levels across different locations. */
-	inventory_levels: {
-		/** Unique identifier for the inventory level. */
-		id: number;
-		/** Location identifier where the stock is held. */
-		location_id: string;
-		/** Available stock quantity at this location. */
-		stock: null | number;
-		/** ID of the variant this inventory refers to. */
-		variant_id: number;
-	}[];
+	/** Height measurement of the product. */
+	height: string;
 	/** Manufacturer Part Number. */
 	mpn: null | number;
 	/** Position of this variant in the product's variant list. */
@@ -205,7 +190,10 @@ export type ProductVariant = {
 	price: null | string;
 	/** ID of the parent product. */
 	product_id: number;
-	/** Promotional or discounted price. */
+	/**
+	 * Promotional or discounted price.
+	 * @deprecated Use `has_promotional_price` together with `price` or `compare_at_price` instead.
+	 */
 	promotional_price: null | string;
 	/** Stock Keeping Unit identifier. */
 	sku: null | string;
@@ -541,9 +529,45 @@ export type CheckoutPage = { type: "checkout"; data: Checkout };
 export type HomePage = { type: "home"; data: Home };
 
 /**
- * Represents Account Page
+ * Represents the account login page, where the customer signs in.
  */
-export type AccountPage = { type: "account"; data: Account };
+export type AccountLoginPage = { type: "account.login"; data: Account };
+
+/**
+ * Represents the account registration page, where a new customer signs up.
+ */
+export type AccountRegisterPage = { type: "account.register"; data: Account };
+
+/**
+ * Represents the account information page, where the customer views and manages their profile.
+ */
+export type AccountInfoPage = { type: "account.info"; data: Account };
+
+/**
+ * Represents the account password reset page, where the customer recovers access to their account.
+ */
+export type AccountResetPage = { type: "account.reset"; data: Account };
+
+/**
+ * Represents the account new password page, where the customer sets a new password.
+ */
+export type AccountNewPasswordPage = { type: "account.newpass"; data: Account };
+
+/**
+ * Represents the account orders page, where the customer views their order history.
+ */
+export type AccountOrdersPage = { type: "account.orders"; data: Account };
+
+/**
+ * Represents any of the customer account pages.
+ */
+export type AccountPage =
+	| AccountLoginPage
+	| AccountRegisterPage
+	| AccountInfoPage
+	| AccountResetPage
+	| AccountNewPasswordPage
+	| AccountOrdersPage;
 
 /**
  * Represents a custom page step.
@@ -740,19 +764,30 @@ export type BillingAddress = Prettify<
 >;
 
 /**
+ * Represents the contact information of a customer in the checkout process.
+ */
+export type CustomerContact = {
+	email: Nullable<string>;
+	name: Nullable<string>;
+	phone: Nullable<string>;
+	accepts_marketing: Nullable<boolean>;
+	accepts_marketing_updated_at: Nullable<string>;
+};
+
+/**
  * Represents a customer in the checkout process.
  */
 export type Customer = {
-	id: Nullable<number>;
-	contact: {
-		email: Nullable<string>;
-		name: Nullable<string>;
-		phone: Nullable<string>;
-		accepts_marketing: Nullable<boolean>;
-		accepts_marketing_updated_at: Nullable<string>;
-	};
-	shipping_address: ShippingAddress;
-	billing_address: BillingAddress;
+	id?: Nullable<number>;
+	contact?: Nullable<CustomerContact>;
+	shipping_address?: Nullable<ShippingAddress>;
+	billing_address?: Nullable<BillingAddress>;
+	name?: Nullable<string>;
+	email?: Nullable<string>;
+	phone?: Nullable<string>;
+	cpf_cnpj?: Nullable<string>;
+	business_name?: Nullable<string>;
+	billing_country?: Nullable<string>;
 };
 
 /**

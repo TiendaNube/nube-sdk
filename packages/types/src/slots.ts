@@ -1,4 +1,10 @@
-import type { ObjectValues, Prettify } from "./utility";
+import type {
+	Digit,
+	IsNumericString,
+	LowercaseLetter,
+	ObjectValues,
+	Prettify,
+} from "./utility";
 
 /**
  * List of common UI slots available across different contexts.
@@ -146,9 +152,16 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_products_new"} AFTER_SECTION_PRODUCTS_NEW - After the products new section on the home page.
  * @property {"before_section_products_featured"} BEFORE_SECTION_PRODUCTS_FEATURED - Before the products featured section on the home page.
  * @property {"after_section_products_featured"} AFTER_SECTION_PRODUCTS_FEATURED - After the products featured section on the home page.
+ * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
+ * @property {"after_product_detail_related_products"} AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS - After the related products section on the product detail page.
+ * @property {"before_product_detail_complementary_products"} BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - Before the complementary products section on the product detail page.
+ * @property {"after_product_detail_complementary_products"} AFTER_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - After the complementary products section on the product detail page.
  * @property {"before_line_item"} BEFORE_LINE_ITEM - Before each cart line item.
  * @property {"cart_line_item_top"} CART_LINE_ITEM_TOP - Top of the cart line item. Deprecated; use BEFORE_LINE_ITEM instead.
  * @property {"before_footer"} BEFORE_FOOTER - Before the footer.
+ * @property {"inside_footer"} INSIDE_FOOTER - Inside footer content.
+ * @property {"footer_seals"} FOOTER_SEALS - Inside footer seals.
+ * @property {"after_footer"} AFTER_FOOTER - After the footer.
  * @property {"before_product_detail_payment_options"} BEFORE_PRODUCT_DETAIL_PAYMENT_OPTIONS - Before the payment options accordion on the product detail page.
  * @property {"after_product_detail_payment_options"} AFTER_PRODUCT_DETAIL_PAYMENT_OPTIONS - After the payment options accordion on the product detail page.
  * @property {"before_product_detail_shipping_options"} BEFORE_PRODUCT_DETAIL_SHIPPING_OPTIONS - Before the shipping options on the product detail page.
@@ -211,6 +224,9 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_CART_SUMMARY: "after_cart_summary",
 	AFTER_SECTION_NEWSLETTER: "after_section_newsletter",
 	BEFORE_FOOTER: "before_footer",
+	INSIDE_FOOTER: "inside_footer",
+	FOOTER_SEALS: "footer_seals",
+	AFTER_FOOTER: "after_footer",
 	BEFORE_SECTION_NEWSLETTER: "before_section_newsletter",
 	BEFORE_SECTION_PRODUCTS_SALE: "before_section_products_sale",
 	AFTER_SECTION_PRODUCTS_SALE: "after_section_products_sale",
@@ -218,6 +234,14 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_PRODUCTS_NEW: "after_section_products_new",
 	BEFORE_SECTION_PRODUCTS_FEATURED: "before_section_products_featured",
 	AFTER_SECTION_PRODUCTS_FEATURED: "after_section_products_featured",
+	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
+		"before_product_detail_related_products",
+	AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS:
+		"after_product_detail_related_products",
+	BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS:
+		"before_product_detail_complementary_products",
+	AFTER_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS:
+		"after_product_detail_complementary_products",
 	BEFORE_LINE_ITEM: "before_line_item",
 	/** @deprecated Use BEFORE_LINE_ITEM instead. */
 	CART_LINE_ITEM_TOP: "cart_line_item_top",
@@ -274,7 +298,186 @@ export type CheckoutUISlot = ObjectValues<typeof CHECKOUT_UI_SLOT>;
 export type StorefrontUISlot = ObjectValues<typeof STOREFRONT_UI_SLOT>;
 
 /**
- * Represents all possible UI slots where components can be dynamically injected.
- * This type combines checkout, storefront, and common UI slots.
+ * The set of characters allowed in the body of a custom slot name
+ * (i.e. the part after the `custom_` prefix).
+ *
+ * Only lowercase letters, digits and underscores are considered valid,
+ * which also enforces the `lowercase` and `snake_case` conventions.
  */
-export type UISlot = Prettify<CheckoutUISlot | StorefrontUISlot>;
+type AllowedCustomUISlotChar = LowercaseLetter | Digit | "_";
+
+/**
+ * Recursively checks whether every character of `S` is an
+ * {@link AllowedCustomUISlotChar}.
+ *
+ * Resolves to `true` only when `S` is non-empty and made up exclusively of
+ * lowercase letters, digits and underscores; otherwise resolves to `false`.
+ *
+ * The non-literal `string` type resolves to `true`, since a value that is not
+ * a string literal cannot be validated at the type level and must be accepted.
+ *
+ * @template S - The custom slot body to validate (without the `custom_` prefix).
+ */
+type IsValidCustomUISlotBody<S extends string> = string extends S
+	? true
+	: S extends `${infer Head}${infer Tail}`
+		? Head extends AllowedCustomUISlotChar
+			? Tail extends ""
+				? true
+				: IsValidCustomUISlotBody<Tail>
+			: false
+		: false;
+
+/**
+ * Represents a custom slot defined by the store theme developer.
+ *
+ * A custom slot lets a theme expose its own injection points, following these rules:
+ *
+ * 1. It must always start with the `custom_` prefix.
+ * 2. It must be written in `snake_case`.
+ * 3. It must be entirely lowercase.
+ * 4. Only letters, numbers and `_` are valid characters.
+ *
+ * When used without a type argument (for example, as part of the {@link UISlot}
+ * union) it behaves as the broad ``custom_${string}`` template, matching any
+ * custom slot. When a string literal is provided as `T`, the rules above are
+ * enforced at the type level: valid names resolve to the literal itself, while
+ * invalid ones resolve to `never`.
+ *
+ * @template T - The custom slot name to validate. Defaults to `string`, which
+ * yields the broad ``custom_${string}`` type.
+ *
+ * @example
+ * ```ts
+ * type A = CustomUISlot<"custom_promo_banner">; // "custom_promo_banner"
+ * type B = CustomUISlot<"custom_promoBanner">;  // never (not lowercase / snake_case)
+ * type C = CustomUISlot<"custom_promo-banner">; // never (invalid character "-")
+ * type D = CustomUISlot<"promo_banner">;        // never (missing "custom_" prefix)
+ * type E = CustomUISlot;                         // `custom_${string}`
+ * ```
+ */
+export type CustomUISlot<T extends string = string> = string extends T
+	? `custom_${string}`
+	: T extends `custom_${infer Body}`
+		? IsValidCustomUISlotBody<Body> extends true
+			? T
+			: never
+		: never;
+
+/**
+ * The prefixes that every dynamic-section slot must start with.
+ *
+ * A dynamic-section slot is created around a theme section that can be added,
+ * removed or reordered by the store owner, exposing an injection point right
+ * `before` or `after` that section.
+ */
+type DynamicUISlotPrefix = "before_dynamic_section_" | "after_dynamic_section_";
+
+/**
+ * Validates the body of a dynamic slot (the part after the
+ * {@link DynamicUISlotPrefix}).
+ *
+ * A valid body is any (non-empty) section name followed by a single underscore
+ * and a trailing numeric sequence, e.g. ``single-shelf_1782228052519``. The
+ * name itself is unrestricted, so the numeric suffix is matched against the
+ * part after the *last* underscore.
+ *
+ * @template Body - The dynamic slot body to validate.
+ */
+type IsValidDynamicUISlotBody<Body extends string> =
+	Body extends `${infer Name}_${infer Rest}`
+		? Name extends ""
+			? false
+			: Rest extends `${string}_${string}`
+				? IsValidDynamicUISlotBody<Rest>
+				: IsNumericString<Rest>
+		: false;
+
+/**
+ * Represents a slot injected around a dynamic theme section.
+ *
+ * A dynamic slot follows these rules:
+ *
+ * 1. It must start with either the `before_dynamic_section_` or
+ *    `after_dynamic_section_` prefix.
+ * 2. The prefix is followed by a section name, which can be any string.
+ * 3. It must always end with an underscore and a numeric sequence (the section
+ *    instance id).
+ *
+ * When used without a type argument (for example, as part of the {@link UISlot}
+ * union) it behaves as the broad ``${DynamicUISlotPrefix}${string}`` template,
+ * matching any dynamic slot. When a string literal is provided as `T`, the
+ * rules above are enforced at the type level: valid names resolve to the
+ * literal itself, while invalid ones resolve to `never`.
+ *
+ * @template T - The dynamic slot name to validate. Defaults to `string`, which
+ * yields the broad ``${DynamicUISlotPrefix}${string}`` type.
+ *
+ * @example
+ * ```ts
+ * type A = DynamicUISlot<"before_dynamic_section_single-shelf_1782228052519">;
+ * //   => "before_dynamic_section_single-shelf_1782228052519"
+ * type B = DynamicUISlot<"after_dynamic_section_single-shelf_1782228052519">;
+ * //   => "after_dynamic_section_single-shelf_1782228052519"
+ * type C = DynamicUISlot<"before_dynamic_section_single-shelf">; // never (no numeric suffix)
+ * type D = DynamicUISlot<"before_dynamic_section_singleShelf_1">; // "before_dynamic_section_singleShelf_1" (name is unrestricted)
+ * type E = DynamicUISlot<"before_dynamic_section_-shelf_1">;      // "before_dynamic_section_-shelf_1" (name is unrestricted)
+ * type F = DynamicUISlot;                                          // `${DynamicUISlotPrefix}${string}`
+ * ```
+ */
+export type DynamicUISlot<T extends string = string> = string extends T
+	? `${DynamicUISlotPrefix}${string}`
+	: T extends `${DynamicUISlotPrefix}${infer Body}`
+		? IsValidDynamicUISlotBody<Body> extends true
+			? T
+			: never
+		: never;
+
+/**
+ * Represents all possible UI slots where components can be dynamically injected.
+ * This type combines checkout, storefront, common, custom and dynamic UI slots.
+ */
+export type UISlot = Prettify<
+	CheckoutUISlot | StorefrontUISlot | CustomUISlot | DynamicUISlot
+>;
+
+/**
+ * Validates a UI slot name provided as a string literal `S`.
+ *
+ * Predefined checkout and storefront slots resolve to themselves. Dynamic slots
+ * (those starting with `before_dynamic_section_` / `after_dynamic_section_`) are
+ * validated against the {@link DynamicUISlot} rules, and custom slots (those
+ * starting with `custom_`) against the {@link CustomUISlot} rules, each
+ * resolving to `S` when valid or `never` when invalid. Any other string
+ * resolves to `never`.
+ *
+ * This is meant to be used to constrain slot arguments so that invalid custom
+ * slot names are rejected at the call site (see {@link NubeSDK.render}).
+ *
+ * @template S - The slot name to validate.
+ */
+export type ValidateUISlot<S extends string> = S extends
+	| CheckoutUISlot
+	| StorefrontUISlot
+	? S
+	: S extends DynamicUISlot
+		? DynamicUISlot<S>
+		: S extends CustomUISlot
+			? CustomUISlot<S>
+			: never;
+
+/**
+ * Type of a slot argument for APIs such as {@link NubeSDK.render} and
+ * {@link NubeSDK.clearSlot}.
+ *
+ * It keeps the predefined checkout and storefront slots as direct union
+ * members, so editors still offer autocomplete for the fixed slot names, while
+ * validating custom slot names (starting with `custom_`) through the generic
+ * `TSlot` parameter via {@link ValidateUISlot}.
+ *
+ * @template TSlot - The literal type inferred from the slot argument.
+ */
+export type UISlotArg<TSlot extends string> =
+	| CheckoutUISlot
+	| StorefrontUISlot
+	| (TSlot & ValidateUISlot<TSlot>);

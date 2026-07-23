@@ -1,4 +1,6 @@
+import type { NubeAPI } from "./api";
 import type { AppSettingsValues } from "./app-settings";
+import type { DynamicSlot, StaticSlot } from "./available-slots";
 import type { NubeBrowserAPIs } from "./browser";
 import type { NubeComponent, UI } from "./components";
 import type {
@@ -19,7 +21,7 @@ import type {
 	NubeSDKSendableEvent,
 } from "./events";
 
-import type { UISlot } from "./slots";
+import type { UISlotArg } from "./slots";
 import type { DeepPartial, Nullable } from "./utility";
 
 /**
@@ -225,11 +227,14 @@ export type NubeSDK = {
 	 * The component can be either a static component or a function that receives the current state
 	 * and returns a component to render.
 	 *
-	 * @param slot - The UI slot where the component will be rendered.
+	 * @param slot - The UI slot where the component will be rendered. Accepts a
+	 * slot name (custom slot names starting with `custom_`, and dynamic slot
+	 * names, are validated at the call site) or a `StaticSlot` / `DynamicSlot`
+	 * object returned by `nube.api.getAvailableSlots()`.
 	 * @param component - The component to render, either a static component or a function that returns a component based on the current state.
 	 */
-	render(
-		slot: UISlot,
+	render<const TSlot extends string>(
+		slot: UISlotArg<TSlot> | StaticSlot | DynamicSlot,
 		component:
 			| NubeComponent
 			| NubeComponent[]
@@ -239,9 +244,14 @@ export type NubeSDK = {
 	/**
 	 * Clears a component from a specific UI slot, removing it from the NubeSDKState.
 	 *
-	 * @param slot - The UI slot from which the component will be cleared.
+	 * @param slot - The UI slot from which the component will be cleared. Accepts
+	 * a slot name (custom slot names starting with `custom_`, and dynamic slot
+	 * names, are validated at the call site) or a `StaticSlot` / `DynamicSlot`
+	 * object returned by `nube.api.getAvailableSlots()`.
 	 */
-	clearSlot(slot: UISlot): void;
+	clearSlot<const TSlot extends string>(
+		slot: UISlotArg<TSlot> | StaticSlot | DynamicSlot,
+	): void;
 
 	/**
 	 * Retrieves the app settings values for the current app.
@@ -249,6 +259,13 @@ export type NubeSDK = {
 	 * @returns The app settings values, or an empty object if not available.
 	 */
 	getAppSettings(): AppSettingsValues;
+
+	/**
+	 * Host-API namespace. Exposes typed adapters that invoke host-side
+	 * capabilities across the worker / main thread boundary
+	 * (e.g. `nube.api.getCheckout()`).
+	 */
+	api: NubeAPI;
 };
 
 /**

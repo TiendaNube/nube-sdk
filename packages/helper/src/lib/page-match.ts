@@ -7,6 +7,7 @@
  */
 
 import type {
+	Account,
 	Category,
 	Checkout,
 	Home,
@@ -14,6 +15,7 @@ import type {
 	ProductDetails,
 } from "@tiendanube/nube-sdk-types";
 import {
+	isAccountPage,
 	isCategoryPage,
 	isCheckoutPage,
 	isHomePage,
@@ -48,6 +50,7 @@ export type PageDataMap = {
 	category: Category;
 	checkout: Checkout;
 	home: Home;
+	account: Account;
 };
 
 /**
@@ -146,10 +149,15 @@ export function pageMatch(state: NubeSDKState, handlers: PageHandlers): void {
 		handlers.home?.(state, page.data);
 		return;
 	}
+
+	if (isAccountPage(page)) {
+		handlers.account?.(state, page.data);
+		return;
+	}
 }
 
 /**
- * Subscribes to navigation changes and invokes handlers that match the current page.
+ * Subscribes to page load events and invokes the handler that matches the loaded page.
  *
  * Functional pattern that detects the current page type and calls the
  * corresponding handler whenever navigation updates occur.
@@ -175,14 +183,11 @@ export function pageMatch(state: NubeSDKState, handlers: PageHandlers): void {
 export function onPage(handlers: PageHandlers): () => void {
 	const nube = getNubeInstance();
 
-	const currentState = nube.getState();
-
-	pageMatch(currentState, handlers);
-
 	const listener = (state: NubeSDKState) => pageMatch(state, handlers);
-	nube.on("location:updated", listener);
 
-	return () => nube.off("location:updated", listener);
+	nube.on("page:loaded", listener);
+
+	return () => nube.off("page:loaded", listener);
 }
 
 /**
