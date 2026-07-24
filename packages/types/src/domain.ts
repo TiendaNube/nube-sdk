@@ -628,6 +628,8 @@ export type AppConfig = {
 	has_cart_validation: boolean;
 	/** Determines whether the user can select a shipping option. */
 	disable_shipping_more_options: boolean;
+	/** Determines whether the cart is handled before update. */
+	handle_cart_before_update: boolean;
 };
 /**
  * Represents a shipping option available in checkout.
