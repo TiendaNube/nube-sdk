@@ -12,30 +12,36 @@ export const theme = {
 			foreground: new ThemeColor("main-foreground"),
 			background: new ThemeColor("main-background"),
 		},
+		/**
+		 * Checkout exposes these tokens with a leading underscore (`--_success`),
+		 * while the storefront exposes them without it (`--success`). Declaring the
+		 * underscore-free name as the `var()` fallback keeps a single theme object
+		 * working in both environments.
+		 */
 		success: {
-			light: "var(--_success-light)",
-			medium: "var(--_success)",
-			dark: "var(--_success-dark)",
+			light: "var(--_success-light, var(--success-light))",
+			medium: "var(--_success, var(--success))",
+			dark: "var(--_success-dark, var(--success-dark))",
 		},
 		warning: {
-			light: "var(--_warning-light)",
-			medium: "var(--_warning)",
-			dark: "var(--_warning-dark)",
+			light: "var(--_warning-light, var(--warning-light))",
+			medium: "var(--_warning, var(--warning))",
+			dark: "var(--_warning-dark, var(--warning-dark))",
 		},
 		danger: {
-			light: "var(--_danger-light)",
-			medium: "var(--_danger)",
-			dark: "var(--_danger-dark)",
+			light: "var(--_danger-light, var(--danger-light))",
+			medium: "var(--_danger, var(--danger))",
+			dark: "var(--_danger-dark, var(--danger-dark))",
 		},
 		info: {
-			light: "var(--_info-light)",
-			medium: "var(--_info)",
-			dark: "var(--_info-dark)",
+			light: "var(--_info-light, var(--info-light))",
+			medium: "var(--_info, var(--info))",
+			dark: "var(--_info-dark, var(--info-dark))",
 		},
 		neutral: {
-			light: "var(--_neutral-light)",
-			medium: "var(--_neutral)",
-			dark: "var(--_neutral-dark)",
+			light: "var(--_neutral-light, var(--neutral-light))",
+			medium: "var(--_neutral, var(--neutral))",
+			dark: "var(--_neutral-dark, var(--neutral-dark))",
 		},
 		text: {
 			high: "var(--text-foreground-high)",
@@ -44,34 +50,38 @@ export const theme = {
 		},
 	},
 	typography: {
+		/**
+		 * Same underscore fallback as the semantic colors above: Checkout exposes
+		 * these tokens as `--_*`, the storefront without the underscore.
+		 */
 		body: {
-			font: "var(--_body-font)",
-			fontSize: "var(--_body-font-size)",
-			lineHeight: "var(--_body-font-leading)",
+			font: "var(--_body-font, var(--body-font))",
+			fontSize: "var(--_body-font-size, var(--body-font-size))",
+			lineHeight: "var(--_body-font-leading, var(--body-font-leading))",
 		},
 		xl: {
-			fontSize: "var(--_font-xl)",
-			lineHeight: "var(--_font-xl-leading)",
+			fontSize: "var(--_font-xl, var(--font-xl))",
+			lineHeight: "var(--_font-xl-leading, var(--font-xl-leading))",
 		},
 		lg: {
-			fontSize: "var(--_font-lg)",
-			lineHeight: "var(--_font-lg-leading)",
+			fontSize: "var(--_font-lg, var(--font-lg))",
+			lineHeight: "var(--_font-lg-leading, var(--font-lg-leading))",
 		},
 		base: {
-			fontSize: "var(--_font-base)",
-			lineHeight: "var(--_font-base-leading)",
+			fontSize: "var(--_font-base, var(--font-base))",
+			lineHeight: "var(--_font-base-leading, var(--font-base-leading))",
 		},
 		md: {
-			fontSize: "var(--_font-md)",
-			lineHeight: "var(--_font-md-leading)",
+			fontSize: "var(--_font-md, var(--font-md))",
+			lineHeight: "var(--_font-md-leading, var(--font-md-leading))",
 		},
 		sm: {
-			fontSize: "var(--_font-sm)",
-			lineHeight: "var(--_font-sm-leading)",
+			fontSize: "var(--_font-sm, var(--font-sm))",
+			lineHeight: "var(--_font-sm-leading, var(--font-sm-leading))",
 		},
 		xs: {
-			fontSize: "var(--_font-xs)",
-			lineHeight: "var(--_font-xs-leading)",
+			fontSize: "var(--_font-xs, var(--font-xs))",
+			lineHeight: "var(--_font-xs-leading, var(--font-xs-leading))",
 		},
 	},
 	border: {
