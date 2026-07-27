@@ -131,6 +131,8 @@ import type {
 	NubeComponentVideoPlayerProps,
 	NubeComponentVideoRoot,
 	NubeComponentVideoRootProps,
+	NubeComponentVideoStories,
+	NubeComponentVideoStoriesProps,
 	NubeComponentVideoYouTube,
 	NubeComponentVideoYouTubeProps,
 } from "@tiendanube/nube-sdk-types";
@@ -201,6 +203,7 @@ import {
 	toastTitle,
 	videoPlayer,
 	videoRoot,
+	videoStories,
 	videoYouTube,
 } from "@tiendanube/nube-sdk-ui";
 
@@ -501,6 +504,23 @@ export const Video = {
 	Player: VideoPlayer,
 	YouTube: VideoYouTube,
 };
+
+/**
+ * Creates a `VideoStories` component.
+ *
+ * `VideoStories` is a vertical, stories-style player for a sequence of
+ * self-hosted videos (Instagram/WhatsApp-style). It renders inline as a compact
+ * 9:16 card; and can be expanded to a fullscreen overlay. Events (`onOpen`,
+ * `onClose`, `onChange`, `onComplete`, `onError`) are observe-only.
+ *
+ * @param props - The properties for configuring the video stories component.
+ * @returns A `NubeComponentVideoStories` object.
+ */
+export function VideoStories(
+	props: NubeComponentVideoStoriesProps,
+): NubeComponentVideoStories {
+	return videoStories(props);
+}
 
 /**
  * Creates a `Select` component.
