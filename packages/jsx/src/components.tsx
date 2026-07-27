@@ -127,6 +127,12 @@ import type {
 	NubeComponentToastTitleProps,
 	NubeComponentUse,
 	NubeComponentUseProps,
+	NubeComponentVideoPlayer,
+	NubeComponentVideoPlayerProps,
+	NubeComponentVideoRoot,
+	NubeComponentVideoRootProps,
+	NubeComponentVideoYouTube,
+	NubeComponentVideoYouTubeProps,
 } from "@tiendanube/nube-sdk-types";
 import {
 	accordionContent,
@@ -193,6 +199,9 @@ import {
 	toastDescription,
 	toastRoot,
 	toastTitle,
+	videoPlayer,
+	videoRoot,
+	videoYouTube,
 } from "@tiendanube/nube-sdk-ui";
 
 /**
@@ -430,6 +439,68 @@ export function Progress(
 export function Iframe(props: NubeComponentIframeProps): NubeComponentIframe {
 	return iframe(props);
 }
+
+/**
+ * Creates a `Video.Root` component.
+ *
+ * `Video.Root` is the source-agnostic wrapper for a video. It owns
+ * layout, the shared playback modifiers (`autoplay`, `muted`, `loop`) and the
+ * source-agnostic playback event handlers. Wrap a `Video.Player` or a
+ * `Video.YouTube` plus any overlay children (rendered over the video when the
+ * fullscreen lightbox is open).
+ *
+ * @param props - The properties for configuring the video root component.
+ * @returns A `NubeComponentVideoRoot` object representing the video root component.
+ */
+function VideoRoot(props: NubeComponentVideoRootProps): NubeComponentVideoRoot {
+	return videoRoot(props);
+}
+
+/**
+ * Creates a `Video.Player` component.
+ *
+ * `Video.Player` is a self-hosted video source (MP4, HLS or DASH) rendered by
+ * the SDK's bundled player engine. It must be a child of `Video.Root`. Emits
+ * source-specific errors through its own `onError`.
+ *
+ * @param props - The properties for configuring the video player component.
+ * @returns A `NubeComponentVideoPlayer` object representing the video player component.
+ */
+function VideoPlayer(
+	props: NubeComponentVideoPlayerProps,
+): NubeComponentVideoPlayer {
+	return videoPlayer(props);
+}
+
+/**
+ * Creates a `Video.YouTube` component.
+ *
+ * `Video.YouTube` embeds a YouTube video via the official IFrame Player API.
+ * It must be a child of `Video.Root`. No lightbox is available (YouTube ToS
+ * prohibits overlaying or cropping the embed). Emits source-specific errors
+ * through its own `onError`.
+ *
+ * @param props - The properties for configuring the YouTube video component.
+ * @returns A `NubeComponentVideoYouTube` object representing the YouTube component.
+ */
+function VideoYouTube(
+	props: NubeComponentVideoYouTubeProps,
+): NubeComponentVideoYouTube {
+	return videoYouTube(props);
+}
+
+/**
+ * Compound `Video` component.
+ *
+ * - `Video.Root` — wrapper owning layout, playback modifiers and events.
+ * - `Video.Player` — the self-hosted source (MP4 / HLS / DASH).
+ * - `Video.YouTube` — a YouTube embed via the official IFrame Player API.
+ */
+export const Video = {
+	Root: VideoRoot,
+	Player: VideoPlayer,
+	YouTube: VideoYouTube,
+};
 
 /**
  * Creates a `Select` component.

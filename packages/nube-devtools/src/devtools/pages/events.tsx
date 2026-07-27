@@ -3,7 +3,13 @@ import { Divider } from "@/components/ui/divider";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { ResizablePanelGroup } from "@/components/ui/resizable";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Table, TableBody } from "@/components/ui/table";
+import {
+	Table,
+	TableBody,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
 import type {
 	NubeSDKEvent,
@@ -22,6 +28,28 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 const STORAGE_KEY = "nube-devtools-events-page-width";
 const SEARCH_STORAGE_KEY = "nube-devtools-filter-search";
+const COLUMN_WIDTHS_KEY = "nube-devtools-events-column-widths";
+
+type ResizableColumn = "sender" | "target";
+type ColumnWidths = Record<ResizableColumn, number>;
+const DEFAULT_COLUMN_WIDTHS: ColumnWidths = { sender: 150, target: 150 };
+const MIN_COLUMN_WIDTH = 60;
+
+function loadColumnWidths(): ColumnWidths {
+	const stored = localStorage.getItem(COLUMN_WIDTHS_KEY);
+	if (stored) {
+		try {
+			const parsed = JSON.parse(stored) as Partial<ColumnWidths>;
+			return {
+				sender: parsed.sender ?? DEFAULT_COLUMN_WIDTHS.sender,
+				target: parsed.target ?? DEFAULT_COLUMN_WIDTHS.target,
+			};
+		} catch {
+			// ignore malformed value and fall back to defaults
+		}
+	}
+	return DEFAULT_COLUMN_WIDTHS;
+}
 
 type QueryField = "sender" | "target" | "event";
 const QUERY_FIELDS: ReadonlySet<string> = new Set([
@@ -80,6 +108,40 @@ export function Events() {
 		return localStorage.getItem(SEARCH_STORAGE_KEY) || "";
 	});
 	const tableContainerRef = useRef<HTMLDivElement>(null);
+	const [columnWidths, setColumnWidths] =
+		useState<ColumnWidths>(loadColumnWidths);
+
+	useEffect(() => {
+		localStorage.setItem(COLUMN_WIDTHS_KEY, JSON.stringify(columnWidths));
+	}, [columnWidths]);
+
+	const startColumnResize = (
+		column: ResizableColumn,
+		event: React.MouseEvent,
+	) => {
+		event.preventDefault();
+		event.stopPropagation();
+		const startX = event.clientX;
+		const startWidth = columnWidths[column];
+
+		const handleMouseMove = (moveEvent: MouseEvent) => {
+			const delta = moveEvent.clientX - startX;
+			const nextWidth = Math.max(MIN_COLUMN_WIDTH, startWidth + delta);
+			setColumnWidths((prev) => ({ ...prev, [column]: nextWidth }));
+		};
+
+		const handleMouseUp = () => {
+			window.removeEventListener("mousemove", handleMouseMove);
+			window.removeEventListener("mouseup", handleMouseUp);
+			document.body.style.cursor = "";
+			document.body.style.userSelect = "";
+		};
+
+		window.addEventListener("mousemove", handleMouseMove);
+		window.addEventListener("mouseup", handleMouseUp);
+		document.body.style.cursor = "col-resize";
+		document.body.style.userSelect = "none";
+	};
 
 	useEffect(() => {
 		const query = parseQuery(search);
@@ -246,36 +308,50 @@ export function Events() {
 									/>
 								</div>
 							) : (
-								<div className="flex h-full flex-col">
-									<div className="flex items-center border-b text-xs text-muted-foreground shrink-0 h-7">
-										<div className="w-[30%] px-3 truncate border-r">sender</div>
-										<div className="w-[30%] px-3 truncate border-r">target</div>
-										<div className="flex-1 px-3 truncate">event</div>
-									</div>
-									<div
-										ref={tableContainerRef}
-										className="flex-1 overflow-y-auto"
-									>
-										<Table className="table-fixed">
-											<colgroup>
-												<col className="w-[30%]" />
-												<col className="w-[30%]" />
-												<col />
-											</colgroup>
-											<TableBody>
-												{filteredEvents.map((event) => (
-													<EventTableRow
-														key={event.id}
-														event={event}
-														isSelected={event.id === selectedEvent?.id}
-														onSelect={setSelectedEvent}
-														onResend={(e) => handleReplayEvent(e.data)}
-														onAddToFilter={handleAddToFilter}
+								<div ref={tableContainerRef} className="h-full overflow-y-auto">
+									<Table className="table-fixed">
+										<TableHeader>
+											<TableRow>
+												<TableHead
+													style={{ width: columnWidths.sender }}
+													className="relative h-7 px-3 text-muted-foreground border-r"
+												>
+													sender
+													<button
+														type="button"
+														onMouseDown={(e) => startColumnResize("sender", e)}
+														className="absolute top-0 right-0 h-full w-1.5 translate-x-1/2 cursor-ew-resize border-0 bg-transparent p-0"
 													/>
-												))}
-											</TableBody>
-										</Table>
-									</div>
+												</TableHead>
+												<TableHead
+													style={{ width: columnWidths.target }}
+													className="relative h-7 px-3 text-muted-foreground border-r"
+												>
+													target
+													<button
+														type="button"
+														onMouseDown={(e) => startColumnResize("target", e)}
+														className="absolute top-0 right-0 h-full w-1.5 translate-x-1/2 cursor-ew-resize border-0 bg-transparent p-0"
+													/>
+												</TableHead>
+												<TableHead className="h-7 px-3 text-muted-foreground">
+													event
+												</TableHead>
+											</TableRow>
+										</TableHeader>
+										<TableBody className="[&_tr:last-child]:border-b!">
+											{filteredEvents.map((event) => (
+												<EventTableRow
+													key={event.id}
+													event={event}
+													isSelected={event.id === selectedEvent?.id}
+													onSelect={setSelectedEvent}
+													onResend={(e) => handleReplayEvent(e.data)}
+													onAddToFilter={handleAddToFilter}
+												/>
+											))}
+										</TableBody>
+									</Table>
 								</div>
 							)}
 						</ResizablePanel>
