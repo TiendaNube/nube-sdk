@@ -16,6 +16,7 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  * @property {"cart:validate"} CART_VALIDATE - Triggered to validate the current cart state.
  * @property {"cart:add"} CART_ADD - Used to add a cart item.
  * @property {"cart:remove"} CART_REMOVE - Used to remove a cart item.
+ * @property {"cart:open"} CART_OPEN - Used to open the cart.
  * @property {"config:set"} CONFIG_SET - Used to update the SDK configuration.
  * @property {"ui:slot:set"} UI_SLOT_SET - Used to update a UI slot with new content.
  * @property {"shipping:update:label"} SHIPPING_UPDATE_LABEL - Used to update custom labels for shipping options.
@@ -30,6 +31,7 @@ export const SENDABLE_EVENT = {
 	CART_VALIDATE: "cart:validate",
 	CART_ADD: "cart:add",
 	CART_REMOVE: "cart:remove",
+	CART_OPEN: "cart:open",
 	CONFIG_SET: "config:set",
 	UI_SLOT_SET: "ui:slot:set",
 	SHIPPING_UPDATE_LABEL: "shipping:update:label",
