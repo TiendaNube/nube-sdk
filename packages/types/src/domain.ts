@@ -408,6 +408,9 @@ export type Store = {
 
 	/** The store's theme template (e.g., "recife", "morelia", "rio"). */
 	theme: string;
+
+	/** Whether products can be added to the cart without redirecting to the cart page. */
+	quick_cart: boolean;
 };
 
 type FixedProductListSectionName =
@@ -628,6 +631,8 @@ export type AppConfig = {
 	has_cart_validation: boolean;
 	/** Determines whether the user can select a shipping option. */
 	disable_shipping_more_options: boolean;
+	/** Determines whether the cart is handled before update. */
+	handle_cart_before_update: boolean;
 };
 /**
  * Represents a shipping option available in checkout.
