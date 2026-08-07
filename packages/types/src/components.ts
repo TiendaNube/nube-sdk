@@ -119,10 +119,22 @@ type EnhancedCSSProperties = {
 };
 
 /**
+ * Interactive states supported by Nube component styles.
+ */
+export type NubeComponentStylePseudoClass =
+	| ":active"
+	| ":focus"
+	| ":focus-visible"
+	| ":hover";
+
+/**
  * Define named styles for Nube components.
  * This type combines CSS properties with theme-aware values and Size types for layout properties.
  */
-export type NubeComponentStyle = Partial<EnhancedCSSProperties>;
+export type NubeComponentStyle = Partial<EnhancedCSSProperties> &
+	Partial<
+		Record<NubeComponentStylePseudoClass, Partial<EnhancedCSSProperties>>
+	>;
 
 /* -------------------------------------------------------------------------- */
 /*                            Box Component                                   */
