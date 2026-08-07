@@ -14,6 +14,7 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  * @constant
  *
  * @property {"cart:validate"} CART_VALIDATE - Triggered to validate the current cart state.
+ * @property {"cart:before_update:result"} CART_BEFORE_UPDATE_RESULT - Used to send the result of the cart before update handling.
  * @property {"cart:add"} CART_ADD - Used to add a cart item.
  * @property {"cart:remove"} CART_REMOVE - Used to remove a cart item.
  * @property {"cart:open"} CART_OPEN - Used to open the cart.
@@ -29,6 +30,7 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  */
 export const SENDABLE_EVENT = {
 	CART_VALIDATE: "cart:validate",
+	CART_BEFORE_UPDATE_RESULT: "cart:before_update:result",
 	CART_ADD: "cart:add",
 	CART_REMOVE: "cart:remove",
 	CART_OPEN: "cart:open",
@@ -62,6 +64,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"*"} ALL - Wildcard listener for all events.
  * @property {"page:loaded"} PAGE_LOADED - Fired when the page is loaded and the SDK is ready to be used.
  * @property {"cart:update"} CART_UPDATE - Fired when the cart state is updated.
+ * @property {"cart:before_update"} CART_BEFORE_UPDATE - Fired before the cart state is updated.
  * @property {"cart:view"} CART_VIEW - Fired when the user views their shopping cart.
  * @property {"cart:add:success"} CART_ADD_SUCCESS - Fired when a cart item is added successfully.
  * @property {"cart:add:fail"} CART_ADD_FAIL - Fired when a cart item is added unsuccessfully.
@@ -92,6 +95,7 @@ export const EVENT = {
 	ALL: "*",
 	PAGE_LOADED: "page:loaded",
 	CART_UPDATE: "cart:update",
+	CART_BEFORE_UPDATE: "cart:before_update",
 	CART_VIEW: "cart:view",
 	CART_ADD_SUCCESS: "cart:add:success",
 	CART_REMOVE_SUCCESS: "cart:remove:success",
