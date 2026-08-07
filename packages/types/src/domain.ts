@@ -408,6 +408,9 @@ export type Store = {
 
 	/** The store's theme template (e.g., "recife", "morelia", "rio"). */
 	theme: string;
+
+	/** Whether products can be added to the cart without redirecting to the cart page. */
+	quick_cart: boolean;
 };
 
 type FixedProductListSectionName =

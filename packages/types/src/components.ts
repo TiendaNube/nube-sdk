@@ -945,6 +945,125 @@ export type NubeComponentVideoYouTube = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                        VideoStories Component                              */
+/* -------------------------------------------------------------------------- */
+
+/** A single story in the playlist: a self-hosted video with an optional poster. */
+export type VideoStoriesItem = {
+	/**
+	 * MP4, HLS (`.m3u8`) or DASH (`.mpd`) source. Must be an **absolute**
+	 * https URL (e.g. `https://cdn.example.com/video.mp4`).
+	 * Items with an unsafe URL are dropped before render.
+	 */
+	src: SecurityURL;
+	/** Poster image shown before playback. Must be an absolute https URL. */
+	poster?: SecurityURL;
+};
+
+/** Payload emitted with the `open` VideoStories event. */
+export type NubeComponentVideoStoriesOpenPayload = {
+	/** Index of the story that was active when the overlay opened. */
+	index: number;
+	/** Total number of stories in the playlist. */
+	total: number;
+};
+
+/** Payload emitted with the `close` and `change` VideoStories events. */
+export type NubeComponentVideoStoriesIndexPayload = {
+	/** Index of the active story at the time of the event. */
+	index: number;
+};
+
+/** Payload emitted with the `complete` VideoStories event. */
+export type NubeComponentVideoStoriesCompletePayload = {
+	/** Total number of stories in the playlist. */
+	total: number;
+};
+
+/** Payload emitted with the `error` VideoStories event. */
+export type NubeComponentVideoStoriesErrorPayload = {
+	/** Index of the story that failed to load or play. */
+	index: number;
+};
+
+export type NubeComponentVideoStoriesOpenHandler = NubeComponentEventHandler<
+	"open",
+	NubeComponentVideoStoriesOpenPayload
+>;
+export type NubeComponentVideoStoriesCloseHandler = NubeComponentEventHandler<
+	"close",
+	NubeComponentVideoStoriesIndexPayload
+>;
+export type NubeComponentVideoStoriesChangeHandler = NubeComponentEventHandler<
+	"change",
+	NubeComponentVideoStoriesIndexPayload
+>;
+export type NubeComponentVideoStoriesCompleteHandler =
+	NubeComponentEventHandler<
+		"complete",
+		NubeComponentVideoStoriesCompletePayload
+	>;
+export type NubeComponentVideoStoriesErrorHandler = NubeComponentEventHandler<
+	"error",
+	NubeComponentVideoStoriesErrorPayload
+>;
+
+/**
+ * Properties for `VideoStories` — a vertical, stories-style player for a
+ * sequence of self-hosted videos (Instagram/WhatsApp-style). Plays inline as
+ * a compact card; tapping the card expands to a fullscreen overlay.
+ */
+export type NubeComponentVideoStoriesProps = Prettify<
+	NubeComponentBase & {
+		/** The ordered playlist. */
+		items: VideoStoriesItem[];
+		/** Inline card width in px (renders as a 9:16 card). Defaults to `96`. */
+		width?: number | string;
+		/** Start muted. Defaults to `true` (browser autoplay policy); user can unmute. */
+		startMuted?: boolean;
+		/** Press-and-hold the story to pause; release to resume. Defaults to `true`. */
+		pauseOnHold?: boolean;
+		/**
+		 * Tap the left/right thirds to navigate to the previous/next story
+		 * (both inline and fullscreen). Defaults to `true`.
+		 */
+		tapToNavigate?: boolean;
+		/**
+		 * Advance to the next story when the current one ends. Defaults to `true`;
+		 * when `false`, playback stops on the last frame of each story.
+		 */
+		autoAdvance?: boolean;
+		/**
+		 * After the last story, restart from the first instead of completing.
+		 * Defaults to `false`. Only meaningful together with `autoAdvance`.
+		 */
+		loop?: boolean;
+		style?: NubeComponentStyle;
+		/** Emitted (observe-only) when the fullscreen overlay opens. */
+		onOpen?: NubeComponentVideoStoriesOpenHandler;
+		/** Emitted (observe-only) when the fullscreen overlay closes. */
+		onClose?: NubeComponentVideoStoriesCloseHandler;
+		/** Emitted (observe-only) when the active story changes. */
+		onChange?: NubeComponentVideoStoriesChangeHandler;
+		/** Emitted (observe-only) when the last story finishes. */
+		onComplete?: NubeComponentVideoStoriesCompleteHandler;
+		/** Emitted (observe-only) when a story fails to load or play. */
+		onError?: NubeComponentVideoStoriesErrorHandler;
+		children?: NubeComponentChildren;
+	}
+>;
+
+/**
+ * Represents a `videoStories` component, a stories-style video playlist.
+ */
+export type NubeComponentVideoStories = Prettify<
+	NubeComponentBase &
+		NubeComponentVideoStoriesProps & {
+			type: "videoStories";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                           Txt Component                                    */
 /* -------------------------------------------------------------------------- */
 
@@ -2656,6 +2775,7 @@ export type NubeComponent =
 	| NubeComponentVideoRoot
 	| NubeComponentVideoPlayer
 	| NubeComponentVideoYouTube
+	| NubeComponentVideoStories
 	| NubeComponentText
 	| NubeComponentCheckbox
 	| NubeComponentTextarea
