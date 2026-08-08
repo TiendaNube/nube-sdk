@@ -23,6 +23,9 @@ describe("StyleSheet", () => {
 				":hover": {
 					backgroundColor: new ThemeColor("primary").opacity(50),
 				},
+				":focus": {
+					outline: "none",
+				},
 				":focus-visible": {
 					outline: "2px solid currentColor",
 				},
@@ -39,6 +42,7 @@ describe("StyleSheet", () => {
 			expect(styles.container[":hover"].backgroundColor).toBe(
 				"var(--primary-opacity-50)",
 			);
+			expect(styles.container[":focus"].outline).toBe("none");
 			expect(styles.container[":focus-visible"].outline).toBe(
 				"2px solid currentColor",
 			);

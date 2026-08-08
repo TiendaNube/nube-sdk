@@ -130,6 +130,7 @@ export type NubeComponentStylePseudoClass =
 /**
  * Define named styles for Nube components.
  * This type combines CSS properties with theme-aware values and Size types for layout properties.
+ * In StyleSheet.create, use colon-only pseudo-class keys such as `:hover`; the parent selector is implicit.
  */
 export type NubeComponentStyle = Partial<EnhancedCSSProperties> &
 	Partial<
