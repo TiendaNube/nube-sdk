@@ -152,6 +152,16 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_products_new"} AFTER_SECTION_PRODUCTS_NEW - After the products new section on the home page.
  * @property {"before_section_products_featured"} BEFORE_SECTION_PRODUCTS_FEATURED - Before the products featured section on the home page.
  * @property {"after_section_products_featured"} AFTER_SECTION_PRODUCTS_FEATURED - After the products featured section on the home page.
+ * @property {"before_section_products_promotion"} BEFORE_SECTION_PRODUCTS_PROMOTION - Before the products promotion section on the home page.
+ * @property {"after_section_products_promotion"} AFTER_SECTION_PRODUCTS_PROMOTION - After the products promotion section on the home page.
+ * @property {"before_section_products_best_seller"} BEFORE_SECTION_PRODUCTS_BEST_SELLER - Before the best seller products section on the home page.
+ * @property {"after_section_products_best_seller"} AFTER_SECTION_PRODUCTS_BEST_SELLER - After the best seller products section on the home page.
+ * @property {"before_section_products_coming_soon"} BEFORE_SECTION_PRODUCTS_COMING_SOON - Before the coming soon products section on the home page.
+ * @property {"after_section_products_coming_soon"} AFTER_SECTION_PRODUCTS_COMING_SOON - After the coming soon products section on the home page.
+ * @property {"before_section_products_recent"} BEFORE_SECTION_PRODUCTS_RECENT - Before the recent products section on the home page.
+ * @property {"after_section_products_recent"} AFTER_SECTION_PRODUCTS_RECENT - After the recent products section on the home page.
+ * @property {"before_section_products_slider"} BEFORE_SECTION_PRODUCTS_SLIDER - Before the products slider section on the home page.
+ * @property {"after_section_products_slider"} AFTER_SECTION_PRODUCTS_SLIDER - After the products slider section on the home page.
  * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
  * @property {"after_product_detail_related_products"} AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS - After the related products section on the product detail page.
  * @property {"before_product_detail_complementary_products"} BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - Before the complementary products section on the product detail page.
@@ -234,6 +244,16 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_PRODUCTS_NEW: "after_section_products_new",
 	BEFORE_SECTION_PRODUCTS_FEATURED: "before_section_products_featured",
 	AFTER_SECTION_PRODUCTS_FEATURED: "after_section_products_featured",
+	BEFORE_SECTION_PRODUCTS_PROMOTION: "before_section_products_promotion",
+	AFTER_SECTION_PRODUCTS_PROMOTION: "after_section_products_promotion",
+	BEFORE_SECTION_PRODUCTS_BEST_SELLER: "before_section_products_best_seller",
+	AFTER_SECTION_PRODUCTS_BEST_SELLER: "after_section_products_best_seller",
+	BEFORE_SECTION_PRODUCTS_COMING_SOON: "before_section_products_coming_soon",
+	AFTER_SECTION_PRODUCTS_COMING_SOON: "after_section_products_coming_soon",
+	BEFORE_SECTION_PRODUCTS_RECENT: "before_section_products_recent",
+	AFTER_SECTION_PRODUCTS_RECENT: "after_section_products_recent",
+	BEFORE_SECTION_PRODUCTS_SLIDER: "before_section_products_slider",
+	AFTER_SECTION_PRODUCTS_SLIDER: "after_section_products_slider",
 	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
 		"before_product_detail_related_products",
 	AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS:
