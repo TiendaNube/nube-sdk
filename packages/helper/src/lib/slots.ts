@@ -151,7 +151,10 @@ export async function getStaticSlots() {
  * @example
  * ```typescript
  * const dynamics = await getDynamicSlots();
- * const shelves = dynamics.filter((slot) => slot.sectionType === "single-shelf");
+ * // raw slots carry the section's own name, so no alias resolution happens here
+ * const featured = dynamics.filter(
+ * 	(slot) => slot.sectionType === "featured_products",
+ * );
  * ```
  *
  * @since 0.3.0
@@ -168,6 +171,50 @@ type SectionPosition = "before" | "after";
 type SectionOrder = "first" | "last";
 
 /**
+ * Section types that name the same logical theme section under different
+ * spellings.
+ *
+ * The static slots were named after the section they wrap (`products_featured`)
+ * while the dynamic sections are named after the page data that feeds them
+ * (`featured_products`), so the same section answers to two names depending on
+ * whether the theme renders it as a fixed or as a dynamic section. Each entry
+ * is an equivalence class: every name in it refers to one section, so a query
+ * for any of them must consider all of them.
+ *
+ * Private on purpose — apps keep passing whichever name they know and the
+ * lookup normalizes it. To teach the helpers a new pair, add a group here.
+ */
+const EQUIVALENT_SECTION_TYPES: readonly (readonly string[])[] = [
+	["featured_products", "products_featured"],
+];
+
+/**
+ * Index from a section type to its equivalence class in
+ * {@link EQUIVALENT_SECTION_TYPES}, built once at module load so a query is a
+ * single map lookup.
+ */
+const equivalenceIndex = new Map<string, readonly string[]>(
+	EQUIVALENT_SECTION_TYPES.flatMap((group) =>
+		group.map((sectionType) => [sectionType, group] as const),
+	),
+);
+
+/**
+ * Expands a section type into every name that refers to the same section.
+ *
+ * The queried name always comes first, so static lookups keep preferring the
+ * spelling the app asked for; unknown section types expand to themselves.
+ *
+ * @param sectionType - The theme section type as the app spelled it
+ * @returns The section type followed by its known aliases
+ */
+function getEquivalentSectionTypes(sectionType: string): readonly string[] {
+	const group = equivalenceIndex.get(sectionType);
+	if (!group) return [sectionType];
+	return [sectionType, ...group.filter((alias) => alias !== sectionType)];
+}
+
+/**
  * Shared implementation behind the four section-query helpers.
  *
  * Dynamic sections are searched first: it filters the page's dynamic slots by
@@ -178,7 +225,11 @@ type SectionOrder = "first" | "last";
  * back to the unique static `${position}_section_${sectionType}` slot. When
  * neither exists, it logs a {@link SlotNotFound} and resolves to `null`.
  *
- * @param sectionType - The theme section type (e.g. `"single-shelf"`)
+ * Both searches run over the section type and its aliases (see
+ * {@link EQUIVALENT_SECTION_TYPES}), so a section that is spelled one way as a
+ * static slot and another as a dynamic one is found under either name.
+ *
+ * @param sectionType - The theme section type (e.g. `"products_featured"`)
  * @param position - Whether to target the slot before or after the section
  * @param order - Whether to target the first or the last section of the type
  */
@@ -189,11 +240,13 @@ async function findSectionSlot(
 ): Promise<QuerySlotResult> {
 	const slots = await getAvailableSlots();
 	const dynamicType: DynamicSlot["type"] = `${position}_dynamic_section`;
+	const sectionTypes = getEquivalentSectionTypes(sectionType);
 
 	// find in dynamic slots: pick the lowest/highest sectionIndex among the
 	// matching sections rather than assuming a fixed index.
 	const candidates = slots.dynamic.filter(
-		(slot) => slot.sectionType === sectionType && slot.type === dynamicType,
+		(slot) =>
+			sectionTypes.includes(slot.sectionType) && slot.type === dynamicType,
 	);
 
 	if (candidates.length > 0) {
@@ -209,12 +262,14 @@ async function findSectionSlot(
 		return dynamicSection;
 	}
 
-	// find in static slots (unique, so the same slot serves first and last)
-	const staticSection = slots.static.find(
-		(slot) => slot.slotId === `${position}_section_${sectionType}`,
-	);
-
-	if (staticSection) return staticSection;
+	// find in static slots (unique, so the same slot serves first and last),
+	// trying the queried spelling before its aliases
+	for (const type of sectionTypes) {
+		const staticSection = slots.static.find(
+			(slot) => slot.slotId === `${position}_section_${type}`,
+		);
+		if (staticSection) return staticSection;
+	}
 
 	SlotNotFound.log(`${position} ${order} ${sectionType} section`);
 	return null;
@@ -227,7 +282,7 @@ async function findSectionSlot(
  * that type, it falls back to the static `before_section_${sectionType}` slot.
  * When neither exists, it logs a {@link SlotNotFound} and resolves to `null`.
  *
- * @param sectionType - The theme section type (e.g. `"single-shelf"`)
+ * @param sectionType - The theme section type (e.g. `"products_featured"`)
  * @returns A promise resolving to the matching slot, or `null` when the page
  * has no such section
  * @throws If no NubeSDK instance was registered (see `setNubeInstance`)
@@ -235,7 +290,7 @@ async function findSectionSlot(
  * @example
  * ```typescript
  * // `ui.render` accepts the promise directly and skips rendering on `null`.
- * ui.render(beforeFirstSection("single-shelf"), component);
+ * ui.render(beforeFirstSection("products_featured"), component);
  * ```
  *
  * @since 0.3.0
@@ -253,14 +308,14 @@ export function beforeFirstSection(
  * that type, it falls back to the static `after_section_${sectionType}` slot.
  * When neither exists, it logs a {@link SlotNotFound} and resolves to `null`.
  *
- * @param sectionType - The theme section type (e.g. `"single-shelf"`)
+ * @param sectionType - The theme section type (e.g. `"products_featured"`)
  * @returns A promise resolving to the matching slot, or `null` when the page
  * has no such section
  * @throws If no NubeSDK instance was registered (see `setNubeInstance`)
  *
  * @example
  * ```typescript
- * const slot = await afterFirstSection("single-shelf");
+ * const slot = await afterFirstSection("products_featured");
  * if (slot) ui.render(slot, component);
  * ```
  *
@@ -280,14 +335,14 @@ export function afterFirstSection(
  * (which is unique, so it is the same slot {@link beforeFirstSection} returns).
  * When neither exists, it logs a {@link SlotNotFound} and resolves to `null`.
  *
- * @param sectionType - The theme section type (e.g. `"single-shelf"`)
+ * @param sectionType - The theme section type (e.g. `"products_featured"`)
  * @returns A promise resolving to the matching slot, or `null` when the page
  * has no such section
  * @throws If no NubeSDK instance was registered (see `setNubeInstance`)
  *
  * @example
  * ```typescript
- * ui.render(beforeLastSection("single-shelf"), component);
+ * ui.render(beforeLastSection("products_featured"), component);
  * ```
  *
  * @since 0.3.0
@@ -306,14 +361,14 @@ export function beforeLastSection(
  * (which is unique, so it is the same slot {@link afterFirstSection} returns).
  * When neither exists, it logs a {@link SlotNotFound} and resolves to `null`.
  *
- * @param sectionType - The theme section type (e.g. `"single-shelf"`)
+ * @param sectionType - The theme section type (e.g. `"products_featured"`)
  * @returns A promise resolving to the matching slot, or `null` when the page
  * has no such section
  * @throws If no NubeSDK instance was registered (see `setNubeInstance`)
  *
  * @example
  * ```typescript
- * ui.render(afterLastSection("single-shelf"), component);
+ * ui.render(afterLastSection("products_featured"), component);
  * ```
  *
  * @since 0.3.0

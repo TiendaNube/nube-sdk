@@ -356,6 +356,95 @@ describe("slots", () => {
 		});
 	});
 
+	describe("equivalent section types", () => {
+		it("finds the dynamic section when queried by its static spelling", async () => {
+			const wanted = dynamicSlot(
+				"featured_products",
+				5,
+				"after_dynamic_section",
+			);
+			const payload: SlotsPayload = {
+				static: [],
+				dynamic: [
+					dynamicSlot("featured_products", 2, "after_dynamic_section"),
+					wanted,
+				],
+			};
+
+			const byStaticName = await setup(payload);
+			await expect(
+				byStaticName.slots.afterLastSection("products_featured"),
+			).resolves.toBe(wanted);
+
+			const byDynamicName = await setup(payload);
+			await expect(
+				byDynamicName.slots.afterLastSection("featured_products"),
+			).resolves.toBe(wanted);
+		});
+
+		it("finds the static slot when queried by its dynamic spelling", async () => {
+			const fallback = staticSlot("after_section_products_featured");
+			const { slots } = await setup({ static: [fallback], dynamic: [] });
+
+			await expect(slots.afterLastSection("featured_products")).resolves.toBe(
+				fallback,
+			);
+		});
+
+		it("prefers the queried spelling over its alias among static slots", async () => {
+			const queried = staticSlot("before_section_featured_products");
+			const { slots } = await setup({
+				static: [staticSlot("before_section_products_featured"), queried],
+				dynamic: [],
+			});
+
+			await expect(slots.beforeFirstSection("featured_products")).resolves.toBe(
+				queried,
+			);
+		});
+
+		it("still prefers any dynamic match over an aliased static slot", async () => {
+			const dynamicMatch = dynamicSlot(
+				"featured_products",
+				1,
+				"before_dynamic_section",
+			);
+			const { slots } = await setup({
+				static: [staticSlot("before_section_products_featured")],
+				dynamic: [dynamicMatch],
+			});
+
+			await expect(slots.beforeFirstSection("products_featured")).resolves.toBe(
+				dynamicMatch,
+			);
+		});
+
+		it("does not associate section types outside the alias table", async () => {
+			const { slots } = await setup({
+				static: [staticSlot("before_section_banner")],
+				dynamic: [dynamicSlot("single-shelf", 1, "before_dynamic_section")],
+			});
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+			await expect(slots.beforeFirstSection("newsletter")).resolves.toBeNull();
+			expect(errorSpy).toHaveBeenCalledTimes(1);
+		});
+
+		it("reports the queried section type when no alias matches", async () => {
+			const { slots } = await setup();
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+			await expect(
+				slots.afterLastSection("products_featured"),
+			).resolves.toBeNull();
+
+			const error = errorSpy.mock.calls[0]?.[0] as Error;
+			expect(error.message).toBe(
+				"There is no available slot after last products_featured section for app app-123",
+			);
+		});
+	});
+
 	describe("SlotNotFound", () => {
 		it("formats its message from the query description and app id", async () => {
 			const { slots } = await setup();
