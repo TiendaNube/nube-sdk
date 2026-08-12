@@ -184,9 +184,33 @@ type SectionOrder = "first" | "last";
  * Private on purpose — apps keep passing whichever name they know and the
  * lookup normalizes it. To teach the helpers a new pair, add a group here.
  */
-const EQUIVALENT_SECTION_TYPES: readonly (readonly string[])[] = [
+const EQUIVALENT_SECTION_TYPES = [
 	["featured_products", "products_featured"],
-];
+] as const;
+
+/**
+ * Section types the SDK knows about: the static section-boundary slots the
+ * theme exposes, plus the equivalence aliases (see
+ * {@link EQUIVALENT_SECTION_TYPES}, kept derived so the table stays the single
+ * source of truth).
+ */
+type KnownSectionType =
+	| "newsletter"
+	| "products_sale"
+	| "products_new"
+	| "products_featured"
+	| (typeof EQUIVALENT_SECTION_TYPES)[number][number];
+
+/**
+ * A theme section type.
+ *
+ * Known section types (`newsletter`, `products_featured`, …) are surfaced as
+ * editor autocomplete, while any other string is still accepted to support
+ * custom and dynamic sections whose names are only known at runtime.
+ *
+ * @since 0.3.0
+ */
+export type SectionType = KnownSectionType | (string & {});
 
 /**
  * Index from a section type to its equivalence class in
@@ -234,7 +258,7 @@ function getEquivalentSectionTypes(sectionType: string): readonly string[] {
  * @param order - Whether to target the first or the last section of the type
  */
 async function findSectionSlot(
-	sectionType: string,
+	sectionType: SectionType,
 	position: SectionPosition,
 	order: SectionOrder,
 ): Promise<QuerySlotResult> {
@@ -296,7 +320,7 @@ async function findSectionSlot(
  * @since 0.3.0
  */
 export function beforeFirstSection(
-	sectionType: string,
+	sectionType: SectionType,
 ): Promise<QuerySlotResult> {
 	return findSectionSlot(sectionType, "before", "first");
 }
@@ -322,7 +346,7 @@ export function beforeFirstSection(
  * @since 0.3.0
  */
 export function afterFirstSection(
-	sectionType: string,
+	sectionType: SectionType,
 ): Promise<QuerySlotResult> {
 	return findSectionSlot(sectionType, "after", "first");
 }
@@ -348,7 +372,7 @@ export function afterFirstSection(
  * @since 0.3.0
  */
 export function beforeLastSection(
-	sectionType: string,
+	sectionType: SectionType,
 ): Promise<QuerySlotResult> {
 	return findSectionSlot(sectionType, "before", "last");
 }
@@ -374,7 +398,7 @@ export function beforeLastSection(
  * @since 0.3.0
  */
 export function afterLastSection(
-	sectionType: string,
+	sectionType: SectionType,
 ): Promise<QuerySlotResult> {
 	return findSectionSlot(sectionType, "after", "last");
 }
