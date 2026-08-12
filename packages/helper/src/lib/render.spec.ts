@@ -85,6 +85,7 @@ const createMockState = (
 			},
 			language: "en",
 			theme: "rio",
+			quick_cart: false,
 		},
 		ui: {
 			slots: {},
