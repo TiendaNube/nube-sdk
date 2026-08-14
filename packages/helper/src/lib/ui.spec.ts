@@ -1,5 +1,9 @@
-import type { NubeSDK } from "@tiendanube/nube-sdk-types";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import type {
+	DynamicSlot,
+	NubeSDK,
+	StaticSlot,
+} from "@tiendanube/nube-sdk-types";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMockSDK } from "../internal/test-utils.js";
 import { clearNubeInstance, setNubeInstance } from "./instance.js";
 import { ui } from "./ui.js";
@@ -14,6 +18,7 @@ describe("ui", () => {
 
 	afterEach(() => {
 		clearNubeInstance();
+		vi.restoreAllMocks();
 	});
 
 	describe("showToast", () => {
@@ -42,10 +47,75 @@ describe("ui", () => {
 		expect(sdk.clearSlot).toHaveBeenCalledWith("corner_top_left");
 	});
 
-	it("render delegates to the instance", () => {
+	describe("render", () => {
 		const component = { type: "txt" as const, children: "hi" };
-		ui.render("before_main_content", component);
-		expect(sdk.render).toHaveBeenCalledWith("before_main_content", component);
+		const staticSlot = {
+			slotId: "footer_seals",
+			pick: null,
+			isRepeatable: false,
+		} as StaticSlot;
+		const dynamicSlot = {
+			type: "before_dynamic_section",
+			sectionType: "single-shelf",
+			sectionId: "single-shelf-1",
+			sectionIndex: 1,
+			slotId: "before_dynamic_section_single-shelf_1",
+		} as DynamicSlot;
+
+		it("delegates a slot name to the instance", () => {
+			ui.render("before_main_content", component);
+			expect(sdk.render).toHaveBeenCalledWith("before_main_content", component);
+		});
+
+		it("delegates a StaticSlot object to the instance", () => {
+			ui.render(staticSlot, component);
+			expect(sdk.render).toHaveBeenCalledWith(staticSlot, component);
+		});
+
+		it("delegates a DynamicSlot object to the instance", () => {
+			ui.render(dynamicSlot, component);
+			expect(sdk.render).toHaveBeenCalledWith(dynamicSlot, component);
+		});
+
+		it("renders the slot a resolved query promise yields", async () => {
+			ui.render(Promise.resolve(dynamicSlot), component);
+
+			await vi.waitFor(() =>
+				expect(sdk.render).toHaveBeenCalledWith(dynamicSlot, component),
+			);
+		});
+
+		it("does not render when the query promise resolves to null", async () => {
+			ui.render(Promise.resolve(null), component);
+
+			// flush microtasks so the promise chain settles
+			await new Promise((resolve) => setTimeout(resolve, 0));
+
+			expect(sdk.render).not.toHaveBeenCalled();
+		});
+
+		it("logs and swallows a rejected query promise instead of crashing", async () => {
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			const failure = new Error("slot lookup failed");
+
+			// must not throw synchronously
+			expect(() => ui.render(Promise.reject(failure), component)).not.toThrow();
+
+			await vi.waitFor(() => expect(errorSpy).toHaveBeenCalledWith(failure));
+			expect(sdk.render).not.toHaveBeenCalled();
+		});
+
+		it("logs when the instance render throws inside the promise branch", async () => {
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			const failure = new Error("render blew up");
+			(sdk.render as ReturnType<typeof vi.fn>).mockImplementation(() => {
+				throw failure;
+			});
+
+			ui.render(Promise.resolve(dynamicSlot), component);
+
+			await vi.waitFor(() => expect(errorSpy).toHaveBeenCalledWith(failure));
+		});
 	});
 
 	describe("renderAll", () => {
