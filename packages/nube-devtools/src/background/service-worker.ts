@@ -1,3 +1,4 @@
+import { ensureHomeNoCacheCookie } from "./devtools-cookie";
 import { syncDevToolsHeaderRule } from "./devtools-header";
 import {
 	handleDevToolsEvents,
@@ -25,6 +26,14 @@ chrome.scripting
 chrome.runtime.onInstalled.addListener(syncDevToolsHeaderRule);
 chrome.runtime.onStartup.addListener(syncDevToolsHeaderRule);
 syncDevToolsHeaderRule();
+
+chrome.webNavigation.onBeforeNavigate.addListener(({ frameId, url }) => {
+	if (frameId !== 0) {
+		return;
+	}
+
+	ensureHomeNoCacheCookie(url);
+});
 
 function updateExtensionBadge(connected: boolean) {
 	if (connected) {

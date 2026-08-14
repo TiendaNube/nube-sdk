@@ -5,8 +5,14 @@ export const DEVTOOLS_HEADER_VALUE = "true";
 
 export async function syncDevToolsHeaderRule() {
 	try {
+		// Dynamic rules survive extension updates, so drop whatever is
+		// registered instead of only our own id: that also clears rules left
+		// behind by earlier builds.
+		const registeredRules =
+			await chrome.declarativeNetRequest.getDynamicRules();
+
 		await chrome.declarativeNetRequest.updateDynamicRules({
-			removeRuleIds: [DEVTOOLS_HEADER_RULE_ID],
+			removeRuleIds: registeredRules.map((rule) => rule.id),
 			addRules: [
 				{
 					id: DEVTOOLS_HEADER_RULE_ID,
