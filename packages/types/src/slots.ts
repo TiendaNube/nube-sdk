@@ -160,12 +160,6 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_banner_promotional"} AFTER_SECTION_BANNER_PROMOTIONAL - After the promotional banner section on the home page.
  * @property {"before_section_banner_news"} BEFORE_SECTION_BANNER_NEWS - Before the news banner section on the home page.
  * @property {"after_section_banner_news"} AFTER_SECTION_BANNER_NEWS - After the news banner section on the home page.
- * @property {"before_section_banner_featured"} BEFORE_SECTION_BANNER_FEATURED - Before the featured banner section on the home page.
- * @property {"after_section_banner_featured"} AFTER_SECTION_BANNER_FEATURED - After the featured banner section on the home page.
- * @property {"before_section_banner_with_text"} BEFORE_SECTION_BANNER_WITH_TEXT - Before the with text banner section on the home page.
- * @property {"after_section_banner_with_text"} AFTER_SECTION_BANNER_WITH_TEXT - After the with text banner section on the home page.
- * @property {"before_section_banner_with_image"} BEFORE_SECTION_BANNER_WITH_IMAGE - Before the with image banner section on the home page.
- * @property {"after_section_banner_with_image"} AFTER_SECTION_BANNER_WITH_IMAGE - After the with image banner section on the home page.
  * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
  * @property {"after_product_detail_related_products"} AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS - After the related products section on the product detail page.
  * @property {"before_product_detail_complementary_products"} BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - Before the complementary products section on the product detail page.
@@ -254,12 +248,6 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_BANNER_PROMOTIONAL: "after_section_banner_promotional",
 	BEFORE_SECTION_BANNER_NEWS: "before_section_banner_news",
 	AFTER_SECTION_BANNER_NEWS: "after_section_banner_news",
-	BEFORE_SECTION_BANNER_FEATURED: "before_section_banner_featured",
-	AFTER_SECTION_BANNER_FEATURED: "after_section_banner_featured",
-	BEFORE_SECTION_BANNER_WITH_TEXT: "before_section_banner_with_text",
-	AFTER_SECTION_BANNER_WITH_TEXT: "after_section_banner_with_text",
-	BEFORE_SECTION_BANNER_WITH_IMAGE: "before_section_banner_with_image",
-	AFTER_SECTION_BANNER_WITH_IMAGE: "after_section_banner_with_image",
 	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
 		"before_product_detail_related_products",
 	AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS:
