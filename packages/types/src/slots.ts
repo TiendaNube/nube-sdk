@@ -156,12 +156,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_products_promotion"} AFTER_SECTION_PRODUCTS_PROMOTION - After the products promotion section on the home page.
  * @property {"before_section_products_best_seller"} BEFORE_SECTION_PRODUCTS_BEST_SELLER - Before the best seller products section on the home page.
  * @property {"after_section_products_best_seller"} AFTER_SECTION_PRODUCTS_BEST_SELLER - After the best seller products section on the home page.
- * @property {"before_section_products_coming_soon"} BEFORE_SECTION_PRODUCTS_COMING_SOON - Before the coming soon products section on the home page.
- * @property {"after_section_products_coming_soon"} AFTER_SECTION_PRODUCTS_COMING_SOON - After the coming soon products section on the home page.
  * @property {"before_section_products_recent"} BEFORE_SECTION_PRODUCTS_RECENT - Before the recent products section on the home page.
  * @property {"after_section_products_recent"} AFTER_SECTION_PRODUCTS_RECENT - After the recent products section on the home page.
- * @property {"before_section_products_slider"} BEFORE_SECTION_PRODUCTS_SLIDER - Before the products slider section on the home page.
- * @property {"after_section_products_slider"} AFTER_SECTION_PRODUCTS_SLIDER - After the products slider section on the home page.
  * @property {"before_section_product_main"} BEFORE_SECTION_PRODUCT_MAIN - Before the main product section on the product detail page.
  * @property {"after_section_product_main"} AFTER_SECTION_PRODUCT_MAIN - After the main product section on the product detail page.
  * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
@@ -250,12 +246,8 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_PRODUCTS_PROMOTION: "after_section_products_promotion",
 	BEFORE_SECTION_PRODUCTS_BEST_SELLER: "before_section_products_best_seller",
 	AFTER_SECTION_PRODUCTS_BEST_SELLER: "after_section_products_best_seller",
-	BEFORE_SECTION_PRODUCTS_COMING_SOON: "before_section_products_coming_soon",
-	AFTER_SECTION_PRODUCTS_COMING_SOON: "after_section_products_coming_soon",
 	BEFORE_SECTION_PRODUCTS_RECENT: "before_section_products_recent",
 	AFTER_SECTION_PRODUCTS_RECENT: "after_section_products_recent",
-	BEFORE_SECTION_PRODUCTS_SLIDER: "before_section_products_slider",
-	AFTER_SECTION_PRODUCTS_SLIDER: "after_section_products_slider",
 	BEFORE_SECTION_PRODUCT_MAIN: "before_section_product_main",
 	AFTER_SECTION_PRODUCT_MAIN: "after_section_product_main",
 	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
