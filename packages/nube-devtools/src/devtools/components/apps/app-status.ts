@@ -22,5 +22,16 @@ export const getScriptStatusColor = (status: ScriptStatus) => {
 	}
 };
 
+export const getScriptStatusDotColor = (status?: ScriptStatus) => {
+	switch (status) {
+		case "online":
+			return "text-emerald-400";
+		case "offline":
+			return "text-rose-400";
+		default:
+			return "text-muted-foreground/50";
+	}
+};
+
 export const isLocalScript = (script: string) =>
 	script.includes("localhost") || script.includes("127.0.0.1");

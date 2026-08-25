@@ -94,6 +94,10 @@ export function Apps() {
 										app={selectedApp}
 										scriptStatus={scriptStatuses[selectedApp.data.script]}
 										isLocalMode={localModeApp?.appId === selectedApp.data.id}
+										isReplacedScript={
+											localModeApp?.appId === selectedApp.data.id &&
+											localModeApp?.type === "existing"
+										}
 										isBlocked={isBlocked(selectedApp.data.id)}
 										onBlockedChange={(blocked) =>
 											setBlocked(selectedApp.data, blocked)

@@ -15,7 +15,7 @@ export function AppsHeader({ total, online }: AppsHeaderProps) {
 			</div>
 			<div className="flex items-center gap-2 pr-1 text-xs text-muted-foreground">
 				<span className="flex items-center gap-1.5">
-					<StatusDot online={online > 0} />
+					<StatusDot status={online > 0 ? "online" : "offline"} />
 					{online} online
 				</span>
 				<span className="text-border">|</span>

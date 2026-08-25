@@ -7,7 +7,7 @@ import {
 	ReplacedScriptBadge,
 } from "./app-badges";
 import type { ScriptStatus } from "./app-status";
-import { ScriptStatusBadge } from "./status-badge";
+import { StatusDot } from "./status-badge";
 
 type AppListItemProps = {
 	app: NubeSDKEvent;
@@ -31,21 +31,27 @@ export function AppListItem({
 	return (
 		<TableCell
 			onClick={() => onSelect(app)}
-			className={`p-0 cursor-pointer transition-colors ${
-				isSelected ? "shadow-[inset_2px_0_0_0_rgb(180,83,9)]" : ""
+			className={`cursor-pointer p-0 transition-colors ${
+				isSelected
+					? "bg-amber-700/5 shadow-[inset_2px_0_0_0_rgb(180,83,9)]"
+					: "hover:bg-muted/40"
 			}`}
 		>
-			<div className="flex items-start w-full min-w-0">
-				<div className="flex-1 flex flex-col gap-1 min-w-0 shrink overflow-hidden px-3 py-2">
-					<span className="truncate block">{app.data.id}</span>
-					<div className="flex flex-wrap items-center gap-1">
-						{isLocalMode ? <LocalModeBadge /> : <RemoteAppBadge />}
-						{isReplacedScript && <ReplacedScriptBadge />}
-						{isBlocked && <BlockedBadge />}
-					</div>
+			<div className="flex min-w-0 flex-col gap-1.5 px-3 py-2">
+				<div className="flex min-w-0 items-center gap-2">
+					<StatusDot status={isBlocked ? "offline" : scriptStatus} />
+					<span
+						className={`min-w-0 flex-1 truncate font-mono text-xs ${
+							isBlocked ? "text-muted-foreground line-through" : ""
+						}`}
+					>
+						{app.data.id}
+					</span>
 				</div>
-				<div className="flex items-center gap-1 pr-2 pt-2 shrink-0">
-					<ScriptStatusBadge status={scriptStatus} />
+				<div className="flex flex-wrap items-center gap-1">
+					{isLocalMode ? <LocalModeBadge /> : <RemoteAppBadge />}
+					{isReplacedScript && <ReplacedScriptBadge />}
+					{isBlocked && <BlockedBadge />}
 				</div>
 			</div>
 		</TableCell>

@@ -1,24 +1,23 @@
-import { Badge } from "@/components/ui/badge";
+import { CopyableValue } from "@/components/copyable-value";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
+import { Globe, Plug, ShieldCheck, TerminalSquare } from "lucide-react";
 import {
-	CheckCircle2,
-	FileCode2,
-	Globe,
-	Hash,
-	TerminalSquare,
-	XCircle,
-} from "lucide-react";
-import { BlockedBadge, LocalModeBadge, RemoteAppBadge } from "./app-badges";
-import { AppDetailField } from "./app-detail-field";
-import { AppDetailStat } from "./app-detail-stat";
-import type { ScriptStatus } from "./app-status";
-import { ScriptStatusBadge } from "./status-badge";
+	BlockedBadge,
+	LocalModeBadge,
+	RemoteAppBadge,
+	ReplacedScriptBadge,
+} from "./app-badges";
+import { AppDetailRow } from "./app-detail-row";
+import { AppDetailSection } from "./app-detail-section";
+import { type ScriptStatus, getScriptStatusLabel } from "./app-status";
+import { StatusDot } from "./status-badge";
 import { TemporaryBlockCard } from "./temporary-block-card";
 
 type AppDetailPanelProps = {
 	app: NubeSDKEvent;
 	scriptStatus?: ScriptStatus;
 	isLocalMode: boolean;
+	isReplacedScript: boolean;
 	isBlocked: boolean;
 	onBlockedChange: (blocked: boolean) => void;
 };
@@ -27,88 +26,79 @@ export function AppDetailPanel({
 	app,
 	scriptStatus,
 	isLocalMode,
+	isReplacedScript,
 	isBlocked,
 	onBlockedChange,
 }: AppDetailPanelProps) {
 	const { id, registered, script } = app.data;
-	const isOnline = scriptStatus === "online";
+	const effectiveStatus = isBlocked ? "offline" : scriptStatus;
 
 	return (
 		<div className="flex h-full flex-col overflow-hidden">
-			<header className="shrink-0 border-b px-4 py-3">
-				<div className="flex items-start justify-between gap-2">
-					<span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-						Installed app
+			<header className="shrink-0 border-b p-1.5">
+				<div className="flex items-center gap-2 px-1.5">
+					<StatusDot status={effectiveStatus} />
+					<span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+						{isLocalMode ? "Local app" : "Installed app"}
 					</span>
-					<div className="flex shrink-0 items-center gap-1.5">
-						{isLocalMode ? <LocalModeBadge /> : <RemoteAppBadge />}
-						{isBlocked ? (
-							<BlockedBadge />
-						) : (
-							<ScriptStatusBadge status={scriptStatus} />
-						)}
-					</div>
 				</div>
-				<h1 className="mt-1 truncate font-mono text-sm font-semibold">{id}</h1>
+				<CopyableValue value={id} fontSize="text-[13px]" />
+				<div className="mt-0.5 flex flex-wrap items-center gap-1 px-1.5">
+					{isLocalMode ? <LocalModeBadge /> : <RemoteAppBadge />}
+					{isReplacedScript && <ReplacedScriptBadge />}
+					{isBlocked && <BlockedBadge />}
+				</div>
 			</header>
 
-			<div className="flex-1 space-y-3 overflow-y-auto p-4">
-				<TemporaryBlockCard
-					blocked={isBlocked}
-					onBlockedChange={onBlockedChange}
-				/>
-
-				<div className="flex gap-3">
-					<AppDetailStat
-						icon={isLocalMode ? TerminalSquare : Globe}
+			<div className="flex-1 space-y-3 overflow-y-auto p-2">
+				<AppDetailSection title="Overview">
+					<AppDetailRow
+						label="Connection"
+						icon={Plug}
+						value={
+							isBlocked
+								? "blocked"
+								: scriptStatus
+									? getScriptStatusLabel(scriptStatus)
+									: "unknown"
+						}
+						tone={
+							isBlocked
+								? "danger"
+								: effectiveStatus === "online"
+									? "success"
+									: effectiveStatus === "offline"
+										? "danger"
+										: "muted"
+						}
+					/>
+					<AppDetailRow
 						label="Mode"
+						icon={isLocalMode ? TerminalSquare : Globe}
 						value={isLocalMode ? "Local Mode" : "App"}
-						description={isLocalMode ? "Served via DevTools" : "Installed app"}
 						tone={isLocalMode ? "info" : "neutral"}
 					/>
-					<AppDetailStat
-						icon={isOnline ? CheckCircle2 : XCircle}
-						label="Connection"
-						value={isOnline ? "Online" : "Offline"}
-						description={
-							isOnline ? "Responding to events" : "Not responding to events"
-						}
-						tone={isOnline ? "success" : "danger"}
+					<AppDetailRow
+						label="Registered"
+						icon={ShieldCheck}
+						value={registered ? "yes" : "no"}
+						tone={registered ? "success" : "danger"}
 					/>
-				</div>
+				</AppDetailSection>
 
-				<AppDetailField
-					label="ID"
-					icon={Hash}
-					value={id}
-					trailing={<RegisteredBadge registered={registered} />}
-				/>
+				<AppDetailSection title="Script">
+					<div className="p-0.5">
+						<CopyableValue value={script} />
+					</div>
+				</AppDetailSection>
 
-				<AppDetailField
-					label="Script"
-					icon={FileCode2}
-					value={script}
-					trailing={<ScriptStatusBadge status={scriptStatus} />}
-				/>
+				<AppDetailSection title="Controls">
+					<TemporaryBlockCard
+						blocked={isBlocked}
+						onBlockedChange={onBlockedChange}
+					/>
+				</AppDetailSection>
 			</div>
 		</div>
-	);
-}
-
-function RegisteredBadge({ registered }: { registered: boolean }) {
-	return (
-		<Badge
-			variant="outline"
-			className={`gap-1 px-1.5 py-0 text-[10px] ${
-				registered ? "text-emerald-400/70" : "text-rose-400/70"
-			}`}
-		>
-			{registered ? (
-				<CheckCircle2 className="h-1.5 w-1.5" />
-			) : (
-				<XCircle className="h-1.5 w-1.5" />
-			)}
-			{registered ? "registered" : "unregistered"}
-		</Badge>
 	);
 }
