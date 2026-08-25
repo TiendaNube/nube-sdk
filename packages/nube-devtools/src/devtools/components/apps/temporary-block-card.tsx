@@ -1,3 +1,10 @@
+import {
+	Field,
+	FieldContent,
+	FieldDescription,
+	FieldLabel,
+	FieldTitle,
+} from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import { BanIcon } from "lucide-react";
 
@@ -11,27 +18,29 @@ export function TemporaryBlockCard({
 	onBlockedChange,
 }: TemporaryBlockCardProps) {
 	return (
-		<div className="flex items-center gap-3 px-3 py-2.5">
-			<div
-				className={`flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors ${
-					blocked
-						? "bg-rose-400/10 text-rose-400"
-						: "bg-muted/60 text-muted-foreground"
-				}`}
-			>
-				<BanIcon className="size-3.5" />
-			</div>
-			<div className="min-w-0 flex-1">
-				<p className="text-xs font-medium">Temporary block</p>
-				<p className="mt-0.5 text-[11px] text-muted-foreground">
-					Pause this app without uninstalling it.
-				</p>
-			</div>
-			<Switch
-				checked={blocked}
-				onCheckedChange={onBlockedChange}
-				aria-label="Temporary block"
-			/>
-		</div>
+		<FieldLabel htmlFor="temporary-block" className="border-none">
+			<Field orientation="horizontal" className="items-center p-3">
+				<div
+					className={`flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors ${
+						blocked
+							? "bg-rose-400/10 text-rose-400"
+							: "bg-muted/60 text-muted-foreground"
+					}`}
+				>
+					<BanIcon className="size-3.5" />
+				</div>
+				<FieldContent className="gap-0.5">
+					<FieldTitle className="text-xs">Temporary block</FieldTitle>
+					<FieldDescription className="text-[11px]">
+						Pause this app without uninstalling it.
+					</FieldDescription>
+				</FieldContent>
+				<Switch
+					id="temporary-block"
+					checked={blocked}
+					onCheckedChange={onBlockedChange}
+				/>
+			</Field>
+		</FieldLabel>
 	);
 }
