@@ -1,3 +1,4 @@
+import type { NubeComponentStyle } from "@tiendanube/nube-sdk-types";
 import { describe, expect, it } from "vitest";
 import { StyleSheet } from "./StyleSheet";
 import { ThemeColor } from "./ThemeColor";
@@ -17,19 +18,35 @@ describe("StyleSheet", () => {
 		});
 
 		it("should handle nested style objects", () => {
-			const styles = StyleSheet.create({
-				container: {
-					backgroundColor: new ThemeColor("primary"),
-					":hover": {
-						backgroundColor: new ThemeColor("primary").opacity(50),
-					},
+			const container = {
+				backgroundColor: new ThemeColor("primary"),
+				":hover": {
+					backgroundColor: new ThemeColor("primary").opacity(50),
 				},
+				":focus": {
+					outline: "none",
+				},
+				":focus-visible": {
+					outline: "2px solid currentColor",
+				},
+				":active": {
+					transform: "translateY(1px)",
+				},
+			} satisfies NubeComponentStyle;
+
+			const styles = StyleSheet.create({
+				container,
 			});
 
 			expect(styles.container.backgroundColor).toBe("var(--primary)");
 			expect(styles.container[":hover"].backgroundColor).toBe(
 				"var(--primary-opacity-50)",
 			);
+			expect(styles.container[":focus"].outline).toBe("none");
+			expect(styles.container[":focus-visible"].outline).toBe(
+				"2px solid currentColor",
+			);
+			expect(styles.container[":active"].transform).toBe("translateY(1px)");
 		});
 
 		it("should preserve non-ThemeColor values", () => {
