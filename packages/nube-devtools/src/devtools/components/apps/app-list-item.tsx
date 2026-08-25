@@ -1,3 +1,4 @@
+import { TableCell } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import {
 	BlockedBadge,
@@ -5,7 +6,8 @@ import {
 	RemoteAppBadge,
 	ReplacedScriptBadge,
 } from "./app-badges";
-import { StatusDot } from "./status-badge";
+import type { ScriptStatus } from "./app-status";
+import { ScriptStatusBadge } from "./status-badge";
 
 type AppListItemProps = {
 	app: NubeSDKEvent;
@@ -13,7 +15,7 @@ type AppListItemProps = {
 	isLocalMode: boolean;
 	isReplacedScript: boolean;
 	isBlocked: boolean;
-	isOnline: boolean;
+	scriptStatus?: ScriptStatus;
 	onSelect: (app: NubeSDKEvent) => void;
 };
 
@@ -23,30 +25,29 @@ export function AppListItem({
 	isLocalMode,
 	isReplacedScript,
 	isBlocked,
-	isOnline,
+	scriptStatus,
 	onSelect,
 }: AppListItemProps) {
 	return (
-		<button
-			type="button"
+		<TableCell
 			onClick={() => onSelect(app)}
-			className={`w-full rounded-lg border px-2.5 py-2 text-left transition-colors ${
-				isSelected
-					? "border-sky-400/50 bg-sky-400/5"
-					: "border-border/60 hover:bg-muted/40"
+			className={`p-0 cursor-pointer transition-colors ${
+				isSelected ? "shadow-[inset_2px_0_0_0_rgb(180,83,9)]" : ""
 			}`}
 		>
-			<div className="flex items-center gap-2">
-				<span className="min-w-0 flex-1 truncate font-mono text-xs">
-					{app.data.id}
-				</span>
-				<StatusDot online={isOnline} />
+			<div className="flex items-start w-full min-w-0">
+				<div className="flex-1 flex flex-col gap-1 min-w-0 shrink overflow-hidden px-3 py-2">
+					<span className="truncate block">{app.data.id}</span>
+					<div className="flex flex-wrap items-center gap-1">
+						{isLocalMode ? <LocalModeBadge /> : <RemoteAppBadge />}
+						{isReplacedScript && <ReplacedScriptBadge />}
+						{isBlocked && <BlockedBadge />}
+					</div>
+				</div>
+				<div className="flex items-center gap-1 pr-2 pt-2 shrink-0">
+					<ScriptStatusBadge status={scriptStatus} />
+				</div>
 			</div>
-			<div className="mt-1.5 flex flex-wrap items-center gap-1">
-				{isLocalMode ? <LocalModeBadge /> : <RemoteAppBadge />}
-				{isReplacedScript && <ReplacedScriptBadge />}
-				{isBlocked && <BlockedBadge />}
-			</div>
-		</button>
+		</TableCell>
 	);
 }

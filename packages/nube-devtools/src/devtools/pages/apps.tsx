@@ -83,7 +83,7 @@ export function Apps() {
 									localModeAppId={localModeApp?.appId}
 									isReplacedScript={localModeApp?.type === "existing"}
 									isAppBlocked={isBlocked}
-									isAppOnline={isAppOnline}
+									scriptStatuses={scriptStatuses}
 									onSelect={(app) => setSelectedAppId(app.id)}
 								/>
 							</ResizablePanel>

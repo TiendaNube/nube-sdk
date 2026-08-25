@@ -1,7 +1,9 @@
 import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableRow } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import { Search } from "lucide-react";
 import { AppListItem } from "./app-list-item";
+import type { ScriptStatus } from "./app-status";
 
 type AppListProps = {
 	apps: NubeSDKEvent[];
@@ -11,7 +13,7 @@ type AppListProps = {
 	localModeAppId?: string;
 	isReplacedScript: boolean;
 	isAppBlocked: (appId: string) => boolean;
-	isAppOnline: (app: NubeSDKEvent) => boolean;
+	scriptStatuses: Record<string, ScriptStatus>;
 	onSelect: (app: NubeSDKEvent) => void;
 };
 
@@ -23,7 +25,7 @@ export function AppList({
 	localModeAppId,
 	isReplacedScript,
 	isAppBlocked,
-	isAppOnline,
+	scriptStatuses,
 	onSelect,
 }: AppListProps) {
 	return (
@@ -40,28 +42,31 @@ export function AppList({
 					/>
 				</div>
 			</div>
-			<div className="flex-1 overflow-y-auto p-2">
+			<div className="flex-1 overflow-y-auto overflow-x-hidden">
 				{apps.length === 0 ? (
 					<p className="px-1 py-4 text-center text-xs text-muted-foreground">
 						No apps match this filter
 					</p>
 				) : (
-					<div className="flex flex-col gap-1.5">
-						{apps.map((app) => (
-							<AppListItem
-								key={app.id}
-								app={app}
-								isSelected={app.id === selectedAppId}
-								isLocalMode={localModeAppId === app.data.id}
-								isReplacedScript={
-									localModeAppId === app.data.id && isReplacedScript
-								}
-								isBlocked={isAppBlocked(app.data.id)}
-								isOnline={isAppOnline(app)}
-								onSelect={onSelect}
-							/>
-						))}
-					</div>
+					<Table className="table-fixed">
+						<TableBody className="[&_tr:last-child]:border-b">
+							{apps.map((app) => (
+								<TableRow key={app.id}>
+									<AppListItem
+										app={app}
+										isSelected={app.id === selectedAppId}
+										isLocalMode={localModeAppId === app.data.id}
+										isReplacedScript={
+											localModeAppId === app.data.id && isReplacedScript
+										}
+										isBlocked={isAppBlocked(app.data.id)}
+										scriptStatus={scriptStatuses[app.data.script]}
+										onSelect={onSelect}
+									/>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
 				)}
 			</div>
 		</div>
