@@ -230,6 +230,8 @@ export type NubeComponentFieldProps = Prettify<
 		name: string;
 		label: string;
 		value?: string;
+		placeholder?: string;
+		disabled?: boolean;
 		mask?: string;
 		autoFocus?: boolean;
 		style?: {
@@ -414,11 +416,12 @@ export type NubeComponentSelectProps = Prettify<
 		name: string;
 		label: string;
 		value?: string;
+		disabled?: boolean;
 		style?: {
 			label?: NubeComponentStyle;
 			select?: NubeComponentStyle;
 		};
-		options: { label: string; value: string }[];
+		options: { label: string; value: string; disabled?: boolean }[];
 		onChange?: NubeComponentSelectEventHandler;
 	}
 >;
@@ -721,6 +724,369 @@ export type NubeComponentIframe = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                           Video Component                                  */
+/* -------------------------------------------------------------------------- */
+
+/** Payload emitted with the `play`, `pause` and `ended` video events. */
+export type NubeComponentVideoTimePayload = {
+	/** Playback position in seconds when the event fired. */
+	currentTime: number;
+};
+
+/** Payload emitted with the `progress` video event (fires roughly every 1s). */
+export type NubeComponentVideoProgressPayload = {
+	percent: number;
+	currentTime: number;
+	duration: number;
+};
+
+/** Payload emitted with the `buffer` video event. */
+export type NubeComponentVideoBufferPayload = {
+	buffering: boolean;
+};
+
+export type NubeComponentVideoPlayHandler = NubeComponentEventHandler<
+	"play",
+	NubeComponentVideoTimePayload
+>;
+export type NubeComponentVideoPauseHandler = NubeComponentEventHandler<
+	"pause",
+	NubeComponentVideoTimePayload
+>;
+export type NubeComponentVideoEndedHandler = NubeComponentEventHandler<
+	"ended",
+	NubeComponentVideoTimePayload
+>;
+export type NubeComponentVideoProgressHandler = NubeComponentEventHandler<
+	"progress",
+	NubeComponentVideoProgressPayload
+>;
+export type NubeComponentVideoBufferHandler = NubeComponentEventHandler<
+	"buffer",
+	NubeComponentVideoBufferPayload
+>;
+
+/** Payload emitted with the `open` event (video entered fullscreen). No structured data. */
+export type NubeComponentVideoOpenPayload = Record<string, never>;
+/** Payload emitted with the `close` event (video exited fullscreen). No structured data. */
+export type NubeComponentVideoClosePayload = Record<string, never>;
+
+export type NubeComponentVideoOpenHandler = NubeComponentEventHandler<
+	"open",
+	NubeComponentVideoOpenPayload
+>;
+export type NubeComponentVideoCloseHandler = NubeComponentEventHandler<
+	"close",
+	NubeComponentVideoClosePayload
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                      Video source-specific errors                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Error codes reported by `Video.Player` (the self-hosted MP4 / HLS / DASH
+ * source). `invalid_source` / `engine_load_failed` are raised by the SDK before
+ * playback; the four `media_err_*` codes mirror the HTML media element's
+ * `MediaError.code` as readable strings; `playback_error` covers a media
+ * failure with no known code.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaError/code
+ */
+export type NubeComponentVideoPlayerErrorCode =
+	| "invalid_source"
+	| "engine_load_failed"
+	| "media_err_aborted"
+	| "media_err_network"
+	| "media_err_decode"
+	| "media_err_src_not_supported"
+	| "playback_error";
+
+/**
+ * Payload delivered to `Video.Player`'s `onError`. `source` identifies the
+ * provider — errors are source-specific, so there is no shared union across
+ * providers (see {@link NubeComponentVideoYouTubeErrorPayload}).
+ */
+export type NubeComponentVideoPlayerErrorPayload = {
+	source: "video-player";
+	code: NubeComponentVideoPlayerErrorCode;
+	message: string;
+};
+
+/**
+ * Error codes reported by `Video.YouTube`. `invalid_source` is raised by the
+ * SDK before playback; the rest map the YouTube IFrame API's numeric `onError`
+ * codes to readable strings.
+ *
+ * @see https://developers.google.com/youtube/iframe_api_reference#onError
+ */
+export type NubeComponentVideoYouTubeErrorCode =
+	| "invalid_source"
+	| "invalid_video_id"
+	| "html5_error"
+	| "video_not_found"
+	| "embedding_not_allowed"
+	| "playback_error";
+
+/**
+ * Payload delivered to `Video.YouTube`'s `onError`. Its own `source` / `code`,
+ * distinct from {@link NubeComponentVideoPlayerErrorPayload} — there is no
+ * shared union across providers.
+ */
+export type NubeComponentVideoYouTubeErrorPayload = {
+	source: "video-youtube";
+	code: NubeComponentVideoYouTubeErrorCode;
+	message: string;
+};
+
+export type NubeComponentVideoPlayerErrorHandler = NubeComponentEventHandler<
+	"error",
+	NubeComponentVideoPlayerErrorPayload
+>;
+export type NubeComponentVideoYouTubeErrorHandler = NubeComponentEventHandler<
+	"error",
+	NubeComponentVideoYouTubeErrorPayload
+>;
+
+/**
+ * Properties for `Video.Root` — the source-agnostic wrapper that owns layout,
+ * shared playback modifiers and the source-agnostic playback events. Wrap a
+ * `Video.Player` (self-hosted) or a `Video.YouTube` (embed) plus any overlay
+ * children, which render over the video when the fullscreen lightbox is open.
+ *
+ * Errors are NOT here: they are source-specific and belong to each player
+ * (see `Video.Player`'s and `Video.YouTube`'s own `onError`).
+ */
+export type NubeComponentVideoRootProps = Prettify<
+	NubeComponentBase & {
+		width?: Size;
+		height?: Size;
+		style?: NubeComponentStyle;
+		/** Autoplay on mount. Always muted when `true` (enforced by the component). */
+		autoplay?: boolean;
+		muted?: boolean;
+		loop?: boolean;
+		onPlay?: NubeComponentVideoPlayHandler;
+		onPause?: NubeComponentVideoPauseHandler;
+		onEnded?: NubeComponentVideoEndedHandler;
+		onProgress?: NubeComponentVideoProgressHandler;
+		onBuffer?: NubeComponentVideoBufferHandler;
+		/** Fired when the video enters the fullscreen overlay. */
+		onOpen?: NubeComponentVideoOpenHandler;
+		/** Fired when the fullscreen overlay closes. */
+		onClose?: NubeComponentVideoCloseHandler;
+		children: NubeComponentChildren;
+	}
+>;
+
+/**
+ * Represents a `Video.Root` component, the wrapper for a self-hosted video.
+ */
+export type NubeComponentVideoRoot = Prettify<
+	NubeComponentBase &
+		NubeComponentVideoRootProps & {
+			type: "videoRoot";
+		}
+>;
+
+/**
+ * Properties for `Video.Player` — a self-hosted video source (MP4, HLS or DASH)
+ * rendered by the SDK's bundled player engine. Must be a child of `Video.Root`.
+ */
+export type NubeComponentVideoPlayerProps = Prettify<
+	NubeComponentBase & {
+		/** Video source URL (HTTPS only). MP4, HLS (`.m3u8`) or DASH (`.mpd`). */
+		src: SecurityURL;
+		/** Poster image shown before playback (HTTPS only). */
+		poster?: SecurityURL;
+		/** Show the player's default controls. Defaults to `true`. */
+		controls?: boolean;
+		/**
+		 * Aspect ratio as `"width/height"` (e.g. `"16/9"`, `"9/16"`). Defaults to
+		 * `"16/9"`. Ignored in fullscreen, where the video letterboxes to fit the viewport.
+		 */
+		aspectRatio?: string;
+		/**
+		 * Enable the fullscreen "lightbox": an absoluteFill overlay that fills the
+		 * viewport (CSS, not native fullscreen) with a mandatory close button and
+		 * `Video.Root`'s overlay children rendered on top.
+		 */
+		lightbox?: boolean;
+		/**
+		 * Observe source-specific errors from this player. The handler receives a
+		 * {@link NubeComponentVideoPlayerErrorPayload}. Distinct from `Video.Root`'s
+		 * source-agnostic playback events.
+		 */
+		onError?: NubeComponentVideoPlayerErrorHandler;
+	}
+>;
+
+/**
+ * Represents a `Video.Player` component, a self-hosted video source.
+ */
+export type NubeComponentVideoPlayer = Prettify<
+	NubeComponentBase &
+		NubeComponentVideoPlayerProps & {
+			type: "videoPlayer";
+		}
+>;
+
+/**
+ * Props for the `Video.YouTube` component.
+ */
+export type NubeComponentVideoYouTubeProps = Prettify<
+	NubeComponentBase & {
+		/** YouTube video ID (e.g. `"YE7VzlLtp-4"`) or a youtube.com / youtu.be URL. */
+		src: string;
+		/** Show the YouTube player controls. Defaults to `false`. */
+		controls?: boolean;
+		/**
+		 * Allow fullscreen via YouTube's native fullscreen button. Defaults to
+		 * `true`. The button lives in YouTube's control bar, so it is only
+		 * reachable when `controls` is `true`. No custom fullscreen overlay is
+		 * provided (prohibited by YouTube's embedded-player terms).
+		 */
+		allowFullscreen?: boolean;
+		/**
+		 * Observe source-specific errors from this embed. The handler receives a
+		 * {@link NubeComponentVideoYouTubeErrorPayload}. Distinct from
+		 * `Video.Root`'s source-agnostic playback events.
+		 */
+		onError?: NubeComponentVideoYouTubeErrorHandler;
+	}
+>;
+
+/**
+ * Represents a `Video.YouTube` component, a YouTube embed backed by the
+ * official IFrame Player API. No lightbox (ToS prohibits overlaying YouTube).
+ */
+export type NubeComponentVideoYouTube = Prettify<
+	NubeComponentBase &
+		NubeComponentVideoYouTubeProps & {
+			type: "videoYouTube";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                        VideoStories Component                              */
+/* -------------------------------------------------------------------------- */
+
+/** A single story in the playlist: a self-hosted video with an optional poster. */
+export type VideoStoriesItem = {
+	/**
+	 * MP4, HLS (`.m3u8`) or DASH (`.mpd`) source. Must be an **absolute**
+	 * https URL (e.g. `https://cdn.example.com/video.mp4`).
+	 * Items with an unsafe URL are dropped before render.
+	 */
+	src: SecurityURL;
+	/** Poster image shown before playback. Must be an absolute https URL. */
+	poster?: SecurityURL;
+};
+
+/** Payload emitted with the `open` VideoStories event. */
+export type NubeComponentVideoStoriesOpenPayload = {
+	/** Index of the story that was active when the overlay opened. */
+	index: number;
+	/** Total number of stories in the playlist. */
+	total: number;
+};
+
+/** Payload emitted with the `close` and `change` VideoStories events. */
+export type NubeComponentVideoStoriesIndexPayload = {
+	/** Index of the active story at the time of the event. */
+	index: number;
+};
+
+/** Payload emitted with the `complete` VideoStories event. */
+export type NubeComponentVideoStoriesCompletePayload = {
+	/** Total number of stories in the playlist. */
+	total: number;
+};
+
+/** Payload emitted with the `error` VideoStories event. */
+export type NubeComponentVideoStoriesErrorPayload = {
+	/** Index of the story that failed to load or play. */
+	index: number;
+};
+
+export type NubeComponentVideoStoriesOpenHandler = NubeComponentEventHandler<
+	"open",
+	NubeComponentVideoStoriesOpenPayload
+>;
+export type NubeComponentVideoStoriesCloseHandler = NubeComponentEventHandler<
+	"close",
+	NubeComponentVideoStoriesIndexPayload
+>;
+export type NubeComponentVideoStoriesChangeHandler = NubeComponentEventHandler<
+	"change",
+	NubeComponentVideoStoriesIndexPayload
+>;
+export type NubeComponentVideoStoriesCompleteHandler =
+	NubeComponentEventHandler<
+		"complete",
+		NubeComponentVideoStoriesCompletePayload
+	>;
+export type NubeComponentVideoStoriesErrorHandler = NubeComponentEventHandler<
+	"error",
+	NubeComponentVideoStoriesErrorPayload
+>;
+
+/**
+ * Properties for `VideoStories` — a vertical, stories-style player for a
+ * sequence of self-hosted videos (Instagram/WhatsApp-style). Plays inline as
+ * a compact card; tapping the card expands to a fullscreen overlay.
+ */
+export type NubeComponentVideoStoriesProps = Prettify<
+	NubeComponentBase & {
+		/** The ordered playlist. */
+		items: VideoStoriesItem[];
+		/** Inline card width in px (renders as a 9:16 card). Defaults to `96`. */
+		width?: number | string;
+		/** Start muted. Defaults to `true` (browser autoplay policy); user can unmute. */
+		startMuted?: boolean;
+		/** Press-and-hold the story to pause; release to resume. Defaults to `true`. */
+		pauseOnHold?: boolean;
+		/**
+		 * Tap the left/right thirds to navigate to the previous/next story
+		 * (both inline and fullscreen). Defaults to `true`.
+		 */
+		tapToNavigate?: boolean;
+		/**
+		 * Advance to the next story when the current one ends. Defaults to `true`;
+		 * when `false`, playback stops on the last frame of each story.
+		 */
+		autoAdvance?: boolean;
+		/**
+		 * After the last story, restart from the first instead of completing.
+		 * Defaults to `false`. Only meaningful together with `autoAdvance`.
+		 */
+		loop?: boolean;
+		style?: NubeComponentStyle;
+		/** Emitted (observe-only) when the fullscreen overlay opens. */
+		onOpen?: NubeComponentVideoStoriesOpenHandler;
+		/** Emitted (observe-only) when the fullscreen overlay closes. */
+		onClose?: NubeComponentVideoStoriesCloseHandler;
+		/** Emitted (observe-only) when the active story changes. */
+		onChange?: NubeComponentVideoStoriesChangeHandler;
+		/** Emitted (observe-only) when the last story finishes. */
+		onComplete?: NubeComponentVideoStoriesCompleteHandler;
+		/** Emitted (observe-only) when a story fails to load or play. */
+		onError?: NubeComponentVideoStoriesErrorHandler;
+		children?: NubeComponentChildren;
+	}
+>;
+
+/**
+ * Represents a `videoStories` component, a stories-style video playlist.
+ */
+export type NubeComponentVideoStories = Prettify<
+	NubeComponentBase &
+		NubeComponentVideoStoriesProps & {
+			type: "videoStories";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                           Txt Component                                    */
 /* -------------------------------------------------------------------------- */
 
@@ -983,8 +1349,11 @@ export type NubeComponentFormFieldProps = Prettify<
 			name: string;
 			/** Floating label rendered next to the input (mirrors `Field.label`). */
 			label: string;
+			/** Marks the field as required, failing with `valueMissing` when empty. */
 			required?: boolean;
+			/** Minimum number of characters, failing with `tooShort` when unmet. */
 			minLength?: number;
+			/** Maximum number of characters, failing with `tooLong` when exceeded. */
 			maxLength?: number;
 			/** Regular expression source used for `pattern` validation. */
 			pattern?: string;
@@ -992,6 +1361,8 @@ export type NubeComponentFormFieldProps = Prettify<
 			accept?: string;
 			/** Maximum file size in bytes, only for `inputType: "file"`. */
 			maxSize?: number;
+			/** Current value of the field. */
+			value?: string;
 			/** Style slots, same shape as `Field.style` for visual parity. */
 			style?: {
 				container?: NubeComponentStyle;
@@ -2424,6 +2795,10 @@ export type NubeComponent =
 	| NubeComponentImage
 	| NubeComponentProgress
 	| NubeComponentIframe
+	| NubeComponentVideoRoot
+	| NubeComponentVideoPlayer
+	| NubeComponentVideoYouTube
+	| NubeComponentVideoStories
 	| NubeComponentText
 	| NubeComponentCheckbox
 	| NubeComponentTextarea

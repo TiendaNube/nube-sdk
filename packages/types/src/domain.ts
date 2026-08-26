@@ -408,6 +408,18 @@ export type Store = {
 
 	/** The store's theme template (e.g., "recife", "morelia", "rio"). */
 	theme: string;
+
+	/** Whether products can be added to the cart without redirecting to the cart page. */
+	quick_cart: boolean;
+
+	/**
+	 * Level of detail of the product lists exposed in {@link NubeSDKState.location}.
+	 *
+	 * - `"minimal"`: each product contains only `id` and `name`.
+	 * - `"light"`: each product contains a reduced set of fields.
+	 * - `"full"`: each product contains all available fields.
+	 */
+	state_level: "minimal" | "light" | "full";
 };
 
 type FixedProductListSectionName =

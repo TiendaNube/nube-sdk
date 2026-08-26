@@ -9,3 +9,4 @@ export * from "./render";
 export * from "./selectors";
 export * from "./ui";
 export * from "./utils";
+export * from "./slots";

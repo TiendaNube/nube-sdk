@@ -7,6 +7,8 @@ export * from "./components/fragment";
 export * from "./components/image";
 export * from "./components/progress";
 export * from "./components/iframe";
+export * from "./components/video";
+export * from "./components/video-stories";
 export * from "./components/text";
 export * from "./components/checkbox";
 export * from "./components/textarea";

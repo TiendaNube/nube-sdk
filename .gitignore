@@ -1,3 +1,7 @@
+# Chrome Web Store publish artifacts (contain OAuth tokens / API responses)
+token.json
+release.json
+
 # Logs
 logs
 *.log
