@@ -1,3 +1,4 @@
+import { syncDevToolsHeaderRule } from "./devtools-header";
 import {
 	handleDevToolsEvents,
 	handleDevToolsGetComponents,
@@ -20,6 +21,10 @@ chrome.scripting
 	.catch(() => {
 		// Already registered (e.g. service worker restart) — safe to ignore.
 	});
+
+chrome.runtime.onInstalled.addListener(syncDevToolsHeaderRule);
+chrome.runtime.onStartup.addListener(syncDevToolsHeaderRule);
+syncDevToolsHeaderRule();
 
 function updateExtensionBadge(connected: boolean) {
 	if (connected) {
