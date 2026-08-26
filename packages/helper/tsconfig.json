@@ -15,7 +15,7 @@
     ],
     "module": "esnext",
     "moduleDetection": "force",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noUncheckedIndexedAccess": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,

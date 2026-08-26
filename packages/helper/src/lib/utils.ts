@@ -124,3 +124,7 @@ export function throttle<T extends (...args: never[]) => unknown>(
 		}
 	};
 }
+
+export function isPromise<T>(value: unknown): value is Promise<T> {
+	return typeof value === "object" && value !== null && "then" in value;
+}

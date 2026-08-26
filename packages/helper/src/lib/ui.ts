@@ -1,9 +1,13 @@
 import type {
+	DynamicSlot,
 	NubeComponent,
 	NubeSDKState,
+	StaticSlot,
 	UISlotArg,
 } from "@tiendanube/nube-sdk-types";
 import { getNubeInstance } from "./instance";
+import type { QuerySlotResult } from "./slots";
+import { isPromise } from "./utils";
 
 /**
  * Visual variants supported by {@link UIHelper.showToast}.
@@ -26,10 +30,13 @@ export type RenderableComponent =
 export type UIHelper = {
 	showToast: (message: string, variant?: ToastVariant) => void;
 	clear: <const TSlot extends string>(slot: UISlotArg<TSlot>) => void;
-	render: <const TSlot extends string>(
-		slot: UISlotArg<TSlot>,
-		component: RenderableComponent,
-	) => void;
+	render: {
+		<const TSlot extends string>(
+			slot: UISlotArg<TSlot> | StaticSlot | DynamicSlot,
+			component: RenderableComponent,
+		): void;
+		(slot: Promise<QuerySlotResult>, component: RenderableComponent): void;
+	};
 	renderAll: <const TSlot extends string>(
 		slots: UISlotArg<TSlot>[],
 		component: RenderableComponent,
@@ -59,10 +66,22 @@ export const ui: Readonly<UIHelper> = Object.freeze({
 	},
 
 	render<const TSlot extends string>(
-		slot: UISlotArg<TSlot>,
+		slot:
+			| UISlotArg<TSlot>
+			| StaticSlot
+			| DynamicSlot
+			| Promise<QuerySlotResult>,
 		component: RenderableComponent,
 	) {
-		getNubeInstance().render<TSlot>(slot, component);
+		isPromise<QuerySlotResult>(slot)
+			? slot
+					.then(
+						(resolved) =>
+							resolved !== null &&
+							getNubeInstance().render<TSlot>(resolved, component),
+					)
+					.catch((error) => console.error(error))
+			: getNubeInstance().render<TSlot>(slot, component);
 	},
 
 	// Render the same component across multiple slots in a single call.
