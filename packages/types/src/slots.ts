@@ -154,6 +154,14 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_products_new"} AFTER_SECTION_PRODUCTS_NEW - After the products new section on the home page.
  * @property {"before_section_products_featured"} BEFORE_SECTION_PRODUCTS_FEATURED - Before the products featured section on the home page.
  * @property {"after_section_products_featured"} AFTER_SECTION_PRODUCTS_FEATURED - After the products featured section on the home page.
+ * @property {"before_section_products_promotion"} BEFORE_SECTION_PRODUCTS_PROMOTION - Before the products promotion section on the home page.
+ * @property {"after_section_products_promotion"} AFTER_SECTION_PRODUCTS_PROMOTION - After the products promotion section on the home page.
+ * @property {"before_section_products_best_seller"} BEFORE_SECTION_PRODUCTS_BEST_SELLER - Before the best seller products section on the home page.
+ * @property {"after_section_products_best_seller"} AFTER_SECTION_PRODUCTS_BEST_SELLER - After the best seller products section on the home page.
+ * @property {"before_section_products_recent"} BEFORE_SECTION_PRODUCTS_RECENT - Before the recent products section on the home page.
+ * @property {"after_section_products_recent"} AFTER_SECTION_PRODUCTS_RECENT - After the recent products section on the home page.
+ * @property {"before_section_product_main"} BEFORE_SECTION_PRODUCT_MAIN - Before the main product section on the product detail page.
+ * @property {"after_section_product_main"} AFTER_SECTION_PRODUCT_MAIN - After the main product section on the product detail page.
  * @property {"before_section_banner_categories"} BEFORE_SECTION_BANNER_CATEGORIES - Before the categories banner section on the home page.
  * @property {"after_section_banner_categories"} AFTER_SECTION_BANNER_CATEGORIES - After the categories banner section on the home page.
  * @property {"before_section_banner_promotional"} BEFORE_SECTION_BANNER_PROMOTIONAL - Before the promotional banner section on the home page.
@@ -242,6 +250,14 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_PRODUCTS_NEW: "after_section_products_new",
 	BEFORE_SECTION_PRODUCTS_FEATURED: "before_section_products_featured",
 	AFTER_SECTION_PRODUCTS_FEATURED: "after_section_products_featured",
+	BEFORE_SECTION_PRODUCTS_PROMOTION: "before_section_products_promotion",
+	AFTER_SECTION_PRODUCTS_PROMOTION: "after_section_products_promotion",
+	BEFORE_SECTION_PRODUCTS_BEST_SELLER: "before_section_products_best_seller",
+	AFTER_SECTION_PRODUCTS_BEST_SELLER: "after_section_products_best_seller",
+	BEFORE_SECTION_PRODUCTS_RECENT: "before_section_products_recent",
+	AFTER_SECTION_PRODUCTS_RECENT: "after_section_products_recent",
+	BEFORE_SECTION_PRODUCT_MAIN: "before_section_product_main",
+	AFTER_SECTION_PRODUCT_MAIN: "after_section_product_main",
 	BEFORE_SECTION_BANNER_CATEGORIES: "before_section_banner_categories",
 	AFTER_SECTION_BANNER_CATEGORIES: "after_section_banner_categories",
 	BEFORE_SECTION_BANNER_PROMOTIONAL: "before_section_banner_promotional",
