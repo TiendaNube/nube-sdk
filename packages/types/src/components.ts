@@ -766,6 +766,20 @@ export type NubeComponentVideoBufferHandler = NubeComponentEventHandler<
 	NubeComponentVideoBufferPayload
 >;
 
+/** Payload emitted with the `open` event (video entered fullscreen). No structured data. */
+export type NubeComponentVideoOpenPayload = Record<string, never>;
+/** Payload emitted with the `close` event (video exited fullscreen). No structured data. */
+export type NubeComponentVideoClosePayload = Record<string, never>;
+
+export type NubeComponentVideoOpenHandler = NubeComponentEventHandler<
+	"open",
+	NubeComponentVideoOpenPayload
+>;
+export type NubeComponentVideoCloseHandler = NubeComponentEventHandler<
+	"close",
+	NubeComponentVideoClosePayload
+>;
+
 /* -------------------------------------------------------------------------- */
 /*                      Video source-specific errors                          */
 /* -------------------------------------------------------------------------- */
@@ -857,6 +871,10 @@ export type NubeComponentVideoRootProps = Prettify<
 		onEnded?: NubeComponentVideoEndedHandler;
 		onProgress?: NubeComponentVideoProgressHandler;
 		onBuffer?: NubeComponentVideoBufferHandler;
+		/** Fired when the video enters the fullscreen overlay. */
+		onOpen?: NubeComponentVideoOpenHandler;
+		/** Fired when the fullscreen overlay closes. */
+		onClose?: NubeComponentVideoCloseHandler;
 		children: NubeComponentChildren;
 	}
 >;
@@ -883,6 +901,11 @@ export type NubeComponentVideoPlayerProps = Prettify<
 		poster?: SecurityURL;
 		/** Show the player's default controls. Defaults to `true`. */
 		controls?: boolean;
+		/**
+		 * Aspect ratio as `"width/height"` (e.g. `"16/9"`, `"9/16"`). Defaults to
+		 * `"16/9"`. Ignored in fullscreen, where the video letterboxes to fit the viewport.
+		 */
+		aspectRatio?: string;
 		/**
 		 * Enable the fullscreen "lightbox": an absoluteFill overlay that fills the
 		 * viewport (CSS, not native fullscreen) with a mandatory close button and

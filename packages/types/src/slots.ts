@@ -30,6 +30,7 @@ import type {
  * @property {"after_header"} AFTER_HEADER - After the header.
  * @property {"drawer_left"} DRAWER_LEFT - Left drawer.
  * @property {"drawer_right"} DRAWER_RIGHT - Right drawer.
+ * @property {"fullscreen_content"} FULLSCREEN_CONTENT - Fullscreen overlay; accepts a `Video.Root` component.
  */
 export const COMMON_UI_SLOT = {
 	BEFORE_MAIN_CONTENT: "before_main_content",
@@ -48,6 +49,7 @@ export const COMMON_UI_SLOT = {
 	AFTER_HEADER: "after_header",
 	DRAWER_LEFT: "drawer_left",
 	DRAWER_RIGHT: "drawer_right",
+	FULLSCREEN_CONTENT: "fullscreen_content",
 } as const;
 
 /**
@@ -160,6 +162,12 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_products_recent"} AFTER_SECTION_PRODUCTS_RECENT - After the recent products section on the home page.
  * @property {"before_section_product_main"} BEFORE_SECTION_PRODUCT_MAIN - Before the main product section on the product detail page.
  * @property {"after_section_product_main"} AFTER_SECTION_PRODUCT_MAIN - After the main product section on the product detail page.
+ * @property {"before_section_banner_categories"} BEFORE_SECTION_BANNER_CATEGORIES - Before the categories banner section on the home page.
+ * @property {"after_section_banner_categories"} AFTER_SECTION_BANNER_CATEGORIES - After the categories banner section on the home page.
+ * @property {"before_section_banner_promotional"} BEFORE_SECTION_BANNER_PROMOTIONAL - Before the promotional banner section on the home page.
+ * @property {"after_section_banner_promotional"} AFTER_SECTION_BANNER_PROMOTIONAL - After the promotional banner section on the home page.
+ * @property {"before_section_banner_news"} BEFORE_SECTION_BANNER_NEWS - Before the news banner section on the home page.
+ * @property {"after_section_banner_news"} AFTER_SECTION_BANNER_NEWS - After the news banner section on the home page.
  * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
  * @property {"after_product_detail_related_products"} AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS - After the related products section on the product detail page.
  * @property {"before_product_detail_complementary_products"} BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - Before the complementary products section on the product detail page.
@@ -250,6 +258,12 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_PRODUCTS_RECENT: "after_section_products_recent",
 	BEFORE_SECTION_PRODUCT_MAIN: "before_section_product_main",
 	AFTER_SECTION_PRODUCT_MAIN: "after_section_product_main",
+	BEFORE_SECTION_BANNER_CATEGORIES: "before_section_banner_categories",
+	AFTER_SECTION_BANNER_CATEGORIES: "after_section_banner_categories",
+	BEFORE_SECTION_BANNER_PROMOTIONAL: "before_section_banner_promotional",
+	AFTER_SECTION_BANNER_PROMOTIONAL: "after_section_banner_promotional",
+	BEFORE_SECTION_BANNER_NEWS: "before_section_banner_news",
+	AFTER_SECTION_BANNER_NEWS: "after_section_banner_news",
 	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
 		"before_product_detail_related_products",
 	AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS:
