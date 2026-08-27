@@ -52,6 +52,12 @@ box({
 | alignContent   | FlexContent                    | No          | The CSS property [align-content](https://developer.mozilla.org/en-US/docs/Web/CSS/align-content)     |
 | justifyContent | FlexContent                    | No          | The CSS property [justify-content](https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content) |
 | id             | string                         | No          | Optional unique identifier for the component.                                                        |
+| role | string | No | Se mapea al atributo `role` del elemento anfitrión. |
+| ariaLabel | string | No | Nombre accesible. Se mapea a `aria-label`. |
+| ariaCurrent | boolean<br/>"page"<br/>"step"<br/>"location"<br/>"date"<br/>"time" | No | Marca el elemento como el actual dentro de un conjunto. Se mapea a `aria-current`. |
+| ariaHidden | boolean | No | Oculta contenedores decorativos a las tecnologías de asistencia. Se mapea a `aria-hidden`. |
+| ariaRoleDescription | string | No | Descripción legible del rol, por ejemplo "Carrusel". |
+| tabIndex | number | No | Hace que el elemento pueda recibir foco. Se mapea a `tabindex`. |
 
 ### Valores de propiedad
 

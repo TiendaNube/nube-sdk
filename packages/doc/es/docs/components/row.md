@@ -44,6 +44,12 @@ row({
 | width    | string                       | No       | El ancho de la fila.                                          |
 | height   | string                       | No       | La altura de la fila.                                         |
 | align    | "start" \| "center" \| "end" | No       | La alineación horizontal de los elementos hijos.              |
+| role | string | No | Se mapea al atributo `role` del elemento anfitrión. |
+| ariaLabel | string | No | Nombre accesible. Se mapea a `aria-label`. |
+| ariaCurrent | boolean<br/>"page"<br/>"step"<br/>"location"<br/>"date"<br/>"time" | No | Marca el elemento como el actual dentro de un conjunto. Se mapea a `aria-current`. |
+| ariaHidden | boolean | No | Oculta contenedores decorativos a las tecnologías de asistencia. Se mapea a `aria-hidden`. |
+| ariaRoleDescription | string | No | Descripción legible del rol, por ejemplo "Carrusel". |
+| tabIndex | number | No | Hace que el elemento pueda recibir foco. Se mapea a `tabindex`. |
 
 ## Additional Properties
 

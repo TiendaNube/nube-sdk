@@ -131,9 +131,37 @@ export type NubeComponentStyle = Partial<EnhancedCSSProperties>;
 /**
  * Represents the properties available for a `box` component.
  */
+/**
+ * Accessibility properties shared by the components that can carry them.
+ *
+ * Names follow the camelCase convention already used by `button` and
+ * `formSubmitter` (`ariaLabel`), not the quoted kebab-case of
+ * {@link ProgressAriaProps}. Both spellings exist in this file for historical
+ * reasons; new props use the camelCase one.
+ */
+export type NubeAriaProps = Partial<{
+	/** Maps to the `role` attribute on the host element. */
+	role: string;
+	/** Accessible name. Maps to `aria-label`. */
+	ariaLabel: string;
+	/**
+	 * Marks the element as the current one within a set. Maps to
+	 * `aria-current`. Accepts the full set of values, not just a boolean:
+	 * a carousel bullet uses `"true"`, a breadcrumb uses `"page"`.
+	 */
+	ariaCurrent: boolean | "page" | "step" | "location" | "date" | "time";
+	/** Hides decorative wrappers from assistive tech. Maps to `aria-hidden`. */
+	ariaHidden: boolean;
+	/** Human readable description of the role, e.g. "Carousel". */
+	ariaRoleDescription: string;
+	/** Makes the element focusable. Maps to `tabindex`. */
+	tabIndex: number;
+}>;
+
 export type NubeComponentBoxProps = Prettify<
 	NubeComponentProps &
 		ChildrenProps &
+		NubeAriaProps &
 		Partial<{
 			width: Size;
 			height: Size;
@@ -459,6 +487,11 @@ export type NubeComponentButtonProps = Prettify<
 			style?: NubeComponentStyle;
 			onClick: NubeComponentButtonEventHandler;
 			ariaLabel: string;
+			/**
+			 * Marks the button as the current one within a set. Maps to
+			 * `aria-current`. Carousel pagination bullets use `"true"`.
+			 */
+			ariaCurrent: boolean | "page" | "step" | "location" | "date" | "time";
 		}>
 >;
 
