@@ -210,6 +210,28 @@ export type ProductVariant = {
 };
 
 /**
+ * Represents a subscription option available for a product.
+ */
+export type ProductSubscriptionOption = {
+	/** Unique identifier for the subscription option. */
+	id: string;
+	/** Frequency unit of the subscription (e.g., "months"). */
+	frequency_type: string;
+	/** Number of frequency units between each recurrence. */
+	frequency_value: number;
+	/** Discount percentage applied when subscribing with this option. */
+	discount_percentage: number;
+};
+
+/**
+ * Represents the subscription settings of a product.
+ */
+export type ProductSubscription = {
+	/** Available subscription options for the product. */
+	options: ProductSubscriptionOption[];
+};
+
+/**
  * Represents a detailed product with all its properties and metadata.
  */
 export type ProductDetails = {
@@ -247,6 +269,12 @@ export type ProductDetails = {
 	variants: ProductVariant[];
 	/** URL of the product's promotional video. */
 	video_url: null | string;
+	/** Whether the product can be purchased as a subscription. */
+	is_subscribable?: boolean;
+	/** Whether the product can only be purchased as a subscription. */
+	is_subscription_only?: boolean;
+	/** Subscription settings for the product. `null` when there are no options. */
+	subscription?: ProductSubscription | null;
 };
 
 /**
