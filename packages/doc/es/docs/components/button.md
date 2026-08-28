@@ -83,6 +83,8 @@ button({
 | width     | Size                                                | No        | Ancho del botón (ej: "100%", "200px").           |
 | height    | Size                                                | No        | Altura del botón.                                |
 | onClick   | NubeComponentButtonEventHandler                     | No        | Función llamada cuando se hace clic en el botón. |
+| ariaLabel | string | No | Nombre accesible. Se mapea a `aria-label`. |
+| ariaCurrent | boolean<br/>"page"<br/>"step"<br/>"location"<br/>"date"<br/>"time" | No | Marca el elemento como el actual dentro de un conjunto. Se mapea a `aria-current`. |
 
 ### Valores de las propiedades
 

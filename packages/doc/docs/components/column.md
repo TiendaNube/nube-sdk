@@ -51,6 +51,12 @@ column({
 | alignContent   | FlexContent           | No       | The CSS property [align-content](https://developer.mozilla.org/en-US/docs/Web/CSS/align-content)     |
 | justifyContent | FlexContent           | No       | The CSS property [justify-content](https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content) |
 | id             | string                | No       | Optional unique identifier for the component.                                                        |
+| role | string | No | Maps to the `role` attribute of the host element. |
+| ariaLabel | string | No | Accessible name. Maps to `aria-label`. |
+| ariaCurrent | boolean<br/>"page"<br/>"step"<br/>"location"<br/>"date"<br/>"time" | No | Marks the element as the current one within a set. Maps to `aria-current`. |
+| ariaHidden | boolean | No | Hides decorative wrappers from assistive tech. Maps to `aria-hidden`. |
+| ariaRoleDescription | string | No | Human readable description of the role, e.g. "Carousel". |
+| tabIndex | number | No | Makes the element focusable. Maps to `tabindex`. |
 
 ### Property values
 
