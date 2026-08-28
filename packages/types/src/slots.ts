@@ -124,6 +124,7 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"product_detail_image_center_center"} PRODUCT_DETAIL_IMAGE_CENTER_CENTER - Center of product detail images.
  * @property {"after_product_detail_name"} AFTER_PRODUCT_DETAIL_NAME - After the product name in product detail.
  * @property {"before_product_detail_name"} BEFORE_PRODUCT_DETAIL_NAME - Before the product name in product detail.
+ * @property {"before_product_description"} BEFORE_PRODUCT_DESCRIPTION - Before the product description.
  * @property {"after_product_description"} AFTER_PRODUCT_DESCRIPTION - After the product description.
  * @property {"before_product_detail_price"} BEFORE_PRODUCT_DETAIL_PRICE - Before the product detail price.
  * @property {"after_product_detail_price"} AFTER_PRODUCT_DETAIL_PRICE - After the product detail price.
