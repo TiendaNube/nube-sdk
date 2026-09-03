@@ -1,17 +1,19 @@
-import type { NubeSDKState } from "@tiendanube/nube-sdk-types";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
-export type NubeSDKEventData = [
-	data: NubeSDKState,
-	eventType: string,
-	sender: string,
-	target: string | null,
-];
+/**
+ * One dispatch as reported by the runtime devtools hook. See
+ * `NubeSDKDevtoolsRecord` in `src/types.d.ts` for the contract.
+ */
+export type NubeSDKEventData = NubeSDKDevtoolsRecord;
 
 export type NubeSDKEvent = {
+	/**
+	 * Row identity. Not `record.seq`: the sequence restarts on every page load
+	 * and the list survives navigations.
+	 */
 	id: string;
-	data: NubeSDKEventData;
+	record: NubeSDKEventData;
 };
 
 interface NubeSDKEventsContextType {
@@ -28,6 +30,36 @@ export const NubeSDKEventsProvider = ({
 	children,
 }: { children: ReactNode }) => {
 	const [events, setEvents] = useState<NubeSDKEvent[]>([]);
+
+	// Collected here, in the provider, rather than in the Events page: the
+	// page unmounts whenever the panel navigates elsewhere, and a listener
+	// living there misses every event dispatched in the meantime.
+	useEffect(() => {
+		const listener = (port: chrome.runtime.Port) => {
+			if (port.name !== "nube-devtools-events") return;
+
+			port.onMessage.addListener((message) => {
+				// One message carries a batch: the injected script coalesces the
+				// runtime's replay (and any burst) per microtask.
+				const records = message.payload as NubeSDKEventData[];
+				if (!Array.isArray(records) || records.length === 0) return;
+
+				setEvents((prevEvents) => [
+					...prevEvents,
+					...records.map((record) => ({
+						id: crypto.randomUUID(),
+						record,
+					})),
+				]);
+			});
+		};
+
+		chrome.runtime.onConnect.addListener(listener);
+
+		return () => {
+			chrome.runtime.onConnect.removeListener(listener);
+		};
+	}, []);
 
 	const clearEvents = () => {
 		setEvents([]);

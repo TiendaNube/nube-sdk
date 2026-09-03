@@ -77,9 +77,9 @@ export function EventTableRow({
 		return () => clearTimeout(timer);
 	}, []);
 
-	const sender = event.data[2] ?? "";
-	const target = event.data[3] ?? "*";
-	const eventName = event.data[1] ?? "";
+	const sender = event.record.sender ?? "";
+	const target = event.record.target ?? "*";
+	const eventName = event.record.event ?? "";
 
 	return (
 		<TableRow
