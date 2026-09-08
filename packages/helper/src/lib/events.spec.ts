@@ -36,8 +36,9 @@ describe("events", () => {
 
 	describe("toastOn", () => {
 		function fireRegisteredListener(state: NubeSDKState): void {
-			const registered = (sdk.on as ReturnType<typeof vi.fn>).mock.calls[0][1];
-			registered(state);
+			const registered = (sdk.on as ReturnType<typeof vi.fn>).mock
+				.calls[0]?.[1];
+			registered?.(state);
 		}
 
 		it("shows a static toast when the event fires", () => {

@@ -5,6 +5,13 @@
  */
 
 import type {
+	AccountInfoPage,
+	AccountLoginPage,
+	AccountNewPasswordPage,
+	AccountOrdersPage,
+	AccountPage,
+	AccountRegisterPage,
+	AccountResetPage,
 	AllProductsPage,
 	CategoryPage,
 	CheckoutPage,
@@ -136,4 +143,147 @@ export function isSearchPage(page: Page): page is SearchPage {
  */
 export function isHomePage(page: Page): page is HomePage {
 	return page.type === "home";
+}
+
+/**
+ * Type guard to check if a page is any of the account pages
+ *
+ * @param page - The page to check
+ * @returns True if the page is an AccountPage
+ *
+ * @example
+ * ```typescript
+ * if (isAccountPage(page)) {
+ *   // page is now typed as AccountPage
+ *   console.log(page.data.loggedIn);
+ *   console.log(page.data.customerId);
+ * }
+ * ```
+ *
+ * @since 0.1.0
+ */
+export function isAccountPage(page: Page): page is AccountPage {
+	return page.type.startsWith("account.");
+}
+
+/**
+ * Type guard to check if a page is an account login page
+ *
+ * @param page - The page to check
+ * @returns True if the page is an AccountLoginPage
+ *
+ * @example
+ * ```typescript
+ * if (isAccountLoginPage(page)) {
+ *   // page is now typed as AccountLoginPage
+ *   console.log(page.data.loggedIn);
+ * }
+ * ```
+ *
+ * @since 0.2.0
+ */
+export function isAccountLoginPage(page: Page): page is AccountLoginPage {
+	return page.type === "account.login";
+}
+
+/**
+ * Type guard to check if a page is an account registration page
+ *
+ * @param page - The page to check
+ * @returns True if the page is an AccountRegisterPage
+ *
+ * @example
+ * ```typescript
+ * if (isAccountRegisterPage(page)) {
+ *   // page is now typed as AccountRegisterPage
+ *   console.log(page.data.loggedIn);
+ * }
+ * ```
+ *
+ * @since 0.2.0
+ */
+export function isAccountRegisterPage(page: Page): page is AccountRegisterPage {
+	return page.type === "account.register";
+}
+
+/**
+ * Type guard to check if a page is an account information page
+ *
+ * @param page - The page to check
+ * @returns True if the page is an AccountInfoPage
+ *
+ * @example
+ * ```typescript
+ * if (isAccountInfoPage(page)) {
+ *   // page is now typed as AccountInfoPage
+ *   console.log(page.data.customerId);
+ * }
+ * ```
+ *
+ * @since 0.2.0
+ */
+export function isAccountInfoPage(page: Page): page is AccountInfoPage {
+	return page.type === "account.info";
+}
+
+/**
+ * Type guard to check if a page is an account password reset page
+ *
+ * @param page - The page to check
+ * @returns True if the page is an AccountResetPage
+ *
+ * @example
+ * ```typescript
+ * if (isAccountResetPage(page)) {
+ *   // page is now typed as AccountResetPage
+ *   console.log(page.data.loggedIn);
+ * }
+ * ```
+ *
+ * @since 0.2.0
+ */
+export function isAccountResetPage(page: Page): page is AccountResetPage {
+	return page.type === "account.reset";
+}
+
+/**
+ * Type guard to check if a page is an account new password page
+ *
+ * @param page - The page to check
+ * @returns True if the page is an AccountNewPasswordPage
+ *
+ * @example
+ * ```typescript
+ * if (isAccountNewPasswordPage(page)) {
+ *   // page is now typed as AccountNewPasswordPage
+ *   console.log(page.data.loggedIn);
+ * }
+ * ```
+ *
+ * @since 0.2.0
+ */
+export function isAccountNewPasswordPage(
+	page: Page,
+): page is AccountNewPasswordPage {
+	return page.type === "account.newpass";
+}
+
+/**
+ * Type guard to check if a page is an account orders page
+ *
+ * @param page - The page to check
+ * @returns True if the page is an AccountOrdersPage
+ *
+ * @example
+ * ```typescript
+ * if (isAccountOrdersPage(page)) {
+ *   // page is now typed as AccountOrdersPage
+ *   console.log(page.data.customerId);
+ * }
+ * ```
+ *
+ * @since 0.2.0
+ */
+export function isAccountOrdersPage(page: Page): page is AccountOrdersPage {
+	return page.type === "account.orders";
 }

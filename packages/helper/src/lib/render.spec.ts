@@ -35,6 +35,8 @@ const createMockState = (
 			url: "https://example.com",
 			page,
 			queries: {},
+			title: "",
+			referrer: null,
 		},
 		device: {
 			screen: {
@@ -74,7 +76,16 @@ const createMockState = (
 			name: "Test Store",
 			domain: "example.com",
 			currency: "USD",
+			currency_details: {
+				code: "USD",
+				cents_separator: ".",
+				thousands_separator: ",",
+				display_long: "US$",
+				display_short: "$",
+			},
 			language: "en",
+			theme: "rio",
+			quick_cart: false,
 		},
 		ui: {
 			slots: {},
@@ -87,7 +98,7 @@ const createMockState = (
 		session: {
 			id: "test-session-id",
 		},
-	}) as NubeSDKState;
+	}) as unknown as NubeSDKState;
 
 describe("getProductsFromState", () => {
 	it("should return empty array when page is undefined", () => {
