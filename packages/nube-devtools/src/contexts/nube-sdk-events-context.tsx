@@ -22,6 +22,13 @@ interface NubeSDKEventsContextType {
 	clearEvents: () => void;
 }
 
+/**
+ * Upper bound on the retained history. Every record carries full `prev` and
+ * `next` state snapshots, so an unbounded list would grow the panel's memory
+ * (and the cost of each append) without limit on a busy page.
+ */
+const MAX_EVENTS = 1_000;
+
 const NubeSDKEventsContext = createContext<
 	NubeSDKEventsContextType | undefined
 >(undefined);
@@ -44,13 +51,15 @@ export const NubeSDKEventsProvider = ({
 				const records = message.payload as NubeSDKEventData[];
 				if (!Array.isArray(records) || records.length === 0) return;
 
-				setEvents((prevEvents) => [
-					...prevEvents,
-					...records.map((record) => ({
-						id: crypto.randomUUID(),
-						record,
-					})),
-				]);
+				setEvents((prevEvents) =>
+					[
+						...prevEvents,
+						...records.map((record) => ({
+							id: crypto.randomUUID(),
+							record,
+						})),
+					].slice(-MAX_EVENTS),
+				);
 			});
 		};
 
