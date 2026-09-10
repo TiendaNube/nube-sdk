@@ -97,10 +97,13 @@ window.addEventListener("NubeSDKEvents", ((event) => {
 
 	try {
 		port.postMessage({ payload: records });
-	} catch {
-		// Panel closed between the connect and the post: drop this batch and
-		// let the next one open a fresh port.
-		eventsPort = null;
+	} catch (error) {
+		// Losing a batch is acceptable. If the port is gone — the panel closed
+		// between the connect and the post — `onDisconnect` clears
+		// `eventsPort` on its own; any other failure (a record the runtime
+		// cannot serialize) keeps the port, so one bad batch does not stop the
+		// stream.
+		console.warn("[nube-devtools] failed to forward event batch", error);
 	}
 }) as EventListener);
 
