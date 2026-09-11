@@ -47,6 +47,7 @@ export function Apps() {
 		useState<LocalModeStoredData | null>(null);
 
 	const [isRefreshing, setIsRefreshing] = useState(false);
+	const isActive = useRef(true);
 	const retryTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -63,6 +64,10 @@ export function Apps() {
 					func: getApps,
 				},
 				(results) => {
+					if (!isActive.current) {
+						resolve();
+						return;
+					}
 					try {
 						const appsResult = results?.[0]?.result as
 							| Record<string, NubeSDKApp>
@@ -99,12 +104,16 @@ export function Apps() {
 				refreshTimeout.current = setTimeout(resolve, MIN_REFRESH_FEEDBACK_MS);
 			}),
 		]);
-		setIsRefreshing(false);
+		if (isActive.current) {
+			setIsRefreshing(false);
+		}
 	}, [fetchApps]);
 
 	useEffect(() => {
+		isActive.current = true;
 		fetchApps();
 		return () => {
+			isActive.current = false;
 			if (retryTimeout.current) {
 				clearTimeout(retryTimeout.current);
 				retryTimeout.current = null;
