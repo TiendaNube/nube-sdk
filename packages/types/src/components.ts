@@ -525,6 +525,8 @@ export type NubeComponentCheckboxProps = Prettify<
 		name: string;
 		label: string;
 		checked: boolean;
+		/** Prevents interaction and marks the checkbox as disabled. */
+		disabled?: boolean;
 		onChange?: NubeComponentCheckEventHandler;
 		style?: {
 			container?: NubeComponentStyle;

@@ -95,6 +95,7 @@ checkbox({
 | name        | string                         | Sim         | O nome do checkbox, usado para identificá-lo em formulários.  |
 | label       | string                         | Sim         | O texto do rótulo exibido ao lado do checkbox.                |
 | checked     | boolean                        | Sim         | O estado atual marcado do checkbox.                           |
+| disabled    | boolean                        | Não         | Se o checkbox está desabilitado.                              |
 | onChange    | NubeComponentCheckEventHandler | Não         | Função chamada quando o estado do checkbox muda.              |
 
 ### Valores das propriedades
