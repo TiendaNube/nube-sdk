@@ -214,7 +214,7 @@ export type ProductVariant = {
  */
 export type ProductSubscriptionOption = {
 	/** Unique identifier for the subscription option. */
-	id: string;
+	frequency_option_id: string;
 	/** Frequency unit of the subscription (e.g., "months"). */
 	frequency_type: string;
 	/** Number of frequency units between each recurrence. */
