@@ -1,6 +1,5 @@
 import type { NubeSDKApp } from "@/background/types";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
 	ResizableHandle,
 	ResizablePanel,
@@ -10,6 +9,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Table, TableBody, TableRow } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import { useNubeSDKAppsContext } from "@/contexts/nube-sdk-apps-context";
+import { EmptyState } from "@/devtools/components/empty-state";
 import Layout from "@/devtools/components/layout";
 import { getPageSessionStorage } from "@/utils";
 import { Circle, Loader2 } from "lucide-react";
@@ -25,6 +25,7 @@ import { TableRowItem } from "../components/table-row-item";
 const STORAGE_KEY = "nube-devtools-apps-panel-size";
 const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
 	"nube-devtools-application-server";
+const MIN_REFRESH_FEEDBACK_MS = 500;
 
 type LocalModeStoredData = {
 	appId?: string;
@@ -45,44 +46,74 @@ export function Apps() {
 	const [localModeData, setLocalModeData] =
 		useState<LocalModeStoredData | null>(null);
 
-	const fetchApps = useCallback(() => {
-		chrome.scripting.executeScript(
-			{
-				target: { tabId: chrome.devtools.inspectedWindow.tabId },
-				world: "MAIN",
-				func: getApps,
-			},
-			(results) => {
-				try {
-					const appsResult = results?.[0]?.result as
-						| Record<string, NubeSDKApp>
-						| undefined;
-					const appsKeys = appsResult ? Object.keys(appsResult) : [];
+	const [isRefreshing, setIsRefreshing] = useState(false);
+	const retryTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-					if (appsKeys.length > 0 && appsResult) {
-						const apps = Object.keys(appsResult).map((key) => {
-							return {
-								id: crypto.randomUUID(),
-								data: appsResult[key],
-							};
-						});
-						setApps(apps);
-					} else {
+	const fetchApps = useCallback(() => {
+		if (retryTimeout.current) {
+			clearTimeout(retryTimeout.current);
+			retryTimeout.current = null;
+		}
+		return new Promise<void>((resolve) => {
+			chrome.scripting.executeScript(
+				{
+					target: { tabId: chrome.devtools.inspectedWindow.tabId },
+					world: "MAIN",
+					func: getApps,
+				},
+				(results) => {
+					try {
+						const appsResult = results?.[0]?.result as
+							| Record<string, NubeSDKApp>
+							| undefined;
+						const appsKeys = appsResult ? Object.keys(appsResult) : [];
+
+						if (appsKeys.length > 0 && appsResult) {
+							const apps = Object.keys(appsResult).map((key) => {
+								return {
+									id: crypto.randomUUID(),
+									data: appsResult[key],
+								};
+							});
+							setApps(apps);
+						} else {
+							setApps([]);
+							retryTimeout.current = setTimeout(fetchApps, 2000);
+						}
+					} catch (error) {
 						setApps([]);
-						const timeout = setTimeout(() => {
-							fetchApps();
-							clearTimeout(timeout);
-						}, 2000);
+					} finally {
+						resolve();
 					}
-				} catch (error) {
-					setApps([]);
-				}
-			},
-		);
+				},
+			);
+		});
 	}, [setApps]);
+
+	const handleRefresh = useCallback(async () => {
+		setIsRefreshing(true);
+		await Promise.all([
+			fetchApps(),
+			new Promise<void>((resolve) => {
+				refreshTimeout.current = setTimeout(resolve, MIN_REFRESH_FEEDBACK_MS);
+			}),
+		]);
+		setIsRefreshing(false);
+	}, [fetchApps]);
 
 	useEffect(() => {
 		fetchApps();
+		return () => {
+			if (retryTimeout.current) {
+				clearTimeout(retryTimeout.current);
+				retryTimeout.current = null;
+			}
+			if (refreshTimeout.current) {
+				clearTimeout(refreshTimeout.current);
+				refreshTimeout.current = null;
+			}
+		};
 	}, [fetchApps]);
 
 	useEffect(() => {
@@ -173,7 +204,7 @@ export function Apps() {
 	return (
 		<Layout>
 			<div className="flex h-full flex-col">
-				<nav className="flex items-center justify-between px-1.5 py-1 border-b h-[33px] shrink-0">
+				<nav className="flex items-center justify-between px-1.5 py-1 border-b h-8.25 shrink-0">
 					<div className="flex items-center">
 						<SidebarTrigger />
 					</div>
@@ -189,19 +220,12 @@ export function Apps() {
 					>
 						<ResizablePanel defaultSize={40}>
 							{apps.length === 0 ? (
-								<div className="flex h-full flex-col items-center justify-center gap-2">
-									<p className="text-sm">No apps found</p>
-									<Button
-										variant="outline"
-										size="sm"
-										className="h-5 px-2 text-xs"
-										onClick={() => {
-											fetchApps();
-										}}
-									>
-										Reload page
-									</Button>
-								</div>
+								<EmptyState
+									text="No apps found"
+									buttonText={isRefreshing ? "Refreshing..." : "Refresh apps"}
+									onButtonClick={handleRefresh}
+									isLoading={isRefreshing}
+								/>
 							) : (
 								<div className="overflow-hidden w-full">
 									<Table className="table-fixed">
