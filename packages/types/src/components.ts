@@ -2749,6 +2749,197 @@ export type NubeComponentMarkdown = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                            Table Components                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Defines the size scale of a `tableRoot` component, which controls the
+ * cell padding and font size of the whole table.
+ */
+export type NubeComponentTableSize = "1" | "2" | "3";
+
+/**
+ * Defines the visual variants of a `tableRoot` component.
+ * `surface` renders the table inside a bordered card, while `ghost` renders
+ * it without a container.
+ */
+export type NubeComponentTableVariant = "surface" | "ghost";
+
+/**
+ * Defines the column sizing algorithm of a `tableRoot` component.
+ */
+export type NubeComponentTableLayout = "auto" | "fixed";
+
+/**
+ * Defines the vertical alignment of the cells of a `tableRow` component.
+ */
+export type NubeComponentTableRowAlign =
+	| "start"
+	| "center"
+	| "end"
+	| "baseline";
+
+/**
+ * Defines the horizontal alignment of the content of a table cell.
+ */
+export type NubeComponentTableCellJustify = "start" | "center" | "end";
+
+/**
+ * Represents the properties available for a `table` root component.
+ */
+export type NubeComponentTableRootProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			size?: NubeComponentTableSize;
+			variant?: NubeComponentTableVariant;
+			layout?: NubeComponentTableLayout;
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `table` root component, the wrapper that groups the header
+ * and the body of a table.
+ */
+export type NubeComponentTableRoot = Prettify<
+	NubeComponentBase &
+		NubeComponentTableRootProps & {
+			type: "tableRoot";
+		}
+>;
+
+/**
+ * Represents the properties available for a `table` header component.
+ */
+export type NubeComponentTableHeaderProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `table` header component, used to group the rows that
+ * contain the column headings of a table.
+ */
+export type NubeComponentTableHeader = Prettify<
+	NubeComponentBase &
+		NubeComponentTableHeaderProps & {
+			type: "tableHeader";
+		}
+>;
+
+/**
+ * Represents the properties available for a `table` body component.
+ */
+export type NubeComponentTableBodyProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `table` body component, used to group the rows that
+ * contain the data of a table.
+ */
+export type NubeComponentTableBody = Prettify<
+	NubeComponentBase &
+		NubeComponentTableBodyProps & {
+			type: "tableBody";
+		}
+>;
+
+/**
+ * Represents the properties available for a `table` row component.
+ */
+export type NubeComponentTableRowProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			align?: NubeComponentTableRowAlign;
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `table` row component, used to group the cells of a
+ * single row of a table.
+ */
+export type NubeComponentTableRow = Prettify<
+	NubeComponentBase &
+		NubeComponentTableRowProps & {
+			type: "tableRow";
+		}
+>;
+
+/**
+ * Represents the properties shared by all table cell components.
+ */
+export type NubeComponentTableCellBaseProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			justify?: NubeComponentTableCellJustify;
+			width?: Size;
+			minWidth?: Size;
+			maxWidth?: Size;
+			colSpan?: number;
+			rowSpan?: number;
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents the properties available for a `table` cell component.
+ */
+export type NubeComponentTableCellProps = NubeComponentTableCellBaseProps;
+
+/**
+ * Represents a `table` cell component, a basic data cell of a table.
+ */
+export type NubeComponentTableCell = Prettify<
+	NubeComponentBase &
+		NubeComponentTableCellProps & {
+			type: "tableCell";
+		}
+>;
+
+/**
+ * Represents the properties available for a `table` column header cell
+ * component. Inherits the properties of a `table` cell.
+ */
+export type NubeComponentTableColumnHeaderCellProps =
+	NubeComponentTableCellBaseProps;
+
+/**
+ * Represents a `table` column header cell component, the heading of a
+ * column of a table.
+ */
+export type NubeComponentTableColumnHeaderCell = Prettify<
+	NubeComponentBase &
+		NubeComponentTableColumnHeaderCellProps & {
+			type: "tableColumnHeaderCell";
+		}
+>;
+
+/**
+ * Represents the properties available for a `table` row header cell
+ * component. Inherits the properties of a `table` cell.
+ */
+export type NubeComponentTableRowHeaderCellProps =
+	NubeComponentTableCellBaseProps;
+
+/**
+ * Represents a `table` row header cell component, the heading of a row
+ * of a table.
+ */
+export type NubeComponentTableRowHeaderCell = Prettify<
+	NubeComponentBase &
+		NubeComponentTableRowHeaderCellProps & {
+			type: "tableRowHeaderCell";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                         Basic Definitions                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -2818,6 +3009,13 @@ export type NubeComponent =
 	| NubeComponentIcon
 	| NubeComponentSideScroll
 	| NubeComponentMarkdown
+	| NubeComponentTableRoot
+	| NubeComponentTableHeader
+	| NubeComponentTableBody
+	| NubeComponentTableRow
+	| NubeComponentTableCell
+	| NubeComponentTableColumnHeaderCell
+	| NubeComponentTableRowHeaderCell
 	| NubeComponentSvg
 	| NubeComponentCircle
 	| NubeComponentPath
@@ -2895,7 +3093,14 @@ export type NubeComponentWithChildren =
 	| NubeComponentFormSubmitter
 	| NubeComponentFormSuccess
 	| NubeComponentFormFailure
-	| NubeComponentFormSending;
+	| NubeComponentFormSending
+	| NubeComponentTableRoot
+	| NubeComponentTableHeader
+	| NubeComponentTableBody
+	| NubeComponentTableRow
+	| NubeComponentTableCell
+	| NubeComponentTableColumnHeaderCell
+	| NubeComponentTableRowHeaderCell;
 
 /**
  * Represents the value of a UI component, typically used for form inputs.
