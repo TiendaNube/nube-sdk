@@ -121,6 +121,7 @@ import type {
 	NubeComponentTableCellProps,
 	NubeComponentTableColumnHeaderCell,
 	NubeComponentTableColumnHeaderCellProps,
+	NubeComponentTableDataRow,
 	NubeComponentTableHeader,
 	NubeComponentTableHeaderProps,
 	NubeComponentTableRoot,
@@ -1306,7 +1307,9 @@ export const Form = {
  * @param props - The properties for configuring the table root component.
  * @returns A `NubeComponentTableRoot` object representing the table root component.
  */
-function TableRoot(props: NubeComponentTableRootProps): NubeComponentTableRoot {
+function TableRoot<T extends NubeComponentTableDataRow>(
+	props: NubeComponentTableRootProps<T>,
+): NubeComponentTableRoot<T> {
 	return tableRoot(props);
 }
 

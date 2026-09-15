@@ -2809,8 +2809,10 @@ export type NubeComponentTableDataRow = Record<
  * `key` is the property read from each row of `data` and `label` is the text
  * rendered in the column heading.
  */
-export type NubeComponentTableColumn = {
-	key: string;
+export type NubeComponentTableColumn<
+	T extends NubeComponentTableDataRow = NubeComponentTableDataRow,
+> = {
+	key: Extract<keyof T, string>;
 	label?: string;
 	justify?: NubeComponentTableCellJustify;
 	width?: Size;
@@ -2825,16 +2827,21 @@ export type NubeComponentTableColumn = {
  * components through `children`, or declaratively through `data` and
  * `columns`. When both `data` and `columns` are provided, `children` is
  * ignored and the table is rendered from the data.
+ *
+ * The row shape is inferred from `data`, so the `key` of each column is
+ * restricted to the keys present in the rows.
  */
-export type NubeComponentTableRootProps = Prettify<
+export type NubeComponentTableRootProps<
+	T extends NubeComponentTableDataRow = NubeComponentTableDataRow,
+> = Prettify<
 	NubeComponentBase &
 		ChildrenProps & {
 			size?: NubeComponentTableSize;
 			variant?: NubeComponentTableVariant;
 			layout?: NubeComponentTableLayout;
 			style?: NubeComponentStyle;
-			data?: NubeComponentTableDataRow[];
-			columns?: NubeComponentTableColumn[];
+			data?: T[];
+			columns?: NubeComponentTableColumn<NoInfer<T>>[];
 		}
 >;
 
@@ -2842,9 +2849,11 @@ export type NubeComponentTableRootProps = Prettify<
  * Represents a `table` root component, the wrapper that groups the header
  * and the body of a table.
  */
-export type NubeComponentTableRoot = Prettify<
+export type NubeComponentTableRoot<
+	T extends NubeComponentTableDataRow = NubeComponentTableDataRow,
+> = Prettify<
 	NubeComponentBase &
-		NubeComponentTableRootProps & {
+		NubeComponentTableRootProps<T> & {
 			type: "tableRoot";
 		}
 >;
@@ -3050,7 +3059,12 @@ export type NubeComponent =
 	| NubeComponentIcon
 	| NubeComponentSideScroll
 	| NubeComponentMarkdown
-	| NubeComponentTableRoot
+	// A table root is invariant in its row type, because the column `key` is
+	// derived from `keyof T`. Using the default instantiation here would keep a
+	// table typed with a concrete row shape out of this union, and therefore stop
+	// it from being a valid JSX element.
+	// biome-ignore lint/suspicious/noExplicitAny: accepts any row shape, as React does with `ReactElement<any>`
+	| NubeComponentTableRoot<any>
 	| NubeComponentTableHeader
 	| NubeComponentTableBody
 	| NubeComponentTableRow
@@ -3135,7 +3149,12 @@ export type NubeComponentWithChildren =
 	| NubeComponentFormSuccess
 	| NubeComponentFormFailure
 	| NubeComponentFormSending
-	| NubeComponentTableRoot
+	// A table root is invariant in its row type, because the column `key` is
+	// derived from `keyof T`. Using the default instantiation here would keep a
+	// table typed with a concrete row shape out of this union, and therefore stop
+	// it from being a valid JSX element.
+	// biome-ignore lint/suspicious/noExplicitAny: accepts any row shape, as React does with `ReactElement<any>`
+	| NubeComponentTableRoot<any>
 	| NubeComponentTableHeader
 	| NubeComponentTableBody
 	| NubeComponentTableRow

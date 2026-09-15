@@ -28,6 +28,21 @@ describe("tableRoot", () => {
 		expect(node.columns).toEqual(columns);
 	});
 
+	it("only accepts column keys present in data", () => {
+		const data = [{ nome: "minato", peso: 4.9 }];
+
+		const node = tableRoot({
+			data,
+			columns: [
+				{ key: "nome" },
+				// @ts-expect-error "name" is not a key of the rows of `data`
+				{ key: "name" },
+			],
+		});
+
+		expect(node.columns).toEqual([{ key: "nome" }, { key: "name" }]);
+	});
+
 	it("ignores children when both data and columns are provided", () => {
 		const node = tableRoot({
 			data: [{ nome: "minato" }],

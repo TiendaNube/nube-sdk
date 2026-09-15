@@ -1,4 +1,5 @@
 import type {
+	NubeComponentTableDataRow,
 	NubeComponentTableRoot,
 	NubeComponentTableRootProps,
 } from "@tiendanube/nube-sdk-types";
@@ -12,11 +13,12 @@ import { generateInternalId } from "./generateInternalId";
  *
  * The table can also be declared from raw data through `data` and `columns`.
  * When both are provided, `children` is ignored and the header and the body
- * are rendered from the data.
+ * are rendered from the data. The `key` of each column is restricted to the
+ * keys present in the rows of `data`.
  */
-export const tableRoot = (
-	props: NubeComponentTableRootProps,
-): NubeComponentTableRoot => {
+export const tableRoot = <T extends NubeComponentTableDataRow>(
+	props: NubeComponentTableRootProps<T>,
+): NubeComponentTableRoot<T> => {
 	const isDataDriven = !!props.data && !!props.columns;
 	const { children, ...rest } = props;
 
