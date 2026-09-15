@@ -113,6 +113,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_product_detail_add_to_cart"} AFTER_PRODUCT_DETAIL_ADD_TO_CART - After the product detail add to cart button.
  * @property {"before_add_to_cart_pdp"} BEFORE_ADD_TO_CART_PDP - Before the add to cart button on product detail page. Deprecated; use BEFORE_PRODUCT_DETAIL_ADD_TO_CART instead.
  * @property {"after_add_to_cart_pdp"} AFTER_ADD_TO_CART_PDP - After the add to cart button on product detail page. Deprecated; use AFTER_PRODUCT_DETAIL_ADD_TO_CART instead.
+ * @property {"before_product_detail_image"} BEFORE_PRODUCT_DETAIL_IMAGE - Before the product detail images.
+ * @property {"after_product_detail_image"} AFTER_PRODUCT_DETAIL_IMAGE - After the product detail images.
  * @property {"product_detail_image_top_left"} PRODUCT_DETAIL_IMAGE_TOP_LEFT - Top left corner of product detail images.
  * @property {"product_detail_image_top_right"} PRODUCT_DETAIL_IMAGE_TOP_RIGHT - Top right corner of product detail images.
  * @property {"product_detail_image_bottom_left"} PRODUCT_DETAIL_IMAGE_BOTTOM_LEFT - Bottom left corner of product detail images.
@@ -206,6 +208,8 @@ export const STOREFRONT_UI_SLOT = {
 	BEFORE_ADD_TO_CART_PDP: "before_add_to_cart_pdp",
 	/** @deprecated Use AFTER_PRODUCT_DETAIL_ADD_TO_CART instead. */
 	AFTER_ADD_TO_CART_PDP: "after_add_to_cart_pdp",
+	BEFORE_PRODUCT_DETAIL_IMAGE: "before_product_detail_image",
+	AFTER_PRODUCT_DETAIL_IMAGE: "after_product_detail_image",
 	PRODUCT_DETAIL_IMAGE_TOP_LEFT: "product_detail_image_top_left",
 	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
 	PRODUCT_DETAIL_IMAGE_BOTTOM_LEFT: "product_detail_image_bottom_left",
