@@ -5,6 +5,7 @@ export type * from "./available-slots";
 export type * from "./browser";
 export type * from "./app-settings";
 export type * from "./checkout";
+export type * from "./customization";
 export type * from "./main";
 export type * from "./domain";
 export type * from "./utility";
