@@ -169,6 +169,10 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_banner_promotional"} AFTER_SECTION_BANNER_PROMOTIONAL - After the promotional banner section on the home page.
  * @property {"before_section_banner_news"} BEFORE_SECTION_BANNER_NEWS - Before the news banner section on the home page.
  * @property {"after_section_banner_news"} AFTER_SECTION_BANNER_NEWS - After the news banner section on the home page.
+ * @property {"before_section_testimonials"} BEFORE_SECTION_TESTIMONIALS - Before the testimonials section on the home page.
+ * @property {"after_section_testimonials"} AFTER_SECTION_TESTIMONIALS - After the testimonials section on the home page.
+ * @property {"before_section_welcome"} BEFORE_SECTION_WELCOME - Before the welcome message section on the home page.
+ * @property {"after_section_welcome"} AFTER_SECTION_WELCOME - After the welcome message section on the home page.
  * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
  * @property {"after_product_detail_related_products"} AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS - After the related products section on the product detail page.
  * @property {"before_product_detail_complementary_products"} BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - Before the complementary products section on the product detail page.
@@ -265,6 +269,10 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_BANNER_PROMOTIONAL: "after_section_banner_promotional",
 	BEFORE_SECTION_BANNER_NEWS: "before_section_banner_news",
 	AFTER_SECTION_BANNER_NEWS: "after_section_banner_news",
+	BEFORE_SECTION_TESTIMONIALS: "before_section_testimonials",
+	AFTER_SECTION_TESTIMONIALS: "after_section_testimonials",
+	BEFORE_SECTION_WELCOME: "before_section_welcome",
+	AFTER_SECTION_WELCOME: "after_section_welcome",
 	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
 		"before_product_detail_related_products",
 	AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS:
