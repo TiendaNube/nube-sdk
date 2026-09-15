@@ -9,11 +9,20 @@ import { generateInternalId } from "./generateInternalId";
  *
  * A `table` root is the wrapper that groups the header and the body of a table.
  * It supports properties such as `size`, `variant`, `layout` and custom styling.
+ *
+ * The table can also be declared from raw data through `data` and `columns`.
+ * When both are provided, `children` is ignored and the header and the body
+ * are rendered from the data.
  */
 export const tableRoot = (
 	props: NubeComponentTableRootProps,
-): NubeComponentTableRoot => ({
-	type: "tableRoot",
-	...props,
-	__internalId: generateInternalId("tableRoot", props),
-});
+): NubeComponentTableRoot => {
+	const isDataDriven = !!props.data && !!props.columns;
+	const { children, ...rest } = props;
+
+	return {
+		type: "tableRoot",
+		...(isDataDriven ? rest : props),
+		__internalId: generateInternalId("tableRoot", props),
+	};
+};

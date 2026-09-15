@@ -1298,7 +1298,9 @@ export const Form = {
  * Creates a `Table` root component.
  *
  * The `Table.Root` is the wrapper that groups the `Table.Header` and the
- * `Table.Body` of a table. It supports properties such as `size`, `variant`
+ * `Table.Body` of a table. It can also render the table directly from raw
+ * data through the `data` and `columns` properties, in which case the
+ * children are ignored. It supports properties such as `size`, `variant`
  * and `layout`.
  *
  * @param props - The properties for configuring the table root component.

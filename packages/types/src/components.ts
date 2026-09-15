@@ -2785,7 +2785,46 @@ export type NubeComponentTableRowAlign =
 export type NubeComponentTableCellJustify = "start" | "center" | "end";
 
 /**
+ * Represents the value of a cell when a table is rendered from raw data.
+ */
+export type NubeComponentTableCellValue =
+	| string
+	| number
+	| boolean
+	| null
+	| undefined;
+
+/**
+ * Represents a single row of data of a `tableRoot` component, where each
+ * key matches the `key` of a column.
+ */
+export type NubeComponentTableDataRow = Record<
+	string,
+	NubeComponentTableCellValue
+>;
+
+/**
+ * Represents a column definition of a `tableRoot` component.
+ *
+ * `key` is the property read from each row of `data` and `label` is the text
+ * rendered in the column heading.
+ */
+export type NubeComponentTableColumn = {
+	key: string;
+	label?: string;
+	justify?: NubeComponentTableCellJustify;
+	width?: Size;
+	minWidth?: Size;
+	maxWidth?: Size;
+};
+
+/**
  * Represents the properties available for a `table` root component.
+ *
+ * A table can be declared in two ways: composing `tableHeader`/`tableBody`
+ * components through `children`, or declaratively through `data` and
+ * `columns`. When both `data` and `columns` are provided, `children` is
+ * ignored and the table is rendered from the data.
  */
 export type NubeComponentTableRootProps = Prettify<
 	NubeComponentBase &
@@ -2794,6 +2833,8 @@ export type NubeComponentTableRootProps = Prettify<
 			variant?: NubeComponentTableVariant;
 			layout?: NubeComponentTableLayout;
 			style?: NubeComponentStyle;
+			data?: NubeComponentTableDataRow[];
+			columns?: NubeComponentTableColumn[];
 		}
 >;
 
