@@ -23,8 +23,9 @@ import {
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
 import { SearchInput } from "@/devtools/components/search-input";
+import { getModifiedPaths } from "@/utils/json-diff";
 import { TrashIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 const STORAGE_KEY = "nube-devtools-events-page-width";
 const SEARCH_STORAGE_KEY = "nube-devtools-filter-search";
@@ -102,7 +103,7 @@ function addToFilter(
 
 export function Events() {
 	const [selectedEvent, setSelectedEvent] = useState<NubeSDKEvent | null>(null);
-	const { events, setEvents, clearEvents } = useNubeSDKEventsContext();
+	const { events, clearEvents } = useNubeSDKEventsContext();
 	const [filteredEvents, setFilteredEvents] = useState<NubeSDKEvent[]>([]);
 	const [search, setSearch] = useState(() => {
 		return localStorage.getItem(SEARCH_STORAGE_KEY) || "";
@@ -152,10 +153,10 @@ export function Events() {
 				event: query.event?.toLowerCase(),
 			};
 			setFilteredEvents(
-				events.filter((event) => {
-					const eventName = (event.data[1] ?? "").toLowerCase();
-					const sender = (event.data[2] ?? "").toLowerCase();
-					const target = (event.data[3] ?? "*").toLowerCase();
+				events.filter(({ record }) => {
+					const eventName = (record.event ?? "").toLowerCase();
+					const sender = (record.sender ?? "").toLowerCase();
+					const target = (record.target ?? "*").toLowerCase();
 					if (expected.sender !== undefined && sender !== expected.sender)
 						return false;
 					if (expected.target !== undefined && target !== expected.target)
@@ -170,10 +171,10 @@ export function Events() {
 
 		const term = search.toLowerCase();
 		setFilteredEvents(
-			events.filter((event) => {
-				const eventName = (event.data[1] ?? "").toLowerCase();
-				const sender = (event.data[2] ?? "").toLowerCase();
-				const target = (event.data[3] ?? "").toLowerCase();
+			events.filter(({ record }) => {
+				const eventName = (record.event ?? "").toLowerCase();
+				const sender = (record.sender ?? "").toLowerCase();
+				const target = (record.target ?? "").toLowerCase();
 				return (
 					eventName.includes(term) ||
 					sender.includes(term) ||
@@ -186,32 +187,6 @@ export function Events() {
 	useEffect(() => {
 		localStorage.setItem(SEARCH_STORAGE_KEY, search);
 	}, [search]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		const listener = (port: chrome.runtime.Port) => {
-			if (port.name === "nube-devtools-events") {
-				port.onMessage.addListener((message) => {
-					if (message.payload as NubeSDKEventData) {
-						setEvents((prevEvents) => {
-							return [
-								...prevEvents,
-								{ id: crypto.randomUUID(), data: message.payload },
-							];
-						});
-
-						port.disconnect();
-					}
-				});
-			}
-		};
-
-		chrome.runtime.onConnect.addListener(listener);
-
-		return () => {
-			chrome.runtime.onConnect.removeListener(listener);
-		};
-	}, []);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -234,15 +209,15 @@ export function Events() {
 		clearEvents();
 	};
 
-	const handleReplayEvent = (event: NubeSDKEventData) => {
+	const handleReplayEvent = (record: NubeSDKEventData) => {
 		chrome.runtime.sendMessage(
 			{
 				action: "nube-devtools-replay-event",
 				payload: {
 					tabId: chrome.devtools.inspectedWindow.tabId,
-					state: event[0],
-					event: event[1],
-					appId: event[2],
+					state: record.next,
+					event: record.event,
+					appId: record.sender,
 				},
 			},
 			(response: { status: boolean }) => {
@@ -254,6 +229,17 @@ export function Events() {
 			},
 		);
 	};
+
+	// What this single event actually changed. `prev`/`next` come straight from
+	// the runtime hook, so this is the event's own diff — not a comparison
+	// between two `getState()` polls.
+	const modifiedPaths = useMemo(() => {
+		if (!selectedEvent) return new Set<string>();
+		return getModifiedPaths(
+			selectedEvent.record.prev,
+			selectedEvent.record.next,
+		);
+	}, [selectedEvent]);
 
 	const hasHiddenEvents =
 		filteredEvents.length === 0 && events.length !== filteredEvents.length;
@@ -346,7 +332,7 @@ export function Events() {
 													event={event}
 													isSelected={event.id === selectedEvent?.id}
 													onSelect={setSelectedEvent}
-													onResend={(e) => handleReplayEvent(e.data)}
+													onResend={(e) => handleReplayEvent(e.record)}
 													onAddToFilter={handleAddToFilter}
 												/>
 											))}
@@ -361,9 +347,10 @@ export function Events() {
 								{selectedEvent && (
 									<JsonViewer
 										className="p-2 text-sm overflow-x-auto"
-										data={selectedEvent.data[0]}
+										data={selectedEvent.record.next}
 										name="state"
 										collapsed={1}
+										modifiedPaths={modifiedPaths}
 									/>
 								)}
 							</div>
