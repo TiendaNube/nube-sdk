@@ -17,12 +17,12 @@
 		"type": "git",
 		"url": "git+https://github.com/TiendaNube/nube-sdk.git"
 	},
-	"author": "Tiendanube / Nuvemshop",
+	"author": "Nuvemshop / Tiendanube",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/TiendaNube/nube-sdk/issues"
 	},
-	"homepage": "https://www.tiendanube.com",
+	"homepage": "https://nuvemshop.dev/",
 	"devDependencies": {
 		"@biomejs/biome": "1.8.3",
 		"@vitest/coverage-v8": "^3.1.1",
