@@ -68,102 +68,108 @@ export const handleEvents = () => {
 		};
 	}
 
-	const getStorageProxy = (type: "localStorage" | "sessionStorage") =>
-		new Proxy(window[type], {
-			get(target, prop: string | symbol) {
-				if (prop === "length") {
-					return target.length;
-				}
-				if (prop === "getItem") {
-					return (key: string) => {
-						const value = target.getItem(key);
-						const pattern = /^app-(\d+)-(.+)$/;
-						const match = key.match(pattern);
-						if (match) {
-							window.dispatchEvent(
-								new CustomEvent("NubeSDKStorageEvents", {
-									detail: {
-										method: "getItem",
-										type,
-										key,
-										value,
-									},
-								}),
-							);
-						}
-						return value;
-					};
-				}
-				if (prop === "setItem") {
-					return (key: string, value: string) => {
-						target.setItem(key, value);
-						const pattern = /^app-(\d+)-(.+)$/;
-						const match = key.match(pattern);
-						if (match) {
-							window.dispatchEvent(
-								new CustomEvent("NubeSDKStorageEvents", {
-									detail: {
-										method: "setItem",
-										type,
-										key,
-										value,
-									},
-								}),
-							);
-						}
-					};
-				}
-				if (prop === "clear") {
-					return () => {
-						window.dispatchEvent(
-							new CustomEvent("NubeSDKStorageEvents", {
-								detail: {
-									method: "clear",
-									type,
-									key: "",
-									value: "{}",
-								},
-							}),
-						);
-						return target.clear();
-					};
-				}
-				if (prop === "removeItem") {
-					return (key: string) => {
-						const value = target.removeItem(key);
-						const pattern = /^app-(\d+)-(.+)$/;
-						const match = key.match(pattern);
-						if (match) {
-							window.dispatchEvent(
-								new CustomEvent("NubeSDKStorageEvents", {
-									detail: {
-										method: "removeItem",
-										type,
-										key,
-										value: "{}",
-									},
-								}),
-							);
-						}
-						return value;
-					};
-				}
-				return target[prop as keyof Storage];
-			},
+	// Patched on `Storage.prototype` rather than by replacing the `window`
+	// globals with a Proxy: the real Storage objects stay in place, so `key()`,
+	// `length` and index access keep working as the browser implements them.
+
+	// App ids come in two shapes: a numeric store-app id and a UUID. The UUID
+	// alternative is spelled out rather than folded into a looser character
+	// class because it contains the same `-` that separates id from key.
+	const STORAGE_KEY_PATTERN =
+		/^app-([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|\d+)-(.+)$/;
+
+	const notify = (detail: {
+		method: string;
+		type: "localStorage" | "sessionStorage";
+		key: string;
+		value: string | null;
+	}) => {
+		try {
+			window.dispatchEvent(new CustomEvent("NubeSDKStorageEvents", { detail }));
+		} catch {
+			// Never throw inside a storage call the page made.
+		}
+	};
+
+	// One prototype, two storages: the type is resolved per call. Reading the
+	// globals can throw in a sandboxed frame, and a Storage from elsewhere is
+	// passed through unreported.
+	const storageTypeOf = (
+		storage: Storage,
+	): "localStorage" | "sessionStorage" | null => {
+		try {
+			if (storage === window.localStorage) return "localStorage";
+			if (storage === window.sessionStorage) return "sessionStorage";
+		} catch {}
+		return null;
+	};
+
+	// The spec coerces the key, so `getItem(null)` is a valid read of the
+	// "null" key and store code does it — coercing here keeps `.match` alive.
+	const shouldReport = (key: unknown) => STORAGE_KEY_PATTERN.test(String(key));
+
+	const proto = window.Storage?.prototype;
+	const PATCH_FLAG = "__nubeDevtoolsStoragePatched__";
+
+	if (proto && !Object.prototype.hasOwnProperty.call(proto, PATCH_FLAG)) {
+		const original = {
+			getItem: proto.getItem,
+			setItem: proto.setItem,
+			removeItem: proto.removeItem,
+			clear: proto.clear,
+		};
+
+		// Original first, report after: a write that throws is never reported.
+		proto.getItem = function getItem(key: string) {
+			const value = original.getItem.call(this, key);
+			const type = storageTypeOf(this);
+			if (type && shouldReport(key)) {
+				notify({ method: "getItem", type, key: String(key), value });
+			}
+			return value;
+		};
+
+		proto.setItem = function setItem(key: string, value: string) {
+			original.setItem.call(this, key, value);
+			const type = storageTypeOf(this);
+			if (type && shouldReport(key)) {
+				notify({
+					method: "setItem",
+					type,
+					key: String(key),
+					value: String(value),
+				});
+			}
+		};
+
+		proto.removeItem = function removeItem(key: string) {
+			original.removeItem.call(this, key);
+			const type = storageTypeOf(this);
+			if (type && shouldReport(key)) {
+				notify({
+					method: "removeItem",
+					type,
+					key: String(key),
+					value: "{}",
+				});
+			}
+		};
+
+		proto.clear = function clear() {
+			original.clear.call(this);
+			const type = storageTypeOf(this);
+			// No key to match against, so `clear` is always reported.
+			if (type) {
+				notify({ method: "clear", type, key: "", value: "{}" });
+			}
+		};
+
+		// Holds the originals so the patch can be undone from the console.
+		Object.defineProperty(proto, PATCH_FLAG, {
+			value: original,
+			writable: false,
+			enumerable: false,
+			configurable: true,
 		});
-
-	const localStorageProxy = getStorageProxy("localStorage");
-	const sessionStorageProxy = getStorageProxy("sessionStorage");
-
-	Object.defineProperty(window, "localStorage", {
-		value: localStorageProxy,
-		writable: true,
-		configurable: true,
-	});
-
-	Object.defineProperty(window, "sessionStorage", {
-		value: sessionStorageProxy,
-		writable: true,
-		configurable: true,
-	});
+	}
 };

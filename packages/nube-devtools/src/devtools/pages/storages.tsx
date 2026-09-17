@@ -17,35 +17,18 @@ import { TableRowItem } from "../components/table-row-item";
 
 const STORAGE_KEY = "nube-devtools-storages-page-width";
 
+const safeJsonParse = (value: string) => {
+	try {
+		return JSON.parse(value);
+	} catch {
+		return value;
+	}
+};
+
 export function Storages() {
 	const [selectedEvent, setSelectedEvent] = useState<NubeSDKEvent | null>(null);
-	const { events, setEvents, cleanup } = useNubeSDKStorage();
+	const { events, cleanup } = useNubeSDKStorage();
 	const tableContainerRef = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		const listener = (port: chrome.runtime.Port) => {
-			if (port.name === "nube-devtools-storage-events") {
-				port.onMessage.addListener((message) => {
-					if (message.payload) {
-						setEvents((prevEvents) => [
-							...prevEvents,
-							{
-								id: crypto.randomUUID(),
-								data: message.payload,
-							},
-						]);
-						port.disconnect();
-					}
-				});
-			}
-		};
-
-		chrome.runtime.onConnect.addListener(listener);
-
-		return () => {
-			chrome.runtime.onConnect.removeListener(listener);
-		};
-	}, [setEvents]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -66,11 +49,12 @@ export function Storages() {
 
 	const parsedEventData = useMemo(() => {
 		if (!selectedEvent) return {};
+		const { value } = selectedEvent.data;
 		return {
 			...selectedEvent.data,
-			value: selectedEvent.data.value
-				? JSON.parse(selectedEvent.data.value)
-				: {},
+			// Apps are free to store a plain string, so a parse failure is
+			// expected: show the raw value instead of throwing out of render.
+			value: value ? safeJsonParse(value) : {},
 		};
 	}, [selectedEvent]);
 
@@ -119,7 +103,7 @@ export function Storages() {
 										</Button>
 									</div>
 								) : (
-									<Table>
+									<Table className="table-fixed">
 										<TableBody>
 											{events.map((event) => (
 												<TableRow key={event.id}>
