@@ -160,6 +160,16 @@ export type ProductImage = {
 };
 
 /**
+ * Represents a single attribute option of a product variant.
+ */
+export type ProductVariantOption = {
+	/** Name of the attribute (e.g., "Color", "Size"). */
+	name: string;
+	/** Value selected for the attribute (e.g., "Algodão", "1"). */
+	value: string;
+};
+
+/**
  * Represents a product variant with all its properties and inventory information.
  */
 export type ProductVariant = {
@@ -201,8 +211,13 @@ export type ProductVariant = {
 	stock: null | number;
 	/** Whether stock management is enabled for this variant. */
 	stock_management: boolean;
-	/** Localized attribute values for the variant. */
+	/**
+	 * Localized attribute values for the variant.
+	 * @deprecated Use `options` instead.
+	 */
 	values: LocalizedString[];
+	/** Attribute options (name/value pairs) for the variant. */
+	options: ProductVariantOption[];
 	/** Weight measurement of the product. */
 	weight: string;
 	/** Width measurement of the product. */
