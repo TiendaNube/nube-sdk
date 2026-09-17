@@ -169,6 +169,26 @@ const debounced = debounce((q: string) => search(q), 300);
 const throttled = throttle(() => onScroll(), 100);
 ```
 
-## License
+## Official Documentation
 
-MIT
+For more details about NubeSDK and how to build apps, check out our **official documentation**:
+
+🔗 **[NubeSDK Documentation](https://nuvemshop.dev/en-US/apps/nube-sdk/overview)**
+
+- [Getting started](https://nuvemshop.dev/en-US/apps/nube-sdk/getting-started)
+  - How to set up the environment and create your first app
+- [Events](https://nuvemshop.dev/en-US/apps/nube-sdk/events/overview)
+  - All the events your app can send and listen
+- [State](https://nuvemshop.dev/en-US/apps/nube-sdk/state/overview)
+  - Complete definition of the store data that can be accessed
+- [API](https://nuvemshop.dev/en-US/apps/nube-sdk/api/overview)
+  - Integration layer with checkout, analytics, and more
+
+## Support
+
+- **Questions?** Use [GitHub Issues](https://github.com/TiendaNube/nube-sdk/issues).
+- **Found a bug?** Open an issue with a reproducible example.
+
+---
+
+© [Nuvemshop / Tiendanube](https://nuvemshop.dev), 2026. All rights reserved.
