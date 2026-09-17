@@ -2,7 +2,6 @@
 
 **TypeScript definitions for NubeSDK**, ensuring safety, consistency, and better integration with IDEs and code editors.
 
-
 `@tiendanube/nube-sdk-types` provides **well-defined TypeScript types** for **NubeSDK**, simplifying the development of **third-party apps** within the **Nuvemshop** platform.
 
 Apps in NubeSDK run **inside isolated web workers**, without direct access to the DOM. This package standardizes **data structures, events, and interfaces**, ensuring **type safety and consistency** in communication with the platform.
@@ -24,7 +23,7 @@ This package provides essential type definitions for NubeSDK integration, includ
 ### Events
 
 - `NubeSDKSendableEvent` → Events that can be sent to the SDK.
-- `NubeSDKListenableEvent`  → Events that apps can listen to.
+- `NubeSDKListenableEvent` → Events that apps can listen to.
 - `NubeSDKListener` → Function signature for event handlers.
 
 ### Data Models
@@ -34,8 +33,9 @@ This package provides essential type definitions for NubeSDK integration, includ
 - `AppLocation` → Represents the user's current page within the platform.
 
 ### UI Components
+
 - `NubeComponent` → Declarative representation of a UI component.
-- `NubeComponentBox`, NubeComponentRow, NubeComponentField, etc. 
+- `NubeComponentBox`, NubeComponentRow, NubeComponentField, etc.
 
 ## Example Usage
 
@@ -49,19 +49,20 @@ function App(nube: NubeSDK) {
 }
 ```
 
-## Example Project Setup
-
-A minimal example project using `@tiendanube/nube-sdk-types` is available in the repository under:
-
-- [`examples/minimal`](https://github.com/TiendaNube/nube-sdk/tree/main/examples/minimal)
-
-This example include **pre-configured build setups**, ensuring a seamless development experience.
-
 ## Official Documentation
 
 For more details about NubeSDK and how to build apps, check out our **official documentation**:
 
-🔗 **[NubeSDK Documentation](https://dev.tiendanube.com/docs/applications/nube-sdk/overview)**
+🔗 **[NubeSDK Documentation](https://nuvemshop.dev/en-US/apps/nube-sdk/overview)**
+
+- [Getting started](https://nuvemshop.dev/en-US/apps/nube-sdk/getting-started)
+  - How to set up the environment and create your first app
+- [Events](https://nuvemshop.dev/en-US/apps/nube-sdk/events/overview)
+  - All the events your app can send and listen
+- [State](https://nuvemshop.dev/en-US/apps/nube-sdk/state/overview)
+  - Complete definition of the store data that can be accessed
+- [API](https://nuvemshop.dev/en-US/apps/nube-sdk/api/overview)
+  - Integration layer with checkout, analytics, and more
 
 ## Support
 
@@ -70,4 +71,4 @@ For more details about NubeSDK and how to build apps, check out our **official d
 
 ---
 
-© [Tiendanube / Nuvemshop](https://www.tiendanube.com), 2025. All rights reserved.
+© [Nuvemshop / Tiendanube](https://nuvemshop.dev), 2026. All rights reserved.

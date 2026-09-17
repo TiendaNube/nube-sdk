@@ -10,7 +10,7 @@
 		"format": "biome check --write ./src",
 		"lint": "biome check ./src"
 	},
-	"author": "Tiendanube / Nuvemshop",
+	"author": "Nuvemshop / Tiendanube",
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
 		"@tiendanube/nube-sdk-types": "^0.94.0",

@@ -1,9 +1,17 @@
 {
 	"name": "create-nube-app",
 	"description": "Create Nube App",
-	"author": "Tiendanube / Nuvemshop",
+	"author": "Nuvemshop / Tiendanube",
 	"license": "MIT",
 	"version": "0.28.0",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/TiendaNube/nube-sdk.git"
+	},
+	"bugs": {
+		"url": "https://github.com/TiendaNube/nube-sdk/issues"
+	},
+	"homepage": "https://nuvemshop.dev/",
 	"bin": {
 		"create-nube-app": "dist/index.js"
 	},
@@ -25,5 +33,6 @@
 		"tsup": "^8.4.0",
 		"typescript": "^5.6.2"
 	},
-	"files": ["./dist", "README.md", "CHANGELOG.md", "LICENSE", "./templates"]
+	"files": ["./dist", "README.md", "CHANGELOG.md", "LICENSE", "./templates"],
+	"keywords": ["tiendanube", "nuvemshop", "nube-sdk", "ecommerce", "sdk", "cli"]
 }
