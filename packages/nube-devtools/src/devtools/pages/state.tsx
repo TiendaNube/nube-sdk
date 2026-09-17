@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Divider } from "@/components/ui/divider";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import type { NubeSDKEventData } from "@/contexts/nube-sdk-events-context";
+import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import { UpdatedAt } from "@/devtools/components/updated-at";
 import { getModifiedPaths } from "@/utils/json-diff";
@@ -20,22 +20,12 @@ export function State() {
 	const [modifiedPaths, setModifiedPaths] = useState<Set<string>>(new Set());
 	const previousStateRef = useRef<NubeSDKState | null>(null);
 
-	useEffect(() => {
-		const listener = (port: chrome.runtime.Port) => {
-			if (port.name === "nube-devtools-events") {
-				port.onMessage.addListener((message) => {
-					fetchState();
-					setUpdatedAt(Date.now());
-				});
-			}
-		};
-
-		chrome.runtime.onConnect.addListener(listener);
-
-		return () => {
-			chrome.runtime.onConnect.removeListener(listener);
-		};
-	}, []);
+	// Re-read the state whenever new events land. Driven by the events context
+	// (which owns the single port to the page) instead of a second listener on
+	// the same port: this page mounts and unmounts as the panel navigates, and
+	// a listener here would miss the batches dispatched while it was gone.
+	const { events } = useNubeSDKEventsContext();
+	const eventCount = events.length;
 
 	const fetchState = useCallback(() => {
 		setLoading(true);
@@ -75,9 +65,10 @@ export function State() {
 		);
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: eventCount is the refresh trigger, not a value the effect reads
 	useEffect(() => {
 		fetchState();
-	}, [fetchState]);
+	}, [fetchState, eventCount]);
 
 	return (
 		<Layout>
