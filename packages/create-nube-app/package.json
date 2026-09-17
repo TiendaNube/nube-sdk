@@ -3,7 +3,7 @@
 	"description": "Create Nube App",
 	"author": "Nuvemshop / Tiendanube",
 	"license": "MIT",
-	"version": "0.28.0",
+	"version": "0.29.0",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/TiendaNube/nube-sdk.git"
