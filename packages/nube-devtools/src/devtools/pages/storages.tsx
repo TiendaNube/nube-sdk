@@ -371,7 +371,7 @@ function RecordRow({ record, isSelected, onSelect }: RecordRowProps) {
 			<button
 				type="button"
 				onClick={() => onSelect(record)}
-				className={`flex w-full items-center gap-2 px-3 py-2 text-left border-b transition-colors duration-1000 hover:bg-accent/50 ${
+				className={`flex w-full items-center gap-2 px-3 py-2 text-left border-b transition-colors duration-1000 hover:bg-accent/50 cursor-pointer ${
 					isHighlighted ? "bg-amber-500/20" : ""
 				} ${
 					isSelected
