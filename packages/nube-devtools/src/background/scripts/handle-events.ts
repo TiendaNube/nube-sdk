@@ -1,4 +1,14 @@
-export const handleEvents = () => {
+/**
+ * Injected into the inspected page's MAIN world on every load. It forwards the
+ * runtime's devtools records and instruments the storages NubeSDK apps write
+ * to.
+ *
+ * `storageKeyPatternSource` is passed in rather than declared here because
+ * `chrome.scripting.executeScript` serializes this function without its scope:
+ * receiving it through `args` keeps one definition of the key format
+ * (`src/utils/storage-key.ts`) shared with the panel.
+ */
+export const handleEvents = (storageKeyPatternSource: string) => {
 	if (window.__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__) {
 		return;
 	}
@@ -70,22 +80,31 @@ export const handleEvents = () => {
 
 	// Patched on `Storage.prototype` rather than by replacing the `window`
 	// globals with a Proxy: the real Storage objects stay in place, so `key()`,
-	// `length` and index access keep working as the browser implements them.
-
-	// App ids come in two shapes: a numeric store-app id and a UUID. The UUID
-	// alternative is spelled out rather than folded into a looser character
-	// class because it contains the same `-` that separates id from key.
-	const STORAGE_KEY_PATTERN =
-		/^app-([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|\d+)-(.+)$/;
+	// `length` and index access keep working as the browser implements them —
+	// which is what lets the panel snapshot the storages by enumeration.
+	//
+	// Only the mutating methods are wrapped. `getItem` is deliberately left
+	// alone: the panel models storage as state, not as a log of calls, so a read
+	// has nothing to contribute — and reporting one would invent a record for a
+	// key that does not exist.
+	const storageKeyPattern = new RegExp(storageKeyPatternSource);
 
 	const notify = (detail: {
-		method: string;
+		method: "setItem" | "removeItem" | "clear";
 		type: "localStorage" | "sessionStorage";
 		key: string;
 		value: string | null;
 	}) => {
 		try {
-			window.dispatchEvent(new CustomEvent("NubeSDKStorageEvents", { detail }));
+			window.dispatchEvent(
+				new CustomEvent("NubeSDKStorageEvents", {
+					// Stamped at the source: this is the only point where the real
+					// time of the write is known. Entries the panel finds already in
+					// storage carry no timestamp at all, and it says so instead of
+					// passing their discovery time off as a write time.
+					detail: { ...detail, timestamp: Date.now() },
+				}),
+			);
 		} catch {
 			// Never throw inside a storage call the page made.
 		}
@@ -104,31 +123,52 @@ export const handleEvents = () => {
 		return null;
 	};
 
-	// The spec coerces the key, so `getItem(null)` is a valid read of the
-	// "null" key and store code does it — coercing here keeps `.match` alive.
-	const shouldReport = (key: unknown) => STORAGE_KEY_PATTERN.test(String(key));
+	// The spec coerces the key, so `setItem(null, v)` is a valid write to the
+	// "null" key and store code does it — coercing here keeps `.test` alive.
+	const shouldReport = (key: unknown) => storageKeyPattern.test(String(key));
+
+	// `localStorage` is shared across every tab of the origin, so another tab
+	// can change an entry without any call landing on this document. The native
+	// `storage` event is the only report of that, and it fires exclusively on
+	// the documents that did not perform the write — no overlap with the patch
+	// below, so no double-reporting.
+	window.addEventListener("storage", (event) => {
+		const area = event.storageArea;
+		const type = area ? storageTypeOf(area) : null;
+		if (!type) return;
+
+		// A null key is how the spec reports `clear()`.
+		if (event.key === null) {
+			notify({ method: "clear", type, key: "", value: null });
+			return;
+		}
+
+		if (!shouldReport(event.key)) return;
+
+		if (event.newValue === null) {
+			notify({ method: "removeItem", type, key: event.key, value: null });
+			return;
+		}
+
+		notify({
+			method: "setItem",
+			type,
+			key: event.key,
+			value: event.newValue,
+		});
+	});
 
 	const proto = window.Storage?.prototype;
 	const PATCH_FLAG = "__nubeDevtoolsStoragePatched__";
 
 	if (proto && !Object.prototype.hasOwnProperty.call(proto, PATCH_FLAG)) {
 		const original = {
-			getItem: proto.getItem,
 			setItem: proto.setItem,
 			removeItem: proto.removeItem,
 			clear: proto.clear,
 		};
 
 		// Original first, report after: a write that throws is never reported.
-		proto.getItem = function getItem(key: string) {
-			const value = original.getItem.call(this, key);
-			const type = storageTypeOf(this);
-			if (type && shouldReport(key)) {
-				notify({ method: "getItem", type, key: String(key), value });
-			}
-			return value;
-		};
-
 		proto.setItem = function setItem(key: string, value: string) {
 			original.setItem.call(this, key, value);
 			const type = storageTypeOf(this);
@@ -150,7 +190,7 @@ export const handleEvents = () => {
 					method: "removeItem",
 					type,
 					key: String(key),
-					value: "{}",
+					value: null,
 				});
 			}
 		};
@@ -158,9 +198,11 @@ export const handleEvents = () => {
 		proto.clear = function clear() {
 			original.clear.call(this);
 			const type = storageTypeOf(this);
-			// No key to match against, so `clear` is always reported.
+			// No key to match against, and it wipes app entries along with the
+			// page's own, so `clear` is always reported: the panel drops every
+			// record it holds for that storage.
 			if (type) {
-				notify({ method: "clear", type, key: "", value: "{}" });
+				notify({ method: "clear", type, key: "", value: null });
 			}
 		};
 

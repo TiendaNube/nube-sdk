@@ -115,10 +115,69 @@ window.addEventListener("NubeSDKErrorEvents", ((event) => {
 	});
 }) as EventListener);
 
+/**
+ * Storage mutations share the event stream's shape: one long-lived port, and
+ * one message per batch.
+ *
+ * A port per mutation — what this used to do — opened a connection for every
+ * `setItem` on the page, and a page boot writes in bursts.
+ */
+let storagePort: chrome.runtime.Port | null = null;
+
+function getStoragePort(): chrome.runtime.Port | null {
+	if (storagePort) {
+		return storagePort;
+	}
+
+	try {
+		const port = chrome.runtime.connect({
+			name: "nube-devtools-storage-events",
+		});
+		port.onDisconnect.addListener(() => {
+			storagePort = null;
+		});
+		storagePort = port;
+		return port;
+	} catch {
+		return null;
+	}
+}
+
+const pendingStorageEvents: NubeSDKStorageEvent[] = [];
+let storageFlushScheduled = false;
+
+function flushStorageEvents() {
+	storageFlushScheduled = false;
+	if (pendingStorageEvents.length === 0) {
+		return;
+	}
+
+	const batch = pendingStorageEvents.splice(0, pendingStorageEvents.length);
+	const port = getStoragePort();
+	if (!port) {
+		return;
+	}
+
+	try {
+		port.postMessage({ payload: batch });
+	} catch (error) {
+		// Same trade-off as the event stream: a lost batch is recoverable —
+		// the panel can re-snapshot the storages — and `onDisconnect` clears
+		// the port on its own when the panel closed.
+		console.warn("[nube-devtools] failed to forward storage batch", error);
+	}
+}
+
 window.addEventListener("NubeSDKStorageEvents", ((event: Event) => {
 	const payload = event as CustomEvent<NubeSDKStorageEvent>;
-	const port = chrome.runtime.connect({ name: "nube-devtools-storage-events" });
-	port.postMessage({
-		payload: payload.detail,
-	});
+	if (!payload.detail) {
+		return;
+	}
+
+	pendingStorageEvents.push(payload.detail);
+	if (storageFlushScheduled) {
+		return;
+	}
+	storageFlushScheduled = true;
+	queueMicrotask(flushStorageEvents);
 }) as EventListener);

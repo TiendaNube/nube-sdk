@@ -1,3 +1,4 @@
+import { STORAGE_KEY_PATTERN_SOURCE } from "../utils/storage-key";
 import {
 	handleEvents,
 	highlightElement,
@@ -44,6 +45,9 @@ export const handleDevToolsEvents = async ({ tabId }: { tabId: number }) => {
 		target: { tabId },
 		world: "MAIN",
 		func: handleEvents,
+		// The injected function is serialized without its scope, so the key
+		// format has to be handed over explicitly.
+		args: [STORAGE_KEY_PATTERN_SOURCE],
 	});
 };
 

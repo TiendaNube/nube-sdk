@@ -1,34 +1,198 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+	type PageStorageType,
+	parseStorageKey,
+	readPageStorage,
+	removePageStorage,
+	setPageStorage,
+	unwrapStorageValue,
+} from "@/utils";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import type { ReactNode } from "react";
 
+/** One storage mutation as reported by the injected page patch. */
 export type NubeSDKStorageEvent = {
-	method: string;
-	type: "localStorage" | "sessionStorage";
+	method: "setItem" | "removeItem" | "clear";
+	type: PageStorageType;
+	/** Full key, namespace included. Empty for `clear`. */
 	key: string;
 	value: string | null;
+	timestamp?: number;
 };
 
-export type NubeSDKEvent = {
+/**
+ * One entry that currently exists in the page's storage.
+ *
+ * The panel models storage as state rather than as a log of calls: a write to
+ * a key the list already holds replaces its value instead of appending a row,
+ * which is what makes the list match what the page would show if inspected
+ * directly.
+ */
+export type NubeSDKStorageRecord = {
+	/**
+	 * `type:storageKey` — the entry's real identity. Not the key alone: the
+	 * same key can exist in both storages at once, and since the key carries
+	 * the app namespace this also keeps two apps' identically-named keys
+	 * apart.
+	 */
 	id: string;
-	data: NubeSDKStorageEvent;
+	type: PageStorageType;
+	/** The app that owns the entry, as namespaced in the key. */
+	appId: string;
+	/** The key the app passed, without the `app-<appId>-` prefix. */
+	key: string;
+	/** The full key as it exists in the page's storage. */
+	storageKey: string;
+	value: string;
+	/**
+	 * When this panel *observed* the value change, or null for an entry that
+	 * was already in storage when the panel snapshotted it.
+	 *
+	 * Null rather than the snapshot time on purpose: a `localStorage` entry
+	 * can predate the session by weeks, and showing the moment devtools found
+	 * it as "just now" would be wrong in the one direction that matters.
+	 */
+	updatedAt: number | null;
+	/**
+	 * The entry's expiration, epoch ms, or null when it was stored without a
+	 * TTL.
+	 *
+	 * Resolved here, when the value changes, rather than in render: the list
+	 * needs it on every row and re-parsing each payload on each re-render would
+	 * be work for nothing.
+	 */
+	expiresAt: number | null;
 };
 
 interface NubeSDKStorageContextType {
-	events: NubeSDKEvent[];
-	setEvents: React.Dispatch<React.SetStateAction<NubeSDKEvent[]>>;
-	cleanup: () => void;
+	records: NubeSDKStorageRecord[];
+	isLoading: boolean;
+	/** Re-reads the page's storages and rebuilds the list from them. */
+	refresh: () => Promise<void>;
+	/** Writes a new value for an existing entry. */
+	saveValue: (record: NubeSDKStorageRecord, value: string) => Promise<boolean>;
+	/** Deletes an entry from the page's storage. */
+	removeRecord: (record: NubeSDKStorageRecord) => Promise<boolean>;
 }
-
-const MAX_EVENTS = 1_000;
 
 const NubeSDKStorageContext = createContext<
 	NubeSDKStorageContextType | undefined
 >(undefined);
 
+const recordId = (type: PageStorageType, storageKey: string) =>
+	`${type}:${storageKey}`;
+
+function toRecord(
+	type: PageStorageType,
+	storageKey: string,
+	value: string,
+	updatedAt: number | null,
+): NubeSDKStorageRecord | null {
+	const parsed = parseStorageKey(storageKey);
+	// Not an app entry: the page's own keys reach the snapshot and the native
+	// `storage` event, and neither belongs in this panel.
+	if (!parsed) return null;
+
+	return {
+		id: recordId(type, storageKey),
+		type,
+		appId: parsed.appId,
+		key: parsed.key,
+		storageKey,
+		value,
+		updatedAt,
+		expiresAt: unwrapStorageValue(value).expiresAt,
+	};
+}
+
+/**
+ * How long to wait after a navigation before snapshotting.
+ *
+ * `onNavigated` fires before the apps have booted, and the new document's
+ * storages are read as they are at that instant. The delay lets the first
+ * round of app writes land, so the snapshot is not immediately stale; anything
+ * written after it still arrives through the patch.
+ */
+const SNAPSHOT_AFTER_NAVIGATION_DELAY = 300;
+
 export const NubeSDKStorageProvider = ({
 	children,
 }: { children: ReactNode }) => {
-	const [events, setEvents] = useState<NubeSDKEvent[]>([]);
+	const [records, setRecords] = useState<NubeSDKStorageRecord[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const recordsRef = useRef<NubeSDKStorageRecord[]>([]);
+	recordsRef.current = records;
+
+	const applyEvent = useCallback((event: NubeSDKStorageEvent) => {
+		setRecords((previous) => {
+			// `clear` carries no key and wipes the whole storage, so every
+			// record the panel holds for that storage goes with it.
+			if (event.method === "clear") {
+				return previous.filter((record) => record.type !== event.type);
+			}
+
+			const id = recordId(event.type, event.key);
+
+			if (event.method === "removeItem") {
+				return previous.filter((record) => record.id !== id);
+			}
+
+			const next = toRecord(
+				event.type,
+				event.key,
+				event.value ?? "",
+				event.timestamp ?? Date.now(),
+			);
+			if (!next) return previous;
+
+			const index = previous.findIndex((record) => record.id === id);
+			if (index === -1) return [...previous, next];
+
+			const updated = [...previous];
+			updated[index] = next;
+			return updated;
+		});
+	}, []);
+
+	const refresh = useCallback(async () => {
+		setIsLoading(true);
+		try {
+			const entries = await readPageStorage();
+			const previousById = new Map(
+				recordsRef.current.map((record) => [record.id, record]),
+			);
+
+			setRecords(
+				entries.flatMap((entry) => {
+					const previous = previousById.get(recordId(entry.type, entry.key));
+					// An entry whose value the panel watched change keeps its
+					// observed time. If the value moved on since, the write was
+					// not observed here — another tab, or a write that predates
+					// the panel — and its age is unknown again.
+					const updatedAt =
+						previous && previous.value === entry.value
+							? previous.updatedAt
+							: null;
+
+					const record = toRecord(
+						entry.type,
+						entry.key,
+						entry.value,
+						updatedAt,
+					);
+					return record ? [record] : [];
+				}),
+			);
+		} finally {
+			setIsLoading(false);
+		}
+	}, []);
 
 	// Collected here, in the provider, rather than in the Storages page: the
 	// page unmounts whenever the panel navigates elsewhere, and a listener
@@ -39,15 +203,13 @@ export const NubeSDKStorageProvider = ({
 			if (port.name !== "nube-devtools-storage-events") return;
 
 			port.onMessage.addListener((message) => {
-				if (!message.payload) return;
-
-				setEvents((prevEvents) =>
-					[
-						...prevEvents,
-						{ id: crypto.randomUUID(), data: message.payload },
-					].slice(-MAX_EVENTS),
-				);
-				port.disconnect();
+				// One message carries a batch: the content script coalesces
+				// bursts, which a page boot produces plenty of.
+				const events = message.payload as NubeSDKStorageEvent[];
+				if (!Array.isArray(events)) return;
+				for (const event of events) {
+					applyEvent(event);
+				}
 			});
 		};
 
@@ -56,14 +218,75 @@ export const NubeSDKStorageProvider = ({
 		return () => {
 			chrome.runtime.onConnect.removeListener(listener);
 		};
-	}, []);
+	}, [applyEvent]);
 
-	const cleanup = () => {
-		setEvents([]);
-	};
+	useEffect(() => {
+		refresh();
+
+		// A reload keeps both storages but starts a fresh document, so the
+		// list is rebuilt from the new page rather than carried across: an
+		// entry the previous document held may simply not be there any more.
+		let timer: ReturnType<typeof setTimeout> | null = null;
+		const onNavigated = () => {
+			setRecords([]);
+			if (timer) clearTimeout(timer);
+			timer = setTimeout(refresh, SNAPSHOT_AFTER_NAVIGATION_DELAY);
+		};
+
+		chrome.devtools?.network?.onNavigated?.addListener(onNavigated);
+
+		return () => {
+			if (timer) clearTimeout(timer);
+			chrome.devtools?.network?.onNavigated?.removeListener(onNavigated);
+		};
+	}, [refresh]);
+
+	const saveValue = useCallback(
+		async (record: NubeSDKStorageRecord, value: string) => {
+			const written = await setPageStorage(
+				record.type,
+				record.storageKey,
+				value,
+			);
+			if (!written) return false;
+
+			// The patched `setItem` echoes this write back as an event, but the
+			// round trip through the page is not instant: applying it here
+			// keeps the panel from showing the old value in the meantime. Both
+			// paths converge on the same record.
+			applyEvent({
+				method: "setItem",
+				type: record.type,
+				key: record.storageKey,
+				value,
+				timestamp: Date.now(),
+			});
+			return true;
+		},
+		[applyEvent],
+	);
+
+	const removeRecord = useCallback(
+		async (record: NubeSDKStorageRecord) => {
+			const removed = await removePageStorage(record.type, record.storageKey);
+			if (!removed) return false;
+
+			applyEvent({
+				method: "removeItem",
+				type: record.type,
+				key: record.storageKey,
+				value: null,
+				timestamp: Date.now(),
+			});
+			return true;
+		},
+		[applyEvent],
+	);
 
 	return (
-		<NubeSDKStorageContext.Provider value={{ events, setEvents, cleanup }}>
+		<NubeSDKStorageContext.Provider
+			value={{ records, isLoading, refresh, saveValue, removeRecord }}
+		>
 			{children}
 		</NubeSDKStorageContext.Provider>
 	);
