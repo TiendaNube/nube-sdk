@@ -115,6 +115,21 @@ import type {
 	NubeComponentSymbolProps,
 	NubeComponentTSpan,
 	NubeComponentTSpanProps,
+	NubeComponentTableBody,
+	NubeComponentTableBodyProps,
+	NubeComponentTableCell,
+	NubeComponentTableCellProps,
+	NubeComponentTableColumnHeaderCell,
+	NubeComponentTableColumnHeaderCellProps,
+	NubeComponentTableDataRow,
+	NubeComponentTableHeader,
+	NubeComponentTableHeaderProps,
+	NubeComponentTableRoot,
+	NubeComponentTableRootProps,
+	NubeComponentTableRow,
+	NubeComponentTableRowHeaderCell,
+	NubeComponentTableRowHeaderCellProps,
+	NubeComponentTableRowProps,
 	NubeComponentText,
 	NubeComponentTextProps,
 	NubeComponentTextarea,
@@ -196,6 +211,13 @@ import {
 	svgText,
 	svgTspan,
 	svgUse,
+	tableBody,
+	tableCell,
+	tableColumnHeaderCell,
+	tableHeader,
+	tableRoot,
+	tableRow,
+	tableRowHeaderCell,
 	text,
 	textarea,
 	toastDescription,
@@ -1271,4 +1293,118 @@ export const Form = {
 	Success: FormSuccess,
 	Failure: FormFailure,
 	Sending: FormSending,
+};
+
+/**
+ * Creates a `Table` root component.
+ *
+ * The `Table.Root` is the wrapper that groups the `Table.Header` and the
+ * `Table.Body` of a table. It can also render the table directly from raw
+ * data through the `data` and `columns` properties, in which case the
+ * children are ignored. It supports properties such as `size`, `variant`
+ * and `layout`.
+ *
+ * @param props - The properties for configuring the table root component.
+ * @returns A `NubeComponentTableRoot` object representing the table root component.
+ */
+function TableRoot<T extends NubeComponentTableDataRow>(
+	props: NubeComponentTableRootProps<T>,
+): NubeComponentTableRoot<T> {
+	return tableRoot(props);
+}
+
+/**
+ * Creates a `Table.Header` component.
+ *
+ * The `Table.Header` groups the rows that contain the column headings of a
+ * table. It expects `Table.Row` components as children.
+ *
+ * @param props - The properties for configuring the table header component.
+ * @returns A `NubeComponentTableHeader` object representing the table header component.
+ */
+function TableHeader(
+	props: NubeComponentTableHeaderProps,
+): NubeComponentTableHeader {
+	return tableHeader(props);
+}
+
+/**
+ * Creates a `Table.Body` component.
+ *
+ * The `Table.Body` groups the rows that contain the data of a table.
+ * It expects `Table.Row` components as children.
+ *
+ * @param props - The properties for configuring the table body component.
+ * @returns A `NubeComponentTableBody` object representing the table body component.
+ */
+function TableBody(props: NubeComponentTableBodyProps): NubeComponentTableBody {
+	return tableBody(props);
+}
+
+/**
+ * Creates a `Table.Row` component.
+ *
+ * The `Table.Row` groups the cells of a single row of a table and supports
+ * the `align` property to control the vertical alignment of its cells.
+ *
+ * @param props - The properties for configuring the table row component.
+ * @returns A `NubeComponentTableRow` object representing the table row component.
+ */
+function TableRow(props: NubeComponentTableRowProps): NubeComponentTableRow {
+	return tableRow(props);
+}
+
+/**
+ * Creates a `Table.Cell` component.
+ *
+ * The `Table.Cell` is a basic data cell of a table. It supports properties
+ * such as `justify`, `width`, `minWidth`, `maxWidth`, `colSpan` and `rowSpan`.
+ *
+ * @param props - The properties for configuring the table cell component.
+ * @returns A `NubeComponentTableCell` object representing the table cell component.
+ */
+function TableCell(props: NubeComponentTableCellProps): NubeComponentTableCell {
+	return tableCell(props);
+}
+
+/**
+ * Creates a `Table.ColumnHeaderCell` component.
+ *
+ * The `Table.ColumnHeaderCell` is the heading of a column of a table and
+ * should be placed inside a `Table.Row` of a `Table.Header`. It supports the
+ * same properties as a `Table.Cell`.
+ *
+ * @param props - The properties for configuring the table column header cell component.
+ * @returns A `NubeComponentTableColumnHeaderCell` object representing the table column header cell component.
+ */
+function TableColumnHeaderCell(
+	props: NubeComponentTableColumnHeaderCellProps,
+): NubeComponentTableColumnHeaderCell {
+	return tableColumnHeaderCell(props);
+}
+
+/**
+ * Creates a `Table.RowHeaderCell` component.
+ *
+ * The `Table.RowHeaderCell` is the heading of a row of a table and is usually
+ * the first cell of a `Table.Row` of a `Table.Body`. It supports the same
+ * properties as a `Table.Cell`.
+ *
+ * @param props - The properties for configuring the table row header cell component.
+ * @returns A `NubeComponentTableRowHeaderCell` object representing the table row header cell component.
+ */
+function TableRowHeaderCell(
+	props: NubeComponentTableRowHeaderCellProps,
+): NubeComponentTableRowHeaderCell {
+	return tableRowHeaderCell(props);
+}
+
+export const Table = {
+	Root: TableRoot,
+	Header: TableHeader,
+	Body: TableBody,
+	Row: TableRow,
+	Cell: TableCell,
+	ColumnHeaderCell: TableColumnHeaderCell,
+	RowHeaderCell: TableRowHeaderCell,
 };

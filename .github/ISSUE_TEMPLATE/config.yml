@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/TiendaNube/nube-sdk/discussions/categories/q-a
     about: "Ask questions, explore SDK alternatives, or discuss architecture constraints."
   - name: NubeSDK Documentation
-    url: https://dev.tiendanube.com/docs/applications/nube-sdk/overview
+    url: https://nuvemshop.dev/en-US/apps/nube-sdk/overview
     about: "Check the official docs before opening an issue."

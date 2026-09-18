@@ -1,11 +1,19 @@
 {
 	"name": "nube-devtools",
 	"displayName": "nube-devtools",
-	"version": "1.8.0",
-	"author": "Tiendanube / Nuvemshop",
+	"version": "1.8.1",
+	"author": "Nuvemshop / Tiendanube",
 	"description": "Chrome DevTools extension for debugging and testing NubeSDK apps with real-time insights.",
 	"type": "module",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/TiendaNube/nube-sdk.git"
+	},
+	"bugs": {
+		"url": "https://github.com/TiendaNube/nube-sdk/issues"
+	},
+	"homepage": "https://nuvemshop.dev/",
 	"keywords": [
 		"chrome-extension",
 		"create-nube-app",
