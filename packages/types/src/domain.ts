@@ -130,9 +130,6 @@ export type CartItem = {
 
 	/** List of sub-items that compose the kit (when `is_kit` is true). */
 	sub_items: CartSubItem[];
-
-	/** Categories the product belongs to. */
-	categories: Category[];
 };
 
 /**
