@@ -83,8 +83,17 @@ export type CartItem = {
 	/** Name of the product. */
 	name: string;
 
-	/** Price of the product in string format (to match API response). */
+	/**
+	 * Final price of the product in string format (to match API response).
+	 * Already includes any applied discount.
+	 */
 	price: string;
+
+	/**
+	 * Original price before any discounts, in string format (to match API response).
+	 * `null` when the product has no discount applied.
+	 */
+	compare_at_price: string;
 
 	/** Quantity of this product in the cart. */
 	quantity: number;
