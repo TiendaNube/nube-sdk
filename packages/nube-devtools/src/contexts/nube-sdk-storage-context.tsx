@@ -1,4 +1,5 @@
 import {
+	type PageStorageEntry,
 	type PageStorageType,
 	parseStorageKey,
 	readPageStorage,
@@ -72,6 +73,13 @@ export type NubeSDKStorageRecord = {
 
 interface NubeSDKStorageContextType {
 	records: NubeSDKStorageRecord[];
+	/**
+	 * True until the first read of the page's storages resolves.
+	 *
+	 * Only ever cleared, never raised again by the poll: without it an empty
+	 * list and a list that has not been read yet look identical, and the panel
+	 * would claim "nothing stored" for the moment before its first read lands.
+	 */
 	isLoading: boolean;
 	/** Re-reads the page's storages and rebuilds the list from them. */
 	refresh: () => Promise<void>;
@@ -112,6 +120,61 @@ function toRecord(
 }
 
 /**
+ * Whether two lists describe the same storage state.
+ *
+ * The poll below re-reads the page every couple of seconds, and an unchanged
+ * storage has to yield the *same array*: a fresh one would invalidate every
+ * memo downstream and re-render the list for nothing, several times a minute.
+ */
+function sameRecords(
+	a: NubeSDKStorageRecord[],
+	b: NubeSDKStorageRecord[],
+): boolean {
+	if (a.length !== b.length) return false;
+
+	// Compared position by position: both sides come from the storage's own
+	// enumeration order, which is stable for as long as the keys are.
+	for (let index = 0; index < a.length; index++) {
+		if (
+			a[index].id !== b[index].id ||
+			a[index].value !== b[index].value ||
+			a[index].updatedAt !== b[index].updatedAt
+		) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/** Rebuilds the list from a snapshot, keeping the old array when nothing moved. */
+function reconcile(
+	previous: NubeSDKStorageRecord[],
+	entries: PageStorageEntry[],
+): NubeSDKStorageRecord[] {
+	const previousById = new Map(
+		previous.map((record) => [record.id, record] as const),
+	);
+
+	const next = entries.flatMap((entry) => {
+		const previousRecord = previousById.get(recordId(entry.type, entry.key));
+		// An entry whose value the panel watched change keeps its observed
+		// time. If the value moved on since, the write was not observed here —
+		// another tab, or a write that predates the panel — and its age is
+		// unknown again.
+		const updatedAt =
+			previousRecord && previousRecord.value === entry.value
+				? previousRecord.updatedAt
+				: null;
+
+		const record = toRecord(entry.type, entry.key, entry.value, updatedAt);
+		return record ? [record] : [];
+	});
+
+	return sameRecords(previous, next) ? previous : next;
+}
+
+/**
  * How long to wait after a navigation before snapshotting.
  *
  * `onNavigated` fires before the apps have booted, and the new document's
@@ -126,10 +189,15 @@ export const NubeSDKStorageProvider = ({
 }: { children: ReactNode }) => {
 	const [records, setRecords] = useState<NubeSDKStorageRecord[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const recordsRef = useRef<NubeSDKStorageRecord[]>([]);
-	recordsRef.current = records;
+	/**
+	 * Counts mutations the panel has applied. A snapshot that was already in
+	 * flight when one landed is stale by definition, and discarding it is what
+	 * keeps the poll from briefly reverting a value the page just wrote.
+	 */
+	const mutationSeq = useRef(0);
 
 	const applyEvent = useCallback((event: NubeSDKStorageEvent) => {
+		mutationSeq.current += 1;
 		setRecords((previous) => {
 			// `clear` carries no key and wipes the whole storage, so every
 			// record the panel holds for that storage goes with it.
@@ -161,34 +229,17 @@ export const NubeSDKStorageProvider = ({
 	}, []);
 
 	const refresh = useCallback(async () => {
-		setIsLoading(true);
+		const seenMutations = mutationSeq.current;
+
 		try {
 			const entries = await readPageStorage();
-			const previousById = new Map(
-				recordsRef.current.map((record) => [record.id, record]),
-			);
 
-			setRecords(
-				entries.flatMap((entry) => {
-					const previous = previousById.get(recordId(entry.type, entry.key));
-					// An entry whose value the panel watched change keeps its
-					// observed time. If the value moved on since, the write was
-					// not observed here — another tab, or a write that predates
-					// the panel — and its age is unknown again.
-					const updatedAt =
-						previous && previous.value === entry.value
-							? previous.updatedAt
-							: null;
+			// A write landed while the page was being read. Its own event has
+			// already updated the list with a value newer than anything this
+			// read saw, so the read is dropped rather than applied.
+			if (mutationSeq.current !== seenMutations) return;
 
-					const record = toRecord(
-						entry.type,
-						entry.key,
-						entry.value,
-						updatedAt,
-					);
-					return record ? [record] : [];
-				}),
-			);
+			setRecords((previous) => reconcile(previous, entries));
 		} finally {
 			setIsLoading(false);
 		}
@@ -206,10 +257,16 @@ export const NubeSDKStorageProvider = ({
 				// One message carries a batch: the content script coalesces
 				// bursts, which a page boot produces plenty of.
 				const events = message.payload as NubeSDKStorageEvent[];
-				if (!Array.isArray(events)) return;
-				for (const event of events) {
-					applyEvent(event);
+				if (Array.isArray(events)) {
+					for (const event of events) {
+						applyEvent(event);
+					}
 				}
+
+				// One connection carries one batch, so the port has done its
+				// job. Closing it here is what bounds the number of open ports
+				// to the batches actually in flight.
+				port.disconnect();
 			});
 		};
 
@@ -229,6 +286,9 @@ export const NubeSDKStorageProvider = ({
 		let timer: ReturnType<typeof setTimeout> | null = null;
 		const onNavigated = () => {
 			setRecords([]);
+			// Back to an unread state: the new document's storages have not
+			// been looked at yet, which is not the same as being empty.
+			setIsLoading(true);
 			if (timer) clearTimeout(timer);
 			timer = setTimeout(refresh, SNAPSHOT_AFTER_NAVIGATION_DELAY);
 		};

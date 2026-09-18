@@ -116,33 +116,20 @@ window.addEventListener("NubeSDKErrorEvents", ((event) => {
 }) as EventListener);
 
 /**
- * Storage mutations share the event stream's shape: one long-lived port, and
- * one message per batch.
+ * Storage mutations are coalesced per microtask and sent over a **fresh port
+ * per batch**, which the panel closes once it has the message.
  *
- * A port per mutation — what this used to do — opened a connection for every
- * `setItem` on the page, and a page boot writes in bursts.
+ * Deliberately not one long-lived port. The panel receives these through
+ * `chrome.runtime.onConnect`, and that fires once per connection: a port
+ * opened before the panel was listening — which is the normal case, since apps
+ * write while the page boots — stays alive on the service worker side and is
+ * invisible to the panel forever, so every later batch would go nowhere it
+ * could see. A connection per batch means the panel starts receiving the
+ * moment it opens, whenever that is.
+ *
+ * Batching is what keeps the cost of that bounded: a burst of `setItem` calls
+ * is one connection, not one per call.
  */
-let storagePort: chrome.runtime.Port | null = null;
-
-function getStoragePort(): chrome.runtime.Port | null {
-	if (storagePort) {
-		return storagePort;
-	}
-
-	try {
-		const port = chrome.runtime.connect({
-			name: "nube-devtools-storage-events",
-		});
-		port.onDisconnect.addListener(() => {
-			storagePort = null;
-		});
-		storagePort = port;
-		return port;
-	} catch {
-		return null;
-	}
-}
-
 const pendingStorageEvents: NubeSDKStorageEvent[] = [];
 let storageFlushScheduled = false;
 
@@ -153,17 +140,16 @@ function flushStorageEvents() {
 	}
 
 	const batch = pendingStorageEvents.splice(0, pendingStorageEvents.length);
-	const port = getStoragePort();
-	if (!port) {
-		return;
-	}
 
 	try {
+		const port = chrome.runtime.connect({
+			name: "nube-devtools-storage-events",
+		});
 		port.postMessage({ payload: batch });
 	} catch (error) {
-		// Same trade-off as the event stream: a lost batch is recoverable —
-		// the panel can re-snapshot the storages — and `onDisconnect` clears
-		// the port on its own when the panel closed.
+		// Losing a batch is recoverable here in a way it is not for the event
+		// stream: the panel re-snapshots the storages on a timer, so the entry
+		// converges on its own.
 		console.warn("[nube-devtools] failed to forward storage batch", error);
 	}
 }
