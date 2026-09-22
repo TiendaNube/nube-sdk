@@ -119,11 +119,32 @@ export type Customization = {
 	 * It is the block as a whole — the payment discount, the instalment line,
 	 * the card logos and the link that opens the modal — so hiding it removes
 	 * the payment information from the product page without touching the
-	 * instalments shown on product grids.
+	 * instalments shown on product grids, which are
+	 * {@link Customization."installments-panel-grid"}.
 	 *
 	 * Present on every theme that supports the SDK, and on product pages only.
 	 */
 	"installments-panel": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The instalment line inside product **cards** — the "3x $33,33" shown
+	 * under the price of each item in a product grid, carousel or
+	 * related-products strip.
+	 *
+	 * The counterpart of {@link Customization."installments-panel"}, and
+	 * independent of it: hiding this one clears the instalments from every
+	 * card on the page without touching the product page's payments block,
+	 * and hiding that one leaves the cards alone. A store that wants neither
+	 * sends both.
+	 *
+	 * Every card on the page is customized, including the related products of
+	 * a product page and the cards inside a quick-shop modal. Cards that
+	 * appear later — pagination, infinite scroll — need another
+	 * {@link CustomizationCommands.set}, as
+	 * {@link CustomizationCommands.set} describes.
+	 *
+	 * Present on every theme that supports the SDK.
+	 */
+	"installments-panel-grid": AllowedCustomizationOptions<"hidden">;
 };
 
 /**
