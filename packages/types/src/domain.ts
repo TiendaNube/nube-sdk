@@ -695,6 +695,23 @@ export type AppConfig = {
 	/** Determines whether the cart is handled before update. */
 	handle_cart_before_update: boolean;
 };
+
+/**
+ * Represents another app installed on the store and present on the same page.
+ *
+ * Named `InstalledApp` rather than `App` because `NubeApp` is already the type
+ * of an app's entry point.
+ *
+ * Only the app's identity is exposed: everything else the SDK keeps per app
+ * stays on the main thread, so one app can never read another app's data.
+ */
+export type InstalledApp = {
+	/** The app's unique identifier, the same value used as the key in `apps`. */
+	id: string;
+	/** Whether the app has finished registering. Absent until the SDK registers it. */
+	registered?: boolean;
+};
+
 /**
  * Represents a shipping option available in checkout.
  */
