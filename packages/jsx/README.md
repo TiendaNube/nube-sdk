@@ -54,26 +54,34 @@ export function App(nube: NubeSDK) {
 }
 ```
 
-## Example Project Setup
+## Project Setup
 
-A minimal example project using `@tiendanube/nube-sdk-jsx` is available in the repository under:
+To scaffold a project already configured for JSX, use the CLI and pick the **Minimal with UI in JSX** template:
 
-This repository includes example projects to help you get started quickly:
+```sh
+npm create nube-app@latest
+```
 
-- [`examples/minimal-ui-jsx`](https://github.com/TiendaNube/nube-sdk/tree/main/examples/minimal-ui-jsx)
+The generated project comes with a **pre-configured setup**:
 
-This example includes a **pre-configured setup** with:
 - `tsup` for building the project.
 - `tsconfig.json` properly set up for JSX support.
 - No need to manually specify the JSX runtime.
-
-Developers can refer to this project as a starting point to quickly integrate JSX components with NubeSDK.
 
 ## Official Documentation
 
 For more details about NubeSDK and how to build apps, check out our **official documentation**:
 
-[**NubeSDK Documentation**](https://dev.tiendanube.com/docs/applications/nube-sdk/overview)
+🔗 **[NubeSDK Documentation](https://nuvemshop.dev/en-US/apps/nube-sdk/overview)**
+
+- [Getting started](https://nuvemshop.dev/en-US/apps/nube-sdk/getting-started)
+  - How to set up the environment and create your first app
+- [Events](https://nuvemshop.dev/en-US/apps/nube-sdk/events/overview)
+  - All the events your app can send and listen
+- [State](https://nuvemshop.dev/en-US/apps/nube-sdk/state/overview)
+  - Complete definition of the store data that can be accessed
+- [API](https://nuvemshop.dev/en-US/apps/nube-sdk/api/overview)
+  - Integration layer with checkout, analytics, and more
 
 ## Support
 
@@ -82,6 +90,5 @@ For more details about NubeSDK and how to build apps, check out our **official d
 
 ---
 
-© [Tiendanube / Nuvemshop](https://www.tiendanube.com), 2025. All rights reserved.
-
+© [Nuvemshop / Tiendanube](https://nuvemshop.dev), 2026. All rights reserved.
 

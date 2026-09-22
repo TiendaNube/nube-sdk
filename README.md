@@ -12,9 +12,11 @@ NubeSDK provides a suite of libraries that enable developers to create **secure,
 
 This monorepo contains several key packages that facilitate different aspects of NubeSDK development:
 
-- [`@tiendanube/nube-sdk-types`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/types) →  TypeScript definitions for NubeSDK.
+- [`@tiendanube/nube-sdk-types`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/types) → TypeScript definitions for NubeSDK.
 - [`@tiendanube/nube-sdk-ui`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/ui) → Functions for building declarative UI components.
 - [`@tiendanube/nube-sdk-jsx`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/jsx) → JSX runtime for writing UI components using JSX/TSX.
+- [`@tiendanube/nube-sdk-helper`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/helper) → Utility functions, type guards, and SDK instance management.
+- [`@tiendanube/nube-sdk-snippet`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/snippet) → Type definitions for the NubeSDK snippet environment.
 - [`create-nube-app`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app) → CLI tool for scaffolding and setting up new Nube applications.
 
 ## Installation
@@ -67,19 +69,28 @@ export const App: NubeApp = (nube) => {
 
 ## Example Projects
 
-This repository includes example projects to help you get started quickly:
+The CLI ships the templates below, which you can also browse in this repository:
 
-- **Minimal app setup:** [`examples/minimal`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app/templates/minimal)
-- **Minimal with UI:** [`examples/minimal-ui`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app/templates/minimal-ui)
-- **Minimal with UI in JSX:** [`examples/minimal-ui-jsx`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app/templates/minimal-ui-jsx)
+- **Minimal app setup:** [`templates/minimal`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app/templates/minimal)
+- **Minimal with UI:** [`templates/minimal-ui`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app/templates/minimal-ui)
+- **Minimal with UI in JSX:** [`templates/minimal-ui-jsx`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app/templates/minimal-ui-jsx)
 
-These examples include **pre-configured build setups**, ensuring a seamless development experience.
+These templates include **pre-configured build setups**, ensuring a seamless development experience.
 
 ## Official Documentation
 
 For more details about NubeSDK and how to build apps, check out our **official documentation**:
 
-**[NubeSDK Documentation](https://dev.tiendanube.com/docs/applications/nube-sdk/overview)**
+🔗 **[NubeSDK Documentation](https://nuvemshop.dev/en-US/apps/nube-sdk/overview)**
+
+- [Getting started](https://nuvemshop.dev/en-US/apps/nube-sdk/getting-started)
+  - How to set up the environment and create your first app
+- [Events](https://nuvemshop.dev/en-US/apps/nube-sdk/events/overview)
+  - All the events your app can send and listen
+- [State](https://nuvemshop.dev/en-US/apps/nube-sdk/state/overview)
+  - Complete definition of the store data that can be accessed
+- [API](https://nuvemshop.dev/en-US/apps/nube-sdk/api/overview)
+  - Integration layer with checkout, analytics, and more
 
 ## Contributing
 
@@ -112,6 +123,6 @@ We welcome bug reports and feature requests from the community! See our **[Contr
 
 ---
 
-© [Tiendanube / Nuvemshop](https://www.tiendanube.com), 2025. All rights reserved.
+© [Nuvemshop / Tiendanube](https://nuvemshop.dev), 2026. All rights reserved.
 
 

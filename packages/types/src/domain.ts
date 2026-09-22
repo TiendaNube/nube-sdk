@@ -83,8 +83,17 @@ export type CartItem = {
 	/** Name of the product. */
 	name: string;
 
-	/** Price of the product in string format (to match API response). */
+	/**
+	 * Final price of the product in string format (to match API response).
+	 * Already includes any applied discount.
+	 */
 	price: string;
+
+	/**
+	 * Original price before any discounts, in string format (to match API response).
+	 * `null` when the product has no discount applied.
+	 */
+	compare_at_price: string;
 
 	/** Quantity of this product in the cart. */
 	quantity: number;
@@ -160,6 +169,16 @@ export type ProductImage = {
 };
 
 /**
+ * Represents a single attribute option of a product variant.
+ */
+export type ProductVariantOption = {
+	/** Name of the attribute (e.g., "Color", "Size"). */
+	name: string;
+	/** Value selected for the attribute (e.g., "Algodão", "1"). */
+	value: string;
+};
+
+/**
  * Represents a product variant with all its properties and inventory information.
  */
 export type ProductVariant = {
@@ -201,8 +220,13 @@ export type ProductVariant = {
 	stock: null | number;
 	/** Whether stock management is enabled for this variant. */
 	stock_management: boolean;
-	/** Localized attribute values for the variant. */
+	/**
+	 * Localized attribute values for the variant.
+	 * @deprecated Use `options` instead.
+	 */
 	values: LocalizedString[];
+	/** Attribute options (name/value pairs) for the variant. */
+	options: ProductVariantOption[];
 	/** Weight measurement of the product. */
 	weight: string;
 	/** Width measurement of the product. */
