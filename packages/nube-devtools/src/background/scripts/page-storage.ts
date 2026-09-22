@@ -11,7 +11,6 @@ export type PageStorageType = "localStorage" | "sessionStorage";
 
 export type PageStorageEntry = {
 	type: PageStorageType;
-	/** Full key as it exists in the page's storage, namespace included. */
 	key: string;
 	value: string;
 };
@@ -28,9 +27,6 @@ export const readStorage = (
 	const entries: PageStorageEntry[] = [];
 
 	const collect = (type: PageStorageType, storage: Storage) => {
-		// Enumerated through `length`/`key()` rather than `Object.keys`: those
-		// are the spec's own enumeration and the devtools patch leaves them
-		// alone, so a snapshot cannot be skewed by the instrumentation.
 		for (let index = 0; index < storage.length; index++) {
 			const key = storage.key(index);
 			if (key === null || !pattern.test(key)) continue;

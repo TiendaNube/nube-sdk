@@ -98,10 +98,6 @@ export const handleEvents = (storageKeyPatternSource: string) => {
 		try {
 			window.dispatchEvent(
 				new CustomEvent("NubeSDKStorageEvents", {
-					// Stamped at the source: this is the only point where the real
-					// time of the write is known. Entries the panel finds already in
-					// storage carry no timestamp at all, and it says so instead of
-					// passing their discovery time off as a write time.
 					detail: { ...detail, timestamp: Date.now() },
 				}),
 			);
@@ -127,11 +123,6 @@ export const handleEvents = (storageKeyPatternSource: string) => {
 	// "null" key and store code does it — coercing here keeps `.test` alive.
 	const shouldReport = (key: unknown) => storageKeyPattern.test(String(key));
 
-	// `localStorage` is shared across every tab of the origin, so another tab
-	// can change an entry without any call landing on this document. The native
-	// `storage` event is the only report of that, and it fires exclusively on
-	// the documents that did not perform the write — no overlap with the patch
-	// below, so no double-reporting.
 	window.addEventListener("storage", (event) => {
 		const area = event.storageArea;
 		const type = area ? storageTypeOf(area) : null;
@@ -198,9 +189,6 @@ export const handleEvents = (storageKeyPatternSource: string) => {
 		proto.clear = function clear() {
 			original.clear.call(this);
 			const type = storageTypeOf(this);
-			// No key to match against, and it wipes app entries along with the
-			// page's own, so `clear` is always reported: the panel drops every
-			// record it holds for that storage.
 			if (type) {
 				notify({ method: "clear", type, key: "", value: null });
 			}

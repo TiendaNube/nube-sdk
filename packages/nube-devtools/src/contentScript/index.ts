@@ -116,19 +116,17 @@ window.addEventListener("NubeSDKErrorEvents", ((event) => {
 }) as EventListener);
 
 /**
- * Storage mutations are coalesced per microtask and sent over a **fresh port
- * per batch**, which the panel closes once it has the message.
+ * Storage mutations are grouped per microtask and each group is sent over a new
+ * port, which the panel closes after reading it.
  *
- * Deliberately not one long-lived port. The panel receives these through
- * `chrome.runtime.onConnect`, and that fires once per connection: a port
- * opened before the panel was listening — which is the normal case, since apps
- * write while the page boots — stays alive on the service worker side and is
- * invisible to the panel forever, so every later batch would go nowhere it
- * could see. A connection per batch means the panel starts receiving the
- * moment it opens, whenever that is.
+ * A single long-lived port would not work: the panel only sees ports through
+ * `chrome.runtime.onConnect`, which fires once per connection. Apps usually
+ * write while the page boots, before the panel is listening, so that first port
+ * would stay invisible to the panel and every later batch would be lost. One
+ * port per batch means the panel starts receiving as soon as it opens.
  *
- * Batching is what keeps the cost of that bounded: a burst of `setItem` calls
- * is one connection, not one per call.
+ * Batching keeps that cheap: a burst of `setItem` calls costs one connection,
+ * not one per call.
  */
 const pendingStorageEvents: NubeSDKStorageEvent[] = [];
 let storageFlushScheduled = false;
@@ -147,9 +145,6 @@ function flushStorageEvents() {
 		});
 		port.postMessage({ payload: batch });
 	} catch (error) {
-		// Losing a batch is recoverable here in a way it is not for the event
-		// stream: the panel re-snapshots the storages on a timer, so the entry
-		// converges on its own.
 		console.warn("[nube-devtools] failed to forward storage batch", error);
 	}
 }

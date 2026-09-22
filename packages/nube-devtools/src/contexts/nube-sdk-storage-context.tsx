@@ -21,7 +21,6 @@ import type { ReactNode } from "react";
 export type NubeSDKStorageEvent = {
 	method: "setItem" | "removeItem" | "clear";
 	type: PageStorageType;
-	/** Full key, namespace included. Empty for `clear`. */
 	key: string;
 	value: string | null;
 	timestamp?: number;
@@ -48,7 +47,6 @@ export type NubeSDKStorageRecord = {
 	appId: string;
 	/** The key the app passed, without the `app-<appId>-` prefix. */
 	key: string;
-	/** The full key as it exists in the page's storage. */
 	storageKey: string;
 	value: string;
 	/**
@@ -158,10 +156,6 @@ function reconcile(
 
 	const next = entries.flatMap((entry) => {
 		const previousRecord = previousById.get(recordId(entry.type, entry.key));
-		// An entry whose value the panel watched change keeps its observed
-		// time. If the value moved on since, the write was not observed here —
-		// another tab, or a write that predates the panel — and its age is
-		// unknown again.
 		const updatedAt =
 			previousRecord && previousRecord.value === entry.value
 				? previousRecord.updatedAt
