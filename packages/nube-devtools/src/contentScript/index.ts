@@ -115,10 +115,50 @@ window.addEventListener("NubeSDKErrorEvents", ((event) => {
 	});
 }) as EventListener);
 
+/**
+ * Storage mutations are grouped per microtask and each group is sent over a new
+ * port, which the panel closes after reading it.
+ *
+ * A single long-lived port would not work: the panel only sees ports through
+ * `chrome.runtime.onConnect`, which fires once per connection. Apps usually
+ * write while the page boots, before the panel is listening, so that first port
+ * would stay invisible to the panel and every later batch would be lost. One
+ * port per batch means the panel starts receiving as soon as it opens.
+ *
+ * Batching keeps that cheap: a burst of `setItem` calls costs one connection,
+ * not one per call.
+ */
+const pendingStorageEvents: NubeSDKStorageEvent[] = [];
+let storageFlushScheduled = false;
+
+function flushStorageEvents() {
+	storageFlushScheduled = false;
+	if (pendingStorageEvents.length === 0) {
+		return;
+	}
+
+	const batch = pendingStorageEvents.splice(0, pendingStorageEvents.length);
+
+	try {
+		const port = chrome.runtime.connect({
+			name: "nube-devtools-storage-events",
+		});
+		port.postMessage({ payload: batch });
+	} catch (error) {
+		console.warn("[nube-devtools] failed to forward storage batch", error);
+	}
+}
+
 window.addEventListener("NubeSDKStorageEvents", ((event: Event) => {
 	const payload = event as CustomEvent<NubeSDKStorageEvent>;
-	const port = chrome.runtime.connect({ name: "nube-devtools-storage-events" });
-	port.postMessage({
-		payload: payload.detail,
-	});
+	if (!payload.detail) {
+		return;
+	}
+
+	pendingStorageEvents.push(payload.detail);
+	if (storageFlushScheduled) {
+		return;
+	}
+	storageFlushScheduled = true;
+	queueMicrotask(flushStorageEvents);
 }) as EventListener);
