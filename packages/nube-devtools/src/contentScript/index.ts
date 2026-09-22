@@ -115,10 +115,55 @@ window.addEventListener("NubeSDKErrorEvents", ((event) => {
 	});
 }) as EventListener);
 
+/**
+ * Storage mutations are coalesced per microtask and sent over a **fresh port
+ * per batch**, which the panel closes once it has the message.
+ *
+ * Deliberately not one long-lived port. The panel receives these through
+ * `chrome.runtime.onConnect`, and that fires once per connection: a port
+ * opened before the panel was listening — which is the normal case, since apps
+ * write while the page boots — stays alive on the service worker side and is
+ * invisible to the panel forever, so every later batch would go nowhere it
+ * could see. A connection per batch means the panel starts receiving the
+ * moment it opens, whenever that is.
+ *
+ * Batching is what keeps the cost of that bounded: a burst of `setItem` calls
+ * is one connection, not one per call.
+ */
+const pendingStorageEvents: NubeSDKStorageEvent[] = [];
+let storageFlushScheduled = false;
+
+function flushStorageEvents() {
+	storageFlushScheduled = false;
+	if (pendingStorageEvents.length === 0) {
+		return;
+	}
+
+	const batch = pendingStorageEvents.splice(0, pendingStorageEvents.length);
+
+	try {
+		const port = chrome.runtime.connect({
+			name: "nube-devtools-storage-events",
+		});
+		port.postMessage({ payload: batch });
+	} catch (error) {
+		// Losing a batch is recoverable here in a way it is not for the event
+		// stream: the panel re-snapshots the storages on a timer, so the entry
+		// converges on its own.
+		console.warn("[nube-devtools] failed to forward storage batch", error);
+	}
+}
+
 window.addEventListener("NubeSDKStorageEvents", ((event: Event) => {
 	const payload = event as CustomEvent<NubeSDKStorageEvent>;
-	const port = chrome.runtime.connect({ name: "nube-devtools-storage-events" });
-	port.postMessage({
-		payload: payload.detail,
-	});
+	if (!payload.detail) {
+		return;
+	}
+
+	pendingStorageEvents.push(payload.detail);
+	if (storageFlushScheduled) {
+		return;
+	}
+	storageFlushScheduled = true;
+	queueMicrotask(flushStorageEvents);
 }) as EventListener);
