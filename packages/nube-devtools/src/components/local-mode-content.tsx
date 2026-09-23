@@ -223,6 +223,14 @@ export function LocalModeContent() {
 	}, [checkScriptAvailabilityOnce]);
 
 	const reloadCurrentTab = async () => {
+		// Inside DevTools the tab to reload is the inspected one: the active
+		// tab differs as soon as the user switches tabs while the poll runs,
+		// or when DevTools is undocked. The popup has no inspected tab.
+		const inspectedTabId = chrome.devtools?.inspectedWindow?.tabId;
+		if (typeof inspectedTabId === "number") {
+			chrome.tabs.reload(inspectedTabId);
+			return;
+		}
 		const [tab] = await chrome.tabs.query({
 			active: true,
 			currentWindow: true,
