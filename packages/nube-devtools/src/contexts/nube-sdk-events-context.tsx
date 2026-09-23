@@ -1,3 +1,4 @@
+import { isFromInspectedTab } from "@/utils/inspected-tab";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
@@ -44,6 +45,15 @@ export const NubeSDKEventsProvider = ({
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
 			if (port.name !== "nube-devtools-events") return;
+
+			// Another tab's content script: not ours to show. Disconnecting
+			// matters for the long-lived events port: while this panel
+			// holds it, that tab never reconnects, so its own panel would
+			// never see a connection.
+			if (!isFromInspectedTab(port)) {
+				port.disconnect();
+				return;
+			}
 
 			port.onMessage.addListener((message) => {
 				// One message carries a batch: the injected script coalesces the
