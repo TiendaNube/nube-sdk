@@ -5,6 +5,10 @@
  *   ReloadTargetsInspected (FIX_RELOAD_INSPECTED_TAB off)
  *     Start -> dev server comes up -> user switches to another tab (the
  *     docked panel keeps polling) -> poll sees 200 -> reloads the ACTIVE tab.
+ *   AtMostOnePollReloadPerStart (FIX_POLL_GENERATION off)
+ *     Start -> poll fetch in flight -> Stop -> Start (resets the shared
+ *     cancelled flag) -> both fetches answer 200 -> the first Start's
+ *     poll, revived, reloads the tab a second time.
  */
 import { act } from "react";
 import { type Root, createRoot } from "react-dom/client";
@@ -100,5 +104,30 @@ describe("LocalModeContent", () => {
 
 		expect(reload).toHaveBeenCalledTimes(1);
 		expect(reload).toHaveBeenCalledWith(INSPECTED_TAB);
+	});
+
+	it("does not revive the previous poll when started again while a fetch is in flight", async () => {
+		const answers: Array<(response: { status: number }) => void> = [];
+		fetchMock.mockImplementation(
+			() => new Promise((resolve) => answers.push(resolve)),
+		);
+
+		await click("Start");
+		await settle();
+		expect(answers).toHaveLength(1);
+
+		await click("Stop");
+		await settle(0);
+		await click("Start");
+		await settle();
+		expect(answers).toHaveLength(2);
+		reload.mockClear();
+
+		await act(async () => {
+			for (const answer of answers) answer({ status: 200 });
+		});
+		await settle(0);
+
+		expect(reload).toHaveBeenCalledTimes(1);
 	});
 });
