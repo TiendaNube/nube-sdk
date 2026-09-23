@@ -12,6 +12,7 @@
 import type {
 	AvailableSlotsCommands,
 	DynamicSlot,
+	NubeSDK,
 	Nullable,
 	StaticSlot,
 } from "@tiendanube/nube-sdk-types";
@@ -33,6 +34,13 @@ export type QuerySlotResult = StaticSlot | DynamicSlot | null;
  * {@link getAvailableSlotsAPI}. `null` until then.
  */
 let api: Nullable<AvailableSlotsCommands> = null;
+
+/**
+ * The instance {@link api} was resolved from. The memo is only reused while
+ * that instance is still the registered one, so re-registering (or clearing)
+ * the instance never leaves the helpers talking to a stale adapter.
+ */
+let apiOwner: Nullable<Readonly<NubeSDK>> = null;
 
 /**
  * Error describing a slot query that matched nothing on the current page.
@@ -76,7 +84,7 @@ export class SlotNotFound extends Error {
 /**
  * Gets the available-slots adapter from the registered NubeSDK instance.
  *
- * The adapter is resolved once and memoized for the lifetime of the app, so
+ * The adapter is resolved once per registered instance and memoized, so
  * repeated queries reuse the same command channel.
  *
  * @returns The available-slots adapter (`nube.api.getAvailableSlots()`)
@@ -91,8 +99,10 @@ export class SlotNotFound extends Error {
  * @since 0.3.0
  */
 export function getAvailableSlotsAPI() {
-	if (api === null) {
-		api = getNubeInstance().api.getAvailableSlots();
+	const nube = getNubeInstance();
+	if (api === null || apiOwner !== nube) {
+		api = nube.api.getAvailableSlots();
+		apiOwner = nube;
 	}
 	return api;
 }

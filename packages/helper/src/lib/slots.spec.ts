@@ -102,6 +102,37 @@ describe("slots", () => {
 			expect(second).toBe(commands);
 			expect(getAvailableSlotsSpy).toHaveBeenCalledTimes(1);
 		});
+
+		// specs/tla/HelperInstanceCache.tla, invariant SlotsFollowInstance
+		it("resolves the adapter again when another instance is registered", async () => {
+			const { slots, commands } = await setup();
+			const instance = await import("./instance.js");
+			expect(slots.getAvailableSlotsAPI()).toBe(commands);
+
+			const otherCommands = {
+				getAll: vi.fn(),
+				getStatic: vi.fn(),
+				getDynamic: vi.fn(),
+			} as unknown as AvailableSlotsCommands;
+			instance.clearNubeInstance();
+			instance.setNubeInstance({
+				...createMockSDK(),
+				api: { getAvailableSlots: vi.fn(() => otherCommands) },
+			} as unknown as NubeSDK);
+
+			expect(slots.getAvailableSlotsAPI()).toBe(otherCommands);
+		});
+
+		// specs/tla/HelperInstanceCache.tla, invariant SlotsFollowInstance
+		it("throws after clearNubeInstance even if the adapter was memoized", async () => {
+			const { slots } = await setup();
+			const instance = await import("./instance.js");
+			slots.getAvailableSlotsAPI();
+
+			instance.clearNubeInstance();
+
+			expect(() => slots.getAvailableSlotsAPI()).toThrow(/setNubeInstance/);
+		});
 	});
 
 	describe("bucket getters", () => {
