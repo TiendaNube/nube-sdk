@@ -191,4 +191,15 @@ describe("panel ports from other tabs", () => {
 
 		expect(port.disconnect).toHaveBeenCalled();
 	});
+
+	// specs/tla/DevtoolsPorts.tla, NoIdleErrorPorts: the content script opens
+	// one port per WebWorkerError and never closes it, so the panel must, as
+	// the storage listener already does.
+	it("closes an error port once its message is read", async () => {
+		const port = connect("nube-devtools-error-events", INSPECTED_TAB);
+		await act(async () => port.post(errorBatch));
+
+		expect(snapshot.errors).toBe(1);
+		expect(port.disconnect).toHaveBeenCalled();
+	});
 });

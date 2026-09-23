@@ -44,6 +44,10 @@ export const NubeSDKErrorsProvider = ({
 							setAppsErrors(updatedErrors);
 						}
 					}
+
+					// The content script opens one port per error and never
+					// closes it, so the panel does, as it does for storage.
+					port.disconnect();
 				});
 			}
 		};
