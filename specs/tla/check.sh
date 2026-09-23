@@ -75,10 +75,12 @@ expect_violation HelperInstanceCache FIX_SLOTS_OWNER SlotsFollowInstance
 # Documented behavior (clearBrowserCache is the reset), reported only:
 expect_violation HelperInstanceCache FIX_SLOTS_OWNER BrowserFollowsInstance
 
-# Suspected, host-dependent: no fix in this repository.
 expect_pass HelperEvents
-expect_env_violation HelperEvents HOST_READY_AFTER_START StepHandlerOnce
+expect_violation HelperEvents FIX_CHECKOUT_STEP_ONCE StepHandlerOnce
+# Suspected, not fixed: only if the host can also start an app before
+# checkout:ready and then fire it live.
 expect_env_violation HelperEvents HOST_READY_AFTER_START StepHandlerOnlyWhenReady
+# Would break only with set-like on/off; the host appends and removes one copy.
 expect_env_violation HelperEvents HOST_SET_SEMANTICS HandlesIndependent
 # Holds under no host assumption: a promised slot resolves after a later
 # synchronous render/clear of the same slot and overwrites it.

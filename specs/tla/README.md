@@ -14,7 +14,7 @@ the fix.
 | `DevtoolsRequests` | panel -> service worker -> `executeScript` -> `sendResponse` (`src/background/*`, `src/devtools/pages/components.tsx`) | `EveryRequestAnswered`, `NoCallbackThrows` | `FIX_GUARD_COMPONENT_RESULTS` |
 | `LocalModeReload` | Local mode start/stop/poll/reload (`src/components/local-mode-content.tsx`) | `ReloadTargetsInspected`, `SingleLivePollLoop`, `AtMostOnePollReloadPerStart` | `FIX_RELOAD_INSPECTED_TAB`, `FIX_POLL_GENERATION` |
 | `HelperInstanceCache` | `helper` instance registration and the caches derived from it (`src/lib/{instance,slots,browser}.ts`) | `SlotsFollowInstance` (and `BrowserFollowsInstance`, reported only: `clearBrowserCache` is the documented reset) | `FIX_SLOTS_OWNER` |
-| `HelperEvents` | `helper` `onCheckoutStep`, `onEvent`, `ui.render(Promise<slot>)` | `StepHandlerOnce`, `StepHandlerOnlyWhenReady`, `HandlesIndependent`, `LastRenderWins` | none: host-dependent, reported as suspected |
+| `HelperEvents` | `helper` `onCheckoutStep` against the host's sticky `checkout:ready`, `onEvent`, `ui.render(Promise<slot>)` | `StepHandlerOnce` (and `StepHandlerOnlyWhenReady`, `HandlesIndependent`, `LastRenderWins`, reported as suspected under other host assumptions) | `FIX_CHECKOUT_STEP_ONCE` |
 
 Assumptions about the environment (Chrome's port semantics, what the host
 runtime does) are spelled out in each spec's header. Where the documentation
