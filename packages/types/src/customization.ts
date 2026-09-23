@@ -37,7 +37,37 @@ export type CustomizationOptions = {
 	 * making the label vanish into its own background.
 	 */
 	fontColor: string;
+	/**
+	 * Whether the element is hidden, and on which viewports:
+	 *
+	 * - `"always"` — hidden on every viewport;
+	 * - `"mobile"` — hidden below 768px only;
+	 * - `"desktop"` — hidden from 768px up only;
+	 * - `"never"` — not hidden, i.e. shown as the store renders it. Pass this
+	 *   to undo a previous value without restoring the target's other options,
+	 *   the way `""` undoes {@link CustomizationOptions.fontColor}.
+	 *
+	 * Applied through a stylesheet the platform owns rather than an inline
+	 * style, which is what makes it outlast the store's own code: a theme that
+	 * shows or hides the same element — as it does when a shopper selects a
+	 * variant — does not undo it, so this option usually does not need the
+	 * re-applying that {@link CustomizationCommands.set} describes. `"never"`
+	 * hands the element back to the theme instead of pinning it visible.
+	 *
+	 * 768px is the breakpoint the platform's themes are built on. A theme with
+	 * different breakpoints of its own still hides at this one.
+	 *
+	 * Refused when the value is not one of the four above.
+	 */
+	hidden: CustomizationHiddenMode;
 };
+
+/**
+ * The values {@link CustomizationOptions.hidden} accepts, named so an app can
+ * type a mode it computes — from its own settings, say — without repeating the
+ * union.
+ */
+export type CustomizationHiddenMode = "always" | "mobile" | "desktop" | "never";
 
 /**
  * Requires at least one of `T`'s members while leaving the others optional.
@@ -81,6 +111,40 @@ export type Customization = {
 	 * label differently.
 	 */
 	"add-to-cart-button": AllowedCustomizationOptions<"text" | "fontColor">;
+	/**
+	 * The storefront's installments panel: the payments block of the product
+	 * page, which shows the instalment the product can be paid in and opens the
+	 * store's payment-methods modal when tapped.
+	 *
+	 * It is the block as a whole — the payment discount, the instalment line,
+	 * the card logos and the link that opens the modal — so hiding it removes
+	 * the payment information from the product page without touching the
+	 * instalments shown on product grids, which are
+	 * {@link Customization."product-grid-installments"}.
+	 *
+	 * Present on every theme that supports the SDK, and on product pages only.
+	 */
+	"product-detail-installments": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The instalment line inside product **cards** — the "3x $33,33" shown
+	 * under the price of each item in a product grid, carousel or
+	 * related-products strip.
+	 *
+	 * The counterpart of {@link Customization."product-detail-installments"}, and
+	 * independent of it: hiding this one clears the instalments from every
+	 * card on the page without touching the product page's payments block,
+	 * and hiding that one leaves the cards alone. A store that wants neither
+	 * sends both.
+	 *
+	 * Every card on the page is customized, including the related products of
+	 * a product page and the cards inside a quick-shop modal. Cards that
+	 * appear later — pagination, infinite scroll — need another
+	 * {@link CustomizationCommands.set}, as
+	 * {@link CustomizationCommands.set} describes.
+	 *
+	 * Present on every theme that supports the SDK.
+	 */
+	"product-grid-installments": AllowedCustomizationOptions<"hidden">;
 };
 
 /**
