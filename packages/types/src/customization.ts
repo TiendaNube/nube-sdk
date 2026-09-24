@@ -1,3 +1,5 @@
+import type { ProductDetails } from "./domain";
+
 /**
  * Every customization option an app can ask for, declared once.
  *
@@ -81,6 +83,38 @@ export type Customization = {
 	 * label differently.
 	 */
 	"add-to-cart-button": AllowedCustomizationOptions<"text" | "fontColor">;
+	/**
+	 * The price on the product page — the main one, next to the product name.
+	 * Prices in product grids, carousels and quick shop are not affected.
+	 *
+	 * `text` replaces the price as shown, e.g. to express it per square metre.
+	 * Only what the shopper reads changes: the amount the product is sold and
+	 * charged at stays the same, and so do the discounts and installments the
+	 * store computes from it.
+	 *
+	 * The store rewrites the price when the shopper selects a variant, so an
+	 * app re-applies it on `product:variant_selected`.
+	 */
+	"product-detail-price": AllowedCustomizationOptions<"text">;
+	/**
+	 * The price on every product card in a grid: category, search and home
+	 * listings, and the related products on a product page. The product
+	 * page's own price is `product-detail-price`.
+	 *
+	 * Every card shows a different price, so this target is usually set with
+	 * a resolver, which gets each card's product:
+	 *
+	 * ```ts
+	 * customization.set("product-grid-item-price", (product) => {
+	 *   const price = product.variants?.[0]?.price;
+	 *   if (!price) return; // leave this card as it is
+	 *   return { text: `${perSquareMetre(price)} / m²` };
+	 * });
+	 * ```
+	 *
+	 * As with `product-detail-price`, only what the shopper reads changes.
+	 */
+	"product-grid-item-price": AllowedCustomizationOptions<"text">;
 };
 
 /**
@@ -91,10 +125,71 @@ export type Customization = {
 export type CustomizationTarget = keyof Customization;
 
 /**
- * A set of customizations addressed by target — the argument of a bulk
- * {@link CustomizationCommands.set}. At least one target is required.
+ * A product as the store's state carries it, which is what a
+ * {@link CustomizationResolver} receives.
+ *
+ * Only `id` and `name` are guaranteed. How much of the rest is there depends
+ * on the store's `state_level`: `"minimal"` carries nothing else, `"light"`
+ * carries part of it (variants and their prices included), and `"full"` all
+ * of it — so check a field before using it.
  */
-export type CustomizationInput = AtLeastOne<Customization>;
+export type CustomizationProduct = Pick<ProductDetails, "id" | "name"> &
+	Partial<Omit<ProductDetails, "id" | "name">>;
+
+/**
+ * What a {@link CustomizationResolver} receives for each element, per target.
+ * It comes from the state, never from the page. *
+ * A target listed here is resolved per element. A target that is not has no
+ * per-element context: its resolver runs once, with no argument (see
+ * {@link CustomizationContextOf}).
+ */
+export type CustomizationContext = {
+	/** Each card's product. */
+	"product-grid-item-price": CustomizationProduct;
+};
+
+/**
+ * What a resolver of target `K` receives: the target's entry in
+ * {@link CustomizationContext}, or nothing for a target that has none — its
+ * resolver then runs once, and what it returns applies to every matching
+ * element, as options would.
+ */
+export type CustomizationContextOf<K extends CustomizationTarget> =
+	K extends keyof CustomizationContext ? CustomizationContext[K] : undefined;
+
+/**
+ * Computes a target's options for each element on the page, from that
+ * element's context — so every product card can get its own text, for
+ * instance.
+ *
+ * Return the options for that element, or nothing to leave it as the store
+ * renders it. A resolver that throws only affects its own element, and the
+ * reason is reported in the result.
+ *
+ * Synchronous only: an app that needs data to decide fetches it first and
+ * calls `set` afterwards. The resolver runs inside the app's worker, and only
+ * the options it returns reach the page.
+ */
+export type CustomizationResolver<K extends CustomizationTarget> = (
+	context: CustomizationContextOf<K>,
+) => Customization[K] | undefined;
+
+/**
+ * Options for a target: the same options for every matching element, or a
+ * {@link CustomizationResolver} computing them per element.
+ */
+export type CustomizationValue<K extends CustomizationTarget> =
+	| Customization[K]
+	| CustomizationResolver<K>;
+
+/**
+ * A set of customizations addressed by target — the argument of a bulk
+ * {@link CustomizationCommands.set}. Each target takes options or a
+ * resolver, and at least one target is required.
+ */
+export type CustomizationInput = AtLeastOne<{
+	[K in CustomizationTarget]: CustomizationValue<K>;
+}>;
 
 /**
  * Why a {@link CustomizationCommands.set} or
@@ -222,19 +317,26 @@ export type CustomizationCommands = {
 	 * the first time it is customized, so `reset` still restores what the store
 	 * itself renders.
 	 *
+	 * Pass a {@link CustomizationResolver} instead of options to compute them
+	 * per element. With a resolver, the call succeeds when at least one
+	 * element was customized, or when the resolver returned nothing for every
+	 * element — like a `reset` with nothing to restore.
+	 *
 	 * @param target — The element to customize.
 	 * @param options — The options for that target, narrowed to the ones it
-	 *   accepts; at least one is required.
+	 *   accepts (at least one is required), or a resolver returning them.
 	 */
 	set<K extends CustomizationTarget>(
 		target: K,
-		options: Customization[K],
+		options: CustomizationValue<K>,
 	): Promise<CustomizationResult>;
 	/**
 	 * Customizes several targets at once, with the same semantics as the
-	 * single-target form.
+	 * single-target form. Every resolver is computed before the call reaches
+	 * the page, so the whole set is delivered at once.
 	 *
-	 * @param input — Options per target; at least one target is required.
+	 * @param input — Options or a resolver per target; at least one target is
+	 *   required.
 	 */
 	set(input: CustomizationInput): Promise<CustomizationResult>;
 	/**
