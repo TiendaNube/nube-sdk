@@ -73,6 +73,12 @@ export const NubeSDKCommandsProvider = ({
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
 			if (port.name !== "nube-devtools-command-events") return;
+			// Every open panel hears every tab's content script. The port is
+			// left alone rather than disconnected, since it belongs to the panel
+			// inspecting that tab.
+			if (port.sender?.tab?.id !== chrome.devtools.inspectedWindow.tabId) {
+				return;
+			}
 
 			port.onMessage.addListener((message) => {
 				const batch = message.payload as NubeSDKCommandRecord[];
