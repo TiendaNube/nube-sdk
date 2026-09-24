@@ -1,4 +1,12 @@
 export { handleEvents } from "./handle-events";
+export {
+	clearCommands,
+	handleCommands,
+	type NubeSDKCommandErrorCode,
+	type NubeSDKCommandRecord,
+	type NubeSDKCommandStatus,
+	readCommands,
+} from "./page-commands";
 export { highlightElement } from "./highlight-element";
 export {
 	getStorageItem,
