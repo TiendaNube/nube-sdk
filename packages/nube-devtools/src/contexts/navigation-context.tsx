@@ -10,6 +10,7 @@ export const PAGES = {
 	COMPONENTS: "components",
 	SVG_CONVERT: "svg-convert",
 	STATE: "state",
+	API_CALLS: "api-calls",
 } as const;
 
 export type Page = (typeof PAGES)[keyof typeof PAGES];

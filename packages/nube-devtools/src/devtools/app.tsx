@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
+import { NubeSDKCommandsProvider } from "@/contexts/nube-sdk-commands-context";
 import { NubeSDKErrorsProvider } from "@/contexts/nube-sdk-errors-context";
 import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
 import { NubeSDKStorageProvider } from "@/contexts/nube-sdk-storage-context";
@@ -10,6 +11,7 @@ import {
 } from "../contexts/navigation-context";
 import { useNubeStatus } from "../hooks/use-nube-status";
 
+import { ApiCalls } from "./pages/api-calls";
 import { Apps } from "./pages/apps";
 import { Components } from "./pages/components";
 import { Errors } from "./pages/errors";
@@ -27,6 +29,7 @@ const PAGE_COMPONENTS = {
 	[PAGES.ERRORS]: Errors,
 	[PAGES.EVENTS]: Events,
 	[PAGES.STORAGES]: Storages,
+	[PAGES.API_CALLS]: ApiCalls,
 	[PAGES.SVG_CONVERT]: SvgConverter,
 	[PAGES.STATE]: State,
 } as const;
@@ -49,10 +52,12 @@ export const App = () => {
 			<NubeSDKErrorsProvider>
 				<NubeSDKEventsProvider>
 					<NubeSDKStorageProvider>
-						<NubeSDKAppsProvider>
-							<AppContent />
-							<Toaster />
-						</NubeSDKAppsProvider>
+						<NubeSDKCommandsProvider>
+							<NubeSDKAppsProvider>
+								<AppContent />
+								<Toaster />
+							</NubeSDKAppsProvider>
+						</NubeSDKCommandsProvider>
 					</NubeSDKStorageProvider>
 				</NubeSDKEventsProvider>
 			</NubeSDKErrorsProvider>

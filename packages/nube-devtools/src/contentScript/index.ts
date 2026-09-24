@@ -1,4 +1,5 @@
 import type { NubeSDKStorageEvent } from "@/contexts/nube-sdk-storage-context";
+import type { NubeSDKCommandRecord } from "@/utils/page-commands";
 
 const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
 	"nube-devtools-application-server";
@@ -115,10 +116,93 @@ window.addEventListener("NubeSDKErrorEvents", ((event) => {
 	});
 }) as EventListener);
 
+/**
+ * Storage mutations are grouped per microtask and each group is sent over a new
+ * port, which the panel closes after reading it.
+ *
+ * A single long-lived port would not work: the panel only sees ports through
+ * `chrome.runtime.onConnect`, which fires once per connection. Apps usually
+ * write while the page boots, before the panel is listening, so that first port
+ * would stay invisible to the panel and every later batch would be lost. One
+ * port per batch means the panel starts receiving as soon as it opens.
+ *
+ * Batching keeps that cheap: a burst of `setItem` calls costs one connection,
+ * not one per call.
+ */
+const pendingStorageEvents: NubeSDKStorageEvent[] = [];
+let storageFlushScheduled = false;
+
+function flushStorageEvents() {
+	storageFlushScheduled = false;
+	if (pendingStorageEvents.length === 0) {
+		return;
+	}
+
+	const batch = pendingStorageEvents.splice(0, pendingStorageEvents.length);
+
+	try {
+		const port = chrome.runtime.connect({
+			name: "nube-devtools-storage-events",
+		});
+		port.postMessage({ payload: batch });
+	} catch (error) {
+		console.warn("[nube-devtools] failed to forward storage batch", error);
+	}
+}
+
 window.addEventListener("NubeSDKStorageEvents", ((event: Event) => {
 	const payload = event as CustomEvent<NubeSDKStorageEvent>;
-	const port = chrome.runtime.connect({ name: "nube-devtools-storage-events" });
-	port.postMessage({
-		payload: payload.detail,
-	});
+	if (!payload.detail) {
+		return;
+	}
+
+	pendingStorageEvents.push(payload.detail);
+	if (storageFlushScheduled) {
+		return;
+	}
+	storageFlushScheduled = true;
+	queueMicrotask(flushStorageEvents);
+}) as EventListener);
+
+/**
+ * Command bridge calls, forwarded the same way as storage mutations — one port
+ * per microtask batch, for the same reason: the first calls happen while the
+ * page boots, before the panel is listening.
+ *
+ * A call is reported twice (started, settled) under one id, and the panel
+ * upserts, so a batch carrying both is fine.
+ */
+const pendingCommandRecords: NubeSDKCommandRecord[] = [];
+let commandFlushScheduled = false;
+
+function flushCommandRecords() {
+	commandFlushScheduled = false;
+	if (pendingCommandRecords.length === 0) {
+		return;
+	}
+
+	const batch = pendingCommandRecords.splice(0, pendingCommandRecords.length);
+
+	try {
+		const port = chrome.runtime.connect({
+			name: "nube-devtools-command-events",
+		});
+		port.postMessage({ payload: batch });
+	} catch (error) {
+		console.warn("[nube-devtools] failed to forward command batch", error);
+	}
+}
+
+window.addEventListener("NubeSDKCommandEvents", ((event: Event) => {
+	const payload = event as CustomEvent<NubeSDKCommandRecord>;
+	if (!payload.detail) {
+		return;
+	}
+
+	pendingCommandRecords.push(payload.detail);
+	if (commandFlushScheduled) {
+		return;
+	}
+	commandFlushScheduled = true;
+	queueMicrotask(flushCommandRecords);
 }) as EventListener);

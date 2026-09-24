@@ -1,4 +1,5 @@
 import {
+	ArrowRightLeft,
 	Braces,
 	ChartNoAxesGantt,
 	CircleAlert,
@@ -70,6 +71,11 @@ const menu: {
 		title: "Storage",
 		page: PAGES.STORAGES,
 		icon: Database,
+	},
+	{
+		title: "API Calls",
+		page: PAGES.API_CALLS,
+		icon: ArrowRightLeft,
 	},
 	{
 		title: "SVG Converter",
