@@ -93,7 +93,12 @@ describe("page-match", () => {
 			const handlers = { account: accountHandler } as const;
 			const state = makeState({
 				type: "account.login",
-				data: { customerId: null, loggedIn: false },
+				data: {
+					customerId: null,
+					loggedIn: false,
+					orderId: null,
+					orderNumber: null,
+				},
 			});
 
 			pageMatch(state, handlers);

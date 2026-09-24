@@ -199,6 +199,13 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_register_form_fields"} AFTER_REGISTER_FORM_FIELDS - After the fields of the customer registration form on the storefront register page.
  * @property {"before_register_form_submit"} BEFORE_REGISTER_FORM_SUBMIT - Before the submit button of the customer registration form on the storefront register page.
  * @property {"after_register_form_submit"} AFTER_REGISTER_FORM_SUBMIT - After the submit button of the customer registration form on the storefront register page.
+ * @property {"before_account_order_item"} BEFORE_ACCOUNT_ORDER_ITEM - Before each order card in the account order list. Repeatable; `pick` is the order id.
+ * @property {"after_account_order_item"} AFTER_ACCOUNT_ORDER_ITEM - After each order card in the account order list. Repeatable; `pick` is the order id.
+ * @property {"before_account_order_detail"} BEFORE_ACCOUNT_ORDER_DETAIL - Before the order detail block on the account order detail page.
+ * @property {"before_account_order_header"} BEFORE_ACCOUNT_ORDER_HEADER - Before the order title/number on the account order detail page.
+ * @property {"after_account_order_header"} AFTER_ACCOUNT_ORDER_HEADER - After the order title/number on the account order detail page.
+ * @property {"before_account_order_items"} BEFORE_ACCOUNT_ORDER_ITEMS - Before the item list on the account order detail page.
+ * @property {"after_account_order_items"} AFTER_ACCOUNT_ORDER_ITEMS - After the item list on the account order detail page.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -308,6 +315,13 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_REGISTER_FORM_FIELDS: "after_register_form_fields",
 	BEFORE_REGISTER_FORM_SUBMIT: "before_register_form_submit",
 	AFTER_REGISTER_FORM_SUBMIT: "after_register_form_submit",
+	BEFORE_ACCOUNT_ORDER_ITEM: "before_account_order_item",
+	AFTER_ACCOUNT_ORDER_ITEM: "after_account_order_item",
+	BEFORE_ACCOUNT_ORDER_DETAIL: "before_account_order_detail",
+	BEFORE_ACCOUNT_ORDER_HEADER: "before_account_order_header",
+	AFTER_ACCOUNT_ORDER_HEADER: "after_account_order_header",
+	BEFORE_ACCOUNT_ORDER_ITEMS: "before_account_order_items",
+	AFTER_ACCOUNT_ORDER_ITEMS: "after_account_order_items",
 } as const;
 
 /**
