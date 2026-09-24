@@ -1,7 +1,7 @@
 {
 	"name": "nube-devtools",
 	"displayName": "nube-devtools",
-	"version": "1.9.0",
+	"version": "1.10.0",
 	"author": "Nuvemshop / Tiendanube",
 	"description": "Chrome DevTools extension for debugging and testing NubeSDK apps with real-time insights.",
 	"type": "module",
