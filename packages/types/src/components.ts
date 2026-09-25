@@ -1143,6 +1143,15 @@ export type NubeComponentToastVariant =
 	| "info";
 
 /**
+ * Handler fired once when a `toast` finishes closing, either because its
+ * `duration` ran out or because the buyer clicked the close button.
+ */
+export type NubeComponentToastCloseHandler = NubeComponentEventHandler<
+	"close",
+	undefined
+>;
+
+/**
  * Represents the properties available for a `toast` root component.
  */
 export type NubeComponentToastRootProps = Prettify<
@@ -1151,6 +1160,12 @@ export type NubeComponentToastRootProps = Prettify<
 			variant?: NubeComponentToastVariant;
 			duration?: number;
 			style?: NubeComponentStyle;
+			/**
+			 * Called once when the toast finishes closing (after its exit
+			 * transition), whether its `duration` ran out or the buyer clicked
+			 * the close button. Useful to clear the slot or update app state.
+			 */
+			onClose?: NubeComponentToastCloseHandler;
 		}
 >;
 
