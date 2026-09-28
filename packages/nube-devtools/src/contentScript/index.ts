@@ -1,5 +1,6 @@
 import type { NubeSDKStorageEvent } from "@/contexts/nube-sdk-storage-context";
 import type { NubeSDKCommandRecord } from "@/utils/page-commands";
+import type { NubeSDKPerformanceRecord } from "@/utils/page-performance";
 
 const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
 	"nube-devtools-application-server";
@@ -205,4 +206,47 @@ window.addEventListener("NubeSDKCommandEvents", ((event: Event) => {
 	}
 	commandFlushScheduled = true;
 	queueMicrotask(flushCommandRecords);
+}) as EventListener);
+
+/**
+ * Performance measurements, forwarded the same way as command calls — one
+ * port per microtask batch, since most of them are taken while the page
+ * boots, before the panel is listening.
+ */
+const pendingPerformanceRecords: NubeSDKPerformanceRecord[] = [];
+let performanceFlushScheduled = false;
+
+function flushPerformanceRecords() {
+	performanceFlushScheduled = false;
+	if (pendingPerformanceRecords.length === 0) {
+		return;
+	}
+
+	const batch = pendingPerformanceRecords.splice(
+		0,
+		pendingPerformanceRecords.length,
+	);
+
+	try {
+		const port = chrome.runtime.connect({
+			name: "nube-devtools-performance-events",
+		});
+		port.postMessage({ payload: batch });
+	} catch (error) {
+		console.warn("[nube-devtools] failed to forward performance batch", error);
+	}
+}
+
+window.addEventListener("NubeSDKPerformanceEvents", ((event: Event) => {
+	const payload = event as CustomEvent<NubeSDKPerformanceRecord>;
+	if (!payload.detail) {
+		return;
+	}
+
+	pendingPerformanceRecords.push(payload.detail);
+	if (performanceFlushScheduled) {
+		return;
+	}
+	performanceFlushScheduled = true;
+	queueMicrotask(flushPerformanceRecords);
 }) as EventListener);
