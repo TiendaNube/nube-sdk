@@ -1,5 +1,9 @@
 import type { JsonObject, NubeComponent } from "./components";
-import type { AsyncNubeStorage, NubeScrollToEventData } from "./storage";
+import type {
+	AsyncNubeStorage,
+	NubeNavigateRoute,
+	NubeScrollToEventData,
+} from "./storage";
 
 /**
  * Represents the main interface for browser APIs that are usually not available in web workers.
@@ -16,10 +20,11 @@ export type NubeBrowserAPIs = {
 	asyncSessionStorage: AsyncNubeStorage;
 
 	/**
-	 * Navigates to the given route.
-	 * @param route The route to navigate to. Must start with '/'.
+	 * Navigates to the given route or alias.
+	 * @param route A route starting with '/', or an alias such as `"checkout"`
+	 *   or `"login"` that the SDK resolves to the right URL for the store.
 	 */
-	navigate: (route: `/${string}`) => void;
+	navigate: (route: NubeNavigateRoute) => void;
 
 	/**
 	 * Posts a message to the iframe.

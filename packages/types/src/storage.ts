@@ -57,8 +57,20 @@ export type NubeStorageEventData =
 	| NubeStorageQueryEventData
 	| NubeStorageQueryResponseEventData;
 
+/**
+ * Named destinations that can be passed to `navigate` instead of a route.
+ * The SDK resolves each alias to the right URL for the current store.
+ */
+export type NubeNavigateAlias = "checkout" | "login";
+
+/**
+ * A navigation target: either a relative route starting with '/' or a
+ * {@link NubeNavigateAlias}.
+ */
+export type NubeNavigateRoute = `/${string}` | NubeNavigateAlias;
+
 export type NubeNavigateEventData = {
-	route: `/${string}`;
+	route: NubeNavigateRoute;
 };
 
 export type NubeScrollToEventData = {
