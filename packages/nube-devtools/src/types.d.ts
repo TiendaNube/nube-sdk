@@ -1,6 +1,7 @@
 import "@microlink/react-json-view";
 import type { NubeSDKState } from "@tiendanube/nube-sdk-types";
 import type { NubeSDKCommandRecord } from "./background/scripts/page-commands";
+import type { NubeSDKPerformanceRecord } from "./background/scripts/page-performance";
 
 declare module "@microlink/react-json-view" {
 	interface ReactJsonViewProps {
@@ -63,6 +64,8 @@ declare global {
 		__NUBE_SDK_DEVTOOLS_HOOK__?: NubeSDKDevtoolsHook;
 		/** Command bridge calls recorded by `handleCommands`, oldest first. */
 		__NUBE_DEVTOOLS_COMMANDS__?: NubeSDKCommandRecord[];
+		/** Measurements recorded by `inject-performance-monitor.js`, oldest first. */
+		__NUBE_DEVTOOLS_PERFORMANCE__?: NubeSDKPerformanceRecord[];
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		nubeSDK: any;
 	}
