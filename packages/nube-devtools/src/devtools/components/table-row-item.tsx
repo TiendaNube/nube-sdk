@@ -53,7 +53,9 @@ export function TableRowItem<T>({
 		>
 			<div className="flex items-center w-full min-w-0">
 				<div className="flex-1 flex items-center gap-1 min-w-0 shrink overflow-hidden px-3 py-2">
-					<span className="truncate block">{text}</span>
+					<span className="truncate block" title={text}>
+						{text}
+					</span>
 					{badge1 && (
 						<Badge
 							className="text-[10px] px-1 py-0.5 shrink-0"

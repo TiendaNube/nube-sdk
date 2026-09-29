@@ -1,3 +1,4 @@
+import { syncDevToolsHeaderRule } from "./devtools-header";
 import {
 	handleDevToolsEvents,
 	handleDevToolsGetComponents,
@@ -20,6 +21,27 @@ chrome.scripting
 	.catch(() => {
 		// Already registered (e.g. service worker restart) — safe to ignore.
 	});
+
+// Registered on its own so an existing registration of the flag script (the
+// call above rejects as a whole when any id already exists) cannot keep it
+// from being added.
+chrome.scripting
+	.registerContentScripts([
+		{
+			id: "nube-devtools-performance-monitor",
+			matches: ["http://*/*", "https://*/*"],
+			js: ["inject-performance-monitor.js"],
+			runAt: "document_start",
+			world: "MAIN",
+		},
+	])
+	.catch(() => {
+		// Already registered (e.g. service worker restart) — safe to ignore.
+	});
+
+chrome.runtime.onInstalled.addListener(syncDevToolsHeaderRule);
+chrome.runtime.onStartup.addListener(syncDevToolsHeaderRule);
+syncDevToolsHeaderRule();
 
 function updateExtensionBadge(connected: boolean) {
 	if (connected) {

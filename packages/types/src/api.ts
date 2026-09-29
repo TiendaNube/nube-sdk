@@ -1,6 +1,7 @@
 import type { AnalyticsCommands } from "./analytics";
 import type { AvailableSlotsCommands } from "./available-slots";
 import type { CheckoutCommands } from "./checkout";
+import type { CustomizationCommands } from "./customization";
 
 /**
  * Host-API namespace exposed on `NubeSDK` as `nube.api`.
@@ -31,4 +32,10 @@ export type NubeAPI = {
 	 * same instance — identity comparisons (`===`) hold.
 	 */
 	getAvailableSlots(): AvailableSlotsCommands;
+
+	/**
+	 * Returns the customization adapter, used to change native elements of the
+	 * store's interface. Subsequent calls return the same instance
+	 */
+	getCustomization(): CustomizationCommands;
 };

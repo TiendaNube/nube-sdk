@@ -200,14 +200,34 @@ jobs:
       - run:
           name: Create GitHub release with zip asset
           command: |
-            curl -sS -f -X POST \
+            REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+            # Idempotente: reusa la release existente si ya existe la tag; si no, la crea.
+            HTTP_CODE=$(curl -sS -o release.json -w "%{http_code}" -X POST \
               -H "Authorization: token ${GITHUB_TOKEN}" \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/releases" \
-              -d "{\"tag_name\":\"${CIRCLE_TAG}\",\"name\":\"${CIRCLE_TAG}\",\"body\":\"NubeSDK DevTools ${EXT_VERSION}\"}" \
-              -o release.json
+              "https://api.github.com/repos/${REPO}/releases" \
+              -d "{\"tag_name\":\"${CIRCLE_TAG}\",\"name\":\"${CIRCLE_TAG}\",\"body\":\"NubeSDK DevTools ${EXT_VERSION}\"}")
+            echo "Create release HTTP ${HTTP_CODE}"
+            cat release.json
+            if [ "${HTTP_CODE}" = "422" ]; then
+              echo "Release ya existe para ${CIRCLE_TAG}, reusando..."
+              curl -sS -f -o release.json \
+                -H "Authorization: token ${GITHUB_TOKEN}" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${REPO}/releases/tags/${CIRCLE_TAG}"
+            elif [ "${HTTP_CODE}" -ge 300 ]; then
+              echo "Fallo al crear la release (HTTP ${HTTP_CODE})" >&2
+              exit 1
+            fi
             UPLOAD_URL=$(node -p "require('./release.json').upload_url.replace(/{.*}$/, '')")
             ZIP_NAME=$(basename "${ZIP_PATH}")
+            # Borra el asset previo con el mismo nombre (si existe) para evitar 422 en el upload.
+            EXISTING_ASSET_ID=$(node -p "((require('./release.json').assets||[]).find(a => a.name === '${ZIP_NAME}')||{}).id || ''")
+            if [ -n "${EXISTING_ASSET_ID}" ]; then
+              curl -sS -f -X DELETE \
+                -H "Authorization: token ${GITHUB_TOKEN}" \
+                "https://api.github.com/repos/${REPO}/releases/assets/${EXISTING_ASSET_ID}"
+            fi
             curl -sS -f -X POST \
               -H "Authorization: token ${GITHUB_TOKEN}" \
               -H "Content-Type: application/zip" \

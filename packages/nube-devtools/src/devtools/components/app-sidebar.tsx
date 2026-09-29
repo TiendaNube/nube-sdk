@@ -1,10 +1,12 @@
 import {
+	ArrowRightLeft,
 	Braces,
 	ChartNoAxesGantt,
 	CircleAlert,
 	CodeXml,
 	ComponentIcon,
 	Database,
+	Gauge,
 	Package,
 	Server,
 } from "lucide-react";
@@ -25,11 +27,15 @@ import {
 import { PAGES, type Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
 import { useNubeSDKErrorsContext } from "@/contexts/nube-sdk-errors-context";
+import { useNubeSDKPerformance } from "@/contexts/nube-sdk-performance-context";
 import packageData from "../../../package.json";
 
-const Badge = ({ text }: { text: string }) => {
+const Badge = ({ text, className }: { text: string; className?: string }) => {
 	return (
-		<BadgeComponent className="text-[10px] px-1 py-0.5" variant="destructive">
+		<BadgeComponent
+			className={`text-[10px] px-1 py-0.5 ${className ?? ""}`}
+			variant="destructive"
+		>
 			{text}
 		</BadgeComponent>
 	);
@@ -72,6 +78,16 @@ const menu: {
 		icon: Database,
 	},
 	{
+		title: "API Calls",
+		page: PAGES.API_CALLS,
+		icon: ArrowRightLeft,
+	},
+	{
+		title: "Performance",
+		page: PAGES.PERFORMANCE,
+		icon: Gauge,
+	},
+	{
 		title: "SVG Converter",
 		page: PAGES.SVG_CONVERT,
 		icon: CodeXml,
@@ -86,10 +102,20 @@ const menu: {
 export function AppSidebar() {
 	const { currentPage, navigate } = useNavigation();
 	const { totalErrors } = useNubeSDKErrorsContext();
+	const { poorCount } = useNubeSDKPerformance();
 
 	const getItemBadge = (item: (typeof menu)[number]) => {
 		if (item.page === PAGES.ERRORS && totalErrors > 0) {
 			return <Badge text={String(totalErrors)} />;
+		}
+		if (item.page === PAGES.PERFORMANCE && poorCount > 0) {
+			// Amber rather than red: over budget is a warning, not an error.
+			return (
+				<Badge
+					text={String(poorCount)}
+					className="bg-amber-600 text-white dark:bg-amber-600"
+				/>
+			);
 		}
 		if (item.badge) {
 			return <Badge text={item.badge} />;

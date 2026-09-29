@@ -1,7 +1,7 @@
 {
   "name": "nube-sdk",
   "version": "0.0.0",
-  "description": "A set of packages to develop apps partner apps to Tiendanube/Nuvemshop",
+  "description": "A set of packages to develop partner apps to Nuvemshop/Tiendanube",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TiendaNube/nube-sdk.git"
@@ -12,16 +12,15 @@
     "packages/jsx",
     "packages/snippet",
     "packages/create-nube-app",
-    "packages/doc",
     "packages/nube-devtools",
     "packages/helper"
   ],
-  "author": "Tiendanube / Nuvemshop",
+  "author": "Nuvemshop / Tiendanube",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/TiendaNube/nube-sdk/issues"
   },
-  "homepage": "https://www.tiendanube.com.br",
+  "homepage": "https://nuvemshop.dev/",
   "scripts": {
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",

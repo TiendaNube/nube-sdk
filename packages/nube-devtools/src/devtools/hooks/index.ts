@@ -6,3 +6,7 @@ export { useApps } from "./use-apps";
 export { useBlockedApps, type BlockedApp } from "./use-blocked-apps";
 export { useScriptStatuses } from "./use-script-statuses";
 export { useLocalModeApp, type LocalModeApp } from "./use-local-mode-app";
+export {
+	PANEL_VISIBILITY_EVENT,
+	usePanelVisibility,
+} from "./use-panel-visibility";

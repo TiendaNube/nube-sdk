@@ -23,7 +23,7 @@ Please describe:
 
 For questions and general help, please use **[GitHub Discussions Q&A](https://github.com/TiendaNube/nube-sdk/discussions/categories/q-a)** instead of opening an issue.
 
-You can also check the **[official NubeSDK documentation](https://dev.tiendanube.com/docs/applications/nube-sdk/overview)** for guides and API reference.
+You can also check the **[official NubeSDK documentation](https://nuvemshop.dev/en-US/apps/nube-sdk/overview)** for guides and API reference.
 
 ## Issue Lifecycle
 

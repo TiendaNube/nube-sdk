@@ -67,9 +67,9 @@ jobs:
             **We're actively exploring the best ways to support these use cases** within the SDK.
 
             In the meantime, here are some alternatives that might help:
-            - **UI rendering** -- Use [Slots](https://dev.tiendanube.com/docs/applications/nube-sdk/slots/overview) + [Components](https://dev.tiendanube.com/docs/applications/nube-sdk/components/overview)
-            - **Data storage** -- Use [Browser APIs](https://dev.tiendanube.com/docs/applications/nube-sdk/browser-apis) (async storage with TTL)
-            - **External content** -- Use [iframe support](https://dev.tiendanube.com/docs/applications/nube-sdk/browser-apis)
+            - **UI rendering** -- Use [Slots](https://nuvemshop.dev/en-US/apps/nube-sdk/slots/overview) + [Components](https://nuvemshop.dev/en-US/apps/nube-sdk/components/overview)
+            - **Data storage** -- Use [Browser APIs](https://nuvemshop.dev/en-US/apps/nube-sdk/browser-apis) (async storage with TTL)
+            - **External content** -- Use [iframe support](https://nuvemshop.dev/en-US/apps/nube-sdk/components/iframe)
 
             For more context on this architecture decision, see [this discussion](https://github.com/TiendaNube/nube-sdk/discussions/227).
 

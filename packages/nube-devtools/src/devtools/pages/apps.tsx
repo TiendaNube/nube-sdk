@@ -23,7 +23,7 @@ import { useMemo, useState } from "react";
 const STORAGE_KEY = "nube-devtools-apps-panel-size";
 
 export function Apps() {
-	const { apps, refresh } = useApps();
+	const { apps, refresh, isRefreshing } = useApps();
 	const { blockedApps, isBlocked, setBlocked } = useBlockedApps();
 	const localModeApp = useLocalModeApp();
 
@@ -65,8 +65,9 @@ export function Apps() {
 					{allApps.length === 0 ? (
 						<EmptyState
 							text="No apps found"
-							buttonText="Reload page"
+							buttonText={isRefreshing ? "Refreshing..." : "Refresh apps"}
 							onButtonClick={refresh}
+							isLoading={isRefreshing}
 						/>
 					) : (
 						<ResizablePanelGroup

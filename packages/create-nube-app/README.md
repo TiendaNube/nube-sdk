@@ -96,7 +96,16 @@ The created project includes the following scripts:
 
 For more details about NubeSDK and how to build apps, check out our **official documentation**:
 
-[**NubeSDK Documentation**](https://dev.tiendanube.com/docs/applications/nube-sdk/overview)
+🔗 **[NubeSDK Documentation](https://nuvemshop.dev/en-US/apps/nube-sdk/overview)**
+
+- [Getting started](https://nuvemshop.dev/en-US/apps/nube-sdk/getting-started)
+  - How to set up the environment and create your first app
+- [Events](https://nuvemshop.dev/en-US/apps/nube-sdk/events/overview)
+  - All the events your app can send and listen
+- [State](https://nuvemshop.dev/en-US/apps/nube-sdk/state/overview)
+  - Complete definition of the store data that can be accessed
+- [API](https://nuvemshop.dev/en-US/apps/nube-sdk/api/overview)
+  - Integration layer with checkout, analytics, and more
 
 ## Support
 
@@ -105,4 +114,4 @@ For more details about NubeSDK and how to build apps, check out our **official d
 
 ---
 
-© [Tiendanube / Nuvemshop](https://www.tiendanube.com), 2026. All rights reserved.
+© [Nuvemshop / Tiendanube](https://nuvemshop.dev), 2026. All rights reserved.

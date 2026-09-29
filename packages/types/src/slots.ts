@@ -113,6 +113,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_product_detail_add_to_cart"} AFTER_PRODUCT_DETAIL_ADD_TO_CART - After the product detail add to cart button.
  * @property {"before_add_to_cart_pdp"} BEFORE_ADD_TO_CART_PDP - Before the add to cart button on product detail page. Deprecated; use BEFORE_PRODUCT_DETAIL_ADD_TO_CART instead.
  * @property {"after_add_to_cart_pdp"} AFTER_ADD_TO_CART_PDP - After the add to cart button on product detail page. Deprecated; use AFTER_PRODUCT_DETAIL_ADD_TO_CART instead.
+ * @property {"before_product_detail_image"} BEFORE_PRODUCT_DETAIL_IMAGE - Before the product detail images.
+ * @property {"after_product_detail_image"} AFTER_PRODUCT_DETAIL_IMAGE - After the product detail images.
  * @property {"product_detail_image_top_left"} PRODUCT_DETAIL_IMAGE_TOP_LEFT - Top left corner of product detail images.
  * @property {"product_detail_image_top_right"} PRODUCT_DETAIL_IMAGE_TOP_RIGHT - Top right corner of product detail images.
  * @property {"product_detail_image_bottom_left"} PRODUCT_DETAIL_IMAGE_BOTTOM_LEFT - Bottom left corner of product detail images.
@@ -124,6 +126,7 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"product_detail_image_center_center"} PRODUCT_DETAIL_IMAGE_CENTER_CENTER - Center of product detail images.
  * @property {"after_product_detail_name"} AFTER_PRODUCT_DETAIL_NAME - After the product name in product detail.
  * @property {"before_product_detail_name"} BEFORE_PRODUCT_DETAIL_NAME - Before the product name in product detail.
+ * @property {"before_product_description"} BEFORE_PRODUCT_DESCRIPTION - Before the product description.
  * @property {"after_product_description"} AFTER_PRODUCT_DESCRIPTION - After the product description.
  * @property {"before_product_detail_price"} BEFORE_PRODUCT_DETAIL_PRICE - Before the product detail price.
  * @property {"after_product_detail_price"} AFTER_PRODUCT_DETAIL_PRICE - After the product detail price.
@@ -154,12 +157,26 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_products_new"} AFTER_SECTION_PRODUCTS_NEW - After the products new section on the home page.
  * @property {"before_section_products_featured"} BEFORE_SECTION_PRODUCTS_FEATURED - Before the products featured section on the home page.
  * @property {"after_section_products_featured"} AFTER_SECTION_PRODUCTS_FEATURED - After the products featured section on the home page.
+ * @property {"before_section_products_promotion"} BEFORE_SECTION_PRODUCTS_PROMOTION - Before the products promotion section on the home page.
+ * @property {"after_section_products_promotion"} AFTER_SECTION_PRODUCTS_PROMOTION - After the products promotion section on the home page.
+ * @property {"before_section_products_best_seller"} BEFORE_SECTION_PRODUCTS_BEST_SELLER - Before the best seller products section on the home page.
+ * @property {"after_section_products_best_seller"} AFTER_SECTION_PRODUCTS_BEST_SELLER - After the best seller products section on the home page.
+ * @property {"before_section_products_recent"} BEFORE_SECTION_PRODUCTS_RECENT - Before the recent products section on the home page.
+ * @property {"after_section_products_recent"} AFTER_SECTION_PRODUCTS_RECENT - After the recent products section on the home page.
+ * @property {"before_section_product_main"} BEFORE_SECTION_PRODUCT_MAIN - Before the main product section on the product detail page.
+ * @property {"after_section_product_main"} AFTER_SECTION_PRODUCT_MAIN - After the main product section on the product detail page.
  * @property {"before_section_banner_categories"} BEFORE_SECTION_BANNER_CATEGORIES - Before the categories banner section on the home page.
  * @property {"after_section_banner_categories"} AFTER_SECTION_BANNER_CATEGORIES - After the categories banner section on the home page.
  * @property {"before_section_banner_promotional"} BEFORE_SECTION_BANNER_PROMOTIONAL - Before the promotional banner section on the home page.
  * @property {"after_section_banner_promotional"} AFTER_SECTION_BANNER_PROMOTIONAL - After the promotional banner section on the home page.
  * @property {"before_section_banner_news"} BEFORE_SECTION_BANNER_NEWS - Before the news banner section on the home page.
  * @property {"after_section_banner_news"} AFTER_SECTION_BANNER_NEWS - After the news banner section on the home page.
+ * @property {"before_section_testimonials"} BEFORE_SECTION_TESTIMONIALS - Before the testimonials section on the home page.
+ * @property {"after_section_testimonials"} AFTER_SECTION_TESTIMONIALS - After the testimonials section on the home page.
+ * @property {"before_section_welcome"} BEFORE_SECTION_WELCOME - Before the welcome message section on the home page.
+ * @property {"after_section_welcome"} AFTER_SECTION_WELCOME - After the welcome message section on the home page.
+ * @property {"before_section_institutional"} BEFORE_SECTION_INSTITUTIONAL - Before the institutional message section on the home page.
+ * @property {"after_section_institutional"} AFTER_SECTION_INSTITUTIONAL - After the institutional message section on the home page.
  * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
  * @property {"after_product_detail_related_products"} AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS - After the related products section on the product detail page.
  * @property {"before_product_detail_complementary_products"} BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - Before the complementary products section on the product detail page.
@@ -193,6 +210,8 @@ export const STOREFRONT_UI_SLOT = {
 	BEFORE_ADD_TO_CART_PDP: "before_add_to_cart_pdp",
 	/** @deprecated Use AFTER_PRODUCT_DETAIL_ADD_TO_CART instead. */
 	AFTER_ADD_TO_CART_PDP: "after_add_to_cart_pdp",
+	BEFORE_PRODUCT_DETAIL_IMAGE: "before_product_detail_image",
+	AFTER_PRODUCT_DETAIL_IMAGE: "after_product_detail_image",
 	PRODUCT_DETAIL_IMAGE_TOP_LEFT: "product_detail_image_top_left",
 	PRODUCT_DETAIL_IMAGE_TOP_RIGHT: "product_detail_image_top_right",
 	PRODUCT_DETAIL_IMAGE_BOTTOM_LEFT: "product_detail_image_bottom_left",
@@ -242,12 +261,26 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_PRODUCTS_NEW: "after_section_products_new",
 	BEFORE_SECTION_PRODUCTS_FEATURED: "before_section_products_featured",
 	AFTER_SECTION_PRODUCTS_FEATURED: "after_section_products_featured",
+	BEFORE_SECTION_PRODUCTS_PROMOTION: "before_section_products_promotion",
+	AFTER_SECTION_PRODUCTS_PROMOTION: "after_section_products_promotion",
+	BEFORE_SECTION_PRODUCTS_BEST_SELLER: "before_section_products_best_seller",
+	AFTER_SECTION_PRODUCTS_BEST_SELLER: "after_section_products_best_seller",
+	BEFORE_SECTION_PRODUCTS_RECENT: "before_section_products_recent",
+	AFTER_SECTION_PRODUCTS_RECENT: "after_section_products_recent",
+	BEFORE_SECTION_PRODUCT_MAIN: "before_section_product_main",
+	AFTER_SECTION_PRODUCT_MAIN: "after_section_product_main",
 	BEFORE_SECTION_BANNER_CATEGORIES: "before_section_banner_categories",
 	AFTER_SECTION_BANNER_CATEGORIES: "after_section_banner_categories",
 	BEFORE_SECTION_BANNER_PROMOTIONAL: "before_section_banner_promotional",
 	AFTER_SECTION_BANNER_PROMOTIONAL: "after_section_banner_promotional",
 	BEFORE_SECTION_BANNER_NEWS: "before_section_banner_news",
 	AFTER_SECTION_BANNER_NEWS: "after_section_banner_news",
+	BEFORE_SECTION_TESTIMONIALS: "before_section_testimonials",
+	AFTER_SECTION_TESTIMONIALS: "after_section_testimonials",
+	BEFORE_SECTION_WELCOME: "before_section_welcome",
+	AFTER_SECTION_WELCOME: "after_section_welcome",
+	BEFORE_SECTION_INSTITUTIONAL: "before_section_institutional",
+	AFTER_SECTION_INSTITUTIONAL: "after_section_institutional",
 	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
 		"before_product_detail_related_products",
 	AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS:

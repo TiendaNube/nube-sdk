@@ -83,8 +83,17 @@ export type CartItem = {
 	/** Name of the product. */
 	name: string;
 
-	/** Price of the product in string format (to match API response). */
+	/**
+	 * Final price of the product in string format (to match API response).
+	 * Already includes any applied discount.
+	 */
 	price: string;
+
+	/**
+	 * Original price before any discounts, in string format (to match API response).
+	 * `null` when the product has no discount applied.
+	 */
+	compare_at_price: string;
 
 	/** Quantity of this product in the cart. */
 	quantity: number;
@@ -160,6 +169,16 @@ export type ProductImage = {
 };
 
 /**
+ * Represents a single attribute option of a product variant.
+ */
+export type ProductVariantOption = {
+	/** Name of the attribute (e.g., "Color", "Size"). */
+	name: string;
+	/** Value selected for the attribute (e.g., "Algodão", "1"). */
+	value: string;
+};
+
+/**
  * Represents a product variant with all its properties and inventory information.
  */
 export type ProductVariant = {
@@ -201,12 +220,39 @@ export type ProductVariant = {
 	stock: null | number;
 	/** Whether stock management is enabled for this variant. */
 	stock_management: boolean;
-	/** Localized attribute values for the variant. */
+	/**
+	 * Localized attribute values for the variant.
+	 * @deprecated Use `options` instead.
+	 */
 	values: LocalizedString[];
+	/** Attribute options (name/value pairs) for the variant. */
+	options: ProductVariantOption[];
 	/** Weight measurement of the product. */
 	weight: string;
 	/** Width measurement of the product. */
 	width: string;
+};
+
+/**
+ * Represents a subscription option available for a product.
+ */
+export type ProductSubscriptionOption = {
+	/** Unique identifier for the subscription option. */
+	frequency_option_id: string;
+	/** Frequency unit of the subscription (e.g., "months"). */
+	frequency_type: string;
+	/** Number of frequency units between each recurrence. */
+	frequency_value: number;
+	/** Discount percentage applied when subscribing with this option. */
+	discount_percentage: number;
+};
+
+/**
+ * Represents the subscription settings of a product.
+ */
+export type ProductSubscription = {
+	/** Available subscription options for the product. */
+	options: ProductSubscriptionOption[];
 };
 
 /**
@@ -247,6 +293,12 @@ export type ProductDetails = {
 	variants: ProductVariant[];
 	/** URL of the product's promotional video. */
 	video_url: null | string;
+	/** Whether the product can be purchased as a subscription. */
+	is_subscribable?: boolean;
+	/** Whether the product can only be purchased as a subscription. */
+	is_subscription_only?: boolean;
+	/** Subscription settings for the product. `null` when there are no options. */
+	subscription?: ProductSubscription | null;
 };
 
 /**

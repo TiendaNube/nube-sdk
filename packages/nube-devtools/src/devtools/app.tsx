@@ -1,7 +1,9 @@
 import { Toaster } from "@/components/ui/sonner";
 import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
+import { NubeSDKCommandsProvider } from "@/contexts/nube-sdk-commands-context";
 import { NubeSDKErrorsProvider } from "@/contexts/nube-sdk-errors-context";
 import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
+import { NubeSDKPerformanceProvider } from "@/contexts/nube-sdk-performance-context";
 import { NubeSDKStorageProvider } from "@/contexts/nube-sdk-storage-context";
 import {
 	NavigationProvider,
@@ -10,11 +12,13 @@ import {
 } from "../contexts/navigation-context";
 import { useNubeStatus } from "../hooks/use-nube-status";
 
+import { ApiCalls } from "./pages/api-calls";
 import { Apps } from "./pages/apps";
 import { Components } from "./pages/components";
 import { Errors } from "./pages/errors";
 import { Events } from "./pages/events";
 import { LocalModePage } from "./pages/local-mode";
+import { Performance } from "./pages/performance";
 import { State } from "./pages/state";
 import { Storages } from "./pages/storages";
 import { SvgConverter } from "./pages/svg-converter";
@@ -27,6 +31,8 @@ const PAGE_COMPONENTS = {
 	[PAGES.ERRORS]: Errors,
 	[PAGES.EVENTS]: Events,
 	[PAGES.STORAGES]: Storages,
+	[PAGES.API_CALLS]: ApiCalls,
+	[PAGES.PERFORMANCE]: Performance,
 	[PAGES.SVG_CONVERT]: SvgConverter,
 	[PAGES.STATE]: State,
 } as const;
@@ -49,10 +55,14 @@ export const App = () => {
 			<NubeSDKErrorsProvider>
 				<NubeSDKEventsProvider>
 					<NubeSDKStorageProvider>
-						<NubeSDKAppsProvider>
-							<AppContent />
-							<Toaster />
-						</NubeSDKAppsProvider>
+						<NubeSDKCommandsProvider>
+							<NubeSDKPerformanceProvider>
+								<NubeSDKAppsProvider>
+									<AppContent />
+									<Toaster />
+								</NubeSDKAppsProvider>
+							</NubeSDKPerformanceProvider>
+						</NubeSDKCommandsProvider>
 					</NubeSDKStorageProvider>
 				</NubeSDKEventsProvider>
 			</NubeSDKErrorsProvider>

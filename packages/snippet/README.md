@@ -1,10 +1,18 @@
-# @tiendanube/nube-sdk-snippet
+# `@tiendanube/nube-sdk-snippet`
 
-Type definitions for the NubeSDK snippet environment.
+**TypeScript definitions for the NubeSDK snippet environment**, giving you full type safety and IntelliSense when writing snippets.
 
 Snippets are TSX fragments that run in a Web Worker context managed by the platform. Unlike full NubeSDK apps, snippets do not import anything explicitly — all SDK globals (`nube`, `Box`, `styled`, etc.) are injected by the build system.
 
 This package declares those globals so you get full TypeScript/IntelliSense support when writing snippets.
+
+## Installation
+
+```sh
+npm install -D @tiendanube/nube-sdk-snippet
+```
+
+> Note: `@tiendanube/nube-sdk-types`, `@tiendanube/nube-sdk-jsx`, and `@tiendanube/nube-sdk-ui` are peer dependencies and must be installed alongside this package.
 
 ## Usage
 
@@ -53,14 +61,26 @@ All utilities from `@tiendanube/nube-sdk-ui` are available as globals:
 | `theme` | Access to theme tokens and variables |
 | `StyleSheet` | Creates named style objects |
 
-## Installation
+## Official Documentation
 
-```bash
-npm install --save-dev @tiendanube/nube-sdk-snippet
-```
+For more details about NubeSDK and how to build apps, check out our **official documentation**:
 
-## Peer Dependencies
+🔗 **[NubeSDK Documentation](https://nuvemshop.dev/en-US/apps/nube-sdk/overview)**
 
-- `@tiendanube/nube-sdk-types`
-- `@tiendanube/nube-sdk-jsx`
-- `@tiendanube/nube-sdk-ui`
+- [Getting started](https://nuvemshop.dev/en-US/apps/nube-sdk/getting-started)
+  - How to set up the environment and create your first app
+- [Events](https://nuvemshop.dev/en-US/apps/nube-sdk/events/overview)
+  - All the events your app can send and listen
+- [State](https://nuvemshop.dev/en-US/apps/nube-sdk/state/overview)
+  - Complete definition of the store data that can be accessed
+- [API](https://nuvemshop.dev/en-US/apps/nube-sdk/api/overview)
+  - Integration layer with checkout, analytics, and more
+
+## Support
+
+- **Questions?** Use [GitHub Issues](https://github.com/TiendaNube/nube-sdk/issues).
+- **Found a bug?** Open an issue with a reproducible example.
+
+---
+
+© [Nuvemshop / Tiendanube](https://nuvemshop.dev), 2026. All rights reserved.
