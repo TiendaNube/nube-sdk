@@ -29,11 +29,11 @@ export function LocalModeBadge() {
 	);
 }
 
-export function RemoteAppBadge() {
+export function HostedAppBadge() {
 	return (
 		<AppBadge
 			icon={Globe}
-			label="App"
+			label="Hosted"
 			className="border-border/60 text-muted-foreground"
 		/>
 	);

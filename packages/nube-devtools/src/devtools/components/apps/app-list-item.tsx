@@ -3,7 +3,7 @@ import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import {
 	BlockedBadge,
 	LocalModeBadge,
-	RemoteAppBadge,
+	HostedAppBadge,
 	ReplacedScriptBadge,
 } from "./app-badges";
 import type { ScriptStatus } from "./app-status";
@@ -49,7 +49,7 @@ export function AppListItem({
 					</span>
 				</div>
 				<div className="flex flex-wrap items-center gap-1">
-					{isLocalMode ? <LocalModeBadge /> : <RemoteAppBadge />}
+					{isLocalMode ? <LocalModeBadge /> : <HostedAppBadge />}
 					{isReplacedScript && <ReplacedScriptBadge />}
 					{isBlocked && <BlockedBadge />}
 				</div>

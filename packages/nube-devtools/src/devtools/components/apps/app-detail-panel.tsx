@@ -3,8 +3,8 @@ import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import { Globe, Plug, ShieldCheck, TerminalSquare } from "lucide-react";
 import {
 	BlockedBadge,
+	HostedAppBadge,
 	LocalModeBadge,
-	RemoteAppBadge,
 	ReplacedScriptBadge,
 } from "./app-badges";
 import { AppDetailRow } from "./app-detail-row";
@@ -44,7 +44,7 @@ export function AppDetailPanel({
 				</div>
 				<CopyableValue value={id} fontSize="text-[13px]" />
 				<div className="mt-0.5 flex flex-wrap items-center gap-1 px-1.5">
-					{isLocalMode ? <LocalModeBadge /> : <RemoteAppBadge />}
+					{isLocalMode ? <LocalModeBadge /> : <HostedAppBadge />}
 					{isReplacedScript && <ReplacedScriptBadge />}
 					{isBlocked && <BlockedBadge />}
 				</div>
@@ -75,7 +75,7 @@ export function AppDetailPanel({
 					<AppDetailRow
 						label="Mode"
 						icon={isLocalMode ? TerminalSquare : Globe}
-						value={isLocalMode ? "Local Mode" : "App"}
+						value={isLocalMode ? "Local Mode" : "Hosted"}
 						tone={isLocalMode ? "info" : "neutral"}
 					/>
 					<AppDetailRow
@@ -93,10 +93,27 @@ export function AppDetailPanel({
 				</AppDetailSection>
 
 				<AppDetailSection title="Controls">
-					<TemporaryBlockCard
-						blocked={isBlocked}
-						onBlockedChange={onBlockedChange}
-					/>
+					{isLocalMode ? (
+						<div className="flex items-center gap-3 p-3">
+							<div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted/60 text-muted-foreground">
+								<TerminalSquare className="size-3.5" />
+							</div>
+							<div className="flex flex-col gap-0.5">
+								<span className="text-xs font-medium">
+									Temporary block unavailable
+								</span>
+								<span className="text-[11px] text-muted-foreground">
+									Local mode apps can't be blocked. Stop your local dev server
+									to disable this app.
+								</span>
+							</div>
+						</div>
+					) : (
+						<TemporaryBlockCard
+							blocked={isBlocked}
+							onBlockedChange={onBlockedChange}
+						/>
+					)}
 				</AppDetailSection>
 			</div>
 		</div>
