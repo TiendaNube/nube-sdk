@@ -18,12 +18,13 @@ import {
 	useLocalModeApp,
 	useScriptStatuses,
 } from "@/devtools/hooks";
+import { Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const STORAGE_KEY = "nube-devtools-apps-panel-size";
 
 export function Apps() {
-	const { apps, refresh, isRefreshing } = useApps();
+	const { apps, isLoaded, refresh, isRefreshing } = useApps();
 	const { blockedApps, isBlocked, setBlocked } = useBlockedApps();
 	const localModeApp = useLocalModeApp();
 
@@ -36,7 +37,10 @@ export function Apps() {
 		const missingBlockedApps = blockedApps
 			.filter((blocked) => !apps.some((app) => app.data.id === blocked.id))
 			.map((blocked) => ({ id: `blocked:${blocked.id}`, data: blocked }));
-		return [...apps, ...missingBlockedApps];
+		// Sorted so an app keeps its place when the page starts reporting it.
+		return [...apps, ...missingBlockedApps].sort((a, b) =>
+			a.data.id.localeCompare(b.data.id),
+		);
 	}, [apps, blockedApps]);
 
 	const scriptStatuses = useScriptStatuses(allApps);
@@ -55,14 +59,20 @@ export function Apps() {
 	}, [allApps, filter]);
 
 	const onlineCount = allApps.filter(isAppOnline).length;
-	const selectedApp = allApps.find((app) => app.id === selectedAppId) ?? null;
+	const selectedApp =
+		allApps.find((app) => app.data.id === selectedAppId) ?? null;
 
 	return (
 		<Layout>
 			<div className="flex h-full flex-col">
 				<AppsHeader total={allApps.length} online={onlineCount} />
 				<div className="flex-1 overflow-hidden">
-					{allApps.length === 0 ? (
+					{!isLoaded ? (
+						<div className="flex h-full items-center justify-center gap-2 text-sm">
+							<Loader2 className="size-3 animate-spin" />
+							Loading apps...
+						</div>
+					) : allApps.length === 0 ? (
 						<EmptyState
 							text="No apps found"
 							buttonText={isRefreshing ? "Refreshing..." : "Refresh apps"}
@@ -85,7 +95,7 @@ export function Apps() {
 									isReplacedScript={localModeApp?.type === "existing"}
 									isAppBlocked={isBlocked}
 									scriptStatuses={scriptStatuses}
-									onSelect={(app) => setSelectedAppId(app.id)}
+									onSelect={(app) => setSelectedAppId(app.data.id)}
 								/>
 							</ResizablePanel>
 							<ResizableHandle />

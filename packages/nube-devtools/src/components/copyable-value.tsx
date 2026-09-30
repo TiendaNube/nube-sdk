@@ -16,7 +16,7 @@ export function CopyableValue({
 		<button
 			type="button"
 			onClick={handleCopy}
-			className="group/copy flex w-full items-center gap-2 rounded-md border border-transparent px-2.5 py-1.5 text-left text-sm transition-colors hover:border-border hover:bg-muted/50"
+			className="group/copy flex w-full items-center gap-2 rounded-md border border-transparent px-2.5 py-1.5 text-left text-sm transition-colors"
 		>
 			<span className={`min-w-0 flex-1 break-all font-mono ${fontSize}`}>
 				{value}
