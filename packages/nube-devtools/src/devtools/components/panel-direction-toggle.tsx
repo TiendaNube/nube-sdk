@@ -11,7 +11,6 @@ export function PanelDirectionToggle({
 	direction,
 	onToggle,
 }: PanelDirectionToggleProps) {
-	// The icon shows the layout the click switches to.
 	const isHorizontal = direction === "horizontal";
 	const Icon = isHorizontal ? Rows2Icon : Columns2Icon;
 	const label = isHorizontal
