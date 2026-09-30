@@ -1,14 +1,10 @@
-import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableRow } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
-import { Search } from "lucide-react";
 import { AppListItem } from "./app-list-item";
 import type { ScriptStatus } from "./app-status";
 
 type AppListProps = {
 	apps: NubeSDKEvent[];
-	filter: string;
-	onFilterChange: (value: string) => void;
 	selectedAppId?: string;
 	localModeAppId?: string;
 	isReplacedScript: boolean;
@@ -19,8 +15,6 @@ type AppListProps = {
 
 export function AppList({
 	apps,
-	filter,
-	onFilterChange,
 	selectedAppId,
 	localModeAppId,
 	isReplacedScript,
@@ -30,18 +24,6 @@ export function AppList({
 }: AppListProps) {
 	return (
 		<div className="flex h-full flex-col overflow-hidden">
-			<div className="shrink-0 border-b p-1.5">
-				<div className="relative">
-					<Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-muted-foreground" />
-					<Input
-						name="filter-apps"
-						value={filter}
-						placeholder="Filter apps..."
-						onChange={(e) => onFilterChange(e.target.value)}
-						className="h-7 rounded-md pl-7 text-[12px] md:text-[12px]"
-					/>
-				</div>
-			</div>
 			<div className="flex-1 overflow-y-auto overflow-x-hidden">
 				{apps.length === 0 ? (
 					<p className="px-1 py-6 text-center text-xs text-muted-foreground">
