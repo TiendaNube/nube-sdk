@@ -10,6 +10,12 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
 import type {
 	NubeSDKEvent,
@@ -22,11 +28,14 @@ import {
 } from "@/devtools/components/event-table-row";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
+import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import { SearchInput } from "@/devtools/components/search-input";
+import { usePanelDirection } from "@/hooks/use-panel-direction";
 import { getModifiedPaths } from "@/utils/json-diff";
-import { TrashIcon } from "lucide-react";
+import { ChartNoAxesGanttIcon, InfoIcon, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+
 const STORAGE_KEY = "nube-devtools-events-page-width";
 const SEARCH_STORAGE_KEY = "nube-devtools-filter-search";
 const COLUMN_WIDTHS_KEY = "nube-devtools-events-column-widths";
@@ -102,6 +111,8 @@ function addToFilter(
 }
 
 export function Events() {
+	const { direction, toggleDirection, autoSaveId } =
+		usePanelDirection(STORAGE_KEY);
 	const [selectedEvent, setSelectedEvent] = useState<NubeSDKEvent | null>(null);
 	const { events, clearEvents } = useNubeSDKEventsContext();
 	const [filteredEvents, setFilteredEvents] = useState<NubeSDKEvent[]>([]);
@@ -247,8 +258,8 @@ export function Events() {
 	return (
 		<Layout>
 			<div className="flex h-full flex-col">
-				<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px] shrink-0">
-					<div className="flex items-center">
+				<nav className="flex items-center justify-between px-1.5 py-1 border-b h-[33px] shrink-0">
+					<div className="flex items-center min-w-0">
 						<SidebarTrigger />
 						<Divider />
 						<Button
@@ -256,31 +267,80 @@ export function Events() {
 							variant="ghost"
 							size="icon"
 							className="h-6 w-6"
+							title="Clear the list"
 							onClick={handleClearList}
 						>
 							<TrashIcon className="size-3" />
 						</Button>
+						<Divider />
+						<ChartNoAxesGanttIcon className="size-3 shrink-0" />
+						<span className="ml-1.5 text-xs font-medium">Events</span>
+						<span className="ml-2 text-xs text-muted-foreground truncate hidden sm:inline">
+							Events dispatched between your apps and the store
+						</span>
 					</div>
-					<Divider />
-					<SearchInput value={search} onChange={setSearch} />
-					{events.length > 0 && (
-						<>
-							<Divider />
-							<span
-								className={`text-xs px-2 whitespace-nowrap ${hasHiddenEvents ? "text-neutral-400" : ""}`}
-							>
-								{hasHiddenEvents
-									? `${events.length} hidden`
-									: `${filteredEvents.length} ${filteredEvents.length === 1 ? "event" : "events"}`}
-							</span>
-						</>
-					)}
+					<div className="flex items-center gap-1.5 shrink-0">
+						<PanelDirectionToggle
+							direction={direction}
+							onToggle={toggleDirection}
+						/>
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span className="inline-flex shrink-0">
+										<InfoIcon className="size-3 text-muted-foreground" />
+									</span>
+								</TooltipTrigger>
+								<TooltipContent className="max-w-xs">
+									Every event with its sender and target, and the state it
+									produced. Modified fields are highlighted in the state viewer.
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
 				</nav>
+
+				<div className="flex items-center gap-1 px-1.5 py-1 border-b shrink-0">
+					<div className="flex items-center flex-1 min-w-0 max-w-xs">
+						<SearchInput
+							value={search}
+							onChange={setSearch}
+							placeholder="Filter by event, sender or target..."
+						/>
+					</div>
+					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<span className="inline-flex shrink-0 ml-1">
+									<InfoIcon className="size-3 text-muted-foreground" />
+								</span>
+							</TooltipTrigger>
+							<TooltipContent className="max-w-xs space-y-1">
+								<p>Matches any part of the event name, sender or target.</p>
+								<p>
+									For exact values, use{" "}
+									<code>sender="…" target="…" event="…"</code>, alone or
+									combined.
+								</p>
+							</TooltipContent>
+						</Tooltip>
+					</TooltipProvider>
+					{events.length > 0 && (
+						<span
+							className={`ml-auto text-xs px-1 whitespace-nowrap ${hasHiddenEvents ? "text-muted-foreground" : ""}`}
+						>
+							{hasHiddenEvents
+								? `${events.length} hidden`
+								: `${filteredEvents.length} ${filteredEvents.length === 1 ? "event" : "events"}`}
+						</span>
+					)}
+				</div>
 				<div className="flex-1 overflow-hidden">
 					<ResizablePanelGroup
-						autoSaveId={STORAGE_KEY}
+						key={direction}
+						autoSaveId={autoSaveId}
 						storage={localStorage}
-						direction="horizontal"
+						direction={direction}
 					>
 						<ResizablePanel defaultSize={40}>
 							{events.length === 0 ? (
@@ -344,7 +404,7 @@ export function Events() {
 						<ResizableHandle />
 						<ResizablePanel>
 							<div className="h-full overflow-auto">
-								{selectedEvent && (
+								{selectedEvent ? (
 									<JsonViewer
 										className="p-2 text-sm overflow-x-auto"
 										data={selectedEvent.record.next}
@@ -352,6 +412,12 @@ export function Events() {
 										collapsed={1}
 										modifiedPaths={modifiedPaths}
 									/>
+								) : (
+									<div className="flex h-full items-center justify-center px-4">
+										<p className="text-xs text-muted-foreground">
+											Select an event to inspect the state it produced.
+										</p>
+									</div>
 								)}
 							</div>
 						</ResizablePanel>

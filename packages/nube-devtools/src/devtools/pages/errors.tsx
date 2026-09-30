@@ -9,9 +9,12 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useNubeSDKErrorsContext } from "@/contexts/nube-sdk-errors-context";
 import { EmptyState } from "@/devtools/components/empty-state";
+import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
+import { usePanelDirection } from "@/hooks/use-panel-direction";
 import {
 	ChevronDownIcon,
 	ChevronRightIcon,
+	CircleAlertIcon,
 	CopyIcon,
 	TrashIcon,
 } from "lucide-react";
@@ -38,6 +41,8 @@ function getErrorLabel(error: unknown): string {
 }
 
 export function Errors() {
+	const { direction, toggleDirection, autoSaveId } =
+		usePanelDirection(STORAGE_KEY);
 	const { appsErrors, totalErrors, clearErrors } = useNubeSDKErrorsContext();
 	const [expandedApps, setExpandedApps] = useState<Set<string>>(new Set());
 	const [selectedError, setSelectedError] = useState<ErrorEntry | null>(null);
@@ -84,8 +89,8 @@ export function Errors() {
 	return (
 		<Layout>
 			<div className="flex h-full flex-col">
-				<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px] shrink-0">
-					<div className="flex items-center">
+				<nav className="flex items-center justify-between px-1.5 py-1 border-b h-[33px] shrink-0">
+					<div className="flex items-center min-w-0">
 						<SidebarTrigger />
 						<Divider />
 						<Button
@@ -93,22 +98,36 @@ export function Errors() {
 							variant="ghost"
 							size="icon"
 							className="h-6 w-6"
+							title="Clear the list"
 							onClick={handleClear}
 						>
 							<TrashIcon className="size-3" />
 						</Button>
-					</div>
-					{totalErrors > 0 && (
-						<span className="text-xs px-2 whitespace-nowrap">
-							{totalErrors} {totalErrors === 1 ? "error" : "errors"}
+						<Divider />
+						<CircleAlertIcon className="size-3 shrink-0" />
+						<span className="ml-1.5 text-xs font-medium">Errors</span>
+						<span className="ml-2 text-xs text-muted-foreground truncate hidden sm:inline">
+							Errors thrown by your apps, grouped by app
 						</span>
-					)}
+					</div>
+					<div className="flex items-center gap-1.5 shrink-0">
+						{totalErrors > 0 && (
+							<span className="text-xs px-2 whitespace-nowrap">
+								{totalErrors} {totalErrors === 1 ? "error" : "errors"}
+							</span>
+						)}
+						<PanelDirectionToggle
+							direction={direction}
+							onToggle={toggleDirection}
+						/>
+					</div>
 				</nav>
 				<div className="flex-1 overflow-hidden">
 					<ResizablePanelGroup
-						autoSaveId={STORAGE_KEY}
+						key={direction}
+						autoSaveId={autoSaveId}
 						storage={localStorage}
-						direction="horizontal"
+						direction={direction}
 					>
 						<ResizablePanel defaultSize={40}>
 							<div className="h-full overflow-x-hidden overflow-y-auto">
@@ -215,9 +234,9 @@ export function Errors() {
 											value={getErrorText(selectedError.error)}
 										/>
 									) : (
-										<div className="flex items-center justify-center w-full h-full">
-											<p className="text-muted-foreground text-sm">
-												Select an error to view details
+										<div className="flex items-center justify-center w-full h-full px-4">
+											<p className="text-xs text-muted-foreground">
+												Select an error to inspect its details.
 											</p>
 										</div>
 									)}

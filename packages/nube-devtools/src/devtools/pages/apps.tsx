@@ -11,6 +11,8 @@ import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import { useNubeSDKAppsContext } from "@/contexts/nube-sdk-apps-context";
 import { EmptyState } from "@/devtools/components/empty-state";
 import Layout from "@/devtools/components/layout";
+import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
+import { usePanelDirection } from "@/hooks/use-panel-direction";
 import { getPageSessionStorage } from "@/utils";
 import { Circle, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -41,6 +43,8 @@ const getApps = (): Record<string, NubeSDKApp> => {
 };
 
 export function Apps() {
+	const { direction, toggleDirection, autoSaveId } =
+		usePanelDirection(STORAGE_KEY);
 	const { apps, setApps } = useNubeSDKAppsContext();
 	const [selectedApp, setSelectedApp] = useState<NubeSDKEvent | null>(null);
 	const [localModeData, setLocalModeData] =
@@ -217,15 +221,22 @@ export function Apps() {
 					<div className="flex items-center">
 						<SidebarTrigger />
 					</div>
-					<span className="text-xs">
-						{apps.length} {apps.length === 1 ? "app" : "apps"}
-					</span>
+					<div className="flex items-center gap-1.5 shrink-0">
+						<span className="text-xs">
+							{apps.length} {apps.length === 1 ? "app" : "apps"}
+						</span>
+						<PanelDirectionToggle
+							direction={direction}
+							onToggle={toggleDirection}
+						/>
+					</div>
 				</nav>
 				<div className="flex-1 overflow-hidden">
 					<ResizablePanelGroup
-						autoSaveId={STORAGE_KEY}
+						key={direction}
+						autoSaveId={autoSaveId}
 						storage={localStorage}
-						direction="horizontal"
+						direction={direction}
 					>
 						<ResizablePanel defaultSize={40}>
 							{apps.length === 0 ? (
@@ -278,13 +289,19 @@ export function Apps() {
 						</ResizablePanel>
 						<ResizableHandle />
 						<ResizablePanel>
-							{selectedApp && (
+							{selectedApp ? (
 								<AppDetailPanel
 									id={selectedApp.data.id}
 									registered={selectedApp.data.registered}
 									script={selectedApp.data.script}
 									scriptStatus={scriptStatuses[selectedApp.data.script]}
 								/>
+							) : (
+								<div className="flex h-full items-center justify-center px-4">
+									<p className="text-xs text-muted-foreground">
+										Select an app to inspect its details.
+									</p>
+								</div>
 							)}
 						</ResizablePanel>
 					</ResizablePanelGroup>

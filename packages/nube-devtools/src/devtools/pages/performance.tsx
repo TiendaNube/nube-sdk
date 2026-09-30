@@ -19,8 +19,10 @@ import {
 	useNubeSDKPerformance,
 } from "@/contexts/nube-sdk-performance-context";
 import Layout from "@/devtools/components/layout";
+import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import { formatAbsoluteDateTime } from "@/devtools/components/relative-time";
 import { SearchInput } from "@/devtools/components/search-input";
+import { usePanelDirection } from "@/hooks/use-panel-direction";
 import { downloadFile } from "@/utils/file-utils";
 import {
 	ASYNC_BUDGET,
@@ -96,6 +98,8 @@ function readDismissed(): boolean {
 }
 
 export function Performance() {
+	const { direction, toggleDirection, autoSaveId } =
+		usePanelDirection(PANEL_WIDTH_KEY);
 	const { entries, isLoading, clearEntries } = useNubeSDKPerformance();
 
 	const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -206,28 +210,34 @@ export function Performance() {
 							How long your apps take to load, render and respond
 						</span>
 					</div>
-					<TooltipProvider>
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<span className="inline-flex shrink-0">
-									<InfoIcon className="size-3 text-muted-foreground" />
-								</span>
-							</TooltipTrigger>
-							<TooltipContent className="max-w-xs space-y-1">
-								<p>
-									Requests your apps make with <code>fetch</code>, their{" "}
-									<code>nube.api</code> calls, and the time from worker start to
-									first render. App init and handler timings are only reported
-									by telemetry-enabled SDK builds.
-								</p>
-								<p>
-									Ratings follow reference budgets, not NubeSDK limits.
-									Handlers: {SYNC_BUDGET.reference}. Everything else:{" "}
-									{ASYNC_BUDGET.reference}.
-								</p>
-							</TooltipContent>
-						</Tooltip>
-					</TooltipProvider>
+					<div className="flex items-center gap-1.5 shrink-0">
+						<PanelDirectionToggle
+							direction={direction}
+							onToggle={toggleDirection}
+						/>
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span className="inline-flex shrink-0">
+										<InfoIcon className="size-3 text-muted-foreground" />
+									</span>
+								</TooltipTrigger>
+								<TooltipContent className="max-w-xs space-y-1">
+									<p>
+										Requests your apps make with <code>fetch</code>, their{" "}
+										<code>nube.api</code> calls, and the time from worker start
+										to first render. App init and handler timings are only
+										reported by telemetry-enabled SDK builds.
+									</p>
+									<p>
+										Ratings follow reference budgets, not NubeSDK limits.
+										Handlers: {SYNC_BUDGET.reference}. Everything else:{" "}
+										{ASYNC_BUDGET.reference}.
+									</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
 				</nav>
 
 				{!bannerDismissed && (
@@ -324,9 +334,10 @@ export function Performance() {
 
 				<div className="flex-1 overflow-hidden">
 					<ResizablePanelGroup
-						autoSaveId={PANEL_WIDTH_KEY}
+						key={direction}
+						autoSaveId={autoSaveId}
 						storage={localStorage}
-						direction="horizontal"
+						direction={direction}
 					>
 						<ResizablePanel defaultSize={60}>
 							<EntryList
