@@ -16,6 +16,7 @@ import {
 import type { NubeSDKStorageRecord } from "@/contexts/nube-sdk-storage-context";
 import { useNubeSDKStorage } from "@/contexts/nube-sdk-storage-context";
 import Layout from "@/devtools/components/layout";
+import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import {
 	Expiration,
 	RelativeTime,
@@ -27,6 +28,7 @@ import {
 	HIGHLIGHT_DURATION,
 	useChangeHighlight,
 } from "@/hooks/use-change-highlight";
+import { usePanelDirection } from "@/hooks/use-panel-direction";
 import type { PageStorageType } from "@/utils";
 import { unwrapStorageValue, wrapStorageValue } from "@/utils/storage-value";
 import { DatabaseIcon, FilterIcon, InfoIcon, Trash2Icon } from "lucide-react";
@@ -87,6 +89,8 @@ function compareRecords(a: NubeSDKStorageRecord, b: NubeSDKStorageRecord) {
 }
 
 export function Storages() {
+	const { direction, toggleDirection, autoSaveId } =
+		usePanelDirection(PANEL_WIDTH_KEY);
 	const { records, isLoading, refresh, saveValue, removeRecord } =
 		useNubeSDKStorage();
 
@@ -164,6 +168,10 @@ export function Storages() {
 						</span>
 					</div>
 					<div className="flex items-center gap-1.5 shrink-0">
+						<PanelDirectionToggle
+							direction={direction}
+							onToggle={toggleDirection}
+						/>
 						<span
 							className="flex items-center gap-1 text-[10px] text-muted-foreground"
 							title={`App writes appear as they happen. Anything JavaScript cannot report — an edit from Chrome's Application panel, say — is picked up within ${POLL_INTERVAL / 1000}s.`}
@@ -226,9 +234,10 @@ export function Storages() {
 
 				<div className="flex-1 overflow-hidden">
 					<ResizablePanelGroup
-						autoSaveId={PANEL_WIDTH_KEY}
+						key={direction}
+						autoSaveId={autoSaveId}
 						storage={localStorage}
-						direction="horizontal"
+						direction={direction}
 					>
 						<ResizablePanel defaultSize={45}>
 							<RecordList

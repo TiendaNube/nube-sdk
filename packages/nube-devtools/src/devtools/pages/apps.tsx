@@ -12,6 +12,7 @@ import {
 } from "@/devtools/components/apps";
 import { EmptyState } from "@/devtools/components/empty-state";
 import Layout from "@/devtools/components/layout";
+import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import { SearchInput } from "@/devtools/components/search-input";
 import {
 	useApps,
@@ -19,6 +20,7 @@ import {
 	useLocalModeApp,
 	useScriptStatuses,
 } from "@/devtools/hooks";
+import { usePanelDirection } from "@/hooks/use-panel-direction";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -26,6 +28,8 @@ const STORAGE_KEY = "nube-devtools-apps-panel-size";
 const SEARCH_STORAGE_KEY = "nube-devtools-apps-filter-search";
 
 export function Apps() {
+	const { direction, toggleDirection, autoSaveId } =
+		usePanelDirection(STORAGE_KEY);
 	const { apps, isLoaded, refresh, isRefreshing } = useApps();
 	const { blockedApps, isBlocked, setBlocked } = useBlockedApps();
 	const localModeApp = useLocalModeApp();
@@ -87,6 +91,12 @@ export function Apps() {
 							placeholder="Filter by app or script..."
 						/>
 					</div>
+					<div className="ml-auto flex items-center shrink-0">
+						<PanelDirectionToggle
+							direction={direction}
+							onToggle={toggleDirection}
+						/>
+					</div>
 				</div>
 				<div className="flex-1 overflow-hidden">
 					{!isLoaded ? (
@@ -103,9 +113,10 @@ export function Apps() {
 						/>
 					) : (
 						<ResizablePanelGroup
-							autoSaveId={STORAGE_KEY}
+							key={direction}
+							autoSaveId={autoSaveId}
 							storage={localStorage}
-							direction="horizontal"
+							direction={direction}
 						>
 							<ResizablePanel defaultSize={35} minSize={20}>
 								<AppList
