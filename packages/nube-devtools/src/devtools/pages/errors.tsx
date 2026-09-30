@@ -14,6 +14,7 @@ import { usePanelDirection } from "@/hooks/use-panel-direction";
 import {
 	ChevronDownIcon,
 	ChevronRightIcon,
+	CircleAlertIcon,
 	CopyIcon,
 	TrashIcon,
 } from "lucide-react";
@@ -88,8 +89,8 @@ export function Errors() {
 	return (
 		<Layout>
 			<div className="flex h-full flex-col">
-				<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px] shrink-0">
-					<div className="flex items-center">
+				<nav className="flex items-center justify-between px-1.5 py-1 border-b h-[33px] shrink-0">
+					<div className="flex items-center min-w-0">
 						<SidebarTrigger />
 						<Divider />
 						<Button
@@ -97,10 +98,17 @@ export function Errors() {
 							variant="ghost"
 							size="icon"
 							className="h-6 w-6"
+							title="Clear the list"
 							onClick={handleClear}
 						>
 							<TrashIcon className="size-3" />
 						</Button>
+						<Divider />
+						<CircleAlertIcon className="size-3 shrink-0" />
+						<span className="ml-1.5 text-xs font-medium">Errors</span>
+						<span className="ml-2 text-xs text-muted-foreground truncate hidden sm:inline">
+							Errors thrown by your apps, grouped by app
+						</span>
 					</div>
 					<div className="flex items-center gap-1.5 shrink-0">
 						{totalErrors > 0 && (
