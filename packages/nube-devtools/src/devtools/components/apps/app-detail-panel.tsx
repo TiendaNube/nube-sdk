@@ -42,7 +42,7 @@ export function AppDetailPanel({
 						{isLocalMode ? "Local app" : "Installed app"}
 					</span>
 				</div>
-				<CopyableValue value={id} fontSize="text-[13px]" />
+        <CopyableValue value={id} fontSize="text-[13px]" />
 				<div className="mt-0.5 flex flex-wrap items-center gap-1 px-1.5">
 					{isLocalMode ? <LocalModeBadge /> : <HostedAppBadge />}
 					{isReplacedScript && <ReplacedScriptBadge />}
