@@ -2,8 +2,8 @@ import { TableCell } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import {
 	BlockedBadge,
-	LocalModeBadge,
 	HostedAppBadge,
+	LocalModeBadge,
 	ReplacedScriptBadge,
 } from "./app-badges";
 import type { ScriptStatus } from "./app-status";
