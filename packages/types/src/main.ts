@@ -9,6 +9,7 @@ import type {
 	Cart,
 	Customer,
 	Device,
+	InstalledApp,
 	Order,
 	Payment,
 	Session,
@@ -88,6 +89,18 @@ export type NubeSDKState = {
 	 * Information about the session, including the session ID.
 	 */
 	session: Session;
+
+	/**
+	 * The apps present on the current page, keyed by app id — including the app
+	 * reading the state.
+	 *
+	 * Use it to detect whether another app is installed and already running, for
+	 * example to coordinate two apps that render into the same slot.
+	 *
+	 * Absent during the very first events of a page load, before the SDK has
+	 * announced any app.
+	 */
+	apps?: Record<string, InstalledApp>;
 };
 
 /*
