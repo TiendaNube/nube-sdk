@@ -573,8 +573,14 @@ export type SearchPage = { type: "search"; data: Search & WithProductList };
  * Represents the account data.
  */
 export type Account = {
+	/** The ID of the logged in customer, or `null` when there is no session. */
 	customerId: Nullable<number>;
+	/** Whether the customer is logged in. */
 	loggedIn: boolean;
+	/** The ID of the order being viewed, when on an order detail page. */
+	orderId: Nullable<number>;
+	/** The number of the order being viewed, when on an order detail page. */
+	orderNumber: Nullable<number>;
 };
 
 /**
