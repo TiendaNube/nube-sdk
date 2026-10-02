@@ -62,6 +62,8 @@ declare global {
 		__NUBE_DEVTOOLS_EXTENSION__: boolean;
 		__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__: boolean;
 		__NUBE_SDK_DEVTOOLS_HOOK__?: NubeSDKDevtoolsHook;
+		/** Last `seq` the panel cleared; `readEvents` skips it and older. */
+		__NUBE_DEVTOOLS_EVENTS_CLEARED_SEQ__?: number;
 		/** Command bridge calls recorded by `handleCommands`, oldest first. */
 		__NUBE_DEVTOOLS_COMMANDS__?: NubeSDKCommandRecord[];
 		/** Measurements recorded by `inject-performance-monitor.js`, oldest first. */
