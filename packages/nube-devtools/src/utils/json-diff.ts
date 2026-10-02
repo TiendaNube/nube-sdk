@@ -1,7 +1,24 @@
+type Container = Record<string, unknown> | unknown[];
+
+function isContainer(value: unknown): value is Container {
+	return typeof value === "object" && value !== null;
+}
+
+const hasOwn = (obj: object, key: string) =>
+	Object.prototype.hasOwnProperty.call(obj, key);
+
 /**
- * Compares two objects and returns the paths (as arrays) of all modified keys
- * @param oldObj The previous object
- * @param newObj The new object
+ * Compares two values structurally and returns the dot-joined paths of every
+ * leaf that changed. Objects and arrays are walked recursively (arrays by
+ * index), so values that are equal but have a different reference — e.g. state
+ * that was serialized across the devtools bridge — are not reported.
+ *
+ * - Changed primitive / type change: the path of that value.
+ * - Added or removed key: the path of that key.
+ * - Array length change: the paths of the added/removed indexes.
+ *
+ * @param oldObj The previous value
+ * @param newObj The new value
  * @param path Current path (used for recursion)
  * @returns Set of paths (as strings) that were modified
  */
@@ -11,75 +28,54 @@ export function getModifiedPaths(
 	path: string[] = [],
 ): Set<string> {
 	const modifiedPaths = new Set<string>();
+	collectModifiedPaths(oldObj, newObj, path, modifiedPaths);
+	return modifiedPaths;
+}
 
-	if (oldObj === newObj) {
-		return modifiedPaths;
+function collectModifiedPaths(
+	oldValue: unknown,
+	newValue: unknown,
+	path: string[],
+	modifiedPaths: Set<string>,
+): void {
+	// Object.is also treats NaN as equal to NaN
+	if (Object.is(oldValue, newValue)) {
+		return;
 	}
 
-	// Handle null/undefined cases
-	if (oldObj == null || newObj == null) {
-		if (oldObj !== newObj) {
-			modifiedPaths.add(path.join("."));
-		}
-		return modifiedPaths;
+	// Primitives, null/undefined, or container vs. primitive
+	if (!isContainer(oldValue) || !isContainer(newValue)) {
+		modifiedPaths.add(path.join("."));
+		return;
 	}
 
-	// Handle primitive types
-	if (
-		typeof oldObj !== "object" ||
-		typeof newObj !== "object" ||
-		Array.isArray(oldObj) !== Array.isArray(newObj)
-	) {
-		if (oldObj !== newObj) {
-			modifiedPaths.add(path.join("."));
-		}
-		return modifiedPaths;
+	// Array replaced by object (or vice versa)
+	if (Array.isArray(oldValue) !== Array.isArray(newValue)) {
+		modifiedPaths.add(path.join("."));
+		return;
 	}
 
-	const oldObjTyped = oldObj as Record<string, unknown>;
-	const newObjTyped = newObj as Record<string, unknown>;
-
-	// Get all keys from both objects
+	const oldRecord = oldValue as Record<string, unknown>;
+	const newRecord = newValue as Record<string, unknown>;
 	const allKeys = new Set([
-		...Object.keys(oldObjTyped),
-		...Object.keys(newObjTyped),
+		...Object.keys(oldRecord),
+		...Object.keys(newRecord),
 	]);
 
 	for (const key of allKeys) {
 		const currentPath = [...path, key];
-		const oldValue = oldObjTyped[key];
-		const newValue = newObjTyped[key];
 
-		// Key was added
-		if (!(key in oldObjTyped)) {
+		// Key added or removed
+		if (!hasOwn(oldRecord, key) || !hasOwn(newRecord, key)) {
 			modifiedPaths.add(currentPath.join("."));
 			continue;
 		}
 
-		// Key was removed
-		if (!(key in newObjTyped)) {
-			modifiedPaths.add(currentPath.join("."));
-			continue;
-		}
-
-		// Recursively check nested objects
-		if (
-			typeof oldValue === "object" &&
-			oldValue !== null &&
-			typeof newValue === "object" &&
-			newValue !== null &&
-			!Array.isArray(oldValue) &&
-			!Array.isArray(newValue)
-		) {
-			const nestedPaths = getModifiedPaths(oldValue, newValue, currentPath);
-			for (const p of nestedPaths) {
-				modifiedPaths.add(p);
-			}
-		} else if (oldValue !== newValue) {
-			// Values are different
-			modifiedPaths.add(currentPath.join("."));
-		}
+		collectModifiedPaths(
+			oldRecord[key],
+			newRecord[key],
+			currentPath,
+			modifiedPaths,
+		);
 	}
-
-	return modifiedPaths;
 }
