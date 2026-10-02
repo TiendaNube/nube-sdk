@@ -1,3 +1,4 @@
+import { isFromInspectedTab } from "@/utils/inspected-tab";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
@@ -19,6 +20,11 @@ export const NubeSDKErrorsProvider = ({
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
 			if (port.name === "nube-devtools-error-events") {
+				// Another tab's content script: not ours to show.
+				if (!isFromInspectedTab(port)) {
+					port.disconnect();
+					return;
+				}
 				port.onMessage.addListener((message) => {
 					if (message.payload) {
 						const apps = message.payload[0]?.apps as
@@ -38,6 +44,10 @@ export const NubeSDKErrorsProvider = ({
 							setAppsErrors(updatedErrors);
 						}
 					}
+
+					// The content script opens one port per error and never
+					// closes it, so the panel does, as it does for storage.
+					port.disconnect();
 				});
 			}
 		};

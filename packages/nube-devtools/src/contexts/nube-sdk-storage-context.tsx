@@ -1,6 +1,7 @@
 import {
 	type PageStorageEntry,
 	type PageStorageType,
+	isFromInspectedTab,
 	parseStorageKey,
 	readPageStorage,
 	removePageStorage,
@@ -246,6 +247,12 @@ export const NubeSDKStorageProvider = ({
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
 			if (port.name !== "nube-devtools-storage-events") return;
+
+			// Another tab's content script: not ours to show.
+			if (!isFromInspectedTab(port)) {
+				port.disconnect();
+				return;
+			}
 
 			port.onMessage.addListener((message) => {
 				// One message carries a batch: the content script coalesces

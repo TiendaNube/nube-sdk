@@ -36,7 +36,7 @@ export function Components() {
 					[key: string]: Record<string, NubeSDKComponent>;
 				};
 			}) => {
-				if (response.status && response.components) {
+				if (response?.status && response.components) {
 					const keys = Object.keys(response.components);
 					setComponents(response.components);
 					if (keys.length === 1) {

@@ -200,5 +200,64 @@ describe("page-match", () => {
 				registeredListener,
 			);
 		});
+
+		/**
+		 * A host whose `checkout:ready` is sticky: once dispatched it is kept
+		 * and handed to the app's first `on("checkout:ready")`, synchronously,
+		 * inside that `on` call. `pending` says whether that replay is still
+		 * owed to this app.
+		 */
+		function registerStickyReadySDK(step: string, pending: boolean) {
+			const state = makeState({ type: "checkout", data: { step } });
+			const sdk = createMockSDK(state);
+			const listeners: Array<(state: NubeSDKState) => void> = [];
+			let replayOwed = pending;
+			sdk.on = vi.fn((event: string, listener: (s: NubeSDKState) => void) => {
+				if (event !== "checkout:ready") return;
+				listeners.push(listener);
+				if (replayOwed) {
+					replayOwed = false;
+					listener(state);
+				}
+			}) as unknown as NubeSDK["on"];
+			setNubeInstance(sdk);
+			const emitReady = (next: NubeSDKState) => {
+				for (const listener of listeners) listener(next);
+			};
+			return { state, emitReady };
+		}
+
+		// specs/tla/HelperEvents.tla, StepHandlerOnce (FIX_CHECKOUT_STEP_ONCE)
+		it("runs the step handler once when checkout:ready is replayed on subscribe", () => {
+			const { state } = registerStickyReadySDK("payment", true);
+			const payment = vi.fn();
+
+			onCheckoutStep({ payment } as CheckoutStepHandlers);
+
+			expect(payment).toHaveBeenCalledTimes(1);
+			expect(payment).toHaveBeenCalledWith(state);
+		});
+
+		it("runs the step handler once for a late registration with no replay", () => {
+			const { state } = registerStickyReadySDK("payment", false);
+			const payment = vi.fn();
+
+			onCheckoutStep({ payment } as CheckoutStepHandlers);
+
+			expect(payment).toHaveBeenCalledTimes(1);
+			expect(payment).toHaveBeenCalledWith(state);
+		});
+
+		it("keeps handling checkout:ready dispatched after subscribing", () => {
+			const { emitReady } = registerStickyReadySDK("cart", true);
+			const cart = vi.fn();
+			const payment = vi.fn();
+
+			onCheckoutStep({ cart, payment } as CheckoutStepHandlers);
+			emitReady(makeState({ type: "checkout", data: { step: "payment" } }));
+
+			expect(cart).toHaveBeenCalledTimes(1);
+			expect(payment).toHaveBeenCalledTimes(1);
+		});
 	});
 });

@@ -77,6 +77,13 @@ export function LocalModeContent() {
 		"idle",
 	);
 	const pollCancelledRef = useRef(false);
+	/**
+	 * Bumped by every poll that starts. A fetch cannot be aborted, so a poll
+	 * from an earlier Start can still be waiting on one when Stop and Start
+	 * run; Start resets `pollCancelledRef`, and without this check that poll
+	 * would carry on next to the new one.
+	 */
+	const pollGenerationRef = useRef(0);
 	const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const checkScriptAvailabilityOnce = useCallback(async (url: string) => {
@@ -120,13 +127,16 @@ export function LocalModeContent() {
 
 	const checkScriptAvailability = async (url: string) => {
 		pollCancelledRef.current = false;
+		const generation = ++pollGenerationRef.current;
+		const isStale = () =>
+			pollCancelledRef.current || generation !== pollGenerationRef.current;
 		setScriptAvailability("checking");
 
 		const runAttempt = async (attempt: number): Promise<void> => {
-			if (pollCancelledRef.current) return;
+			if (isStale()) return;
 
 			const available = await fetchScriptAvailable(url);
-			if (pollCancelledRef.current) return;
+			if (isStale()) return;
 
 			if (available) {
 				setScriptAvailability("available");
@@ -223,6 +233,14 @@ export function LocalModeContent() {
 	}, [checkScriptAvailabilityOnce]);
 
 	const reloadCurrentTab = async () => {
+		// Inside DevTools the tab to reload is the inspected one: the active
+		// tab differs as soon as the user switches tabs while the poll runs,
+		// or when DevTools is undocked. The popup has no inspected tab.
+		const inspectedTabId = chrome.devtools?.inspectedWindow?.tabId;
+		if (typeof inspectedTabId === "number") {
+			chrome.tabs.reload(inspectedTabId);
+			return;
+		}
 		const [tab] = await chrome.tabs.query({
 			active: true,
 			currentWindow: true,

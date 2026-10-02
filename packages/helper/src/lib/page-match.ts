@@ -247,20 +247,28 @@ export type CheckoutStepHandlers = Partial<
 export function onCheckoutStep(handlers: CheckoutStepHandlers): () => void {
 	const nube = getNubeInstance();
 
-	const currentState = nube.getState();
-	const currentPage = currentState.location.page;
-
-	if (currentPage.type === "checkout") {
-		handlers[currentPage?.data?.step]?.(currentState);
-	}
-
+	let handledOnSubscribe = false;
 	const listener = (state: NubeSDKState) => {
+		handledOnSubscribe = true;
 		const { page } = state.location;
 		if (page.type !== "checkout") return;
 		const step: CheckoutStep = page.data.step;
 		handlers[step]?.(state);
 	};
 	nube.on("checkout:ready", listener);
+
+	// `checkout:ready` is sticky: the host hands an already dispatched one to
+	// the app's first listener, synchronously, inside `on`. Only when that did
+	// not happen (another listener consumed it earlier) is the current step
+	// handled here, so a late registration still runs once, not twice.
+	if (!handledOnSubscribe) {
+		const currentState = nube.getState();
+		const currentPage = currentState.location.page;
+
+		if (currentPage.type === "checkout") {
+			handlers[currentPage?.data?.step]?.(currentState);
+		}
+	}
 
 	return () => nube.off("checkout:ready", listener);
 }

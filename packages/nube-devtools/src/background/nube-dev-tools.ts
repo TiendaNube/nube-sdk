@@ -92,7 +92,9 @@ export const handleDevToolsGetComponents = ({
 			},
 		},
 		(results) => {
-			const components = results[0].result;
+			// `results` is undefined when the script could not run (the tab is
+			// navigating, or shows a page that cannot be scripted).
+			const components = results?.[0]?.result;
 			if (components) {
 				sendResponse({ status: true, components });
 			} else {
