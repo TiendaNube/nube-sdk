@@ -39,7 +39,37 @@ export type CustomizationOptions = {
 	 * making the label vanish into its own background.
 	 */
 	fontColor: string;
+	/**
+	 * Whether the element is hidden, and on which viewports:
+	 *
+	 * - `"always"` — hidden on every viewport;
+	 * - `"mobile"` — hidden below 768px only;
+	 * - `"desktop"` — hidden from 768px up only;
+	 * - `"never"` — not hidden, i.e. shown as the store renders it. Pass this
+	 *   to undo a previous value without restoring the target's other options,
+	 *   the way `""` undoes {@link CustomizationOptions.fontColor}.
+	 *
+	 * Applied through a stylesheet the platform owns rather than an inline
+	 * style, which is what makes it outlast the store's own code: a theme that
+	 * shows or hides the same element — as it does when a shopper selects a
+	 * variant — does not undo it, so this option usually does not need the
+	 * re-applying that {@link CustomizationCommands.set} describes. `"never"`
+	 * hands the element back to the theme instead of pinning it visible.
+	 *
+	 * 768px is the breakpoint the platform's themes are built on. A theme with
+	 * different breakpoints of its own still hides at this one.
+	 *
+	 * Refused when the value is not one of the four above.
+	 */
+	hidden: CustomizationHiddenMode;
 };
+
+/**
+ * The values {@link CustomizationOptions.hidden} accepts, named so an app can
+ * type a mode it computes — from its own settings, say — without repeating the
+ * union.
+ */
+export type CustomizationHiddenMode = "always" | "mobile" | "desktop" | "never";
 
 /**
  * Requires at least one of `T`'s members while leaving the others optional.
@@ -115,6 +145,49 @@ export type Customization = {
 	 * As with `product-detail-price`, only what the shopper reads changes.
 	 */
 	"product-grid-item-price": AllowedCustomizationOptions<"text">;
+	/**
+	 * The compare-at price on the product page — the original, struck-through
+	 * price shown next to {@link Customization."product-detail-price"} when the
+	 * product is on sale. Compare-at prices in product grids, carousels and
+	 * quick shop are not affected.
+	 *
+	 * `text` replaces the compare-at price as shown, e.g. to express it per
+	 * square metre alongside the price. Only what the shopper reads changes:
+	 * the amounts the store sells at and computes its discounts from stay the
+	 * same. The store rewrites it when the shopper selects a variant, so an app
+	 * re-applies `text` on `product:variant_selected`.
+	 *
+	 * `hidden` removes it from the product page, e.g. to show only the final
+	 * price. The store hides this element by itself when the selected variant
+	 * has no compare-at price; `hidden` never shows it in that case.
+	 */
+	"product-detail-compare-at-price": AllowedCustomizationOptions<
+		"text" | "hidden"
+	>;
+	/**
+	 * The compare-at price on every product card in a grid: category, search
+	 * and home listings, and the related products on a product page. The
+	 * product page's own compare-at price is
+	 * {@link Customization."product-detail-compare-at-price"}.
+	 *
+	 * Every card shows a different compare-at price, so `text` is usually set
+	 * with a resolver, which gets each card's product:
+	 *
+	 * ```ts
+	 * customization.set("product-grid-item-compare-at-price", (product) => {
+	 *   const compareAt = product.variants?.[0]?.compare_at_price;
+	 *   if (!compareAt) return; // leave this card as it is
+	 *   return { text: `${perSquareMetre(compareAt)} / m²` };
+	 * });
+	 * ```
+	 *
+	 * `hidden` applies to every card alike, so it is usually sent as plain
+	 * options. As with `product-detail-compare-at-price`, only what the
+	 * shopper reads changes.
+	 */
+	"product-grid-item-compare-at-price": AllowedCustomizationOptions<
+		"text" | "hidden"
+	>;
 };
 
 /**
@@ -146,6 +219,8 @@ export type CustomizationProduct = Pick<ProductDetails, "id" | "name"> &
 export type CustomizationContext = {
 	/** Each card's product. */
 	"product-grid-item-price": CustomizationProduct;
+	/** Each card's product. */
+	"product-grid-item-compare-at-price": CustomizationProduct;
 };
 
 /**
