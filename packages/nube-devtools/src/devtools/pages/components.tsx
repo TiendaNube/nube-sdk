@@ -9,7 +9,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { RefreshCcw } from "lucide-react";
+import { ComponentIcon, RefreshCwIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import Layout from "../components/layout";
@@ -56,24 +56,31 @@ export function Components() {
 
 	return (
 		<Layout>
-			<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px]">
-				<div className="flex items-center">
+			<nav className="flex items-center justify-between px-1.5 py-1 border-b h-[33px] shrink-0">
+				<div className="flex items-center min-w-0">
 					<SidebarTrigger />
 					<Divider />
 					<Button
 						variant="ghost"
 						size="icon"
 						className="h-6 w-6"
+						title="Refresh the components"
 						onClick={() => {
 							getComponents();
 							toast.success("Components refreshed");
 						}}
 					>
-						<RefreshCcw className="size-3" />
+						<RefreshCwIcon className="size-3" />
 					</Button>
+					<Divider />
+					<ComponentIcon className="size-3 shrink-0" />
+					<span className="ml-1.5 text-xs font-medium">Components</span>
+					<span className="ml-2 text-xs text-muted-foreground truncate hidden sm:inline">
+						The component tree each app renders into its slots
+					</span>
 				</div>
 				{selectedApp && components[selectedApp] && (
-					<span className="text-xs">
+					<span className="shrink-0 pr-1 text-xs text-muted-foreground">
 						{Object.keys(components[selectedApp]).length}{" "}
 						{Object.keys(components[selectedApp]).length === 1
 							? "slot"

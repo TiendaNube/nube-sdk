@@ -25,6 +25,7 @@ const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
 	"nube-devtools-application-server";
 const MAX_POLL_ATTEMPTS = 10;
 const POLL_INTERVAL_MS = 2000;
+const MAX_APPS_FETCH_ATTEMPTS = 5;
 
 type StoredApplicationServerData = {
 	script?: string;
@@ -58,8 +59,19 @@ function getApps(): Record<string, NubeSDKApp> {
 	return {};
 }
 
-export function LocalModeContent() {
-	const [apps, setApps] = useState<NubeSDKApp[]>([]);
+type LocalModeContentProps = {
+	/**
+	 * Apps registered on the inspected page. The DevTools panel passes the list
+	 * it keeps in sync with the runtime; the popup has no such stream, so
+	 * without it the page is read directly.
+	 */
+	apps?: NubeSDKApp[];
+};
+
+export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
+	const [pageApps, setPageApps] = useState<NubeSDKApp[]>([]);
+	const apps = appsProp ?? pageApps;
+	const shouldFetchApps = appsProp === undefined;
 	const [selectedTab, setSelectedTab] = useState<"new" | "existing">(
 		(localStorage.getItem(LOCAL_STORAGE_KEY_DEVTOOLS_LOCAL_MODE_SELECTED_TAB) as
 			| "new"
@@ -78,6 +90,9 @@ export function LocalModeContent() {
 	);
 	const pollCancelledRef = useRef(false);
 	const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const appsRetryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+		null,
+	);
 
 	const checkScriptAvailabilityOnce = useCallback(async (url: string) => {
 		setScriptAvailability("checking");
@@ -89,7 +104,16 @@ export function LocalModeContent() {
 		}
 	}, []);
 
-	const executeAppsScript = useCallback((tabId: number) => {
+	const clearAppsRetry = useCallback(() => {
+		if (appsRetryTimeoutRef.current) {
+			clearTimeout(appsRetryTimeoutRef.current);
+			appsRetryTimeoutRef.current = null;
+		}
+	}, []);
+
+	// Retries while empty: opened during a page load, the runtime may not have
+	// registered any app yet.
+	const executeAppsScript = useCallback((tabId: number, attempt: number) => {
 		chrome.scripting.executeScript(
 			{
 				target: { tabId },
@@ -98,25 +122,36 @@ export function LocalModeContent() {
 			},
 			(results) => {
 				const appsRecord = results?.[0]?.result;
-				if (appsRecord && typeof appsRecord === "object") {
-					setApps(Object.values(appsRecord as Record<string, NubeSDKApp>));
+				const next =
+					appsRecord && typeof appsRecord === "object"
+						? Object.values(appsRecord as Record<string, NubeSDKApp>)
+						: [];
+				setPageApps(next);
+
+				if (next.length === 0 && attempt < MAX_APPS_FETCH_ATTEMPTS) {
+					appsRetryTimeoutRef.current = setTimeout(
+						() => executeAppsScript(tabId, attempt + 1),
+						POLL_INTERVAL_MS,
+					);
 				}
 			},
 		);
 	}, []);
 
 	const fetchApps = useCallback(() => {
+		if (!shouldFetchApps) return;
+		clearAppsRetry();
 		if (chrome.devtools?.inspectedWindow?.tabId != null) {
-			executeAppsScript(chrome.devtools.inspectedWindow.tabId);
+			executeAppsScript(chrome.devtools.inspectedWindow.tabId, 1);
 			return;
 		}
 		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 			const tabId = tabs[0]?.id;
 			if (tabId != null) {
-				executeAppsScript(tabId);
+				executeAppsScript(tabId, 1);
 			}
 		});
-	}, [executeAppsScript]);
+	}, [shouldFetchApps, executeAppsScript, clearAppsRetry]);
 
 	const checkScriptAvailability = async (url: string) => {
 		pollCancelledRef.current = false;
@@ -177,7 +212,8 @@ export function LocalModeContent() {
 		if (selectedTab === "existing") {
 			fetchApps();
 		}
-	}, [selectedTab, fetchApps]);
+		return clearAppsRetry;
+	}, [selectedTab, fetchApps, clearAppsRetry]);
 
 	useEffect(() => {
 		return () => cancelPolling();

@@ -20,9 +20,11 @@ import {
 } from "@/contexts/nube-sdk-commands-context";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
+import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import { formatAbsoluteDateTime } from "@/devtools/components/relative-time";
 import { SearchInput } from "@/devtools/components/search-input";
 import { useChangeHighlight } from "@/hooks/use-change-highlight";
+import { usePanelDirection } from "@/hooks/use-panel-direction";
 import {
 	ArrowRightLeftIcon,
 	FilterIcon,
@@ -117,6 +119,8 @@ function commandName(record: NubeSDKCommandRecord): string {
 }
 
 export function ApiCalls() {
+	const { direction, toggleDirection, autoSaveId } =
+		usePanelDirection(PANEL_WIDTH_KEY);
 	const { records, isLoading, clearRecords } = useNubeSDKCommands();
 
 	const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -197,21 +201,27 @@ export function ApiCalls() {
 							nube.api calls made by your apps
 						</span>
 					</div>
-					<TooltipProvider>
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<span className="inline-flex shrink-0">
-									<InfoIcon className="size-3 text-muted-foreground" />
-								</span>
-							</TooltipTrigger>
-							<TooltipContent className="max-w-xs">
-								Every call an app's worker sends through the command bridge (
-								<code>nube.api.*</code>), with the params it sent and the result
-								or error it got back. Durations include the time the SDK waits
-								for a handler that has not been registered yet.
-							</TooltipContent>
-						</Tooltip>
-					</TooltipProvider>
+					<div className="flex items-center gap-1.5 shrink-0">
+						<PanelDirectionToggle
+							direction={direction}
+							onToggle={toggleDirection}
+						/>
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span className="inline-flex shrink-0">
+										<InfoIcon className="size-3 text-muted-foreground" />
+									</span>
+								</TooltipTrigger>
+								<TooltipContent className="max-w-xs">
+									Every call an app's worker sends through the command bridge (
+									<code>nube.api.*</code>), with the params it sent and the
+									result or error it got back. Durations include the time the
+									SDK waits for a handler that has not been registered yet.
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
 				</nav>
 
 				<div className="flex items-center gap-1 px-1.5 py-1 border-b shrink-0">
@@ -253,9 +263,10 @@ export function ApiCalls() {
 
 				<div className="flex-1 overflow-hidden">
 					<ResizablePanelGroup
-						autoSaveId={PANEL_WIDTH_KEY}
+						key={direction}
+						autoSaveId={autoSaveId}
 						storage={localStorage}
-						direction="horizontal"
+						direction={direction}
 					>
 						<ResizablePanel defaultSize={45}>
 							<CallList

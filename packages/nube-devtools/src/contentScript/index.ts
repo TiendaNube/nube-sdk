@@ -1,5 +1,6 @@
 import type { NubeSDKStorageEvent } from "@/contexts/nube-sdk-storage-context";
 import type { NubeSDKCommandRecord } from "@/utils/page-commands";
+import type { NubeSDKPerformanceRecord } from "@/utils/page-performance";
 
 const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
 	"nube-devtools-application-server";
@@ -53,37 +54,27 @@ if (document.readyState === "loading") {
 }
 
 /**
- * Single long-lived port for the event stream, owned by
- * `NubeSDKEventsProvider` on the panel side (the only consumer, and mounted
- * for as long as the panel is open).
+ * Event stream to the panel. The panel opens the port (`chrome.tabs.connect`)
+ * rather than this script: a port this side opened is only announced to the
+ * panel through `onConnect`, once, so a panel opened after it — closing and
+ * reopening DevTools — never saw it and received nothing until a page reload.
+ * Opened by the panel, a port lives exactly as long as the panel, and only
+ * the panel inspecting this tab gets one.
  *
- * A port per event — what this used to do — meant a burst of connections on
- * every page load, since the runtime hook replays its whole buffer when the
- * injected script subscribes. A port per batch would instead leak one port
- * per batch, as nothing disconnects them.
- *
- * The port dies when the panel closes; it is reopened lazily on the next
- * batch, and events dispatched while no panel is listening are dropped —
- * which is what happened before as well.
+ * Nothing is kept here: the history lives in the devtools hook, which the
+ * panel reads on its own once this script says it is listening.
  */
-let eventsPort: chrome.runtime.Port | null = null;
+const eventsPorts = new Set<chrome.runtime.Port>();
 
-function getEventsPort(): chrome.runtime.Port | null {
-	if (eventsPort) {
-		return eventsPort;
-	}
+chrome.runtime.onConnect.addListener((port) => {
+	if (port.name !== "nube-devtools-events") return;
 
-	try {
-		const port = chrome.runtime.connect({ name: "nube-devtools-events" });
-		port.onDisconnect.addListener(() => {
-			eventsPort = null;
-		});
-		eventsPort = port;
-		return port;
-	} catch {
-		return null;
-	}
-}
+	eventsPorts.add(port);
+	port.onDisconnect.addListener(() => eventsPorts.delete(port));
+	// Past this point every dispatch reaches the panel, so a snapshot it
+	// takes now leaves no gap.
+	port.postMessage({ action: "ready" });
+});
 
 window.addEventListener("NubeSDKEvents", ((event) => {
 	const records = (event as CustomEvent<NubeSDKDevtoolsRecord[]>).detail;
@@ -91,20 +82,16 @@ window.addEventListener("NubeSDKEvents", ((event) => {
 		return;
 	}
 
-	const port = getEventsPort();
-	if (!port) {
-		return;
-	}
-
-	try {
-		port.postMessage({ payload: records });
-	} catch (error) {
-		// Losing a batch is acceptable. If the port is gone — the panel closed
-		// between the connect and the post — `onDisconnect` clears
-		// `eventsPort` on its own; any other failure (a record the runtime
-		// cannot serialize) keeps the port, so one bad batch does not stop the
-		// stream.
-		console.warn("[nube-devtools] failed to forward event batch", error);
+	for (const port of eventsPorts) {
+		try {
+			port.postMessage({ payload: records });
+		} catch (error) {
+			// Losing a batch is acceptable. A port that is gone is dropped by its
+			// `onDisconnect`; any other failure (a record the runtime cannot
+			// serialize) keeps the port, so one bad batch does not stop the
+			// stream.
+			console.warn("[nube-devtools] failed to forward event batch", error);
+		}
 	}
 }) as EventListener);
 
@@ -205,4 +192,47 @@ window.addEventListener("NubeSDKCommandEvents", ((event: Event) => {
 	}
 	commandFlushScheduled = true;
 	queueMicrotask(flushCommandRecords);
+}) as EventListener);
+
+/**
+ * Performance measurements, forwarded the same way as command calls — one
+ * port per microtask batch, since most of them are taken while the page
+ * boots, before the panel is listening.
+ */
+const pendingPerformanceRecords: NubeSDKPerformanceRecord[] = [];
+let performanceFlushScheduled = false;
+
+function flushPerformanceRecords() {
+	performanceFlushScheduled = false;
+	if (pendingPerformanceRecords.length === 0) {
+		return;
+	}
+
+	const batch = pendingPerformanceRecords.splice(
+		0,
+		pendingPerformanceRecords.length,
+	);
+
+	try {
+		const port = chrome.runtime.connect({
+			name: "nube-devtools-performance-events",
+		});
+		port.postMessage({ payload: batch });
+	} catch (error) {
+		console.warn("[nube-devtools] failed to forward performance batch", error);
+	}
+}
+
+window.addEventListener("NubeSDKPerformanceEvents", ((event: Event) => {
+	const payload = event as CustomEvent<NubeSDKPerformanceRecord>;
+	if (!payload.detail) {
+		return;
+	}
+
+	pendingPerformanceRecords.push(payload.detail);
+	if (performanceFlushScheduled) {
+		return;
+	}
+	performanceFlushScheduled = true;
+	queueMicrotask(flushPerformanceRecords);
 }) as EventListener);
