@@ -1,310 +1,156 @@
-import type { NubeSDKApp } from "@/background/types";
-import { Badge } from "@/components/ui/badge";
 import {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Table, TableBody, TableRow } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
-import { useNubeSDKAppsContext } from "@/contexts/nube-sdk-apps-context";
+import {
+	AppDetailEmpty,
+	AppDetailPanel,
+	AppList,
+	AppsHeader,
+} from "@/devtools/components/apps";
 import { EmptyState } from "@/devtools/components/empty-state";
 import Layout from "@/devtools/components/layout";
 import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
-import { usePanelDirection } from "@/hooks/use-panel-direction";
-import { getPageSessionStorage } from "@/utils";
-import { Circle, Loader2 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { SearchInput } from "@/devtools/components/search-input";
 import {
-	AppDetailPanel,
-	type ScriptStatus,
-	getScriptStatusColor,
-	getScriptStatusLabel,
-} from "../components/app-detail-panel";
-import { TableRowItem } from "../components/table-row-item";
+	useApps,
+	useBlockedApps,
+	useLocalModeApp,
+	useScriptStatuses,
+} from "@/devtools/hooks";
+import { usePanelDirection } from "@/hooks/use-panel-direction";
+import { Loader2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 const STORAGE_KEY = "nube-devtools-apps-panel-size";
-const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
-	"nube-devtools-application-server";
-const MIN_REFRESH_FEEDBACK_MS = 500;
-
-type LocalModeStoredData = {
-	appId?: string;
-	type?: "new" | "existing";
-	connected?: boolean;
-};
-
-const getApps = (): Record<string, NubeSDKApp> => {
-	if (window.nubeSDK) {
-		return window.nubeSDK.getState().apps;
-	}
-	return {};
-};
+const SEARCH_STORAGE_KEY = "nube-devtools-apps-filter-search";
 
 export function Apps() {
 	const { direction, toggleDirection, autoSaveId } =
 		usePanelDirection(STORAGE_KEY);
-	const { apps, setApps } = useNubeSDKAppsContext();
-	const [selectedApp, setSelectedApp] = useState<NubeSDKEvent | null>(null);
-	const [localModeData, setLocalModeData] =
-		useState<LocalModeStoredData | null>(null);
+	const { apps, isLoaded, refresh, isRefreshing } = useApps();
+	const { blockedApps, isBlocked, setBlocked } = useBlockedApps();
+	const localModeApp = useLocalModeApp();
 
-	const [isRefreshing, setIsRefreshing] = useState(false);
-	const isActive = useRef(true);
-	const retryTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-	const fetchApps = useCallback(() => {
-		if (retryTimeout.current) {
-			clearTimeout(retryTimeout.current);
-			retryTimeout.current = null;
-		}
-		return new Promise<void>((resolve) => {
-			chrome.scripting.executeScript(
-				{
-					target: { tabId: chrome.devtools.inspectedWindow.tabId },
-					world: "MAIN",
-					func: getApps,
-				},
-				(results) => {
-					if (!isActive.current) {
-						resolve();
-						return;
-					}
-					try {
-						const appsResult = results?.[0]?.result as
-							| Record<string, NubeSDKApp>
-							| undefined;
-						const appsKeys = appsResult ? Object.keys(appsResult) : [];
-
-						if (appsKeys.length > 0 && appsResult) {
-							const apps = Object.keys(appsResult).map((key) => {
-								return {
-									id: crypto.randomUUID(),
-									data: appsResult[key],
-								};
-							});
-							setApps(apps);
-						} else {
-							setApps([]);
-							retryTimeout.current = setTimeout(fetchApps, 2000);
-						}
-					} catch (error) {
-						setApps([]);
-					} finally {
-						resolve();
-					}
-				},
-			);
-		});
-	}, [setApps]);
-
-	const handleRefresh = useCallback(async () => {
-		setIsRefreshing(true);
-		await Promise.all([
-			fetchApps(),
-			new Promise<void>((resolve) => {
-				refreshTimeout.current = setTimeout(resolve, MIN_REFRESH_FEEDBACK_MS);
-			}),
-		]);
-		if (isActive.current) {
-			setIsRefreshing(false);
-		}
-	}, [fetchApps]);
+	const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
+	const [filter, setFilter] = useState(
+		() => localStorage.getItem(SEARCH_STORAGE_KEY) || "",
+	);
 
 	useEffect(() => {
-		isActive.current = true;
-		fetchApps();
-		return () => {
-			isActive.current = false;
-			if (retryTimeout.current) {
-				clearTimeout(retryTimeout.current);
-				retryTimeout.current = null;
-			}
-			if (refreshTimeout.current) {
-				clearTimeout(refreshTimeout.current);
-				refreshTimeout.current = null;
-			}
-		};
-	}, [fetchApps]);
+		localStorage.setItem(SEARCH_STORAGE_KEY, filter);
+	}, [filter]);
 
-	useEffect(() => {
-		let cancelled = false;
-		getPageSessionStorage(PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION).then(
-			(stored) => {
-				if (cancelled || !stored) {
-					if (!cancelled) setLocalModeData(null);
-					return;
-				}
-				try {
-					const data = JSON.parse(stored) as LocalModeStoredData;
-					if (data.connected === true && data.appId && data.type) {
-						setLocalModeData({ appId: data.appId, type: data.type });
-					} else {
-						setLocalModeData(null);
-					}
-				} catch {
-					setLocalModeData(null);
-				}
-			},
+	// Blocked apps live in the page's sessionStorage, so they must show up even
+	// when the inspected page no longer reports them as installed.
+	const allApps = useMemo<NubeSDKEvent[]>(() => {
+		const missingBlockedApps = blockedApps
+			.filter((blocked) => !apps.some((app) => app.data.id === blocked.id))
+			.map((blocked) => ({ id: `blocked:${blocked.id}`, data: blocked }));
+		// Sorted so an app keeps its place when the page starts reporting it.
+		return [...apps, ...missingBlockedApps].sort((a, b) =>
+			a.data.id.localeCompare(b.data.id),
 		);
-		return () => {
-			cancelled = true;
-		};
-	}, []);
+	}, [apps, blockedApps]);
 
-	const handleOnSelect = (event: NubeSDKEvent) => {
-		setSelectedApp(event);
-	};
+	const scriptStatuses = useScriptStatuses(allApps);
 
-	const [scriptStatuses, setScriptStatuses] = useState<
-		Record<string, ScriptStatus>
-	>({});
-	const checkedScripts = useRef<Set<string>>(new Set());
+	const isAppOnline = (app: NubeSDKEvent) =>
+		scriptStatuses[app.data.script] === "online" && !isBlocked(app.data.id);
 
-	useEffect(() => {
-		for (const app of apps) {
-			const scriptUrl = app.data.script;
-			if (!scriptUrl || checkedScripts.current.has(scriptUrl)) continue;
-
-			checkedScripts.current.add(scriptUrl);
-
-			setScriptStatuses((prev) => ({
-				...prev,
-				[scriptUrl]: "checking",
-			}));
-
-			fetch(scriptUrl, { method: "HEAD", mode: "no-cors" })
-				.then(() => {
-					setScriptStatuses((prev) => ({
-						...prev,
-						[scriptUrl]: "online",
-					}));
-				})
-				.catch(() => {
-					setScriptStatuses((prev) => ({
-						...prev,
-						[scriptUrl]: "offline",
-					}));
-				});
-		}
-	}, [apps]);
-
-	const isDevMode = (script: string) => {
-		return script.includes("localhost") || script.includes("127.0.0.1");
-	};
-
-	const renderScriptStatusRightContent = (
-		scriptStatus: ScriptStatus | undefined,
-	) => {
-		if (!scriptStatus) return null;
-		return (
-			<Badge
-				variant="outline"
-				className={`text-[10px] px-1.5 py-0 gap-1 ${getScriptStatusColor(scriptStatus)}`}
-			>
-				{scriptStatus === "checking" ? (
-					<Loader2 className="h-1.5 w-1.5 animate-spin" />
-				) : (
-					<Circle className="h-1.5 w-1.5 fill-current" />
-				)}
-				{getScriptStatusLabel(scriptStatus)}
-			</Badge>
+	const filteredApps = useMemo(() => {
+		const query = filter.trim().toLowerCase();
+		if (!query) return allApps;
+		return allApps.filter(
+			(app) =>
+				app.data.id.toLowerCase().includes(query) ||
+				app.data.script.toLowerCase().includes(query),
 		);
-	};
+	}, [allApps, filter]);
+
+	const onlineCount = allApps.filter(isAppOnline).length;
+	const selectedApp =
+		allApps.find((app) => app.data.id === selectedAppId) ?? null;
 
 	return (
 		<Layout>
 			<div className="flex h-full flex-col">
-				<nav className="flex items-center justify-between px-1.5 py-1 border-b h-8.25 shrink-0">
-					<div className="flex items-center">
-						<SidebarTrigger />
+				<AppsHeader
+					total={allApps.length}
+					online={onlineCount}
+					isRefreshing={isRefreshing}
+					onRefresh={refresh}
+				/>
+				<div className="flex items-center gap-1 px-1.5 py-1 border-b shrink-0">
+					<div className="flex items-center flex-1 min-w-0 max-w-xs">
+						<SearchInput
+							value={filter}
+							onChange={setFilter}
+							placeholder="Filter by app or script..."
+						/>
 					</div>
-					<div className="flex items-center gap-1.5 shrink-0">
-						<span className="text-xs">
-							{apps.length} {apps.length === 1 ? "app" : "apps"}
-						</span>
+					<div className="ml-auto flex items-center shrink-0">
 						<PanelDirectionToggle
 							direction={direction}
 							onToggle={toggleDirection}
 						/>
 					</div>
-				</nav>
+				</div>
 				<div className="flex-1 overflow-hidden">
-					<ResizablePanelGroup
-						key={direction}
-						autoSaveId={autoSaveId}
-						storage={localStorage}
-						direction={direction}
-					>
-						<ResizablePanel defaultSize={40}>
-							{apps.length === 0 ? (
-								<EmptyState
-									text="No apps found"
-									buttonText={isRefreshing ? "Refreshing..." : "Refresh apps"}
-									onButtonClick={handleRefresh}
-									isLoading={isRefreshing}
+					{!isLoaded ? (
+						<div className="flex h-full items-center justify-center gap-2 text-sm">
+							<Loader2 className="size-3 animate-spin" />
+							Loading apps...
+						</div>
+					) : allApps.length === 0 ? (
+						<EmptyState
+							text="No apps found"
+							buttonText={isRefreshing ? "Refreshing..." : "Refresh apps"}
+							onButtonClick={refresh}
+							isLoading={isRefreshing}
+						/>
+					) : (
+						<ResizablePanelGroup
+							key={direction}
+							autoSaveId={autoSaveId}
+							storage={localStorage}
+							direction={direction}
+						>
+							<ResizablePanel defaultSize={35} minSize={20}>
+								<AppList
+									apps={filteredApps}
+									selectedAppId={selectedApp?.id}
+									localModeAppId={localModeApp?.appId}
+									isReplacedScript={localModeApp?.type === "existing"}
+									isAppBlocked={isBlocked}
+									scriptStatuses={scriptStatuses}
+									onSelect={(app) => setSelectedAppId(app.data.id)}
 								/>
-							) : (
-								<div className="overflow-hidden w-full">
-									<Table className="table-fixed">
-										<TableBody className="[&_tr:last-child]:border-b">
-											{apps.map((app) => {
-												const isLocalModeApp =
-													localModeData?.appId === app.data.id;
-												const localModeBadge1 = isLocalModeApp
-													? "Local Mode"
-													: undefined;
-												const localModeBadge2 =
-													isLocalModeApp && localModeData?.type === "existing"
-														? "Replaced Script"
-														: undefined;
-
-												return (
-													<TableRow key={app.id}>
-														<TableRowItem
-															isSelected={app.id === selectedApp?.id}
-															title={app.data.id}
-															badge1={
-																localModeBadge1 ??
-																(isDevMode(app.data.script)
-																	? "dev mode"
-																	: undefined)
-															}
-															badge2={localModeBadge2}
-															event={app}
-															onSelect={handleOnSelect}
-															rightContent={renderScriptStatusRightContent(
-																scriptStatuses[app.data.script],
-															)}
-														/>
-													</TableRow>
-												);
-											})}
-										</TableBody>
-									</Table>
-								</div>
-							)}
-						</ResizablePanel>
-						<ResizableHandle />
-						<ResizablePanel>
-							{selectedApp ? (
-								<AppDetailPanel
-									id={selectedApp.data.id}
-									registered={selectedApp.data.registered}
-									script={selectedApp.data.script}
-									scriptStatus={scriptStatuses[selectedApp.data.script]}
-								/>
-							) : (
-								<div className="flex h-full items-center justify-center px-4">
-									<p className="text-xs text-muted-foreground">
-										Select an app to inspect its details.
-									</p>
-								</div>
-							)}
-						</ResizablePanel>
-					</ResizablePanelGroup>
+							</ResizablePanel>
+							<ResizableHandle />
+							<ResizablePanel>
+								{selectedApp ? (
+									<AppDetailPanel
+										app={selectedApp}
+										scriptStatus={scriptStatuses[selectedApp.data.script]}
+										isLocalMode={localModeApp?.appId === selectedApp.data.id}
+										isReplacedScript={
+											localModeApp?.appId === selectedApp.data.id &&
+											localModeApp?.type === "existing"
+										}
+										isBlocked={isBlocked(selectedApp.data.id)}
+										onBlockedChange={(blocked) =>
+											setBlocked(selectedApp.data, blocked)
+										}
+									/>
+								) : (
+									<AppDetailEmpty />
+								)}
+							</ResizablePanel>
+						</ResizablePanelGroup>
+					)}
 				</div>
 			</div>
 		</Layout>
