@@ -75,12 +75,23 @@ type AllowedCustomizationOptions<T extends keyof CustomizationOptions> =
  */
 export type Customization = {
 	/**
-	 * The storefront's add-to-cart button, on product pages and product grids.
+	 * The storefront's add-to-cart button, on product pages, product grids
+	 * and the quick shop.
 	 *
-	 * Every instance on the page is customized. `fontColor` applies on any
-	 * theme; `text` applies on the themes that render the button as a form
-	 * input, which is most of them, and is ignored where a theme builds the
-	 * label differently.
+	 * With options, every instance on the page is customized. `fontColor`
+	 * applies on any theme; `text` applies on the themes that render the
+	 * button as a form input, which is most of them, and is ignored where a
+	 * theme builds the label differently.
+	 *
+	 * Each button adds a different product, so this target can also be set
+	 * with a resolver, which gets the product of each button:
+	 *
+	 * ```ts
+	 * customization.set("add-to-cart-button", (product) => {
+	 *   if (!product.tags?.includes("pre-order")) return; // leave it as it is
+	 *   return { text: "Reservar" };
+	 * });
+	 * ```
 	 */
 	"add-to-cart-button": AllowedCustomizationOptions<"text" | "fontColor">;
 	/**
@@ -144,6 +155,8 @@ export type CustomizationProduct = Pick<ProductDetails, "id" | "name"> &
  * {@link CustomizationContextOf}).
  */
 export type CustomizationContext = {
+	/** The product the button adds: the product page's, or each card's. */
+	"add-to-cart-button": CustomizationProduct;
 	/** Each card's product. */
 	"product-grid-item-price": CustomizationProduct;
 };
