@@ -1,4 +1,5 @@
 export { handleEvents } from "./handle-events";
+export { clearEvents, readEvents } from "./page-events";
 export {
 	clearCommands,
 	handleCommands,
@@ -8,6 +9,12 @@ export {
 	readCommands,
 } from "./page-commands";
 export { highlightElement } from "./highlight-element";
+export {
+	clearPerformance,
+	type NubeSDKPerformanceKind,
+	type NubeSDKPerformanceRecord,
+	readPerformance,
+} from "./page-performance";
 export {
 	getStorageItem,
 	type PageStorageEntry,

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import type { ReactNode } from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 
 export interface NubeSDKEvent {
 	id: string;
@@ -12,7 +12,7 @@ export interface NubeSDKEvent {
 
 type NubeSDKAppsContextType = {
 	apps: NubeSDKEvent[];
-	setApps: (apps: NubeSDKEvent[]) => void;
+	setApps: Dispatch<SetStateAction<NubeSDKEvent[]>>;
 };
 
 const NubeSDKAppsContext = createContext<NubeSDKAppsContextType | undefined>(

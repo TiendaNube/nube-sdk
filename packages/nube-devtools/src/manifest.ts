@@ -38,6 +38,7 @@ export default defineManifest({
 				"img/logo-48.png",
 				"img/logo-128.png",
 				"inject-extension-flag.js",
+				"inject-performance-monitor.js",
 			],
 			matches: [],
 		},
