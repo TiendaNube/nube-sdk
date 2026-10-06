@@ -2,10 +2,6 @@
 
 **A development toolkit for creating third-party apps within the Nuvemshop platform.**
 
-> [!IMPORTANT]  
-> NubeSDK is currently in its **beta phase**, and new features are still being implemented. Developers interested in using this SDK should **contact the Nuvemshop / Tiendanube team before integration** to ensure compatibility and receive support.
-
-
 ## About
 
 NubeSDK provides a suite of libraries that enable developers to create **secure, declarative, and extensible applications** inside the Nuvemshop ecosystem. Apps built with NubeSDK run inside **isolated web workers**, ensuring a controlled execution environment without direct access to the DOM.
@@ -18,8 +14,9 @@ This monorepo contains several key packages that facilitate different aspects of
 - [`@tiendanube/nube-sdk-helper`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/helper) → Utility functions, type guards, and SDK instance management.
 - [`@tiendanube/nube-sdk-snippet`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/snippet) → Type definitions for the NubeSDK snippet environment.
 - [`create-nube-app`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/create-nube-app) → CLI tool for scaffolding and setting up new Nube applications.
+- [`nube-devtools`](https://github.com/TiendaNube/nube-sdk/tree/main/packages/nube-devtools) → Chrome DevTools extension for debugging and testing NubeSDK apps.
 
-## Installation
+## Getting Started
 
 To quickly create a new Nube application, you can use the CLI tool create-nube-app. Simply run the command below, which will scaffold a complete project with all the necessary dependencies:
 
@@ -57,13 +54,7 @@ const Component = () => (
 );
 
 export const App: NubeApp = (nube) => {
-  nube.send("ui:slot:set", () => ({
-    ui: {
-      slots: {
-        before_main_content: <Component />
-      }
-    }
-  }));
+  nube.render("before_main_content", <Component />);
 }
 ```
 
