@@ -29,69 +29,29 @@ export function JsonViewer({
 
 		// Wait for ReactJsonView to render
 		const timeoutId = setTimeout(() => {
-			if (!containerRef.current) return;
+			const container = containerRef.current;
+			if (!container) return;
 
-			// Remove previous highlight classes
-			const highlightedElements =
-				containerRef.current.querySelectorAll(".json-modified");
-			for (const el of highlightedElements) {
+			for (const el of container.querySelectorAll(".json-modified")) {
 				el.classList.remove("json-modified");
 			}
 
-			// Apply highlight to modified paths
+			const nodesByPath = indexRenderedNodes(container);
+			const elementsToHighlight = new Set<Element>();
+
 			for (const path of modifiedPaths) {
-				const pathParts = path.split(".");
-				const lastKey = pathParts[pathParts.length - 1];
-
-				// Find elements by various strategies
-				// Strategy 1: Look for elements with data-key attribute (used by react-json-view)
-				const keyElements = containerRef.current.querySelectorAll(
-					`[data-key="${lastKey}"], [data-key-name="${lastKey}"]`,
-				);
-
-				// Strategy 2: Look for elements containing the key name in their text
-				// This searches for the key name in the JSON structure
-				const allElements = containerRef.current.querySelectorAll(
-					".react-json-view span, .react-json-view div",
-				);
-
-				const elementsToHighlight = new Set<Element>();
-
-				// Add parent row/container for elements found by data attributes
-				for (const el of keyElements) {
-					// Only highlight the parent row/container, not the key element itself
-					const parent = el.closest("li, .object-container, .variable-row");
-					if (parent) {
-						elementsToHighlight.add(parent);
-					}
+				const target = findDeepestRenderedNode(nodesByPath, path);
+				if (target) {
+					elementsToHighlight.add(getHighlightElement(target));
 				}
+			}
 
-				// Search by text content as fallback
-				for (const el of allElements) {
-					const text = el.textContent?.trim();
-					if (
-						text === `"${lastKey}"` ||
-						text === lastKey ||
-						text?.startsWith(`"${lastKey}":`) ||
-						text?.startsWith(`${lastKey}:`)
-					) {
-						// elementsToHighlight.add(el);
-						// Also highlight the parent row/container
-						const parent = el.closest("li, .object-container, .variable-row");
-						if (parent) {
-							elementsToHighlight.add(parent);
-						}
-					}
-				}
-
-				// Apply highlight class
-				for (const el of elementsToHighlight) {
-					el.classList.add("json-modified");
-					// Remove highlight after animation completes
-					setTimeout(() => {
-						el.classList.remove("json-modified");
-					}, 2000);
-				}
+			for (const el of elementsToHighlight) {
+				el.classList.add("json-modified");
+				// Remove highlight after animation completes
+				setTimeout(() => {
+					el.classList.remove("json-modified");
+				}, 2000);
 			}
 		}, 150);
 
@@ -120,4 +80,77 @@ export function JsonViewer({
 			/>
 		</div>
 	);
+}
+
+// ReactJsonView renders every object/array as `.object-key-val` and every
+// primitive as `.variable-row`. Arrays longer than `groupArraysAfterLength` get
+// extra `.array-group` wrappers that are not part of the data path.
+const NODE_SELECTOR = ".object-key-val:not(.array-group), .variable-row";
+
+/**
+ * Maps the data path of every rendered node (e.g. `cart.items.0.qty`) to its
+ * element. Children of collapsed nodes are not in the DOM, so they are absent.
+ */
+function indexRenderedNodes(container: HTMLElement): Map<string, Element> {
+	const nodesByPath = new Map<string, Element>();
+
+	for (const node of container.querySelectorAll(NODE_SELECTOR)) {
+		const keys: string[] = [];
+		let current: Element | null = node;
+		while (current && container.contains(current)) {
+			keys.unshift(getNodeKey(current));
+			current = current.parentElement?.closest(NODE_SELECTOR) ?? null;
+		}
+		// The outermost node is the root object, which is not part of the path
+		keys.shift();
+		nodesByPath.set(keys.join("."), node);
+	}
+
+	return nodesByPath;
+}
+
+/** Reads the key a node is rendered under from its header row. */
+function getNodeKey(node: Element): string {
+	const header = node.firstElementChild;
+	if (!header) return "";
+
+	const objectKey = header.querySelector(".object-key");
+	if (objectKey) {
+		return (objectKey.textContent ?? "").replace(/^"|"$/g, "");
+	}
+
+	// Array items: `<span class="array-key">0</span>` on objects, or a bare
+	// `0:` on primitives
+	const arrayKey = header.querySelector(".array-key") ?? header;
+	return (arrayKey.textContent ?? "").replace(/:.*$/, "").trim();
+}
+
+/**
+ * Returns the node for `path`, or — when it is not rendered because an
+ * ancestor is collapsed — the deepest rendered ancestor.
+ */
+function findDeepestRenderedNode(
+	nodesByPath: Map<string, Element>,
+	path: string,
+): Element | undefined {
+	const parts = path === "" ? [] : path.split(".");
+	for (let i = parts.length; i >= 0; i--) {
+		const node = nodesByPath.get(parts.slice(0, i).join("."));
+		if (node) return node;
+	}
+	return undefined;
+}
+
+/**
+ * Collapsed objects and primitives are highlighted whole (they fit on one
+ * line). Expanded objects only get their header, so the highlight does not
+ * cover all of their children.
+ */
+function getHighlightElement(node: Element): Element {
+	const isExpanded =
+		node.classList.contains("object-key-val") &&
+		Array.from(node.children).some((child) =>
+			child.classList.contains("pushed-content"),
+		);
+	return isExpanded ? node.firstElementChild ?? node : node;
 }
