@@ -144,6 +144,15 @@ export type Customization = {
 	 * {@link CustomizationCommands.set}, as
 	 * {@link CustomizationCommands.set} describes.
 	 *
+	 * A resolver receives each card's product, so installments can be hidden
+	 * on some products only:
+	 *
+	 * ```ts
+	 * customization.set("product-grid-installments", (product) =>
+	 *   product.id % 2 === 1 ? { hidden: "always" } : undefined,
+	 * );
+	 * ```
+	 *
 	 * Present on every theme that supports the SDK.
 	 */
 	"product-grid-installments": AllowedCustomizationOptions<"hidden">;
@@ -210,6 +219,8 @@ export type CustomizationProduct = Pick<ProductDetails, "id" | "name"> &
 export type CustomizationContext = {
 	/** Each card's product. */
 	"product-grid-item-price": CustomizationProduct;
+	/** Each card's product. */
+	"product-grid-installments": CustomizationProduct;
 };
 
 /**
