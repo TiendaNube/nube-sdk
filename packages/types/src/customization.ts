@@ -150,7 +150,7 @@ export type Customization = {
 	 * sends both.
 	 *
 	 * Every card on the page is customized, including the related products of
-	 * a product page and the cards inside a quick-shop modal. Cards that
+	 * a product page. Cards that
 	 * appear later — pagination, infinite scroll — need another
 	 * {@link CustomizationCommands.set}, as
 	 * {@link CustomizationCommands.set} describes.
