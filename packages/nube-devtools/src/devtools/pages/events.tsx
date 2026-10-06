@@ -21,7 +21,6 @@ import type {
 	NubeSDKEvent,
 	NubeSDKEventData,
 } from "@/contexts/nube-sdk-events-context";
-import { EmptyState } from "@/devtools/components/empty-state";
 import {
 	type EventCellField,
 	EventTableRow,
@@ -344,19 +343,34 @@ export function Events() {
 					>
 						<ResizablePanel defaultSize={40}>
 							{events.length === 0 ? (
-								<div className="h-full overflow-y-auto">
-									<EmptyState
-										text="No events found"
-										buttonText="Reload page"
-										onButtonClick={() => {
-											chrome.devtools.inspectedWindow.reload();
-										}}
-									/>
+								<div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center">
+									<p className="text-sm">No events yet</p>
+									<p className="text-xs text-muted-foreground max-w-xs">
+										Events appear here as apps and the platform dispatch them.
+										Reload to capture the ones sent while the page loads.
+									</p>
+									<Button
+										variant="outline"
+										size="sm"
+										className="h-5 px-2 text-xs"
+										onClick={() => chrome.devtools.inspectedWindow.reload()}
+									>
+										Reload page
+									</Button>
+								</div>
+							) : hasHiddenEvents ? (
+								<div className="flex h-full items-center justify-center px-4">
+									<p className="text-xs text-muted-foreground">
+										No event matches the current filter.
+									</p>
 								</div>
 							) : (
-								<div ref={tableContainerRef} className="h-full overflow-y-auto">
+								<div
+									ref={tableContainerRef}
+									className="h-full overflow-y-auto *:data-[slot=table-container]:overflow-visible"
+								>
 									<Table className="table-fixed">
-										<TableHeader>
+										<TableHeader className="sticky top-0 z-10 bg-background shadow-[inset_0_-1px_0_var(--color-border)] [&_tr]:border-b-0">
 											<TableRow>
 												<TableHead
 													style={{ width: columnWidths.sender }}

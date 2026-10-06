@@ -5,7 +5,10 @@
  * browser APIs through the NubeSDK instance.
  */
 
-import type { NubeBrowserAPIs } from "@tiendanube/nube-sdk-types";
+import type {
+	NubeBrowserAPIs,
+	NubeNavigateRoute,
+} from "@tiendanube/nube-sdk-types";
 import { getNubeInstance } from "./instance";
 
 // Cache for the browser APIs instance
@@ -47,7 +50,8 @@ export const browser = new Proxy({} as Readonly<NubeBrowserAPIs>, {
 /**
  * Navigates to a specific route within the Nube application.
  *
- * @param route - The route to navigate to, must start with '/'
+ * @param route - The route to navigate to, must start with '/', or an alias
+ *   such as `"checkout"` or `"login"`
  *
  * @example
  * ```typescript
@@ -57,11 +61,14 @@ export const browser = new Proxy({} as Readonly<NubeBrowserAPIs>, {
  * // Navigate to home
  * navigate('/');
  *
+ * // Navigate to the checkout
+ * navigate('checkout');
+ *
  * ```
  *
  * @since 0.1.0
  */
-export function navigate(route: `/${string}`): void {
+export function navigate(route: NubeNavigateRoute): void {
 	browser.navigate(route);
 }
 

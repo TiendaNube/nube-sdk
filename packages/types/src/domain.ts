@@ -573,8 +573,14 @@ export type SearchPage = { type: "search"; data: Search & WithProductList };
  * Represents the account data.
  */
 export type Account = {
+	/** The ID of the logged in customer, or `null` when there is no session. */
 	customerId: Nullable<number>;
+	/** Whether the customer is logged in. */
 	loggedIn: boolean;
+	/** The ID of the order being viewed, when on an order detail page. */
+	orderId: Nullable<number>;
+	/** The number of the order being viewed, when on an order detail page. */
+	orderNumber: Nullable<number>;
 };
 
 /**
@@ -695,6 +701,23 @@ export type AppConfig = {
 	/** Determines whether the cart is handled before update. */
 	handle_cart_before_update: boolean;
 };
+
+/**
+ * Represents another app installed on the store and present on the same page.
+ *
+ * Named `InstalledApp` rather than `App` because `NubeApp` is already the type
+ * of an app's entry point.
+ *
+ * Only the app's identity is exposed: everything else the SDK keeps per app
+ * stays on the main thread, so one app can never read another app's data.
+ */
+export type InstalledApp = {
+	/** The app's unique identifier, the same value used as the key in `apps`. */
+	id: string;
+	/** Whether the app has finished registering. Absent until the SDK registers it. */
+	registered?: boolean;
+};
+
 /**
  * Represents a shipping option available in checkout.
  */
@@ -871,6 +894,29 @@ export type PaymentStatus =
 	| "partially_paid";
 
 /**
+ * Represents the issuer (bank) of the card entered in checkout.
+ */
+export type PaymentCardIssuer = {
+	/** Unique identifier of the issuer. */
+	id: string;
+
+	/** Display name of the issuer. */
+	name: string;
+};
+
+/**
+ * Represents the details of the card entered for the selected payment method.
+ * It never contains card numbers, BIN or any other sensitive card data.
+ */
+export type PaymentCard = {
+	/** Card brand, e.g. `"visa"` or `"mastercard"`. */
+	brand: string;
+
+	/** Issuer of the card, or `null` when it could not be identified. */
+	issuer: Nullable<PaymentCardIssuer>;
+};
+
+/**
  * Represents the selected payment method in checkout.
  * This type includes various properties related to the payment method.
  */
@@ -888,6 +934,13 @@ export type SelectedPayment = {
 	name: Nullable<string>;
 	category: Nullable<string>;
 	billing_address: Nullable<boolean>;
+
+	/**
+	 * Details of the card entered for this payment method.
+	 * `null` when the method is not a credit or debit card, or no card was entered yet.
+	 * It belongs to this selection: it is reset when another payment method is selected.
+	 */
+	card: Nullable<PaymentCard>;
 };
 
 /**
