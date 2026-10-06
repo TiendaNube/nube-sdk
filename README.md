@@ -115,5 +115,3 @@ We welcome bug reports and feature requests from the community! See our **[Contr
 ---
 
 © [Nuvemshop / Tiendanube](https://nuvemshop.dev), 2026. All rights reserved.
-
-
