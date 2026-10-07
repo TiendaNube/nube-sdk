@@ -77,6 +77,7 @@ export const COMMON_UI_SLOT = {
  * @property {"after_order_number"} AFTER_ORDER_NUMBER - After the order number in checkout.
  * @property {"before_order_summary"} BEFORE_ORDER_SUMMARY - Before the order summary in checkout.
  * @property {"after_order_summary"} AFTER_ORDER_SUMMARY - After the order summary in checkout.
+ * @property {"after_continue_button"} AFTER_CONTINUE_BUTTON - After the continue button in checkout.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const CHECKOUT_UI_SLOT = {
@@ -97,6 +98,7 @@ export const CHECKOUT_UI_SLOT = {
 	AFTER_ORDER_NUMBER: "after_order_number",
 	BEFORE_ORDER_SUMMARY: "before_order_summary",
 	AFTER_ORDER_SUMMARY: "after_order_summary",
+	AFTER_CONTINUE_BUTTON: "after_continue_button",
 } as const;
 
 /**
