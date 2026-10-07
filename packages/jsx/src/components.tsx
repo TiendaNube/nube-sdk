@@ -652,6 +652,8 @@ export const Accordion = {
  *
  * A `Toast` is a small notification that appears at the bottom of the screen to inform the user about an action or a message.
  * It supports properties such as `type` for controlling the type of toast, and custom styling.
+ * Use `onClose` to react when the toast finishes closing (by `duration` or the close button),
+ * for example to clear the slot it was rendered in.
  */
 function ToastRoot(props: NubeComponentToastRootProps): NubeComponentToastRoot {
 	return toastRoot(props);

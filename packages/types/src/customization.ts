@@ -105,14 +105,68 @@ type AllowedCustomizationOptions<T extends keyof CustomizationOptions> =
  */
 export type Customization = {
 	/**
-	 * The storefront's add-to-cart button, on product pages and product grids.
+	 * The storefront's add-to-cart button, on product pages, product grids
+	 * and the quick shop.
 	 *
-	 * Every instance on the page is customized. `fontColor` applies on any
-	 * theme; `text` applies on the themes that render the button as a form
-	 * input, which is most of them, and is ignored where a theme builds the
-	 * label differently.
+	 * With options, every instance on the page is customized. `fontColor`
+	 * applies on any theme; `text` applies on the themes that render the
+	 * button as a form input, which is most of them, and is ignored where a
+	 * theme builds the label differently.
+	 *
+	 * Each button adds a different product, so this target can also be set
+	 * with a resolver, which gets the product of each button:
+	 *
+	 * ```ts
+	 * customization.set("add-to-cart-button", (product) => {
+	 *   if (!product.tags?.includes("pre-order")) return; // leave it as it is
+	 *   return { text: "Reservar" };
+	 * });
+	 * ```
 	 */
 	"add-to-cart-button": AllowedCustomizationOptions<"text" | "fontColor">;
+	/**
+	 * The storefront's installments panel: the payments block of the product
+	 * page, which shows the instalment the product can be paid in and opens the
+	 * store's payment-methods modal when tapped.
+	 *
+	 * It is the block as a whole — the payment discount, the instalment line,
+	 * the card logos and the link that opens the modal — so hiding it removes
+	 * the payment information from the product page without touching the
+	 * instalments shown on product grids, which are
+	 * {@link Customization."product-grid-installments"}.
+	 *
+	 * Present on every theme that supports the SDK, and on product pages only.
+	 */
+	"product-detail-installments": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The instalment line inside product **cards** — the "3x $33,33" shown
+	 * under the price of each item in a product grid, carousel or
+	 * related-products strip.
+	 *
+	 * The counterpart of {@link Customization."product-detail-installments"}, and
+	 * independent of it: hiding this one clears the instalments from every
+	 * card on the page without touching the product page's payments block,
+	 * and hiding that one leaves the cards alone. A store that wants neither
+	 * sends both.
+	 *
+	 * Every card on the page is customized, including the related products of
+	 * a product page. Cards that
+	 * appear later — pagination, infinite scroll — need another
+	 * {@link CustomizationCommands.set}, as
+	 * {@link CustomizationCommands.set} describes.
+	 *
+	 * A resolver receives each card's product, so installments can be hidden
+	 * on some products only:
+	 *
+	 * ```ts
+	 * customization.set("product-grid-installments", (product) =>
+	 *   product.id % 2 === 1 ? { hidden: "always" } : undefined,
+	 * );
+	 * ```
+	 *
+	 * Present on every theme that supports the SDK.
+	 */
+	"product-grid-installments": AllowedCustomizationOptions<"hidden">;
 	/**
 	 * The price on the product page — the main one, next to the product name.
 	 * Prices in product grids, carousels and quick shop are not affected.
@@ -217,10 +271,13 @@ export type CustomizationProduct = Pick<ProductDetails, "id" | "name"> &
  * {@link CustomizationContextOf}).
  */
 export type CustomizationContext = {
+	/** The product the button adds: the product page's, or each card's. */
+	"add-to-cart-button": CustomizationProduct;
 	/** Each card's product. */
 	"product-grid-item-price": CustomizationProduct;
 	/** Each card's product. */
 	"product-grid-item-compare-at-price": CustomizationProduct;
+	"product-grid-installments": CustomizationProduct;
 };
 
 /**

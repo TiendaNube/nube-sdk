@@ -3,12 +3,16 @@
  * runtime's devtools records and instruments the storages NubeSDK apps write
  * to.
  *
- * `storageKeyPatternSource` is passed in rather than declared here because
- * `chrome.scripting.executeScript` serializes this function without its scope:
- * receiving it through `args` keeps one definition of the key format
- * (`src/utils/storage-key.ts`) shared with the panel.
+ * `storageKeyPatternSource` and `maxRecords` are passed in rather than
+ * declared here because `chrome.scripting.executeScript` serializes this
+ * function without its scope: receiving them through `args` keeps one
+ * definition of each (`src/utils/storage-key.ts`, `src/utils/page-events.ts`)
+ * shared with the panel.
  */
-export const handleEvents = (storageKeyPatternSource: string) => {
+export const handleEvents = (
+	storageKeyPatternSource: string,
+	maxRecords: number,
+) => {
 	if (window.__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__) {
 		return;
 	}
@@ -68,12 +72,20 @@ export const handleEvents = (storageKeyPatternSource: string) => {
 		// on the window, so installing a forwarding one here removes the race
 		// entirely — no polling, and no event dispatched before the runtime
 		// finishes loading is lost.
+		//
+		// It keeps a history like the runtime's own hook does: this is the one
+		// the runtime ends up using, and the panel reads `records()` when it
+		// opens.
 		let seq = 0;
+		const buffer: NubeSDKDevtoolsRecord[] = [];
 		window.__NUBE_SDK_DEVTOOLS_HOOK__ = {
-			emit: (event) => collect({ ...event, seq: seq++ }),
-			// Nothing is buffered on this side: records go straight to the
-			// panel, which keeps the list.
-			records: () => [],
+			emit: (event) => {
+				const record = { ...event, seq: seq++ };
+				buffer.push(record);
+				if (buffer.length > maxRecords) buffer.shift();
+				collect(record);
+			},
+			records: () => buffer.slice(),
 			subscribe: () => () => {},
 		};
 	}

@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Divider } from "@/components/ui/divider";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useDevToolsTheme } from "@/contexts/devtools-theme-context";
 import Layout from "@/devtools/components/layout";
 import { useDynamicWidth } from "@/devtools/hooks";
 import { convertSvgToNubeSDK, copyToClipboard, downloadFile } from "@/utils";
-import { Copy, Download } from "lucide-react";
+import { CodeXmlIcon, CopyIcon, DownloadIcon } from "lucide-react";
 import { useState } from "react";
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import tsx from "react-syntax-highlighter/dist/esm/languages/prism/tsx";
@@ -56,9 +57,36 @@ export function SvgConverter() {
 	return (
 		<Layout>
 			<div className="flex h-full flex-col max-w-full overflow-hidden">
-				<nav className="flex items-center px-1.5 justify-between py-1 border-b h-[33px] shrink-0">
-					<div className="flex items-center">
+				<nav className="flex items-center justify-between px-1.5 py-1 border-b h-[33px] shrink-0">
+					<div className="flex items-center min-w-0">
 						<SidebarTrigger />
+						<Divider />
+						<Button
+							disabled={!outputCode}
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6"
+							title="Copy the converted code"
+							onClick={handleCopy}
+						>
+							<CopyIcon className="size-3" />
+						</Button>
+						<Button
+							disabled={!outputCode}
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6"
+							title="Download the converted code"
+							onClick={handleDownload}
+						>
+							<DownloadIcon className="size-3" />
+						</Button>
+						<Divider />
+						<CodeXmlIcon className="size-3 shrink-0" />
+						<span className="ml-1.5 text-xs font-medium">SVG Converter</span>
+						<span className="ml-2 text-xs text-muted-foreground truncate hidden sm:inline">
+							Convert SVG markup into a NubeSDK component
+						</span>
 					</div>
 				</nav>
 				<Card className="mt-4 ml-4 mr-4">
@@ -93,7 +121,8 @@ export function SvgConverter() {
 								<div>
 									<h4 className="font-semibold mb-1">Copy or download</h4>
 									<p className="text-gray-500 text-xs">
-										Use the buttons to copy or download the converted code
+										Use the header buttons to copy or download the converted
+										code
 									</p>
 								</div>
 							</div>
@@ -122,16 +151,6 @@ export function SvgConverter() {
 					</div>
 					<div className="flex-1 p-4 flex flex-col min-w-0" ref={containerRef}>
 						<div className="flex-1 border rounded-md relative overflow-hidden">
-							{outputCode && (
-								<div className="flex gap-2 absolute top-2 right-2 z-10">
-									<Button size="icon" onClick={handleCopy}>
-										<Copy />
-									</Button>
-									<Button size="icon" onClick={handleDownload}>
-										<Download />
-									</Button>
-								</div>
-							)}
 							<div className="h-full">
 								<SyntaxHighlighter
 									language="tsx"
