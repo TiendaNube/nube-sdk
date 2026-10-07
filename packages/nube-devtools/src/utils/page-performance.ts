@@ -7,6 +7,7 @@ import {
 	clearPerformance,
 	readPerformance,
 } from "@/background/scripts";
+import { executeInPage } from "@/lib/page-bridge";
 
 export type { NubeSDKPerformanceRecord };
 
@@ -25,9 +26,8 @@ export async function readPagePerformance(): Promise<
 	if (tabId === null) return [];
 
 	try {
-		const results = await chrome.scripting.executeScript({
-			target: { tabId },
-			world: "MAIN",
+		const results = await executeInPage({
+			tabId,
 			func: readPerformance,
 		});
 		return (
@@ -44,9 +44,8 @@ export async function clearPagePerformance(): Promise<void> {
 	if (tabId === null) return;
 
 	try {
-		await chrome.scripting.executeScript({
-			target: { tabId },
-			world: "MAIN",
+		await executeInPage({
+			tabId,
 			func: clearPerformance,
 		});
 	} catch {

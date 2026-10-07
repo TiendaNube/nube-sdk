@@ -1,3 +1,4 @@
+export { getApps } from "./get-apps";
 export { handleEvents } from "./handle-events";
 export { clearEvents, readEvents } from "./page-events";
 export {

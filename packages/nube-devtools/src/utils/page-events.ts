@@ -3,6 +3,7 @@
  * `handleEvents`), from the panel.
  */
 import { clearEvents, readEvents } from "@/background/scripts";
+import { executeInPage } from "@/lib/page-bridge";
 
 /**
  * How many dispatches the extension's hook keeps for a panel opened late.
@@ -21,9 +22,8 @@ export async function readPageEvents(): Promise<NubeSDKDevtoolsRecord[]> {
 	if (tabId === null) return [];
 
 	try {
-		const results = await chrome.scripting.executeScript({
-			target: { tabId },
-			world: "MAIN",
+		const results = await executeInPage({
+			tabId,
 			func: readEvents,
 		});
 		return (results?.[0]?.result as NubeSDKDevtoolsRecord[] | undefined) ?? [];
@@ -38,9 +38,8 @@ export async function clearPageEvents(seq: number): Promise<void> {
 	if (tabId === null) return;
 
 	try {
-		await chrome.scripting.executeScript({
-			target: { tabId },
-			world: "MAIN",
+		await executeInPage({
+			tabId,
 			func: clearEvents,
 			args: [seq],
 		});

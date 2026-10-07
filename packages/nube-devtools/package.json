@@ -27,7 +27,9 @@
 		"dev": "NODE_ENV=development vite",
 		"build": "tsc && vite build",
 		"preview": "vite preview",
+		"build:firefox": "tsc && BROWSER=firefox vite build",
 		"zip": "npm run build && node src/zip.js",
+		"zip:firefox": "npm run build:firefox && BROWSER=firefox node src/zip.js",
 		"check": "biome check",
 		"check:fix": "biome check --write"
 	},

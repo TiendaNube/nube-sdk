@@ -7,6 +7,7 @@ import {
 	clearCommands,
 	readCommands,
 } from "@/background/scripts";
+import { executeInPage } from "@/lib/page-bridge";
 
 export type { NubeSDKCommandRecord };
 
@@ -27,9 +28,8 @@ export async function readPageCommands(): Promise<NubeSDKCommandRecord[]> {
 	if (tabId === null) return [];
 
 	try {
-		const results = await chrome.scripting.executeScript({
-			target: { tabId },
-			world: "MAIN",
+		const results = await executeInPage({
+			tabId,
 			func: readCommands,
 		});
 		return (results?.[0]?.result as NubeSDKCommandRecord[] | undefined) ?? [];
@@ -44,9 +44,8 @@ export async function clearPageCommands(): Promise<void> {
 	if (tabId === null) return;
 
 	try {
-		await chrome.scripting.executeScript({
-			target: { tabId },
-			world: "MAIN",
+		await executeInPage({
+			tabId,
 			func: clearCommands,
 		});
 	} catch {

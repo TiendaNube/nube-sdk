@@ -14,6 +14,7 @@ import {
 	removeStorage,
 	writeStorage,
 } from "@/background/scripts";
+import { executeInPage } from "@/lib/page-bridge";
 import { STORAGE_KEY_PATTERN_SOURCE } from "./storage-key";
 
 export type { PageStorageEntry, PageStorageType };
@@ -48,9 +49,8 @@ export async function readPageStorage(): Promise<PageStorageEntry[]> {
 	if (tabId === null) return [];
 
 	try {
-		const results = await chrome.scripting.executeScript({
-			target: { tabId },
-			world: "MAIN",
+		const results = await executeInPage({
+			tabId,
 			func: readStorage,
 			args: [STORAGE_KEY_PATTERN_SOURCE],
 		});
@@ -76,9 +76,8 @@ export async function setPageStorage(
 	if (tabId === null) return false;
 
 	try {
-		const results = await chrome.scripting.executeScript({
-			target: { tabId },
-			world: "MAIN",
+		const results = await executeInPage({
+			tabId,
 			func: writeStorage,
 			args: [type, key, value],
 		});
@@ -99,9 +98,8 @@ export async function removePageStorage(
 	if (tabId === null) return false;
 
 	try {
-		const results = await chrome.scripting.executeScript({
-			target: { tabId },
-			world: "MAIN",
+		const results = await executeInPage({
+			tabId,
 			func: removeStorage,
 			args: [type, key],
 		});
@@ -124,9 +122,8 @@ export async function getPageStorage(
 	if (tabId === null) return null;
 
 	try {
-		const results = await chrome.scripting.executeScript({
-			target: { tabId },
-			world: "MAIN",
+		const results = await executeInPage({
+			tabId,
 			func: getStorageItem,
 			args: [type, key],
 		});

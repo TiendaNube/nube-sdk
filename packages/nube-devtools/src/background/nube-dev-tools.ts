@@ -79,7 +79,7 @@ export const handleDevToolsGetComponents = ({
 			func: () => {
 				if (window.nubeSDK) {
 					const apps = window.nubeSDK.getState().apps;
-					return Object.keys(apps).reduce<
+					const slotsByApp = Object.keys(apps).reduce<
 						Record<string, Record<string, NubeSDKComponent>>
 					>((acc, appId) => {
 						const slots = apps[appId]?.ui?.slots;
@@ -88,17 +88,18 @@ export const handleDevToolsGetComponents = ({
 						}
 						return acc;
 					}, {});
+					// Chrome serializes the result as JSON and drops what it
+					// cannot represent; Firefox uses structured clone and fails
+					// the whole call on a function in the props. Serializing here
+					// gives both the same result.
+					return JSON.parse(JSON.stringify(slotsByApp));
 				}
 				return {};
 			},
 		},
 		(results) => {
-			const components = results[0].result;
-			if (components) {
-				sendResponse({ status: true, components });
-			} else {
-				sendResponse({ status: true, components: {} });
-			}
+			const components = results?.[0]?.result;
+			sendResponse({ status: true, components: components ?? {} });
 		},
 	);
 };

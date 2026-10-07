@@ -1,3 +1,4 @@
+import { EXECUTE_IN_PAGE_ACTION, TAB_RELAY_PORT } from "@/lib/page-bridge";
 import { syncDevToolsHeaderRule } from "./devtools-header";
 import {
 	handleDevToolsEvents,
@@ -7,6 +8,7 @@ import {
 	handleDevToolsScrollToElement,
 	handleDevToolsVerifyNubeSdkStatus,
 } from "./nube-dev-tools";
+import { PAGE_SCRIPTS, type PageScriptName } from "./scripts/registry";
 
 chrome.scripting
 	.registerContentScripts([
@@ -54,6 +56,30 @@ function updateExtensionBadge(connected: boolean) {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+	// Firefox devtools pages have no `scripting`: see `executeInPage`.
+	if (message.action === EXECUTE_IN_PAGE_ACTION) {
+		const { tabId, name, args } = message.payload as {
+			tabId: number;
+			name: PageScriptName;
+			args: unknown[];
+		};
+		const func = PAGE_SCRIPTS[name];
+		if (!func) {
+			sendResponse({ ok: false, error: `unknown page script: ${name}` });
+			return false;
+		}
+		chrome.scripting
+			.executeScript({
+				target: { tabId },
+				world: "MAIN",
+				func: func as (...args: unknown[]) => unknown,
+				args,
+			})
+			.then((results) => sendResponse({ ok: true, results }))
+			.catch((error) => sendResponse({ ok: false, error: String(error) }));
+		return true;
+	}
+
 	if (message.action === "nube-devtools-app-server-status") {
 		updateExtensionBadge(message.payload?.connected === true);
 		return false;
@@ -108,4 +134,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 			sendResponse,
 		});
 	}
+});
+
+// Firefox devtools pages have no `tabs`: the panel's port to the content
+// script comes here and is relayed. See `connectToTab`.
+chrome.runtime.onConnect.addListener((panelPort) => {
+	if (!panelPort.name.startsWith(`${TAB_RELAY_PORT}:`)) return;
+
+	const [, tabIdPart, ...nameParts] = panelPort.name.split(":");
+	const tabId = Number(tabIdPart);
+	const tabPort = chrome.tabs.connect(tabId, { name: nameParts.join(":") });
+
+	tabPort.onMessage.addListener((message) => panelPort.postMessage(message));
+	panelPort.onMessage.addListener((message) => tabPort.postMessage(message));
+	tabPort.onDisconnect.addListener(() => {
+		void chrome.runtime.lastError;
+		panelPort.disconnect();
+	});
+	panelPort.onDisconnect.addListener(() => tabPort.disconnect());
 });

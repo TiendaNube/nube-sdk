@@ -1,7 +1,9 @@
+import { getApps } from "@/background/scripts";
 import type { NubeSDKApp } from "@/background/types";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import { useNubeSDKAppsContext } from "@/contexts/nube-sdk-apps-context";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
+import { executeInPage } from "@/lib/page-bridge";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const RETRY_DELAY = 2000;
@@ -14,13 +16,6 @@ const MAX_ATTEMPTS = 5;
 const MIN_REFRESH_FEEDBACK_MS = 500;
 
 type AppsRecord = Record<string, NubeSDKApp>;
-
-const getApps = (): AppsRecord => {
-	if (window.nubeSDK) {
-		return window.nubeSDK.getState().apps;
-	}
-	return {};
-};
 
 /**
  * `apps` is internal runtime state, missing from the public `NubeSDKState`.
@@ -90,13 +85,12 @@ export function useApps(): {
 		clearRetry();
 		attempts.current += 1;
 		return new Promise<void>((resolve) => {
-			chrome.scripting.executeScript(
-				{
-					target: { tabId: chrome.devtools.inspectedWindow.tabId },
-					world: "MAIN",
-					func: getApps,
-				},
-				(results) => {
+			executeInPage({
+				tabId: chrome.devtools.inspectedWindow.tabId,
+				func: getApps,
+			})
+				.catch(() => undefined)
+				.then((results) => {
 					if (!isActive.current) {
 						resolve();
 						return;
@@ -118,8 +112,7 @@ export function useApps(): {
 					} finally {
 						resolve();
 					}
-				},
-			);
+				});
 		});
 	}, [updateApps, clearRetry]);
 

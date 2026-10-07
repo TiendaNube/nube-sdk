@@ -5,12 +5,14 @@ import * as path from 'node:path'
 
 import manifest from './src/manifest'
 
+const browser = process.env.BROWSER === 'firefox' ? 'firefox' : 'chrome'
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
     build: {
       emptyOutDir: true,
-      outDir: 'build',
+      outDir: browser === 'firefox' ? 'build-firefox' : 'build',
       cssCodeSplit: false,
       rollupOptions: {
         input: {
@@ -18,7 +20,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    plugins: [crx({ manifest }), react()],
+    plugins: [crx({ manifest, browser }), react()],
     legacy: {
       skipWebSocketTokenCheck: true,
     },

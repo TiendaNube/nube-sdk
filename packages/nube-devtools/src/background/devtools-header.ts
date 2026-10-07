@@ -12,11 +12,14 @@ export async function syncDevToolsHeaderRule() {
 					id: DEVTOOLS_HEADER_RULE_ID,
 					priority: 1,
 					action: {
-						type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
+						// String values instead of the `chrome.declarativeNetRequest`
+						// enums, which Firefox does not expose.
+						type: "modifyHeaders" as chrome.declarativeNetRequest.RuleActionType,
 						requestHeaders: [
 							{
 								header: DEVTOOLS_HEADER_NAME,
-								operation: chrome.declarativeNetRequest.HeaderOperation.SET,
+								operation:
+									"set" as chrome.declarativeNetRequest.HeaderOperation,
 								value: DEVTOOLS_HEADER_VALUE,
 							},
 						],
@@ -24,7 +27,7 @@ export async function syncDevToolsHeaderRule() {
 					condition: {
 						urlFilter: "*",
 						resourceTypes: [
-							chrome.declarativeNetRequest.ResourceType.MAIN_FRAME,
+							"main_frame" as chrome.declarativeNetRequest.ResourceType,
 						],
 					},
 				},

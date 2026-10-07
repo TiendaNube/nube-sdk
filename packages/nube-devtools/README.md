@@ -50,6 +50,24 @@ npm run build
 
 The build output will be available in the `build` directory, ready for submission to the Chrome Web Store.
 
+## Firefox (experimental)
+
+The Firefox build requires Firefox 128 or later.
+
+```bash
+npm run build:firefox
+```
+
+The output goes to `build-firefox`. To load it:
+
+- Open `about:debugging#/runtime/this-firefox`
+- Click "Load Temporary Add-on…" and select `build-firefox/manifest.json`
+- Open `about:addons`, go to the extension's "Permissions" tab and make sure access to all websites is allowed
+
+Temporary add-ons are removed when Firefox closes. `npm run zip:firefox` writes the zip to `package/`.
+
+See [docs/firefox-viability.md](docs/firefox-viability.md) for the known gaps.
+
 ## Official Documentation
 
 For more details about NubeSDK and how to build apps, check out our **official documentation**:

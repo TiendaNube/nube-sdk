@@ -2,6 +2,7 @@ import { defineManifest } from "@crxjs/vite-plugin";
 import packageData from "../package.json";
 
 const isDev = process.env.NODE_ENV === "development";
+const isFirefox = process.env.BROWSER === "firefox";
 
 export default defineManifest({
 	name: `NubeSDK DevTools${isDev ? " - DEV" : ""}`,
@@ -19,10 +20,11 @@ export default defineManifest({
 		default_icon: "img/logo-48.png",
 	},
 	devtools_page: "devtools.html",
-	background: {
-		service_worker: "src/background/service-worker.ts",
-		type: "module",
-	},
+	// Firefox does not run MV3 service workers; it loads the same entry as a
+	// non-persistent background script instead.
+	background: isFirefox
+		? { scripts: ["src/background/service-worker.ts"], type: "module" }
+		: { service_worker: "src/background/service-worker.ts", type: "module" },
 	content_scripts: [
 		{
 			matches: ["http://*/*", "https://*/*"],
@@ -40,9 +42,20 @@ export default defineManifest({
 				"inject-extension-flag.js",
 				"inject-performance-monitor.js",
 			],
-			matches: [],
+			// Firefox rejects an empty `matches`.
+			matches: isFirefox ? ["http://*/*", "https://*/*"] : [],
 		},
 	],
 	permissions: ["scripting", "activeTab", "declarativeNetRequest"],
 	host_permissions: ["http://*/*", "https://*/*"],
+	...(isFirefox && {
+		browser_specific_settings: {
+			gecko: {
+				id: "nube-devtools@tiendanube.com",
+				// First release with `world: "MAIN"` in the scripting API.
+				strict_min_version: "128.0",
+				data_collection_permissions: { required: ["none"] },
+			},
+		},
+	}),
 });

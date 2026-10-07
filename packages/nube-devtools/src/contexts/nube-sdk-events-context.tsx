@@ -1,3 +1,4 @@
+import { connectToTab } from "@/lib/page-bridge";
 import {
 	MAX_EVENT_RECORDS,
 	clearPageEvents,
@@ -89,9 +90,7 @@ export const NubeSDKEventsProvider = ({
 		let disposed = false;
 
 		const connect = () => {
-			const current = chrome.tabs.connect(tabId, {
-				name: "nube-devtools-events",
-			});
+			const current = connectToTab(tabId, "nube-devtools-events");
 			port = current;
 
 			current.onMessage.addListener((message) => {

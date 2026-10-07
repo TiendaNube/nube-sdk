@@ -30,13 +30,17 @@ export function Components() {
 					tabId: chrome.devtools.inspectedWindow.tabId,
 				},
 			},
-			(response: {
-				status: boolean;
-				components: {
-					[key: string]: Record<string, NubeSDKComponent>;
-				};
-			}) => {
-				if (response.status && response.components) {
+			(
+				response:
+					| {
+							status: boolean;
+							components: {
+								[key: string]: Record<string, NubeSDKComponent>;
+							};
+					  }
+					| undefined,
+			) => {
+				if (response?.status && response.components) {
 					const keys = Object.keys(response.components);
 					setComponents(response.components);
 					if (keys.length === 1) {
