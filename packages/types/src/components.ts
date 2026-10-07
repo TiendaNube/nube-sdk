@@ -223,7 +223,15 @@ export type NubeComponentFieldEventHandler = NubeComponentEventHandler<
 >;
 
 /**
+ * Input types supported by `field`.
+ */
+export type FieldInputType = "text" | "date";
+
+/**
  * Represents the properties available for a `field` component.
+ *
+ * Note: the HTML `type` attribute is exposed as `inputType` to avoid
+ * collision with the component discriminator (`type: "field"`).
  */
 export type NubeComponentFieldProps = Prettify<
 	NubeComponentBase & {
@@ -232,8 +240,19 @@ export type NubeComponentFieldProps = Prettify<
 		value?: string;
 		placeholder?: string;
 		disabled?: boolean;
+		/** Input mask. Ignored when `inputType` is `"date"`. */
 		mask?: string;
 		autoFocus?: boolean;
+		/**
+		 * HTML `<input>` type. Defaults to `"text"`. `"date"` renders the
+		 * browser's native date picker; `value` and event values use the ISO
+		 * format `YYYY-MM-DD`.
+		 */
+		inputType?: FieldInputType;
+		/** Earliest allowed date (ISO `YYYY-MM-DD`), only for `inputType: "date"`. */
+		min?: string;
+		/** Latest allowed date (ISO `YYYY-MM-DD`), only for `inputType: "date"`. */
+		max?: string;
 		style?: {
 			container?: NubeComponentStyle;
 			label?: NubeComponentStyle;
