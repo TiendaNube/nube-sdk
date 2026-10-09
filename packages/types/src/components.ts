@@ -1300,8 +1300,8 @@ export type NubeComponentFormRootEventHandler = NubeComponentEventHandler<
  * Shape of the data carried in the JSON-stringified `value` delivered to
  * `formRoot.onChange`. Keyed by the `name` prop of each descendant field.
  * For `formField` instances with `inputType: "file"`, the value is the
- * file name only — the underlying `Blob` is never transferred across the
- * worker boundary.
+ * file name only. Use `browser.getFormFile(form, name)` to get the `File`
+ * itself.
  *
  * `formRoot.onChange` follows the same wire shape as `field.onChange` /
  * `select.onChange` / `check.onChange` — a `NubeComponentEventHandler`
