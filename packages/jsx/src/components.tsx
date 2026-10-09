@@ -276,6 +276,17 @@ export function Row(props: NubeComponentRowProps): NubeComponentRow {
 }
 
 /**
+ * JSX-facing props for `Field`.
+ *
+ * Exposes the input's HTML `type` attribute under the natural prop name
+ * `type`. Internally this is mapped to `inputType` because the JSON tree
+ * reserves `type` for the component discriminator (`"field"`).
+ */
+export type FieldProps = Omit<NubeComponentFieldProps, "inputType"> & {
+	type?: NubeComponentFieldProps["inputType"];
+};
+
+/**
  * Creates a `Field` component.
  *
  * The `Field` component represents an input element in a form, such as text fields, dropdowns, or checkboxes.
@@ -284,8 +295,9 @@ export function Row(props: NubeComponentRowProps): NubeComponentRow {
  * @param props - The properties for configuring the field component.
  * @returns A `NubeComponentField` object representing the form field.
  */
-export function Field(props: NubeComponentFieldProps): NubeComponentField {
-	return field(props);
+export function Field(props: FieldProps): NubeComponentField {
+	const { type, ...rest } = props;
+	return field({ inputType: type, ...rest });
 }
 
 /**

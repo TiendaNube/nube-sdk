@@ -223,7 +223,15 @@ export type NubeComponentFieldEventHandler = NubeComponentEventHandler<
 >;
 
 /**
+ * Input types supported by `field`.
+ */
+export type FieldInputType = "text" | "email" | "tel" | "number" | "date";
+
+/**
  * Represents the properties available for a `field` component.
+ *
+ * Note: the HTML `type` attribute is exposed as `inputType` to avoid
+ * collision with the component discriminator (`type: "field"`).
  */
 export type NubeComponentFieldProps = Prettify<
 	NubeComponentBase & {
@@ -232,8 +240,25 @@ export type NubeComponentFieldProps = Prettify<
 		value?: string;
 		placeholder?: string;
 		disabled?: boolean;
+		/** Input mask. Only applied when `inputType` is `"text"` or `"tel"`. */
 		mask?: string;
 		autoFocus?: boolean;
+		/**
+		 * HTML `<input>` type. Defaults to `"text"`. `"date"` renders the
+		 * browser's native date picker; `value` and event values use the ISO
+		 * format `YYYY-MM-DD`.
+		 */
+		inputType?: FieldInputType;
+		/**
+		 * Minimum value: an ISO date (`YYYY-MM-DD`) for `inputType: "date"` or a
+		 * number for `inputType: "number"`. Ignored by the browser on other types.
+		 */
+		min?: string | number;
+		/**
+		 * Maximum value: an ISO date (`YYYY-MM-DD`) for `inputType: "date"` or a
+		 * number for `inputType: "number"`. Ignored by the browser on other types.
+		 */
+		max?: string | number;
 		style?: {
 			container?: NubeComponentStyle;
 			label?: NubeComponentStyle;
@@ -1233,12 +1258,20 @@ export type FormHTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
  * Input types supported by `formField`. Mirrors the subset of `<input type>`
  * values that can be safely materialized and validated on the host DOM.
  */
-export type FormFieldInputType = "text" | "email" | "tel" | "number" | "file";
+export type FormFieldInputType =
+	| "text"
+	| "email"
+	| "tel"
+	| "number"
+	| "file"
+	| "date";
 
 /**
  * Keys of the native `ValidityState` interface that `formField` exposes to
- * `formFieldError` via the `match` prop. `rangeOverflow` is reused for the
- * custom `maxSize` validation on `file` fields.
+ * `formFieldError` via the `match` prop. `rangeOverflow` / `rangeUnderflow`
+ * report `max` / `min` violations on `date` and `number` fields;
+ * `rangeOverflow` is also reused for the custom `maxSize` validation on
+ * `file` fields.
  */
 export type FormFieldValidityStateKey =
 	| "valueMissing"
@@ -1373,6 +1406,18 @@ export type NubeComponentFormFieldProps = Prettify<
 			maxLength?: number;
 			/** Regular expression source used for `pattern` validation. */
 			pattern?: string;
+			/**
+			 * Minimum value: an ISO date (`YYYY-MM-DD`) for `inputType: "date"` or a
+			 * number for `inputType: "number"`. Fails with `rangeUnderflow` when
+			 * unmet; ignored by the browser on other types.
+			 */
+			min?: string | number;
+			/**
+			 * Maximum value: an ISO date (`YYYY-MM-DD`) for `inputType: "date"` or a
+			 * number for `inputType: "number"`. Fails with `rangeOverflow` when
+			 * exceeded; ignored by the browser on other types.
+			 */
+			max?: string | number;
 			/** Accepted file types, only for `inputType: "file"`. */
 			accept?: string;
 			/** Maximum file size in bytes, only for `inputType: "file"`. */
