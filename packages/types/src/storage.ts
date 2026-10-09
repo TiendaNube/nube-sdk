@@ -11,6 +11,8 @@ export type NubeStorageEvent =
 	| "internal:iframe:message"
 	| "internal:form:submit"
 	| "internal:form:reset"
+	| "internal:form:file:get"
+	| "internal:form:file:get:response"
 	| "internal:page:scroll_to";
 
 export type NubeStorageId = "local-storage" | "session-storage";
@@ -94,6 +96,27 @@ export type NubeIframeMessageEventData = {
  */
 export type NubeFormActionEventData = {
 	formId: string;
+};
+
+/**
+ * Request fired by `browser.getFormFile`. `formId` is the `__internalId` of
+ * the target `Form.Root`, validated for ownership the same way as
+ * {@link NubeFormActionEventData}.
+ */
+export type NubeFormFileGetEventData = {
+	requestId: number;
+	formId: string;
+	fieldName: string;
+};
+
+/**
+ * Response to `internal:form:file:get`. Unlike other internal messages it is
+ * posted as a structured-clone object (not a JSON string) so the `File`
+ * survives the worker boundary.
+ */
+export type NubeFormFileGetResponseEventData = {
+	requestId: number;
+	file: File | null;
 };
 
 export interface AsyncNubeStorage {

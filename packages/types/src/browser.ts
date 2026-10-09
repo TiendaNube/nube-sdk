@@ -58,6 +58,36 @@ export type NubeBrowserAPIs = {
 	resetForm: (form: NubeComponent) => void;
 
 	/**
+	 * Returns the `File` currently selected in a `Form.Field` with
+	 * `inputType: "file"`, so the app can read it, validate it, build a
+	 * local preview or upload it straight from the browser (e.g. a `PUT` to
+	 * a pre-signed S3/R2 URL) instead of relying on the `Form.Root` submit.
+	 *
+	 * The `File` is structured-cloned into the worker, which shares the
+	 * underlying bytes instead of copying them. `formRoot.onChange` keeps
+	 * reporting only the file name.
+	 *
+	 * Resolves to `null` when nothing is selected, when the form has no
+	 * file field with that `name`, or when the form is not owned by the
+	 * calling app (ownership is validated the same way as `submitForm`).
+	 *
+	 * @example
+	 * ```typescript
+	 * const file = await browser.getFormFile(form, "document");
+	 * if (file) {
+	 *   await fetch(presignedUrl, {
+	 *     method: "PUT",
+	 *     headers: { "Content-Type": file.type },
+	 *     body: file,
+	 *   });
+	 * }
+	 * ```
+	 * @param form The `Form.Root` component that contains the field.
+	 * @param fieldName The `name` prop of the file `Form.Field`.
+	 */
+	getFormFile: (form: NubeComponent, fieldName: string) => Promise<File | null>;
+
+	/**
 	 * Scrolls the page to the given position.
 	 * @param options Scroll options compatible with the native ScrollToOptions interface.
 	 *   - top: Vertical scroll position in pixels.
