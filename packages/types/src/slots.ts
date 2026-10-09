@@ -25,6 +25,8 @@ import type {
  * @property {"edge_bottom_center"} EDGE_BOTTOM_CENTER - Bottom edge, horizontally centered.
  * @property {"edge_left_center"} EDGE_LEFT_CENTER - Left edge, vertically centered.
  * @property {"edge_right_center"} EDGE_RIGHT_CENTER - Right edge, vertically centered.
+ * @property {"top_bar"} TOP_BAR - Full-width bar fixed to the top of the viewport.
+ * @property {"bottom_bar"} BOTTOM_BAR - Full-width bar fixed to the bottom of the viewport.
  * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
  * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  * @property {"after_header"} AFTER_HEADER - After the header.
@@ -44,6 +46,8 @@ export const COMMON_UI_SLOT = {
 	EDGE_BOTTOM_CENTER: "edge_bottom_center",
 	EDGE_LEFT_CENTER: "edge_left_center",
 	EDGE_RIGHT_CENTER: "edge_right_center",
+	TOP_BAR: "top_bar",
+	BOTTOM_BAR: "bottom_bar",
 	BEFORE_LINE_ITEMS: "before_line_items",
 	AFTER_LINE_ITEMS: "after_line_items",
 	AFTER_HEADER: "after_header",
