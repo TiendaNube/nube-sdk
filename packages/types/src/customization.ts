@@ -252,6 +252,71 @@ export type Customization = {
 export type CustomizationTarget = keyof Customization;
 
 /**
+ * Every value an app can read off a customizable element, declared once.
+ *
+ * This is the vocabulary of {@link CustomizationCommands.get}: each target in
+ * {@link CustomizableElementValues} picks the subset it returns. It is kept
+ * apart from {@link CustomizationOptions} on purpose — a value can be readable
+ * without being writable.
+ *
+ * Every value is what the shopper sees at the moment of the call, as the
+ * browser computed it, whichever stylesheet or theme setting it came from. So
+ * an app can match the store it is installed in instead of guessing, even on a
+ * theme that defines none of the theme CSS variables.
+ */
+export type CustomizationElementValues = {
+	/** The element's visible label, trimmed. */
+	text: string;
+	/** The colour of the element's text, as `rgb()` or `rgba()`. */
+	fontColor: string;
+	/**
+	 * The background the element's text sits on, as `rgb()` or `rgba()`: the
+	 * element's own when it paints one, otherwise that of the nearest
+	 * container that does.
+	 *
+	 * The same colour the contrast rule of `fontColor` is measured against, so
+	 * a font colour derived from it can be checked before calling `set`.
+	 */
+	backgroundColor: string;
+	/** The element's corner radius, e.g. `"40px"` for a pill-shaped button. */
+	borderRadius: string;
+};
+
+/**
+ * Narrows {@link CustomizationElementValues} to the values a given target
+ * returns. All of them, always: unlike options, a reading has no
+ * "at least one".
+ */
+type ReadableElementValues<T extends keyof CustomizationElementValues> = Pick<
+	CustomizationElementValues,
+	T
+>;
+
+/**
+ * The catalog of elements {@link CustomizationCommands.get} can read, keyed by
+ * target name, mapped to the values each one returns.
+ *
+ * A subset of {@link Customization}: a target is listed here once the
+ * platform knows how to read it.
+ */
+export type CustomizableElementValues = {
+	/**
+	 * The storefront's add-to-cart button. When the page has several (product
+	 * grids, quick shop, a hidden placeholder some themes keep beside the real
+	 * one), the values are those of the first one on screen.
+	 */
+	"add-to-cart-button": ReadableElementValues<
+		"text" | "fontColor" | "backgroundColor" | "borderRadius"
+	>;
+};
+
+/**
+ * The name of a readable element — the key an app passes to
+ * {@link CustomizationCommands.get}.
+ */
+export type ReadableCustomizationTarget = keyof CustomizableElementValues;
+
+/**
  * A product as the store's state carries it, which is what a
  * {@link CustomizationResolver} receives.
  *
@@ -305,6 +370,28 @@ export type CustomizationContextOf<K extends CustomizationTarget> =
 export type CustomizationResolver<K extends CustomizationTarget> = (
 	context: CustomizationContextOf<K>,
 ) => Customization[K] | undefined;
+
+/**
+ * Picks which element {@link CustomizationCommands.get} reads, from each
+ * element's context — exactly what a {@link CustomizationResolver} of the
+ * same target receives, so a rule written for `set` can select for `get`:
+ *
+ * ```ts
+ * customization.get("add-to-cart-button", (product) => product.id === 1234);
+ * ```
+ *
+ * A "find one": of the elements whose context made it return `true`, `get`
+ * reads the first one on screen. Only `true` selects and `false` skips; any
+ * other value is reported as an error, so a resolver copied from a `set`
+ * (which returns options) cannot select every element by accident. A
+ * predicate that throws only affects its own element.
+ *
+ * Synchronous only, and it runs inside the app's worker: only which elements
+ * it selected reaches the page.
+ */
+export type CustomizationPredicate<K extends ReadableCustomizationTarget> = (
+	context: CustomizationContextOf<K>,
+) => boolean;
 
 /**
  * Options for a target: the same options for every matching element, or a
@@ -407,12 +494,37 @@ export type CustomizationResult =
 	  };
 
 /**
+ * The outcome of a {@link CustomizationCommands.get} call: the target's
+ * values, or why there are none.
+ *
+ * Failures are those of {@link CustomizationResult}. `not_found` means the
+ * page has no such element (or none the predicate selected), and `unknown_target` that the platform cannot
+ * read this target — older platforms read fewer, so this is the code to
+ * feature-detect on.
+ *
+ * ```ts
+ * const result = await customization.get("add-to-cart-button");
+ * if (!result.ok) return; // keep the app's own defaults
+ *
+ * const { backgroundColor, borderRadius } = result.values;
+ * ```
+ */
+export type CustomizationGetResult<K extends ReadableCustomizationTarget> =
+	| {
+			ok: true;
+			/** The values the target returns, as the shopper sees them now. */
+			values: CustomizableElementValues[K];
+	  }
+	| Extract<CustomizationResult, { ok: false }>;
+
+/**
  * Worker-facing adapter for customizing native elements of the store's
  * interface, exposed on `NubeSDK` as `nube.api.getCustomization()`.
  *
- * Both methods cross the worker / main thread boundary via the internal
- * command channel and resolve with a {@link CustomizationResult}. Neither
- * rejects, so there is nothing to catch: a failure of the channel itself
+ * Every method crosses the worker / main thread boundary via the internal
+ * command channel and resolves with a {@link CustomizationResult} (or, for
+ * `get`, a {@link CustomizationGetResult}). None rejects, so there is nothing
+ * to catch: a failure of the channel itself
  * arrives as `ok: false` carrying the `Error` in `error`.
  */
 export type CustomizationCommands = {
@@ -486,4 +598,51 @@ export type CustomizationCommands = {
 	 * @param targets — The elements to restore.
 	 */
 	reset(targets: CustomizationTarget[]): Promise<CustomizationResult>;
+	/**
+	 * Reads the values the shopper sees on a target — its colours, its corner
+	 * radius, its label — so an app can render its own components to match
+	 * the store instead of guessing.
+	 *
+	 * Changes nothing on the page. It is a reading of the moment of the call:
+	 * nothing is cached or watched, so an app that cares about a later change
+	 * (a variant selection, a viewport crossing a breakpoint) reads again.
+	 *
+	 * ```ts
+	 * const customization = nube.api.getCustomization();
+	 * const result = await customization.get("add-to-cart-button");
+	 *
+	 * if (result.ok) {
+	 *   render(<MyButton
+	 *     background={result.values.backgroundColor}
+	 *     radius={result.values.borderRadius}
+	 *   />);
+	 * }
+	 * ```
+	 *
+	 * When the page has several matching elements — product grids, quick
+	 * shop — pass a {@link CustomizationPredicate} to choose by product:
+	 *
+	 * ```ts
+	 * const result = await customization.get(
+	 *   "add-to-cart-button",
+	 *   (product) => product.id === pdpProductId,
+	 * );
+	 * ```
+	 *
+	 * A predicate that selects nothing, or selects products without an
+	 * element on this page, resolves with `not_found`; one that only fails
+	 * (throws, or returns something other than a boolean) with
+	 * `invalid_input`.
+	 *
+	 * Like `set` and `reset`, it never rejects. On a platform that predates
+	 * it the call resolves with `ok: false` and `code: "bridge_error"`.
+	 *
+	 * @param target — The element to read.
+	 * @param predicate — Optional: which element to read, by its context.
+	 *   Without it, the first one on screen is read.
+	 */
+	get<K extends ReadableCustomizationTarget>(
+		target: K,
+		predicate?: CustomizationPredicate<K>,
+	): Promise<CustomizationGetResult<K>>;
 };
