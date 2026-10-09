@@ -1,4 +1,5 @@
 import { MAX_COMMAND_RECORDS } from "../utils/page-commands";
+import { MAX_EVENT_RECORDS } from "../utils/page-events";
 import { STORAGE_KEY_PATTERN_SOURCE } from "../utils/storage-key";
 import {
 	handleCommands,
@@ -48,8 +49,8 @@ export const handleDevToolsEvents = async ({ tabId }: { tabId: number }) => {
 		world: "MAIN",
 		func: handleEvents,
 		// The injected function is serialized without its scope, so the key
-		// format has to be handed over explicitly.
-		args: [STORAGE_KEY_PATTERN_SOURCE],
+		// format and the history bound have to be handed over explicitly.
+		args: [STORAGE_KEY_PATTERN_SOURCE, MAX_EVENT_RECORDS],
 	});
 	await chrome.scripting.executeScript({
 		target: { tabId },

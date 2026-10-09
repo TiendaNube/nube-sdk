@@ -1,4 +1,5 @@
 export { handleEvents } from "./handle-events";
+export { clearEvents, readEvents } from "./page-events";
 export {
 	clearCommands,
 	handleCommands,

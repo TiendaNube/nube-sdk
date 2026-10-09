@@ -381,7 +381,7 @@ export function Check(
  *
  * A `Check` represents a selectable field that can be toggled between checked and unchecked states.
  * It is typically used to allow users to select one or more options.
- * It supports properties such as `name`, `label`, `checked`, and event handlers (`onChange`).
+ * It supports properties such as `name`, `label`, `checked`, `disabled`, and event handlers (`onChange`).
  *
  * @param props - The properties for configuring the check component.
  * @returns A `NubeComponentCheckbox` object representing the check component.
