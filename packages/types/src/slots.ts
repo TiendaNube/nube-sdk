@@ -27,6 +27,8 @@ import type {
  * @property {"edge_right_center"} EDGE_RIGHT_CENTER - Right edge, vertically centered.
  * @property {"bar_top"} BAR_TOP - Full-width bar fixed to the top of the viewport.
  * @property {"bar_bottom"} BAR_BOTTOM - Full-width bar fixed to the bottom of the viewport.
+ * @property {"bar_top_sticky"} BAR_TOP_STICKY - Full-width bar at the top of the viewport that pushes the page content down instead of covering it.
+ * @property {"bar_bottom_sticky"} BAR_BOTTOM_STICKY - Full-width bar at the bottom of the viewport that pushes the page content up instead of covering it.
  * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
  * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  * @property {"after_header"} AFTER_HEADER - After the header.
@@ -48,6 +50,8 @@ export const COMMON_UI_SLOT = {
 	EDGE_RIGHT_CENTER: "edge_right_center",
 	BAR_TOP: "bar_top",
 	BAR_BOTTOM: "bar_bottom",
+	BAR_TOP_STICKY: "bar_top_sticky",
+	BAR_BOTTOM_STICKY: "bar_bottom_sticky",
 	BEFORE_LINE_ITEMS: "before_line_items",
 	AFTER_LINE_ITEMS: "after_line_items",
 	AFTER_HEADER: "after_header",
