@@ -95,12 +95,24 @@ window.addEventListener("NubeSDKEvents", ((event) => {
 	}
 }) as EventListener);
 
-window.addEventListener("NubeSDKErrorEvents", ((event) => {
-	const port = chrome.runtime.connect({ name: "nube-devtools-error-events" });
-	const payload = event as CustomEvent;
-	port.postMessage({
-		payload: payload.detail,
-	});
+/**
+ * App logs, already batched per microtask by `handleEvents`. Each batch goes
+ * over a new port, like the performance measurements: most errors happen while
+ * the page boots, before the panel is listening, and the snapshot it takes on
+ * open brings those in.
+ */
+window.addEventListener("NubeSDKLogEvents", ((event: Event) => {
+	const logs = (event as CustomEvent<NubeSDKDevtoolsLogRecord[]>).detail;
+	if (!Array.isArray(logs) || logs.length === 0) {
+		return;
+	}
+
+	try {
+		const port = chrome.runtime.connect({ name: "nube-devtools-log-events" });
+		port.postMessage({ payload: logs });
+	} catch (error) {
+		console.warn("[nube-devtools] failed to forward log batch", error);
+	}
 }) as EventListener);
 
 /**

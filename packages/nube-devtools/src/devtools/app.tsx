@@ -1,8 +1,8 @@
 import { Toaster } from "@/components/ui/sonner";
 import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
 import { NubeSDKCommandsProvider } from "@/contexts/nube-sdk-commands-context";
-import { NubeSDKErrorsProvider } from "@/contexts/nube-sdk-errors-context";
 import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
+import { NubeSDKLogsProvider } from "@/contexts/nube-sdk-logs-context";
 import { NubeSDKPerformanceProvider } from "@/contexts/nube-sdk-performance-context";
 import { NubeSDKStorageProvider } from "@/contexts/nube-sdk-storage-context";
 import {
@@ -15,9 +15,9 @@ import { useNubeStatus } from "../hooks/use-nube-status";
 import { ApiCalls } from "./pages/api-calls";
 import { Apps } from "./pages/apps";
 import { Components } from "./pages/components";
-import { Errors } from "./pages/errors";
 import { Events } from "./pages/events";
 import { LocalModePage } from "./pages/local-mode";
+import { Logs } from "./pages/logs";
 import { Performance } from "./pages/performance";
 import { State } from "./pages/state";
 import { Storages } from "./pages/storages";
@@ -28,7 +28,7 @@ const PAGE_COMPONENTS = {
 	[PAGES.APPS]: Apps,
 	[PAGES.LOCAL_MODE]: LocalModePage,
 	[PAGES.COMPONENTS]: Components,
-	[PAGES.ERRORS]: Errors,
+	[PAGES.LOGS]: Logs,
 	[PAGES.EVENTS]: Events,
 	[PAGES.STORAGES]: Storages,
 	[PAGES.API_CALLS]: ApiCalls,
@@ -52,7 +52,7 @@ const AppContent = () => {
 export const App = () => {
 	return (
 		<NavigationProvider>
-			<NubeSDKErrorsProvider>
+			<NubeSDKLogsProvider>
 				<NubeSDKEventsProvider>
 					<NubeSDKStorageProvider>
 						<NubeSDKCommandsProvider>
@@ -65,7 +65,7 @@ export const App = () => {
 						</NubeSDKCommandsProvider>
 					</NubeSDKStorageProvider>
 				</NubeSDKEventsProvider>
-			</NubeSDKErrorsProvider>
+			</NubeSDKLogsProvider>
 		</NavigationProvider>
 	);
 };
