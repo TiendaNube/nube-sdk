@@ -44,6 +44,9 @@ const FILTER_SELECT_CLASS =
 
 const ALL = "all";
 
+/** How close to the bottom, in pixels, still counts as at the bottom. */
+const STICK_TO_BOTTOM_THRESHOLD = 24;
+
 type LevelFilter = typeof ALL | LogLevel;
 
 /** Most severe first, the order the level filter lists them in. */
@@ -500,11 +503,22 @@ function LogList({
 	onSelect,
 }: LogListProps) {
 	const listRef = useRef<HTMLUListElement>(null);
+	// Whether the list was at the bottom before it last changed: scrolling up
+	// to read an older log stops the list from following the new ones.
+	const stickToBottomRef = useRef(true);
+
+	const handleScroll = () => {
+		const list = listRef.current;
+		if (!list) return;
+		stickToBottomRef.current =
+			list.scrollHeight - list.scrollTop - list.clientHeight <
+			STICK_TO_BOTTOM_THRESHOLD;
+	};
 
 	// Keep the newest log in view, like the Events page.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: scroll whenever the list changes
 	useEffect(() => {
-		if (listRef.current) {
+		if (listRef.current && stickToBottomRef.current) {
 			listRef.current.scrollTop = listRef.current.scrollHeight;
 		}
 	}, [logs]);
@@ -560,7 +574,11 @@ function LogList({
 					{logs.length !== total ? ` of ${total}` : ""}
 				</span>
 			</div>
-			<ul ref={listRef} className="flex-1 overflow-y-auto">
+			<ul
+				ref={listRef}
+				className="flex-1 overflow-y-auto"
+				onScroll={handleScroll}
+			>
 				{logs.map((log) => (
 					<LogRow
 						key={log.seq}
