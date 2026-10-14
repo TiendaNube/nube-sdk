@@ -147,7 +147,9 @@ export function Components() {
 
 	const listRef = useRef<HTMLUListElement>(null);
 	const treeRef = useRef(tree);
-	treeRef.current = tree;
+	useEffect(() => {
+		treeRef.current = tree;
+	}, [tree]);
 
 	/** Selects `key`, expanding what hides it and bringing its row into view. */
 	const reveal = useCallback((key: string) => {
