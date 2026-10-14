@@ -33,7 +33,7 @@ import {
 	ScrollTextIcon,
 	TrashIcon,
 } from "lucide-react";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const PANEL_WIDTH_KEY = "nube-devtools-logs-page-width";
@@ -492,6 +492,16 @@ function LogList({
 	selectedSeq,
 	onSelect,
 }: LogListProps) {
+	const listRef = useRef<HTMLUListElement>(null);
+
+	// Keep the newest log in view, like the Events page.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: scroll whenever the list changes
+	useEffect(() => {
+		if (listRef.current) {
+			listRef.current.scrollTop = listRef.current.scrollHeight;
+		}
+	}, [logs]);
+
 	if (logs.length === 0) {
 		if (isLoading) {
 			return (
@@ -543,7 +553,7 @@ function LogList({
 					{logs.length !== total ? ` of ${total}` : ""}
 				</span>
 			</div>
-			<ul className="flex-1 overflow-y-auto">
+			<ul ref={listRef} className="flex-1 overflow-y-auto">
 				{logs.map((log) => (
 					<LogRow
 						key={log.seq}
