@@ -100,11 +100,13 @@ export function Components() {
 	const [selectedKey, setSelectedKey] = useState<string | null>(null);
 	const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
 
-	const refresh = useCallback(async () => {
+	/** Re-reads the page; resolves `false` when it could not be read. */
+	const refresh = useCallback(async (): Promise<boolean> => {
 		const next = await readPageComponents();
 		setSnapshot(next);
 		setIsLoading(false);
 		setUpdatedAt(Date.now());
+		return next !== null;
 	}, []);
 
 	// Every dispatch may have re-rendered a slot, so the tree follows the
@@ -206,9 +208,9 @@ export function Components() {
 							size="icon"
 							className="h-6 w-6"
 							title="Refresh the components"
-							onClick={() => {
-								void refresh();
-								toast.success("Components refreshed");
+							onClick={async () => {
+								if (await refresh()) toast.success("Components refreshed");
+								else toast.error("Could not read the page's components");
 							}}
 						>
 							<RefreshCwIcon className="size-3" />
