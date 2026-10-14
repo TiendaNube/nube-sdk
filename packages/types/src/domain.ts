@@ -130,6 +130,13 @@ export type CartItem = {
 
 	/** List of sub-items that compose the kit (when `is_kit` is true). */
 	sub_items: CartSubItem[];
+
+	/**
+	 * Categories the product belongs to, as `{ id, name }` with the name in the storefront
+	 * language. The root category is left out. Provided on storefront pages; absent where the
+	 * host does not resolve categories (e.g. checkout).
+	 */
+	categories?: Category[];
 };
 
 /**
@@ -267,8 +274,11 @@ export type ProductDetails = {
 	canonical_url: string;
 	/** Unique identifier for the product. */
 	id: number;
-	/** Array of category IDs this product belongs to. */
-	categories?: Category["id"][];
+	/**
+	 * Categories the product belongs to, as `{ id, name }` with the name in the storefront
+	 * language. The root category is left out. Absent in the `minimal` product state.
+	 */
+	categories?: Category[];
 	/** Localized product description. */
 	description: LocalizedString;
 	/** Whether the product qualifies for free shipping. */
