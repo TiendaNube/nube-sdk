@@ -149,6 +149,17 @@ export function Logs() {
 		[logs],
 	);
 
+	// The filtered app or source aged out of the retained logs (or was cleared),
+	// and its option went with it.
+	useEffect(() => {
+		if (appFilter !== ALL && !appIds.includes(appFilter)) setAppFilter(ALL);
+	}, [appIds, appFilter]);
+	useEffect(() => {
+		if (sourceFilter !== ALL && !sources.includes(sourceFilter)) {
+			setSourceFilter(ALL);
+		}
+	}, [sources, sourceFilter]);
+
 	const visibleLogs = useMemo(() => {
 		const term = search.trim().toLowerCase();
 
@@ -172,10 +183,6 @@ export function Logs() {
 
 	const handleClear = () => {
 		setSelectedSeq(null);
-		// The app and source may not come back, and their options go with the
-		// logs.
-		setAppFilter(ALL);
-		setSourceFilter(ALL);
 		clearLogs();
 	};
 
