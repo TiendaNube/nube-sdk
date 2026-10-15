@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 export const PAGES = {
 	EVENTS: "events",
-	ERRORS: "errors",
+	LOGS: "logs",
 	STORAGES: "storages",
 	APPS: "apps",
 	LOCAL_MODE: "local-mode",
@@ -27,7 +27,9 @@ const NavigationContext = createContext<NavigationContextType | undefined>(
 
 export function NavigationProvider({ children }: { children: ReactNode }) {
 	const [currentPage, setCurrentPage] = useState<Page>(() => {
-		const savedPage = localStorage.getItem("currentPage");
+		const stored = localStorage.getItem("currentPage");
+		// The Logs page replaced the Errors page: keep the panel where it was.
+		const savedPage = stored === "errors" ? PAGES.LOGS : stored;
 		return Object.values(PAGES).includes(savedPage as Page)
 			? (savedPage as Page)
 			: PAGES.APPS;
