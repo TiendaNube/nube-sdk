@@ -538,7 +538,10 @@ export type Home = undefined | WithSections<"home">;
  * Represents the product page data.
  */
 export type ProductPageData = {
-	product: ProductDetails;
+	product: ProductDetails & {
+		/** Current value of the product page's quantity selector, kept up to date by `product:quantity_changed`. */
+		quantity?: number;
+	};
 } & WithSections<"product">;
 
 /**
