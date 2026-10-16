@@ -267,6 +267,28 @@ export type Customization = {
 	"product-grid-item-compare-at-price": AllowedCustomizationOptions<
 		"text" | "hidden"
 	>;
+	/**
+	 * The instalment line under the cart's total — the "up to 6x $16,66"
+	 * shown in the cart drawer and on the cart page.
+	 *
+	 * Independent of {@link Customization."product-detail-installments"} and
+	 * {@link Customization."product-grid-installments"}: hiding it leaves the
+	 * product page and the product cards alone, and hiding those leaves the
+	 * cart alone. An app that replaces the store's financing copy with its own
+	 * hides this line and renders its text in a slot such as
+	 * `after_cart_summary`:
+	 *
+	 * ```ts
+	 * customization.set("cart-installments", { hidden: "always" });
+	 * ```
+	 *
+	 * The store updates the line whenever the cart changes, which does not undo
+	 * `hidden`, so it does not need re-applying on cart updates.
+	 *
+	 * Only present on themes that show instalments in the cart; on the others
+	 * the call resolves with `not_found`.
+	 */
+	"cart-installments": AllowedCustomizationOptions<"hidden">;
 };
 
 /**

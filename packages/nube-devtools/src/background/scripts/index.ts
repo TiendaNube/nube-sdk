@@ -8,7 +8,13 @@ export {
 	type NubeSDKCommandStatus,
 	readCommands,
 } from "./page-commands";
-export { highlightElement } from "./highlight-element";
+export {
+	highlightComponents,
+	type NubeSDKComponentsSnapshot,
+	readComponents,
+	scrollToComponent,
+} from "./page-components";
+export { clearLogs, readLogs } from "./page-logs";
 export {
 	clearPerformance,
 	type NubeSDKPerformanceKind,
@@ -24,4 +30,3 @@ export {
 	writeStorage,
 } from "./page-storage";
 export { resendEvent } from "./resend-event";
-export { scrollToElement } from "./scroll-to-element";
