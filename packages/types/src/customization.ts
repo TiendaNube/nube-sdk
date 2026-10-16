@@ -85,6 +85,23 @@ export type CustomizationOptions = {
 	 * Refused when the value is not one of the four above.
 	 */
 	hidden: CustomizationHiddenMode;
+	/**
+	 * Whether the element is shown as unavailable: `true` blocks the
+	 * shopper's clicks and the purchase the button would start, renders it
+	 * dimmed with a `not-allowed` cursor and announces it as disabled to
+	 * assistive technology. `false` hands it back to the store.
+	 *
+	 * Meant for a native button that has nothing valid behind it yet — a
+	 * bundle whose components the shopper has not chosen, say — so it reads
+	 * as "not yet" instead of a click that silently does nothing.
+	 *
+	 * It is layered on top of the store's own state and never replaces it:
+	 * the store keeps disabling an out-of-stock button by itself, and `false`
+	 * does not enable a button the store disabled. Selecting a variant does
+	 * not undo it, so it does not need re-applying on
+	 * `product:variant_selected`.
+	 */
+	disabled: boolean;
 };
 
 /**
@@ -132,7 +149,7 @@ export type Customization = {
 	 * and the quick shop.
 	 *
 	 * With options, every instance on the page is customized. `fontColor`,
-	 * `backgroundColor` and `borderRadius` apply on any theme; `text` applies
+	 * `backgroundColor`, `borderRadius` and `disabled` apply on any theme; `text` applies
 	 * on the themes that render the button as a form input, which is most of
 	 * them, and is ignored where a theme builds the label differently.
 	 *
@@ -147,7 +164,7 @@ export type Customization = {
 	 * ```
 	 */
 	"add-to-cart-button": AllowedCustomizationOptions<
-		"text" | "fontColor" | "backgroundColor" | "borderRadius"
+		"text" | "fontColor" | "backgroundColor" | "borderRadius" | "disabled"
 	>;
 	/**
 	 * The storefront's installments panel: the payments block of the product
@@ -312,6 +329,12 @@ export type CustomizationElementValues = {
 	 * reads `"never"` too.
 	 */
 	hidden: CustomizationHiddenMode;
+	/**
+	 * Whether the element is disabled by the Customization API: the value
+	 * last set with {@link CustomizationOptions.disabled}, or `false`. A
+	 * button the store itself disables — out of stock — reads `false` too.
+	 */
+	disabled: boolean;
 };
 
 /**
@@ -339,7 +362,7 @@ export type CustomizableElementValues = {
 	 * one), the values are those of the first one on screen.
 	 */
 	"add-to-cart-button": ReadableElementValues<
-		"text" | "fontColor" | "backgroundColor" | "borderRadius"
+		"text" | "fontColor" | "backgroundColor" | "borderRadius" | "disabled"
 	>;
 	/** The product page's installments panel. */
 	"product-detail-installments": ReadableElementValues<"hidden">;
@@ -466,7 +489,11 @@ export type CustomizationInput = AtLeastOne<{
  * reaction, which is why they are distinguished:
  *
  * - `invalid_input` — the payload or the options were malformed. A bug in the
- *   app, fixable in the call itself.
+ *   app, fixable in the call itself — or an option the platform does not
+ *   know yet, which an app built against newer types can feature-detect on:
+ *   the `reason` names it (`unknown option "disabled"`). Platforms released
+ *   before that check ignore an unknown option instead, so `get` is the way to
+ *   confirm one took effect there.
  * - `unknown_target` — the target is not in the platform's catalog. Older
  *   platforms know fewer targets, so this is the code to feature-detect on.
  * - `not_found` — the target exists but the current page has no such element,
