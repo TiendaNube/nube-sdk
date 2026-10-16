@@ -1,14 +1,9 @@
 import { MAX_COMMAND_RECORDS } from "../utils/page-commands";
 import { MAX_EVENT_RECORDS } from "../utils/page-events";
+import { MAX_LOG_RECORDS } from "../utils/page-logs";
 import { STORAGE_KEY_PATTERN_SOURCE } from "../utils/storage-key";
-import {
-	handleCommands,
-	handleEvents,
-	highlightElement,
-	resendEvent,
-	scrollToElement,
-} from "./scripts";
-import type { NubeSDKComponent, NubeSDKState } from "./types";
+import { handleCommands, handleEvents, resendEvent } from "./scripts";
+import type { NubeSDKState } from "./types";
 
 type HandleDevToolsResendEventParams = {
 	state: NubeSDKState;
@@ -49,8 +44,8 @@ export const handleDevToolsEvents = async ({ tabId }: { tabId: number }) => {
 		world: "MAIN",
 		func: handleEvents,
 		// The injected function is serialized without its scope, so the key
-		// format and the history bound have to be handed over explicitly.
-		args: [STORAGE_KEY_PATTERN_SOURCE, MAX_EVENT_RECORDS],
+		// format and the history bounds have to be handed over explicitly.
+		args: [STORAGE_KEY_PATTERN_SOURCE, MAX_EVENT_RECORDS, MAX_LOG_RECORDS],
 	});
 	await chrome.scripting.executeScript({
 		target: { tabId },
@@ -58,49 +53,6 @@ export const handleDevToolsEvents = async ({ tabId }: { tabId: number }) => {
 		func: handleCommands,
 		args: [MAX_COMMAND_RECORDS],
 	});
-};
-
-export const handleDevToolsGetComponents = ({
-	tabId,
-	sendResponse,
-}: {
-	tabId: number;
-	sendResponse: (response: {
-		status: boolean;
-		components?: {
-			[key: string]: Record<string, NubeSDKComponent>;
-		};
-	}) => void;
-}) => {
-	chrome.scripting.executeScript(
-		{
-			target: { tabId },
-			world: "MAIN",
-			func: () => {
-				if (window.nubeSDK) {
-					const apps = window.nubeSDK.getState().apps;
-					return Object.keys(apps).reduce<
-						Record<string, Record<string, NubeSDKComponent>>
-					>((acc, appId) => {
-						const slots = apps[appId]?.ui?.slots;
-						if (slots) {
-							acc[appId] = slots;
-						}
-						return acc;
-					}, {});
-				}
-				return {};
-			},
-		},
-		(results) => {
-			const components = results[0].result;
-			if (components) {
-				sendResponse({ status: true, components });
-			} else {
-				sendResponse({ status: true, components: {} });
-			}
-		},
-	);
 };
 
 export const handleDevToolsResendEvent = (
@@ -117,64 +69,6 @@ export const handleDevToolsResendEvent = (
 		(results) => {
 			const success = results?.[0]?.result === true;
 			sendResponse({ status: success });
-		},
-	);
-};
-
-export const handleDevToolsHighlightElement = ({
-	tabId,
-	id,
-	title,
-	type,
-	color,
-	sendResponse,
-}: {
-	tabId: number;
-	id: string;
-	title: string;
-	type: "enter" | "leave";
-	color: "green" | "blue";
-	sendResponse: (response: { status: boolean }) => void;
-}) => {
-	chrome.scripting.executeScript(
-		{
-			target: { tabId },
-			world: "MAIN",
-			func: highlightElement,
-			args: [id, type, color, title],
-		},
-		() => {
-			try {
-				sendResponse({ status: true });
-			} catch (error) {
-				sendResponse({ status: false });
-			}
-		},
-	);
-};
-
-export const handleDevToolsScrollToElement = ({
-	tabId,
-	id,
-	sendResponse,
-}: {
-	tabId: number;
-	id: string;
-	sendResponse: (response: { status: boolean }) => void;
-}) => {
-	chrome.scripting.executeScript(
-		{
-			target: { tabId },
-			world: "MAIN",
-			func: scrollToElement,
-			args: [id],
-		},
-		() => {
-			try {
-				sendResponse({ status: true });
-			} catch (error) {
-				sendResponse({ status: false });
-			}
 		},
 	);
 };
