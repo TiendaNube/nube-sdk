@@ -40,6 +40,29 @@ export type CustomizationOptions = {
 	 */
 	fontColor: string;
 	/**
+	 * The element's background colour, applied as an inline style. Pass `""`
+	 * to drop the inline colour and hand the element back to the theme.
+	 *
+	 * Accepts the same notations as {@link CustomizationOptions.fontColor}, for
+	 * the same reason: the platform checks the contrast between the label and
+	 * this background before applying it.
+	 *
+	 * Refused when that contrast would fall below 3:1 — against the `fontColor`
+	 * sent in the same call, otherwise against the colour the label already
+	 * has. A translucent colour is judged as it shows over what is behind it.
+	 */
+	backgroundColor: string;
+	/**
+	 * The element's corner radius, applied as an inline style, e.g. `"40px"`
+	 * for a pill-shaped button or `"8px 8px 0 0"` per corner. Pass `""` to hand
+	 * the corners back to the theme.
+	 *
+	 * One to four non-negative lengths in `px`, `rem`, `em` or `%`, or `0`.
+	 * Anything else is refused, `var()` and `calc()` included, so a value the
+	 * browser would silently drop never reports a success.
+	 */
+	borderRadius: string;
+	/**
 	 * Whether the element is hidden, and on which viewports:
 	 *
 	 * - `"always"` — hidden on every viewport;
@@ -108,10 +131,10 @@ export type Customization = {
 	 * The storefront's add-to-cart button, on product pages, product grids
 	 * and the quick shop.
 	 *
-	 * With options, every instance on the page is customized. `fontColor`
-	 * applies on any theme; `text` applies on the themes that render the
-	 * button as a form input, which is most of them, and is ignored where a
-	 * theme builds the label differently.
+	 * With options, every instance on the page is customized. `fontColor`,
+	 * `backgroundColor` and `borderRadius` apply on any theme; `text` applies
+	 * on the themes that render the button as a form input, which is most of
+	 * them, and is ignored where a theme builds the label differently.
 	 *
 	 * Each button adds a different product, so this target can also be set
 	 * with a resolver, which gets the product of each button:
@@ -123,7 +146,9 @@ export type Customization = {
 	 * });
 	 * ```
 	 */
-	"add-to-cart-button": AllowedCustomizationOptions<"text" | "fontColor">;
+	"add-to-cart-button": AllowedCustomizationOptions<
+		"text" | "fontColor" | "backgroundColor" | "borderRadius"
+	>;
 	/**
 	 * The storefront's installments panel: the payments block of the product
 	 * page, which shows the instalment the product can be paid in and opens the
@@ -255,14 +280,14 @@ export type CustomizationTarget = keyof Customization;
  * Every value an app can read off a customizable element, declared once.
  *
  * This is the vocabulary of {@link CustomizationCommands.get}: each target in
- * {@link CustomizableElementValues} picks the subset it returns. It is kept
- * apart from {@link CustomizationOptions} on purpose — a value can be readable
- * without being writable.
+ * {@link CustomizableElementValues} picks the subset it returns. Every option
+ * a target accepts in {@link Customization} can be read back under the same
+ * name, and every value it returns can be set.
  *
- * Every value is what the shopper sees at the moment of the call, as the
- * browser computed it, whichever stylesheet or theme setting it came from. So
- * an app can match the store it is installed in instead of guessing, even on a
- * theme that defines none of the theme CSS variables.
+ * Styles are what the shopper sees at the moment of the call, as the browser
+ * computed it, whichever stylesheet or theme setting it came from. So an app
+ * can match the store it is installed in instead of guessing, even on a theme
+ * that defines none of the theme CSS variables.
  */
 export type CustomizationElementValues = {
 	/** The element's visible label, trimmed. */
@@ -280,6 +305,13 @@ export type CustomizationElementValues = {
 	backgroundColor: string;
 	/** The element's corner radius, e.g. `"40px"` for a pill-shaped button. */
 	borderRadius: string;
+	/**
+	 * How the element is hidden by the Customization API: the mode last set
+	 * with {@link CustomizationOptions.hidden}, or `"never"`. An element the
+	 * store itself keeps hidden — a product with no instalments to show —
+	 * reads `"never"` too.
+	 */
+	hidden: CustomizationHiddenMode;
 };
 
 /**
@@ -296,8 +328,9 @@ type ReadableElementValues<T extends keyof CustomizationElementValues> = Pick<
  * The catalog of elements {@link CustomizationCommands.get} can read, keyed by
  * target name, mapped to the values each one returns.
  *
- * A subset of {@link Customization}: a target is listed here once the
- * platform knows how to read it.
+ * Every target of {@link Customization} is listed, returning the values named
+ * like the options it accepts. When the page has several matching elements,
+ * the values are those of the first one on screen.
  */
 export type CustomizableElementValues = {
 	/**
@@ -307,6 +340,20 @@ export type CustomizableElementValues = {
 	 */
 	"add-to-cart-button": ReadableElementValues<
 		"text" | "fontColor" | "backgroundColor" | "borderRadius"
+	>;
+	/** The product page's installments panel. */
+	"product-detail-installments": ReadableElementValues<"hidden">;
+	/** The instalment line of the first product card on screen. */
+	"product-grid-installments": ReadableElementValues<"hidden">;
+	/** The price on the product page, as the shopper reads it. */
+	"product-detail-price": ReadableElementValues<"text">;
+	/** The price of the first product card on screen, as the shopper reads it. */
+	"product-grid-item-price": ReadableElementValues<"text">;
+	/** The compare-at price on the product page. */
+	"product-detail-compare-at-price": ReadableElementValues<"text" | "hidden">;
+	/** The compare-at price of the first product card on screen. */
+	"product-grid-item-compare-at-price": ReadableElementValues<
+		"text" | "hidden"
 	>;
 };
 
@@ -600,8 +647,9 @@ export type CustomizationCommands = {
 	reset(targets: CustomizationTarget[]): Promise<CustomizationResult>;
 	/**
 	 * Reads the values the shopper sees on a target — its colours, its corner
-	 * radius, its label — so an app can render its own components to match
-	 * the store instead of guessing.
+	 * radius, its label, whether it is hidden — so an app can render its own
+	 * components to match the store instead of guessing. Every option a target
+	 * accepts in `set` is read back here under the same name.
 	 *
 	 * Changes nothing on the page. It is a reading of the moment of the call:
 	 * nothing is cached or watched, so an app that cares about a later change
