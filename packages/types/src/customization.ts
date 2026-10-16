@@ -377,6 +377,8 @@ export type CustomizableElementValues = {
 	"product-grid-item-compare-at-price": ReadableElementValues<
 		"text" | "hidden"
 	>;
+	/** The instalment line under the cart's total. */
+	"cart-installments": ReadableElementValues<"hidden">;
 };
 
 /**
