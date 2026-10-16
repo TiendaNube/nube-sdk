@@ -1,4 +1,4 @@
-import type { ProductDetails } from "./domain";
+import type { CartItem, ProductDetails } from "./domain";
 
 /**
  * Every customization option an app can ask for, declared once.
@@ -284,6 +284,47 @@ export type Customization = {
 	"product-grid-item-compare-at-price": AllowedCustomizationOptions<
 		"text" | "hidden"
 	>;
+	/**
+	 * The quantity selector of the product page's add-to-cart form — the
+	 * input with its −/+ buttons. Quantity selectors in product grids, the
+	 * quick shop and the cart are not affected.
+	 *
+	 * Hiding it removes the control only: the form still adds the quantity it
+	 * holds (1 unless the shopper changed it), so an app that offers its own
+	 * quantities usually also manages what is added, e.g. with
+	 * `cart:before_update`. The space the selector took beside the
+	 * add-to-cart button may stay on some themes, as may the "N in stock"
+	 * line.
+	 *
+	 * ```ts
+	 * customization.set("product-detail-quantity", { hidden: "always" });
+	 * ```
+	 *
+	 * Selecting a variant does not undo it. Not present on themes whose
+	 * product page has no quantity selector, nor on a few older themes; the
+	 * call resolves with `not_found` there.
+	 */
+	"product-detail-quantity": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The quantity control of each line item in the cart — the input with its
+	 * −/+ buttons, in the cart drawer and on the cart page.
+	 *
+	 * A resolver receives each line item, so the quantity can be locked on
+	 * some items only, such as the components of a bundle:
+	 *
+	 * ```ts
+	 * customization.set("cart-item-quantity", (item) =>
+	 *   bundleItemIds.includes(item.id) ? { hidden: "always" } : undefined,
+	 * );
+	 * ```
+	 *
+	 * Changing a quantity keeps it. Adding a product re-renders the cart
+	 * drawer's items, which drops it, so an app re-applies it on
+	 * `cart:update`, as {@link CustomizationCommands.set} describes. On the
+	 * cart page of some themes the columns after it shift into the space it
+	 * leaves.
+	 */
+	"cart-item-quantity": AllowedCustomizationOptions<"hidden">;
 };
 
 /**
@@ -378,6 +419,10 @@ export type CustomizableElementValues = {
 	"product-grid-item-compare-at-price": ReadableElementValues<
 		"text" | "hidden"
 	>;
+	/** The product page's quantity selector. */
+	"product-detail-quantity": ReadableElementValues<"hidden">;
+	/** The quantity control of the first line item on screen. */
+	"cart-item-quantity": ReadableElementValues<"hidden">;
 };
 
 /**
@@ -413,6 +458,8 @@ export type CustomizationContext = {
 	/** Each card's product. */
 	"product-grid-item-compare-at-price": CustomizationProduct;
 	"product-grid-installments": CustomizationProduct;
+	/** Each line item, as the cart state carries it. */
+	"cart-item-quantity": CartItem;
 };
 
 /**
