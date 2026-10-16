@@ -276,6 +276,17 @@ export function Row(props: NubeComponentRowProps): NubeComponentRow {
 }
 
 /**
+ * JSX-facing props for `Field`.
+ *
+ * Exposes the input's HTML `type` attribute under the natural prop name
+ * `type`. Internally this is mapped to `inputType` because the JSON tree
+ * reserves `type` for the component discriminator (`"field"`).
+ */
+export type FieldProps = Omit<NubeComponentFieldProps, "inputType"> & {
+	type?: NubeComponentFieldProps["inputType"];
+};
+
+/**
  * Creates a `Field` component.
  *
  * The `Field` component represents an input element in a form, such as text fields, dropdowns, or checkboxes.
@@ -284,8 +295,9 @@ export function Row(props: NubeComponentRowProps): NubeComponentRow {
  * @param props - The properties for configuring the field component.
  * @returns A `NubeComponentField` object representing the form field.
  */
-export function Field(props: NubeComponentFieldProps): NubeComponentField {
-	return field(props);
+export function Field(props: FieldProps): NubeComponentField {
+	const { type, ...rest } = props;
+	return field({ inputType: type, ...rest });
 }
 
 /**
@@ -381,7 +393,7 @@ export function Check(
  *
  * A `Check` represents a selectable field that can be toggled between checked and unchecked states.
  * It is typically used to allow users to select one or more options.
- * It supports properties such as `name`, `label`, `checked`, and event handlers (`onChange`).
+ * It supports properties such as `name`, `label`, `checked`, `disabled`, and event handlers (`onChange`).
  *
  * @param props - The properties for configuring the check component.
  * @returns A `NubeComponentCheckbox` object representing the check component.

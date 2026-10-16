@@ -1,10 +1,7 @@
 import { syncDevToolsHeaderRule } from "./devtools-header";
 import {
 	handleDevToolsEvents,
-	handleDevToolsGetComponents,
-	handleDevToolsHighlightElement,
 	handleDevToolsResendEvent,
-	handleDevToolsScrollToElement,
 	handleDevToolsVerifyNubeSdkStatus,
 } from "./nube-dev-tools";
 
@@ -79,33 +76,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 	if (message.action === "nube-devtools-replay-event") {
 		handleDevToolsResendEvent(sendResponse, message.payload);
 		return true;
-	}
-
-	if (message.action === "nube-devtools-fetch-components") {
-		handleDevToolsGetComponents({
-			tabId: message.payload.tabId,
-			sendResponse,
-		});
-		return true;
-	}
-
-	if (message.action === "nube-devtools-highlight-element") {
-		handleDevToolsHighlightElement({
-			tabId: message.payload.tabId,
-			id: message.payload.id,
-			title: message.payload.title,
-			type: message.payload.type,
-			color: message.payload.color,
-			sendResponse,
-		});
-		return true;
-	}
-
-	if (message.action === "nube-devtools-scroll-to-element") {
-		handleDevToolsScrollToElement({
-			tabId: message.payload.tabId,
-			id: message.payload.id,
-			sendResponse,
-		});
 	}
 });

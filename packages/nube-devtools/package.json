@@ -1,7 +1,7 @@
 {
 	"name": "nube-devtools",
 	"displayName": "nube-devtools",
-	"version": "1.13.1",
+	"version": "1.14.0",
 	"author": "Nuvemshop / Tiendanube",
 	"description": "Chrome DevTools extension for debugging and testing NubeSDK apps with real-time insights.",
 	"type": "module",
@@ -27,6 +27,7 @@
 		"dev": "NODE_ENV=development vite",
 		"build": "tsc && vite build",
 		"preview": "vite preview",
+		"test": "vitest run",
 		"zip": "npm run build && node src/zip.js",
 		"check": "biome check",
 		"check:fix": "biome check --write"
@@ -69,6 +70,7 @@
 		"postcss": "^8.5.15",
 		"tailwindcss": "^4.3.0",
 		"typescript": "^5.9.3",
-		"vite": "^5.0.0"
+		"vite": "^5.0.0",
+		"vitest": "^3.2.4"
 	}
 }

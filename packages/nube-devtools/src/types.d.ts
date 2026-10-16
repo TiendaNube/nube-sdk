@@ -39,6 +39,36 @@ declare global {
 		timestamp: number;
 	};
 
+	/** Severity of an app log, as reported by the SDK telemetry pipeline. */
+	type NubeSDKDevtoolsLogLevel =
+		| "TRACE"
+		| "DEBUG"
+		| "INFO"
+		| "WARN"
+		| "ERROR"
+		| "FATAL";
+
+	/**
+	 * A log reported by an app — an intercepted `console.error`, an uncaught
+	 * error or rejection, a throwing listener or modifier — as mirrored by the
+	 * register through `window.__NUBE_SDK_DEVTOOLS_HOOK__.emitLog`.
+	 */
+	type NubeSDKDevtoolsLogRecord = {
+		/** Monotonic position among logs. Independent from the dispatch `seq`. */
+		seq: number;
+		/** App that produced the log. */
+		app: string;
+		level: NubeSDKDevtoolsLogLevel;
+		/** Where it was captured: `event-listener`, `unhandled-error`... */
+		source: string;
+		/** Event being handled when the log was produced, when there was one. */
+		event?: string;
+		message: string;
+		stack?: string;
+		/** Epoch milliseconds. */
+		timestamp: number;
+	};
+
 	/**
 	 * Instrumentation channel exposed by the runtime when
 	 * `__NUBE_DEVTOOLS_EXTENSION__` is set (see `inject-extension-flag.js`).
@@ -56,6 +86,17 @@ declare global {
 		 * subscriber first, so a panel attached mid-session still gets history.
 		 */
 		subscribe(subscriber: (record: NubeSDKDevtoolsRecord) => void): () => void;
+		/**
+		 * The log channel. Missing on SDK versions that predate it, so every
+		 * caller feature-detects it.
+		 */
+		emitLog?(log: Omit<NubeSDKDevtoolsLogRecord, "seq">): void;
+		/** Buffered logs, oldest first. */
+		logs?(): NubeSDKDevtoolsLogRecord[];
+		/** Subscribes to logs, replaying the buffered ones first. */
+		subscribeLogs?(
+			subscriber: (record: NubeSDKDevtoolsLogRecord) => void,
+		): () => void;
 	};
 
 	interface Window {
@@ -64,6 +105,8 @@ declare global {
 		__NUBE_SDK_DEVTOOLS_HOOK__?: NubeSDKDevtoolsHook;
 		/** Last `seq` the panel cleared; `readEvents` skips it and older. */
 		__NUBE_DEVTOOLS_EVENTS_CLEARED_SEQ__?: number;
+		/** Last log `seq` the panel cleared; `readLogs` skips it and older. */
+		__NUBE_DEVTOOLS_LOGS_CLEARED_SEQ__?: number;
 		/** Command bridge calls recorded by `handleCommands`, oldest first. */
 		__NUBE_DEVTOOLS_COMMANDS__?: NubeSDKCommandRecord[];
 		/** Measurements recorded by `inject-performance-monitor.js`, oldest first. */

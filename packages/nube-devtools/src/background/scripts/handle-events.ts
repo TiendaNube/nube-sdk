@@ -1,17 +1,18 @@
 /**
  * Injected into the inspected page's MAIN world on every load. It forwards the
- * runtime's devtools records and instruments the storages NubeSDK apps write
- * to.
+ * runtime's devtools records and app logs, and instruments the storages
+ * NubeSDK apps write to.
  *
- * `storageKeyPatternSource` and `maxRecords` are passed in rather than
- * declared here because `chrome.scripting.executeScript` serializes this
+ * `storageKeyPatternSource`, `maxRecords` and `maxLogs` are passed in rather
+ * than declared here because `chrome.scripting.executeScript` serializes this
  * function without its scope: receiving them through `args` keeps one
- * definition of each (`src/utils/storage-key.ts`, `src/utils/page-events.ts`)
- * shared with the panel.
+ * definition of each (`src/utils/storage-key.ts`, `src/utils/page-events.ts`,
+ * `src/utils/page-logs.ts`) shared with the panel.
  */
 export const handleEvents = (
 	storageKeyPatternSource: string,
 	maxRecords: number,
+	maxLogs: number,
 ) => {
 	if (window.__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__) {
 		return;
@@ -39,18 +40,6 @@ export const handleEvents = (
 				detail: batch,
 			}),
 		);
-
-		for (const record of batch) {
-			if (record.event !== "WebWorkerError") continue;
-			// Kept as a single-item array: the errors panel reads
-			// `payload[0].apps`, the shape the old `on("WebWorkerError")`
-			// listener produced.
-			window.dispatchEvent(
-				new CustomEvent("NubeSDKErrorEvents", {
-					detail: [record.next],
-				}),
-			);
-		}
 	};
 
 	const collect = (record: NubeSDKDevtoolsRecord) => {
@@ -60,6 +49,31 @@ export const handleEvents = (
 		queueMicrotask(flush);
 	};
 
+	// Logs are batched the same way, into `NubeSDKLogEvents`: an app logging
+	// in a loop, or the replay on subscribe, must not open a port per log.
+	const pendingLogs: NubeSDKDevtoolsLogRecord[] = [];
+	let logsFlushScheduled = false;
+
+	const flushLogs = () => {
+		logsFlushScheduled = false;
+		if (pendingLogs.length === 0) {
+			return;
+		}
+
+		window.dispatchEvent(
+			new CustomEvent("NubeSDKLogEvents", {
+				detail: pendingLogs.splice(0, pendingLogs.length),
+			}),
+		);
+	};
+
+	const collectLog = (record: NubeSDKDevtoolsLogRecord) => {
+		pendingLogs.push(record);
+		if (logsFlushScheduled) return;
+		logsFlushScheduled = true;
+		queueMicrotask(flushLogs);
+	};
+
 	const hook = window.__NUBE_SDK_DEVTOOLS_HOOK__;
 
 	if (hook) {
@@ -67,6 +81,8 @@ export const handleEvents = (
 		// dispatched before this script was injected (`init`, `app:register`,
 		// `app:registered`), which a `nubeSDK.on("*")` listener could never see.
 		hook.subscribe(collect);
+		// SDK versions that predate the log channel simply have no logs.
+		hook.subscribeLogs?.(collectLog);
 	} else {
 		// The runtime bundle has not run yet. It honors a hook that is already
 		// on the window, so installing a forwarding one here removes the race
@@ -78,6 +94,8 @@ export const handleEvents = (
 		// opens.
 		let seq = 0;
 		const buffer: NubeSDKDevtoolsRecord[] = [];
+		let logSeq = 0;
+		const logBuffer: NubeSDKDevtoolsLogRecord[] = [];
 		window.__NUBE_SDK_DEVTOOLS_HOOK__ = {
 			emit: (event) => {
 				const record = { ...event, seq: seq++ };
@@ -87,6 +105,16 @@ export const handleEvents = (
 			},
 			records: () => buffer.slice(),
 			subscribe: () => () => {},
+			// The register reports logs through the same hook, so this one has
+			// to carry the log channel too.
+			emitLog: (log) => {
+				const record = { ...log, seq: logSeq++ };
+				logBuffer.push(record);
+				if (logBuffer.length > maxLogs) logBuffer.shift();
+				collectLog(record);
+			},
+			logs: () => logBuffer.slice(),
+			subscribeLogs: () => () => {},
 		};
 	}
 
