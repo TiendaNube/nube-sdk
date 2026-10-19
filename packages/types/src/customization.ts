@@ -326,6 +326,26 @@ export type Customization = {
 	 */
 	"cart-item-quantity": AllowedCustomizationOptions<"hidden">;
 	/**
+	 * The variant selector of the product page's add-to-cart form — every
+	 * variation (size, colour, …) with its select or buttons. Variant
+	 * selectors in product grids, the quick shop and kit components are not
+	 * affected.
+	 *
+	 * Hiding it removes the choice only: the form still adds the selected
+	 * variant (the default one, unless the shopper picked another first), so
+	 * an app that offers its own way of choosing usually also manages what is
+	 * added, e.g. with `cart:before_update`.
+	 *
+	 * ```ts
+	 * customization.set("product-detail-variants", { hidden: "always" });
+	 * ```
+	 *
+	 * Selecting a variant does not undo it. Not present on products without
+	 * variations, nor on a few older themes; the call resolves with
+	 * `not_found` there.
+	 */
+	"product-detail-variants": AllowedCustomizationOptions<"hidden">;
+	/**
 	 * The instalment line under the cart's total — the "up to 6x $16,66"
 	 * shown in the cart drawer and on the cart page.
 	 *
@@ -445,6 +465,8 @@ export type CustomizableElementValues = {
 	"product-detail-quantity": ReadableElementValues<"hidden">;
 	/** The quantity control of the first line item on screen. */
 	"cart-item-quantity": ReadableElementValues<"hidden">;
+	/** The product page's variant selector. */
+	"product-detail-variants": ReadableElementValues<"hidden">;
 	/** The instalment line under the cart's total. */
 	"cart-installments": ReadableElementValues<"hidden">;
 };
