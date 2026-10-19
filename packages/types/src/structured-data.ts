@@ -108,6 +108,9 @@ export type StructuredDataTarget = keyof StructuredData;
  *   feature-detect on.
  * - `not_found` — the current page has no such node: it is not a product
  *   page, or the product is not published with structured data.
+ * - `refused` — the node already has one of the properties sent, whether
+ *   the platform rendered it or an earlier call set it. Values are never
+ *   replaced, so nothing on this page will change it.
  * - `bridge_error` — the command never reached the page, or failed on the way
  *   back. Comes with {@link StructuredDataResult.error}.
  */
@@ -115,6 +118,7 @@ export type StructuredDataFailureCode =
 	| "invalid_input"
 	| "unknown_target"
 	| "not_found"
+	| "refused"
 	| "bridge_error";
 
 /**
@@ -147,9 +151,11 @@ export type StructuredDataCommands = {
 	/**
 	 * Sets properties of a structured data node.
 	 *
-	 * Each property sent replaces the one the node had, including one the
-	 * platform rendered itself; properties not sent are left as they are.
-	 * Calling `set` again with the same property replaces it again.
+	 * A property is only ever added, never replaced: if the node already has
+	 * it — because the platform rendered it (e.g. from the product's rating
+	 * metafields), or another app or an earlier call set it — the call
+	 * resolves with `refused` and the page is left as it was. Properties not
+	 * sent are left as they are.
 	 *
 	 * @param target — The node to change, e.g. `"product"`.
 	 * @param properties — The properties to set on it.
