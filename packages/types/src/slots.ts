@@ -208,6 +208,7 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_account_order_header"} AFTER_ACCOUNT_ORDER_HEADER - After the order title/number on the account order detail page.
  * @property {"before_account_order_items"} BEFORE_ACCOUNT_ORDER_ITEMS - Before the item list on the account order detail page.
  * @property {"after_account_order_items"} AFTER_ACCOUNT_ORDER_ITEMS - After the item list on the account order detail page.
+ * @property {"after_search_form"} AFTER_SEARCH_FORM - Right below the search input of the storefront.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -324,6 +325,7 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_ACCOUNT_ORDER_HEADER: "after_account_order_header",
 	BEFORE_ACCOUNT_ORDER_ITEMS: "before_account_order_items",
 	AFTER_ACCOUNT_ORDER_ITEMS: "after_account_order_items",
+	AFTER_SEARCH_FORM: "after_search_form",
 } as const;
 
 /**
