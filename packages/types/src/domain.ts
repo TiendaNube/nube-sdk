@@ -458,6 +458,14 @@ export type Store = {
 	/** Language code of the store (e.g., "en", "es"). */
 	language: LanguageKey;
 
+	/**
+	 * ISO 3166-1 alpha-2 code of the country the shopper is currently browsing (e.g., "AR", "VE").
+	 *
+	 * In multi-country stores this is the country selected in the storefront, which may differ
+	 * from the store's registered country.
+	 */
+	country?: string;
+
 	/** The store's theme template (e.g., "recife", "morelia", "rio"). */
 	theme: string;
 
