@@ -15,20 +15,17 @@ export type StructuredDataReviewRating = {
 
 /**
  * One review of the product, shaped like a Schema.org `Review` without its
- * `@type`s.
+ * `@type`s, except that `author` is just the reviewer's name.
  *
- * The host renders it with the author as a `Person` and the rating as a
- * `Rating`. Fields not listed here are dropped.
+ * The host renders the author as a `Person` and the rating as a `Rating`.
+ * Fields not listed here are dropped.
  */
 export type StructuredDataReview = {
-	/** The reviewer. */
-	author: {
-		/**
-		 * The reviewer's name. Up to 99 characters, as Google ignores author
-		 * names of 100 or more.
-		 */
-		name: string;
-	};
+	/**
+	 * The reviewer's name, rendered as the `name` of a Schema.org `Person`. Up
+	 * to 99 characters, as Google ignores author names of 100 or more.
+	 */
+	author: string;
 	/** The rating given in this review. */
 	reviewRating: StructuredDataReviewRating;
 	/**
@@ -127,7 +124,7 @@ export type StructuredData = {
 	 * await nube.api.getStructuredData().add("product", {
 	 *   aggregateRating: { ratingValue: 4.7, reviewCount: 128 },
 	 *   review: [
-	 *     { author: { name: "Ana" }, reviewRating: { ratingValue: 5 } },
+	 *     { author: "Ana", reviewRating: { ratingValue: 5 } },
 	 *   ],
 	 * });
 	 * ```
