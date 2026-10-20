@@ -142,6 +142,14 @@ export type NubeComponentBoxProps = Prettify<
 			gap: Size;
 			direction: "row" | "col";
 			style?: NubeComponentStyle;
+			/**
+			 * CSS classes applied to the box, separated by spaces.
+			 *
+			 * Each class is scoped to the app by prefixing it with the app id
+			 * (`app-{appId}_{class}`), so `className: "card"` is rendered as
+			 * `class="app-{appId}_card"`. Target the prefixed name in your CSS.
+			 */
+			className: string;
 			reverse: boolean;
 			background: string;
 			color: string;
