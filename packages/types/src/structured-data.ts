@@ -1,10 +1,53 @@
 /**
- * Schema.org `AggregateRating` as an app supplies it for a product: the
- * average of its reviews and how many there are.
+ * The rating of one review, shaped like a Schema.org `Rating`.
  *
- * The host adds `"@type": "AggregateRating"` itself, so the app sends only the
- * values. At least one of `reviewCount` and `ratingCount` is required, as
- * search engines require for review rich results.
+ * `bestRating` and `worstRating` default to the scale of the
+ * `aggregateRating` sent in the same call.
+ */
+export type StructuredDataReviewRating = {
+	/** The rating given in the review, between `worstRating` and `bestRating`. */
+	ratingValue: number;
+	/** The highest value allowed. Defaults to the aggregate's `bestRating`. */
+	bestRating?: number;
+	/** The lowest value allowed. Defaults to the aggregate's `worstRating`. */
+	worstRating?: number;
+};
+
+/**
+ * One review of the product, shaped like a Schema.org `Review` without its
+ * `@type`s.
+ *
+ * The host renders it with the author as a `Person` and the rating as a
+ * `Rating`. Fields not listed here are dropped.
+ */
+export type StructuredDataReview = {
+	/** The reviewer. */
+	author: {
+		/**
+		 * The reviewer's name. Up to 99 characters, as Google ignores author
+		 * names of 100 or more.
+		 */
+		name: string;
+	};
+	/** The rating given in this review. */
+	reviewRating: StructuredDataReviewRating;
+	/**
+	 * When the review was published, as an ISO 8601 date (`"2026-09-01"`) or
+	 * date-time (`"2026-09-01T10:00:00-03:00"`).
+	 */
+	datePublished?: string;
+	/**
+	 * The text of the review. Up to 2000 characters.
+	 */
+	reviewBody?: string;
+};
+
+/**
+ * The product's rating, shaped like a Schema.org `AggregateRating` without its
+ * `@type`: the average of its reviews and how many there are.
+ *
+ * At least one of `reviewCount` and `ratingCount` is required, as search
+ * engines require for review rich results.
  */
 export type StructuredDataAggregateRating = {
 	/**
@@ -36,11 +79,10 @@ export type StructuredDataAggregateRating = {
 
 /**
  * Central capability interface. Every Schema.org property an app can
- * contribute lives here exactly once; each target in {@link StructuredData}
- * then picks the subset it supports.
+ * contribute lives here exactly once, named and shaped as in the JSON-LD; each
+ * target in {@link StructuredData} then picks the subset it supports.
  *
- * Only `aggregateRating` ships today. Other properties (e.g. `review`) are
- * added here as the platform learns to merge them.
+ * Other properties are added here as the platform learns to merge them.
  */
 export type StructuredDataProperties = {
 	/**
@@ -48,25 +90,22 @@ export type StructuredDataProperties = {
 	 * `aggregateRating` of the node.
 	 */
 	aggregateRating: StructuredDataAggregateRating;
+	/**
+	 * Up to 5 reviews of the product, rendered by the host as the Schema.org
+	 * `review` list of the node.
+	 *
+	 * The reviews are a sample of the ones the `aggregateRating` counts, so it
+	 * must be sent in the same call, and there can be no more reviews than its
+	 * `reviewCount` (or `ratingCount` without it). An empty array adds no
+	 * `review`.
+	 */
+	review: StructuredDataReview[];
 };
 
 /**
- * Requires at least one of `T`'s members while leaving the others optional.
- */
-type AtLeastOne<T> = {
-	[K in keyof T]-?: Required<Pick<T, K>> & Partial<Omit<T, K>>;
-}[keyof T];
-
-/**
- * Narrows {@link StructuredDataProperties} to the properties a given target
- * accepts, of which at least one must be present.
- */
-type AllowedStructuredDataProperties<T extends keyof StructuredDataProperties> =
-	AtLeastOne<Pick<StructuredDataProperties, T>>;
-
-/**
  * The catalog of structured data nodes an app can contribute to, keyed by
- * target name.
+ * target name. Each one takes its properties as the JSON-LD names and nests
+ * them.
  *
  * The platform renders the page's Schema.org JSON-LD itself; an app never
  * adds a node of its own. It supplies values, and the platform merges them
@@ -79,37 +118,44 @@ export type StructuredData = {
 	 * with variants, the `ProductGroup`) the page is about. The products of
 	 * related-products strips and other cards on the page are not affected.
 	 *
+	 * Takes an `aggregateRating`, and optionally a `review` list next to it.
+	 *
 	 * Only available on product pages. Elsewhere the call resolves with
 	 * `not_found`.
 	 *
 	 * ```ts
-	 * await nube.api.getStructuredData().set("product", {
+	 * await nube.api.getStructuredData().add("product", {
 	 *   aggregateRating: { ratingValue: 4.7, reviewCount: 128 },
+	 *   review: [
+	 *     { author: { name: "Ana" }, reviewRating: { ratingValue: 5 } },
+	 *   ],
 	 * });
 	 * ```
 	 */
-	product: AllowedStructuredDataProperties<"aggregateRating">;
+	product: Pick<StructuredDataProperties, "aggregateRating"> &
+		Partial<Pick<StructuredDataProperties, "review">>;
 };
 
 /**
  * The name of a structured data node — the key an app passes to
- * {@link StructuredDataCommands.set}.
+ * {@link StructuredDataCommands.add}.
  */
 export type StructuredDataTarget = keyof StructuredData;
 
 /**
- * Why a {@link StructuredDataCommands.set} call did not take effect.
+ * Why a {@link StructuredDataCommands.add} call did not take effect.
  *
  * - `invalid_input` — the payload or a value was malformed, e.g. a
- *   `ratingValue` outside `worstRating`..`bestRating`. A bug in the app,
- *   fixable in the call itself.
+ *   `ratingValue` outside `worstRating`..`bestRating`, more than 5 reviews,
+ *   or a `review` without an `aggregateRating`. A bug in the app, fixable
+ *   in the call itself.
  * - `unknown_target` — the target or one of the properties is not supported
  *   by the platform. Older platforms support fewer, so this is the code to
  *   feature-detect on.
  * - `not_found` — the current page has no such node: it is not a product
  *   page, or the product is not published with structured data.
  * - `refused` — the node already has one of the properties sent, whether
- *   the platform rendered it or an earlier call set it. Values are never
+ *   the platform rendered it or an earlier call added it. Values are never
  *   replaced, so nothing on this page will change it.
  * - `bridge_error` — the command never reached the page, or failed on the way
  *   back. Comes with {@link StructuredDataResult.error}.
@@ -122,9 +168,9 @@ export type StructuredDataFailureCode =
 	| "bridge_error";
 
 /**
- * The outcome of a {@link StructuredDataCommands.set} call.
+ * The outcome of a {@link StructuredDataCommands.add} call.
  *
- * `set` never rejects: everything that can go wrong comes back here, so an app
+ * `add` never rejects: everything that can go wrong comes back here, so an app
  * branches on `ok` rather than wrapping the call in `try`/`catch`.
  */
 export type StructuredDataResult =
@@ -149,18 +195,18 @@ export type StructuredDataResult =
  */
 export type StructuredDataCommands = {
 	/**
-	 * Sets properties of a structured data node.
+	 * Adds properties to a structured data node.
 	 *
 	 * A property is only ever added, never replaced: if the node already has
 	 * it — because the platform rendered it (e.g. from the product's rating
-	 * metafields), or another app or an earlier call set it — the call
+	 * metafields), or another app or an earlier call added it — the call
 	 * resolves with `refused` and the page is left as it was. Properties not
 	 * sent are left as they are.
 	 *
 	 * @param target — The node to change, e.g. `"product"`.
-	 * @param properties — The properties to set on it.
+	 * @param properties — The properties to add to it.
 	 */
-	set<K extends StructuredDataTarget>(
+	add<K extends StructuredDataTarget>(
 		target: K,
 		properties: StructuredData[K],
 	): Promise<StructuredDataResult>;
