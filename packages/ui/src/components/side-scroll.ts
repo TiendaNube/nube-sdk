@@ -3,6 +3,7 @@ import type {
 	NubeComponentSideScrollProps,
 } from "@tiendanube/nube-sdk-types";
 import { generateInternalId } from "./generateInternalId";
+import { scopedClassNameProp } from "./scopedClassNameProp";
 
 /**
  * Creates a `sidescroll` component.
@@ -19,5 +20,6 @@ export const sideScroll = (
 ): NubeComponentSideScroll => ({
 	type: "sidescroll",
 	...props,
+	...scopedClassNameProp(props.className),
 	__internalId: generateInternalId("sidescroll", props),
 });

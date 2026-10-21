@@ -3,6 +3,7 @@ import type {
 	NubeComponentLinkProps,
 } from "@tiendanube/nube-sdk-types";
 import { generateInternalId } from "./generateInternalId";
+import { scopedClassNameProp } from "./scopedClassNameProp";
 
 /**
  * Creates a `link` component.
@@ -18,5 +19,6 @@ import { generateInternalId } from "./generateInternalId";
 export const link = (props: NubeComponentLinkProps): NubeComponentLink => ({
 	type: "link",
 	...props,
+	...scopedClassNameProp(props.className),
 	__internalId: generateInternalId("link", props),
 });
