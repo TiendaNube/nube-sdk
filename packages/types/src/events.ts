@@ -90,6 +90,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"page:scroll"} PAGE_SCROLL - Fired when the page scroll position changes.
  * @property {"page:exit_intent"} PAGE_EXIT_INTENT - Fired when the cursor leaves through the top edge of the viewport (desktop exit intent).
  * @property {"page:visibility_change"} PAGE_VISIBILITY_CHANGE - Fired when the store becomes hidden/backgrounded or the user switches tabs (mobile/touch).
+ * @property {"device:updated"} DEVICE_UPDATED - Fired when the viewport changes (window resize, orientation change, mobile URL bar collapsing/expanding), debounced. `state.device` is already updated when the listener runs.
  * @property {"storefront:search"} STOREFRONT_SEARCH - Fired when the user interacts with the storefront search. `eventPayload` is `{ term: string, source: "autocomplete" | "submit" }`: `autocomplete` while typing (debounced), `submit` when the search is run.
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
@@ -123,6 +124,7 @@ export const EVENT = {
 	PAGE_SCROLL: "page:scroll",
 	PAGE_EXIT_INTENT: "page:exit_intent",
 	PAGE_VISIBILITY_CHANGE: "page:visibility_change",
+	DEVICE_UPDATED: "device:updated",
 	STOREFRONT_SEARCH: "storefront:search",
 	...SENDABLE_EVENT,
 } as const;
