@@ -142,6 +142,12 @@ import type {
 	NubeComponentToastTitleProps,
 	NubeComponentUse,
 	NubeComponentUseProps,
+	NubeComponentVideoIndicator,
+	NubeComponentVideoIndicatorProps,
+	NubeComponentVideoMuteButton,
+	NubeComponentVideoMuteButtonProps,
+	NubeComponentVideoPlayButton,
+	NubeComponentVideoPlayButtonProps,
 	NubeComponentVideoPlayer,
 	NubeComponentVideoPlayerProps,
 	NubeComponentVideoRoot,
@@ -223,6 +229,9 @@ import {
 	toastDescription,
 	toastRoot,
 	toastTitle,
+	videoIndicator,
+	videoMuteButton,
+	videoPlayButton,
 	videoPlayer,
 	videoRoot,
 	videoStories,
@@ -527,16 +536,70 @@ function VideoYouTube(
 }
 
 /**
+ * Creates a `Video.PlayButton` component.
+ *
+ * `Video.PlayButton` toggles play/pause on the player of the surrounding
+ * `Video.Root`. The click acts on the player directly, so playback can start
+ * with sound without the native controls.
+ *
+ * @param props - The properties for configuring the play button component.
+ * @returns A `NubeComponentVideoPlayButton` object representing the play button component.
+ */
+function VideoPlayButton(
+	props: NubeComponentVideoPlayButtonProps,
+): NubeComponentVideoPlayButton {
+	return videoPlayButton(props);
+}
+
+/**
+ * Creates a `Video.MuteButton` component.
+ *
+ * `Video.MuteButton` toggles mute on the player of the surrounding
+ * `Video.Root`. The click acts on the player directly, so an autoplaying
+ * (always muted) video can be unmuted without pausing.
+ *
+ * @param props - The properties for configuring the mute button component.
+ * @returns A `NubeComponentVideoMuteButton` object representing the mute button component.
+ */
+function VideoMuteButton(
+	props: NubeComponentVideoMuteButtonProps,
+): NubeComponentVideoMuteButton {
+	return videoMuteButton(props);
+}
+
+/**
+ * Creates a `Video.Indicator` component.
+ *
+ * `Video.Indicator` renders its children only while the player of the
+ * surrounding `Video.Root` is in `state`. Inside a `Video.PlayButton` or
+ * `Video.MuteButton`, it swaps the button's content per state.
+ *
+ * @param props - The properties for configuring the indicator component.
+ * @returns A `NubeComponentVideoIndicator` object representing the indicator component.
+ */
+function VideoIndicator(
+	props: NubeComponentVideoIndicatorProps,
+): NubeComponentVideoIndicator {
+	return videoIndicator(props);
+}
+
+/**
  * Compound `Video` component.
  *
  * - `Video.Root` — wrapper owning layout, playback modifiers and events.
  * - `Video.Player` — the self-hosted source (MP4 / HLS / DASH).
  * - `Video.YouTube` — a YouTube embed via the official IFrame Player API.
+ * - `Video.PlayButton` — a custom play/pause button over the video.
+ * - `Video.MuteButton` — a custom mute button over the video.
+ * - `Video.Indicator` — content shown only in a given playback state.
  */
 export const Video = {
 	Root: VideoRoot,
 	Player: VideoPlayer,
 	YouTube: VideoYouTube,
+	PlayButton: VideoPlayButton,
+	MuteButton: VideoMuteButton,
+	Indicator: VideoIndicator,
 };
 
 /**
