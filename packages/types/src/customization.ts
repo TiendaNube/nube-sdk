@@ -1,4 +1,4 @@
-import type { ProductDetails } from "./domain";
+import type { CartItem, ProductDetails } from "./domain";
 
 /**
  * Every customization option an app can ask for, declared once.
@@ -85,6 +85,23 @@ export type CustomizationOptions = {
 	 * Refused when the value is not one of the four above.
 	 */
 	hidden: CustomizationHiddenMode;
+	/**
+	 * Whether the element is shown as unavailable: `true` blocks the
+	 * shopper's clicks and the purchase the button would start, renders it
+	 * dimmed with a `not-allowed` cursor and announces it as disabled to
+	 * assistive technology. `false` hands it back to the store.
+	 *
+	 * Meant for a native button that has nothing valid behind it yet — a
+	 * bundle whose components the shopper has not chosen, say — so it reads
+	 * as "not yet" instead of a click that silently does nothing.
+	 *
+	 * It is layered on top of the store's own state and never replaces it:
+	 * the store keeps disabling an out-of-stock button by itself, and `false`
+	 * does not enable a button the store disabled. Selecting a variant does
+	 * not undo it, so it does not need re-applying on
+	 * `product:variant_selected`.
+	 */
+	disabled: boolean;
 };
 
 /**
@@ -132,7 +149,7 @@ export type Customization = {
 	 * and the quick shop.
 	 *
 	 * With options, every instance on the page is customized. `fontColor`,
-	 * `backgroundColor` and `borderRadius` apply on any theme; `text` applies
+	 * `backgroundColor`, `borderRadius` and `disabled` apply on any theme; `text` applies
 	 * on the themes that render the button as a form input, which is most of
 	 * them, and is ignored where a theme builds the label differently.
 	 *
@@ -147,7 +164,7 @@ export type Customization = {
 	 * ```
 	 */
 	"add-to-cart-button": AllowedCustomizationOptions<
-		"text" | "fontColor" | "backgroundColor" | "borderRadius"
+		"text" | "fontColor" | "backgroundColor" | "borderRadius" | "disabled"
 	>;
 	/**
 	 * The storefront's installments panel: the payments block of the product
@@ -268,6 +285,67 @@ export type Customization = {
 		"text" | "hidden"
 	>;
 	/**
+	 * The quantity selector of the product page's add-to-cart form — the
+	 * input with its −/+ buttons. Quantity selectors in product grids, the
+	 * quick shop and the cart are not affected.
+	 *
+	 * Hiding it removes the control only: the form still adds the quantity it
+	 * holds (1 unless the shopper changed it), so an app that offers its own
+	 * quantities usually also manages what is added, e.g. with
+	 * `cart:before_update`. The space the selector took beside the
+	 * add-to-cart button may stay on some themes, as may the "N in stock"
+	 * line.
+	 *
+	 * ```ts
+	 * customization.set("product-detail-quantity", { hidden: "always" });
+	 * ```
+	 *
+	 * Selecting a variant does not undo it. Not present on themes whose
+	 * product page has no quantity selector, nor on a few older themes; the
+	 * call resolves with `not_found` there.
+	 */
+	"product-detail-quantity": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The quantity control of each line item in the cart — the input with its
+	 * −/+ buttons, in the cart drawer and on the cart page.
+	 *
+	 * A resolver receives each line item, so the quantity can be locked on
+	 * some items only, such as the components of a bundle:
+	 *
+	 * ```ts
+	 * customization.set("cart-item-quantity", (item) =>
+	 *   bundleItemIds.includes(item.id) ? { hidden: "always" } : undefined,
+	 * );
+	 * ```
+	 *
+	 * Changing a quantity keeps it. Adding a product re-renders the cart
+	 * drawer's items, which drops it, so an app re-applies it on
+	 * `cart:update`, as {@link CustomizationCommands.set} describes. On the
+	 * cart page of some themes the columns after it shift into the space it
+	 * leaves.
+	 */
+	"cart-item-quantity": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The variant selector of the product page's add-to-cart form — every
+	 * variation (size, colour, …) with its select or buttons. Variant
+	 * selectors in product grids, the quick shop and kit components are not
+	 * affected.
+	 *
+	 * Hiding it removes the choice only: the form still adds the selected
+	 * variant (the default one, unless the shopper picked another first), so
+	 * an app that offers its own way of choosing usually also manages what is
+	 * added, e.g. with `cart:before_update`.
+	 *
+	 * ```ts
+	 * customization.set("product-detail-variants", { hidden: "always" });
+	 * ```
+	 *
+	 * Selecting a variant does not undo it. Not present on products without
+	 * variations, nor on a few older themes; the call resolves with
+	 * `not_found` there.
+	 */
+	"product-detail-variants": AllowedCustomizationOptions<"hidden">;
+	/**
 	 * The instalment line under the cart's total — the "up to 6x $16,66"
 	 * shown in the cart drawer and on the cart page.
 	 *
@@ -334,6 +412,12 @@ export type CustomizationElementValues = {
 	 * reads `"never"` too.
 	 */
 	hidden: CustomizationHiddenMode;
+	/**
+	 * Whether the element is disabled by the Customization API: the value
+	 * last set with {@link CustomizationOptions.disabled}, or `false`. A
+	 * button the store itself disables — out of stock — reads `false` too.
+	 */
+	disabled: boolean;
 };
 
 /**
@@ -361,7 +445,7 @@ export type CustomizableElementValues = {
 	 * one), the values are those of the first one on screen.
 	 */
 	"add-to-cart-button": ReadableElementValues<
-		"text" | "fontColor" | "backgroundColor" | "borderRadius"
+		"text" | "fontColor" | "backgroundColor" | "borderRadius" | "disabled"
 	>;
 	/** The product page's installments panel. */
 	"product-detail-installments": ReadableElementValues<"hidden">;
@@ -377,6 +461,12 @@ export type CustomizableElementValues = {
 	"product-grid-item-compare-at-price": ReadableElementValues<
 		"text" | "hidden"
 	>;
+	/** The product page's quantity selector. */
+	"product-detail-quantity": ReadableElementValues<"hidden">;
+	/** The quantity control of the first line item on screen. */
+	"cart-item-quantity": ReadableElementValues<"hidden">;
+	/** The product page's variant selector. */
+	"product-detail-variants": ReadableElementValues<"hidden">;
 	/** The instalment line under the cart's total. */
 	"cart-installments": ReadableElementValues<"hidden">;
 };
@@ -414,6 +504,8 @@ export type CustomizationContext = {
 	/** Each card's product. */
 	"product-grid-item-compare-at-price": CustomizationProduct;
 	"product-grid-installments": CustomizationProduct;
+	/** Each line item, as the cart state carries it. */
+	"cart-item-quantity": CartItem;
 };
 
 /**
@@ -490,7 +582,11 @@ export type CustomizationInput = AtLeastOne<{
  * reaction, which is why they are distinguished:
  *
  * - `invalid_input` — the payload or the options were malformed. A bug in the
- *   app, fixable in the call itself.
+ *   app, fixable in the call itself — or an option the platform does not
+ *   know yet, which an app built against newer types can feature-detect on:
+ *   the `reason` names it (`unknown option "disabled"`). Platforms released
+ *   before that check ignore an unknown option instead, so `get` is the way to
+ *   confirm one took effect there.
  * - `unknown_target` — the target is not in the platform's catalog. Older
  *   platforms know fewer targets, so this is the code to feature-detect on.
  * - `not_found` — the target exists but the current page has no such element,
