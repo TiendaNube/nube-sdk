@@ -2,6 +2,7 @@ import type { AnalyticsCommands } from "./analytics";
 import type { AvailableSlotsCommands } from "./available-slots";
 import type { CheckoutCommands } from "./checkout";
 import type { CustomizationCommands } from "./customization";
+import type { ObserverCommands } from "./observer";
 
 /**
  * Host-API namespace exposed on `NubeSDK` as `nube.api`.
@@ -38,4 +39,12 @@ export type NubeAPI = {
 	 * store's interface. Subsequent calls return the same instance
 	 */
 	getCustomization(): CustomizationCommands;
+
+	/**
+	 * Returns the observer adapter, used to follow targets on the page —
+	 * whether they are there, whether the shopper can see them and where they
+	 * are. Subsequent calls return the same instance — identity comparisons
+	 * (`===`) hold.
+	 */
+	getObserver(): ObserverCommands;
 };

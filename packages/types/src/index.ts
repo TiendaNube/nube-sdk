@@ -7,6 +7,7 @@ export type * from "./app-settings";
 export type * from "./checkout";
 export type * from "./customization";
 export type * from "./main";
+export type * from "./observer";
 export type * from "./domain";
 export type * from "./utility";
 export type * from "./components";
