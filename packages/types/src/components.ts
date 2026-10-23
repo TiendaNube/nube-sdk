@@ -125,6 +125,43 @@ type EnhancedCSSProperties = {
 export type NubeComponentStyle = Partial<EnhancedCSSProperties>;
 
 /* -------------------------------------------------------------------------- */
+/*                         Accessibility Props                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Values accepted by `ariaCurrent`, mirroring the `aria-current` attribute.
+ */
+export type AriaCurrent =
+	| boolean
+	| "page"
+	| "step"
+	| "location"
+	| "date"
+	| "time";
+
+/**
+ * Accessibility properties rendered as the matching attributes on the host
+ * element (`ariaLabel` becomes `aria-label`, and so on).
+ */
+export type NubeComponentAriaProps = Partial<{
+	/** WAI-ARIA role of the element, e.g. `"region"`, `"group"` or `"img"`. */
+	role: string;
+	/** Accessible name, rendered as `aria-label`. */
+	ariaLabel: string;
+	/** Human-readable role description, rendered as `aria-roledescription`. */
+	ariaRoleDescription: string;
+	/** Hides the element from assistive technology, rendered as `aria-hidden`. */
+	ariaHidden: boolean;
+	/** Marks the current item of a set, rendered as `aria-current`. */
+	ariaCurrent: AriaCurrent;
+	/**
+	 * `0` adds the element to the tab order and `-1` makes it focusable only
+	 * programmatically. Positive values are not supported.
+	 */
+	tabIndex: 0 | -1;
+}>;
+
+/* -------------------------------------------------------------------------- */
 /*                            Box Component                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -134,6 +171,7 @@ export type NubeComponentStyle = Partial<EnhancedCSSProperties>;
 export type NubeComponentBoxProps = Prettify<
 	NubeComponentProps &
 		ChildrenProps &
+		NubeComponentAriaProps &
 		Partial<{
 			width: Size;
 			height: Size;
@@ -475,6 +513,7 @@ export type NubeComponentButtonEventHandler = NubeComponentEventHandler<
  */
 export type NubeComponentButtonProps = Prettify<
 	NubeComponentBase &
+		NubeComponentAriaProps &
 		Partial<{
 			children: NubeComponentChildren;
 			disabled: boolean;
@@ -483,7 +522,6 @@ export type NubeComponentButtonProps = Prettify<
 			height: Size;
 			style?: NubeComponentStyle;
 			onClick: NubeComponentButtonEventHandler;
-			ariaLabel: string;
 		}>
 >;
 
