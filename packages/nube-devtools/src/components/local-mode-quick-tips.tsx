@@ -1,16 +1,8 @@
-import { Copy } from "lucide-react";
-import { useCallback } from "react";
-import { toast } from "sonner";
+type LocalModeQuickTipsProps = {
+	defaultUrl: string;
+};
 
-const EXAMPLE_URL = "http://localhost:8081/main.min.js";
-
-export function LocalModeQuickTips() {
-	const handleCopyUrl = useCallback(() => {
-		navigator.clipboard.writeText(EXAMPLE_URL).then(() => {
-			toast.success("Copied to clipboard");
-		});
-	}, []);
-
+export function LocalModeQuickTips({ defaultUrl }: LocalModeQuickTipsProps) {
 	return (
 		<div className="mt-2 space-y-1 pb-4">
 			<h3 className="text-[11px] font-medium text-muted-foreground">
@@ -34,20 +26,11 @@ export function LocalModeQuickTips() {
 						2.
 					</span>
 					<p className="text-[11px] text-muted-foreground">
-						Copy URL (e.g.{" "}
+						Click Start App. If the URL field is empty,{" "}
 						<code className="bg-secondary px-0 py-0.5 rounded font-mono text-[10px]">
-							{EXAMPLE_URL}
-						</code>
-						)
-						<button
-							type="button"
-							onClick={handleCopyUrl}
-							title="Copy URL"
-							aria-label="Copy URL"
-							className="ml-1 inline-flex items-center align-middle text-muted-foreground transition-colors hover:text-foreground"
-						>
-							<Copy className="h-3 w-3" />
-						</button>
+							{defaultUrl}
+						</code>{" "}
+						is used
 					</p>
 				</div>
 				<div className="flex items-start gap-1.5 p-1.5 rounded-md bg-card border border-border">
@@ -55,7 +38,7 @@ export function LocalModeQuickTips() {
 						3.
 					</span>
 					<p className="text-[11px] text-muted-foreground">
-						Paste above and click Start Application
+						Using a different port or path? Paste your URL above before starting
 					</p>
 				</div>
 			</div>
