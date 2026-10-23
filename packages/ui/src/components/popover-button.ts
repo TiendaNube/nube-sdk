@@ -3,6 +3,7 @@ import type {
 	NubeComponentPopoverButtonProps,
 } from "@tiendanube/nube-sdk-types";
 import { generateInternalId } from "./generateInternalId";
+import { scopedClassNameProp } from "./scopedClassNameProp";
 
 /**
  * Creates a `popover` button component.
@@ -16,5 +17,6 @@ export const popoverButton = (
 ): NubeComponentPopoverButton => ({
 	type: "popoverButton",
 	...props,
+	...scopedClassNameProp(props.className),
 	__internalId: generateInternalId("popoverButton", props),
 });
