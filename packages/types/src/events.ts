@@ -91,6 +91,8 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"page:exit_intent"} PAGE_EXIT_INTENT - Fired when the cursor leaves through the top edge of the viewport (desktop exit intent).
  * @property {"page:visibility_change"} PAGE_VISIBILITY_CHANGE - Fired when the store becomes hidden/backgrounded or the user switches tabs (mobile/touch).
  * @property {"storefront:search"} STOREFRONT_SEARCH - Fired when the user interacts with the storefront search. `eventPayload` is `{ term: string, source: "autocomplete" | "submit" }`: `autocomplete` while typing (debounced), `submit` when the search is run.
+ * @property {"storefront:search_focus"} STOREFRONT_SEARCH_FOCUS - Fired when the storefront search input gains focus. `eventPayload` is `{ term: string }`, the term currently in the input (possibly empty).
+ * @property {"storefront:search_blur"} STOREFRONT_SEARCH_BLUR - Fired when the storefront search input loses focus. `eventPayload` is `{ term: string }`, the term currently in the input (possibly empty).
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
 export const EVENT = {
@@ -124,6 +126,8 @@ export const EVENT = {
 	PAGE_EXIT_INTENT: "page:exit_intent",
 	PAGE_VISIBILITY_CHANGE: "page:visibility_change",
 	STOREFRONT_SEARCH: "storefront:search",
+	STOREFRONT_SEARCH_FOCUS: "storefront:search_focus",
+	STOREFRONT_SEARCH_BLUR: "storefront:search_blur",
 	...SENDABLE_EVENT,
 } as const;
 
