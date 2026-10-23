@@ -734,6 +734,16 @@ export type NubeComponentIframeProps = Prettify<
 		 * and updates the iframe size (px). Independent of `onMessage`. Requires stable iframe identity
 		 */
 		autoresize?: boolean;
+		/**
+		 * When `true`, delegates the `camera` permission to the iframe's origin
+		 * (e.g. `getUserMedia({ video: true })`). Only honored when `src` is HTTPS.
+		 */
+		allowCamera?: boolean;
+		/**
+		 * When `true`, delegates the `microphone` permission to the iframe's origin
+		 * (e.g. `getUserMedia({ audio: true })`). Only honored when `src` is HTTPS.
+		 */
+		allowMicrophone?: boolean;
 		/** Event handler for messages from the iframe */
 		onMessage?: NubeComponentIframeEventHandler;
 	}
