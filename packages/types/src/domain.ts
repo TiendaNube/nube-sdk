@@ -12,6 +12,9 @@ export type DeviceScreenOrientation = "portrait" | "landscape";
 
 /**
  * Represents the screen state of the device.
+ *
+ * Kept current for the whole session: when the viewport changes the state is
+ * updated and `device:updated` is dispatched.
  */
 export type DeviceScreen = {
 	/** The width of the screen in pixels. */
