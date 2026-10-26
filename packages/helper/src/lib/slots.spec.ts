@@ -178,13 +178,13 @@ describe("slots", () => {
 
 		it("logs SlotNotFound and resolves null when nothing matches", async () => {
 			const { slots } = await setup();
-			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
 			await expect(
 				slots.beforeFirstSection("single-shelf"),
 			).resolves.toBeNull();
 
-			const error = errorSpy.mock.calls[0]?.[0] as Error;
+			const error = warnSpy.mock.calls[0]?.[0] as Error;
 			expect(error).toBeInstanceOf(slots.SlotNotFound);
 			expect(error.message).toBe(
 				"There is no available slot before first single-shelf section for app app-123",
@@ -220,11 +220,11 @@ describe("slots", () => {
 
 		it("logs SlotNotFound and resolves null when nothing matches", async () => {
 			const { slots } = await setup();
-			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
 			await expect(slots.afterFirstSection("single-shelf")).resolves.toBeNull();
 
-			const error = errorSpy.mock.calls[0]?.[0] as Error;
+			const error = warnSpy.mock.calls[0]?.[0] as Error;
 			expect(error.message).toBe(
 				"There is no available slot after first single-shelf section for app app-123",
 			);
@@ -275,11 +275,11 @@ describe("slots", () => {
 
 		it("logs SlotNotFound and resolves null when nothing matches", async () => {
 			const { slots } = await setup();
-			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
 			await expect(slots.beforeLastSection("single-shelf")).resolves.toBeNull();
 
-			const error = errorSpy.mock.calls[0]?.[0] as Error;
+			const error = warnSpy.mock.calls[0]?.[0] as Error;
 			expect(error.message).toBe(
 				"There is no available slot before last single-shelf section for app app-123",
 			);
@@ -314,11 +314,11 @@ describe("slots", () => {
 
 		it("logs SlotNotFound and resolves null when nothing matches", async () => {
 			const { slots } = await setup();
-			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
 			await expect(slots.afterLastSection("single-shelf")).resolves.toBeNull();
 
-			const error = errorSpy.mock.calls[0]?.[0] as Error;
+			const error = warnSpy.mock.calls[0]?.[0] as Error;
 			expect(error.message).toBe(
 				"There is no available slot after last single-shelf section for app app-123",
 			);
@@ -424,24 +424,63 @@ describe("slots", () => {
 				static: [staticSlot("before_section_banner")],
 				dynamic: [dynamicSlot("single-shelf", 1, "before_dynamic_section")],
 			});
-			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
 			await expect(slots.beforeFirstSection("newsletter")).resolves.toBeNull();
-			expect(errorSpy).toHaveBeenCalledTimes(1);
+			expect(warnSpy).toHaveBeenCalledTimes(1);
 		});
 
 		it("reports the queried section type when no alias matches", async () => {
 			const { slots } = await setup();
-			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
 			await expect(
 				slots.afterLastSection("products_featured"),
 			).resolves.toBeNull();
 
-			const error = errorSpy.mock.calls[0]?.[0] as Error;
+			const error = warnSpy.mock.calls[0]?.[0] as Error;
 			expect(error.message).toBe(
 				"There is no available slot after last products_featured section for app app-123",
 			);
+		});
+	});
+
+	describe("silent option", () => {
+		it.each([
+			"beforeFirstSection",
+			"afterFirstSection",
+			"beforeLastSection",
+			"afterLastSection",
+		] as const)("%s skips the warning when silent", async (helper) => {
+			const { slots } = await setup();
+			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+			await expect(
+				slots[helper]("single-shelf", { silent: true }),
+			).resolves.toBeNull();
+
+			expect(warnSpy).not.toHaveBeenCalled();
+			expect(errorSpy).not.toHaveBeenCalled();
+		});
+
+		it("does not change the result when a slot is found", async () => {
+			const fallback = staticSlot("after_section_single-shelf");
+			const { slots } = await setup({ static: [fallback], dynamic: [] });
+
+			await expect(
+				slots.afterFirstSection("single-shelf", { silent: true }),
+			).resolves.toBe(fallback);
+		});
+
+		it("never reports a missing slot through console.error", async () => {
+			const { slots } = await setup();
+			vi.spyOn(console, "warn").mockImplementation(() => {});
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+			await expect(slots.afterFirstSection("single-shelf")).resolves.toBeNull();
+
+			expect(errorSpy).not.toHaveBeenCalled();
 		});
 	});
 
@@ -459,11 +498,11 @@ describe("slots", () => {
 
 		it("log reads the app id from self.__APP_DATA__.id", async () => {
 			const { slots } = await setup();
-			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
 			slots.SlotNotFound.log("after last y section");
 
-			const error = errorSpy.mock.calls[0]?.[0] as Error;
+			const error = warnSpy.mock.calls[0]?.[0] as Error;
 			expect(error.message).toBe(
 				"There is no available slot after last y section for app app-123",
 			);
