@@ -34,7 +34,7 @@ import type {
  * @property {"after_header"} AFTER_HEADER - After the header.
  * @property {"drawer_left"} DRAWER_LEFT - Left drawer.
  * @property {"drawer_right"} DRAWER_RIGHT - Right drawer.
- * @property {"fullscreen_content"} FULLSCREEN_CONTENT - Fullscreen overlay; accepts a `Video.Root` component.
+ * @property {"fullscreen_content"} FULLSCREEN_CONTENT - Fullscreen overlay; accepts a `Video.Root` or a `Carousel.Root` component.
  */
 export const COMMON_UI_SLOT = {
 	BEFORE_MAIN_CONTENT: "before_main_content",
