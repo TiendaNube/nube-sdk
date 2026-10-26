@@ -212,6 +212,7 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_account_order_item"} BEFORE_ACCOUNT_ORDER_ITEM - Before each order card in the account order list. Repeatable; `pick` is the order id.
  * @property {"after_account_order_item"} AFTER_ACCOUNT_ORDER_ITEM - After each order card in the account order list. Repeatable; `pick` is the order id.
  * @property {"before_account_order_detail"} BEFORE_ACCOUNT_ORDER_DETAIL - Before the order detail block on the account order detail page.
+ * @property {"after_account_order_detail"} AFTER_ACCOUNT_ORDER_DETAIL - After the order detail block on the account order detail page.
  * @property {"before_account_order_header"} BEFORE_ACCOUNT_ORDER_HEADER - Before the order title/number on the account order detail page.
  * @property {"after_account_order_header"} AFTER_ACCOUNT_ORDER_HEADER - After the order title/number on the account order detail page.
  * @property {"before_account_order_items"} BEFORE_ACCOUNT_ORDER_ITEMS - Before the item list on the account order detail page.
@@ -330,6 +331,7 @@ export const STOREFRONT_UI_SLOT = {
 	BEFORE_ACCOUNT_ORDER_ITEM: "before_account_order_item",
 	AFTER_ACCOUNT_ORDER_ITEM: "after_account_order_item",
 	BEFORE_ACCOUNT_ORDER_DETAIL: "before_account_order_detail",
+	AFTER_ACCOUNT_ORDER_DETAIL: "after_account_order_detail",
 	BEFORE_ACCOUNT_ORDER_HEADER: "before_account_order_header",
 	AFTER_ACCOUNT_ORDER_HEADER: "after_account_order_header",
 	BEFORE_ACCOUNT_ORDER_ITEMS: "before_account_order_items",
