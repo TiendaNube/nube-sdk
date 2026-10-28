@@ -69,4 +69,15 @@ export type CheckoutCommands = {
 	 * honors this for transparent credit/debit card gateways.
 	 */
 	hideInstallments(installments: InstallmentsToHide): Promise<void>;
+
+	/**
+	 * Asks the host to resync the cart after the app mutated it out-of-band
+	 * (e.g. via the Discounts API). The host refetches the order, recalculates
+	 * shipping options, emits the updated cart to every app through the regular
+	 * cart update flow and reloads the payment options.
+	 *
+	 * Resolves once the refresh finishes; rejects with `command_failed` when
+	 * the host could not refresh the cart.
+	 */
+	refreshCart(): Promise<void>;
 };
