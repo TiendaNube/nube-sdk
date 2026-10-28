@@ -28,6 +28,7 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  * @property {"shipping:recalculate"} SHIPPING_RECALCULATE - Used to recalculate the product page shipping rates with the zipcode already entered (e.g. after a variant change). No-op outside the product page or before the shopper calculated shipping.
  * @property {"order:add:extra"} ORDER_ADD_EXTRA - Used to add additional metadata to an order.
  * @property {"account:register"} ACCOUNT_REGISTER - Used to autocomplete the signup form in the storefront.
+ * @property {"product:select_variant"} PRODUCT_SELECT_VARIANT - Used to select a variant of the product page's product, as if the shopper picked it: the gallery, price and stock follow. `eventPayload` is `{ variant_id: number }`. Confirmed by the `product:variant_selected` that follows; requests sent in quick succession (e.g. on hover) are collapsed into the last one.
  */
 export const SENDABLE_EVENT = {
 	CART_VALIDATE: "cart:validate",
@@ -45,6 +46,7 @@ export const SENDABLE_EVENT = {
 	SHIPPING_SELECT: "shipping:select",
 	SHIPPING_RECALCULATE: "shipping:recalculate",
 	ACCOUNT_REGISTER: "account:register",
+	PRODUCT_SELECT_VARIANT: "product:select_variant",
 } as const;
 
 /**
@@ -88,6 +90,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"quickbuy:open"} QUICKBUY_OPEN - Fired when the quickbuy modal is opened.
  * @property {"quickbuy:close"} QUICKBUY_CLOSE - Fired when the quickbuy modal is closed.
  * @property {"product:variant_selected"} PRODUCT_VARIANT_SELECTED - Fired when a product variant is selected.
+ * @property {"product:select_variant:fail"} PRODUCT_SELECT_VARIANT_FAIL - Fired when a `product:select_variant` request could not be applied. `eventPayload` is `{ variant_id: number | null, reason: "not_product_page" | "variant_not_found" | "options_not_found" }`.
  * @property {"product:quantity_changed"} PRODUCT_QUANTITY_CHANGED - Fired when the quantity selector of the product page or the quickbuy modal changes, before the item is added to the cart.
  * @property {"page:scroll"} PAGE_SCROLL - Fired when the page scroll position changes.
  * @property {"page:exit_intent"} PAGE_EXIT_INTENT - Fired when the cursor leaves through the top edge of the viewport (desktop exit intent).
@@ -123,6 +126,7 @@ export const EVENT = {
 	QUICKBUY_OPEN: "quickbuy:open",
 	QUICKBUY_CLOSE: "quickbuy:close",
 	PRODUCT_VARIANT_SELECTED: "product:variant_selected",
+	PRODUCT_SELECT_VARIANT_FAIL: "product:select_variant:fail",
 	PRODUCT_QUANTITY_CHANGED: "product:quantity_changed",
 	PAGE_SCROLL: "page:scroll",
 	PAGE_EXIT_INTENT: "page:exit_intent",
