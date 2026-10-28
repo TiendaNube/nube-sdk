@@ -29,6 +29,22 @@ import { getNubeInstance } from "./instance";
 export type QuerySlotResult = StaticSlot | DynamicSlot | null;
 
 /**
+ * Options accepted by the section-query helpers.
+ *
+ * @since 0.5.0
+ */
+export type SectionQueryOptions = {
+	/**
+	 * When `true`, a query that matches nothing resolves to `null` without
+	 * logging a {@link SlotNotFound} warning. Useful for sections that are
+	 * expected to be missing on some stores.
+	 *
+	 * @default false
+	 */
+	silent?: boolean;
+};
+
+/**
  * The memoized available-slots adapter, resolved on first use by
  * {@link getAvailableSlotsAPI}. `null` until then.
  */
@@ -37,9 +53,11 @@ let api: Nullable<AvailableSlotsCommands> = null;
 /**
  * Error describing a slot query that matched nothing on the current page.
  *
- * The query helpers do not throw it: they log it through {@link SlotNotFound.log}
- * and return `null`, so a missing slot degrades into "nothing rendered"
- * instead of breaking the app.
+ * The query helpers do not throw it: they log it as a warning through
+ * {@link SlotNotFound.log} (unless called with `silent: true`) and return
+ * `null`, so a missing slot degrades into "nothing rendered" instead of
+ * breaking the app. A missing slot is an expected outcome — it depends on the
+ * layout the store owner set up — so it is not reported as an error.
  *
  * @since 0.3.0
  */
@@ -54,7 +72,7 @@ export class SlotNotFound extends Error {
 	}
 
 	/**
-	 * Logs a `SlotNotFound` for the current app to the console.
+	 * Logs a `SlotNotFound` for the current app to the console as a warning.
 	 *
 	 * Reads the app id from `self.__APP_DATA__.id`, so it is meant to run inside
 	 * the NubeSDK Web Worker runtime.
@@ -65,11 +83,11 @@ export class SlotNotFound extends Error {
 	 * @example
 	 * ```typescript
 	 * SlotNotFound.log("before first product-list section");
-	 * // Error: There is no available slot before first product-list section for app 123
+	 * // Warning: There is no available slot before first product-list section for app 123
 	 * ```
 	 */
 	static log(queryDescription: string) {
-		console.error(new SlotNotFound(queryDescription, self.__APP_DATA__.id));
+		console.warn(new SlotNotFound(queryDescription, self.__APP_DATA__.id));
 	}
 }
 
@@ -247,7 +265,8 @@ function getEquivalentSectionTypes(sectionType: string): readonly string[] {
  * sections of the type exist and to their position among the page's other
  * dynamic sections. When the theme has no matching dynamic section, it falls
  * back to the unique static `${position}_section_${sectionType}` slot. When
- * neither exists, it logs a {@link SlotNotFound} and resolves to `null`.
+ * neither exists, it warns with a {@link SlotNotFound} (unless `silent`) and
+ * resolves to `null`.
  *
  * Both searches run over the section type and its aliases (see
  * {@link EQUIVALENT_SECTION_TYPES}), so a section that is spelled one way as a
@@ -256,11 +275,13 @@ function getEquivalentSectionTypes(sectionType: string): readonly string[] {
  * @param sectionType - The theme section type (e.g. `"products_featured"`)
  * @param position - Whether to target the slot before or after the section
  * @param order - Whether to target the first or the last section of the type
+ * @param options - Query options (see {@link SectionQueryOptions})
  */
 async function findSectionSlot(
 	sectionType: SectionType,
 	position: SectionPosition,
 	order: SectionOrder,
+	{ silent = false }: SectionQueryOptions = {},
 ): Promise<QuerySlotResult> {
 	const slots = await getAvailableSlots();
 	const dynamicType: DynamicSlot["type"] = `${position}_dynamic_section`;
@@ -295,7 +316,7 @@ async function findSectionSlot(
 		if (staticSection) return staticSection;
 	}
 
-	SlotNotFound.log(`${position} ${order} ${sectionType} section`);
+	if (!silent) SlotNotFound.log(`${position} ${order} ${sectionType} section`);
 	return null;
 }
 
@@ -304,9 +325,12 @@ async function findSectionSlot(
  *
  * Dynamic sections are searched first; if the theme has no dynamic section of
  * that type, it falls back to the static `before_section_${sectionType}` slot.
- * When neither exists, it logs a {@link SlotNotFound} and resolves to `null`.
+ * When neither exists, it warns with a {@link SlotNotFound} (unless `silent`)
+ * and resolves to `null`.
  *
  * @param sectionType - The theme section type (e.g. `"products_featured"`)
+ * @param options - Query options; pass `{ silent: true }` to skip the warning
+ * when the section is missing
  * @returns A promise resolving to the matching slot, or `null` when the page
  * has no such section
  * @throws If no NubeSDK instance was registered (see `setNubeInstance`)
@@ -315,14 +339,18 @@ async function findSectionSlot(
  * ```typescript
  * // `ui.render` accepts the promise directly and skips rendering on `null`.
  * ui.render(beforeFirstSection("products_featured"), component);
+ *
+ * // skip the warning for a section that many stores don't have
+ * ui.render(beforeFirstSection("newsletter", { silent: true }), component);
  * ```
  *
  * @since 0.3.0
  */
 export function beforeFirstSection(
 	sectionType: SectionType,
+	options?: SectionQueryOptions,
 ): Promise<QuerySlotResult> {
-	return findSectionSlot(sectionType, "before", "first");
+	return findSectionSlot(sectionType, "before", "first", options);
 }
 
 /**
@@ -330,9 +358,12 @@ export function beforeFirstSection(
  *
  * Dynamic sections are searched first; if the theme has no dynamic section of
  * that type, it falls back to the static `after_section_${sectionType}` slot.
- * When neither exists, it logs a {@link SlotNotFound} and resolves to `null`.
+ * When neither exists, it warns with a {@link SlotNotFound} (unless `silent`)
+ * and resolves to `null`.
  *
  * @param sectionType - The theme section type (e.g. `"products_featured"`)
+ * @param options - Query options; pass `{ silent: true }` to skip the warning
+ * when the section is missing
  * @returns A promise resolving to the matching slot, or `null` when the page
  * has no such section
  * @throws If no NubeSDK instance was registered (see `setNubeInstance`)
@@ -347,8 +378,9 @@ export function beforeFirstSection(
  */
 export function afterFirstSection(
 	sectionType: SectionType,
+	options?: SectionQueryOptions,
 ): Promise<QuerySlotResult> {
-	return findSectionSlot(sectionType, "after", "first");
+	return findSectionSlot(sectionType, "after", "first", options);
 }
 
 /**
@@ -357,9 +389,12 @@ export function afterFirstSection(
  * Dynamic sections are searched first; if the theme has no matching dynamic
  * section, it falls back to the static `before_section_${sectionType}` slot
  * (which is unique, so it is the same slot {@link beforeFirstSection} returns).
- * When neither exists, it logs a {@link SlotNotFound} and resolves to `null`.
+ * When neither exists, it warns with a {@link SlotNotFound} (unless `silent`)
+ * and resolves to `null`.
  *
  * @param sectionType - The theme section type (e.g. `"products_featured"`)
+ * @param options - Query options; pass `{ silent: true }` to skip the warning
+ * when the section is missing
  * @returns A promise resolving to the matching slot, or `null` when the page
  * has no such section
  * @throws If no NubeSDK instance was registered (see `setNubeInstance`)
@@ -373,8 +408,9 @@ export function afterFirstSection(
  */
 export function beforeLastSection(
 	sectionType: SectionType,
+	options?: SectionQueryOptions,
 ): Promise<QuerySlotResult> {
-	return findSectionSlot(sectionType, "before", "last");
+	return findSectionSlot(sectionType, "before", "last", options);
 }
 
 /**
@@ -383,9 +419,12 @@ export function beforeLastSection(
  * Dynamic sections are searched first; if the theme has no matching dynamic
  * section, it falls back to the static `after_section_${sectionType}` slot
  * (which is unique, so it is the same slot {@link afterFirstSection} returns).
- * When neither exists, it logs a {@link SlotNotFound} and resolves to `null`.
+ * When neither exists, it warns with a {@link SlotNotFound} (unless `silent`)
+ * and resolves to `null`.
  *
  * @param sectionType - The theme section type (e.g. `"products_featured"`)
+ * @param options - Query options; pass `{ silent: true }` to skip the warning
+ * when the section is missing
  * @returns A promise resolving to the matching slot, or `null` when the page
  * has no such section
  * @throws If no NubeSDK instance was registered (see `setNubeInstance`)
@@ -399,6 +438,7 @@ export function beforeLastSection(
  */
 export function afterLastSection(
 	sectionType: SectionType,
+	options?: SectionQueryOptions,
 ): Promise<QuerySlotResult> {
-	return findSectionSlot(sectionType, "after", "last");
+	return findSectionSlot(sectionType, "after", "last", options);
 }

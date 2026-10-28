@@ -634,6 +634,12 @@ export type NubeComponentImageProps = Prettify<
 		sources?: ImageSource[];
 		width?: Size;
 		height?: Size;
+		/**
+		 * Native browser loading strategy for the image.
+		 * `"lazy"` defers loading until the image is near the viewport;
+		 * `"eager"` loads it immediately. Defaults to the browser behavior (`"eager"`).
+		 */
+		loading?: "eager" | "lazy";
 		style?: NubeComponentStyle;
 	}
 >;
@@ -734,6 +740,16 @@ export type NubeComponentIframeProps = Prettify<
 		 * and updates the iframe size (px). Independent of `onMessage`. Requires stable iframe identity
 		 */
 		autoresize?: boolean;
+		/**
+		 * When `true`, delegates the `camera` permission to the iframe's origin
+		 * (e.g. `getUserMedia({ video: true })`). Only honored when `src` is HTTPS.
+		 */
+		allowCamera?: boolean;
+		/**
+		 * When `true`, delegates the `microphone` permission to the iframe's origin
+		 * (e.g. `getUserMedia({ audio: true })`). Only honored when `src` is HTTPS.
+		 */
+		allowMicrophone?: boolean;
 		/** Event handler for messages from the iframe */
 		onMessage?: NubeComponentIframeEventHandler;
 	}
@@ -804,6 +820,17 @@ export type NubeComponentVideoOpenHandler = NubeComponentEventHandler<
 export type NubeComponentVideoCloseHandler = NubeComponentEventHandler<
 	"close",
 	NubeComponentVideoClosePayload
+>;
+
+/** Payload emitted with the `mutechange` event. */
+export type NubeComponentVideoMuteChangePayload = {
+	muted: boolean;
+	currentTime: number;
+};
+
+export type NubeComponentVideoMuteChangeHandler = NubeComponentEventHandler<
+	"mutechange",
+	NubeComponentVideoMuteChangePayload
 >;
 
 /* -------------------------------------------------------------------------- */
@@ -880,6 +907,11 @@ export type NubeComponentVideoYouTubeErrorHandler = NubeComponentEventHandler<
  * `Video.Player` (self-hosted) or a `Video.YouTube` (embed) plus any overlay
  * children, which render over the video when the fullscreen lightbox is open.
  *
+ * Custom controls (`Video.PlayButton`, `Video.MuteButton`, `Video.Indicator`)
+ * placed as children render over the video in every mode. Their clicks act on
+ * the player directly, so they can start playback with sound or unmute an
+ * autoplaying video without the native controls.
+ *
  * Errors are NOT here: they are source-specific and belong to each player
  * (see `Video.Player`'s and `Video.YouTube`'s own `onError`).
  */
@@ -888,7 +920,10 @@ export type NubeComponentVideoRootProps = Prettify<
 		width?: Size;
 		height?: Size;
 		style?: NubeComponentStyle;
-		/** Autoplay on mount. Always muted when `true` (enforced by the component). */
+		/**
+		 * Autoplay on mount. Always muted when `true` (enforced by the component).
+		 * To let the shopper turn the sound on, add a `Video.MuteButton`.
+		 */
 		autoplay?: boolean;
 		muted?: boolean;
 		loop?: boolean;
@@ -901,6 +936,11 @@ export type NubeComponentVideoRootProps = Prettify<
 		onOpen?: NubeComponentVideoOpenHandler;
 		/** Fired when the fullscreen overlay closes. */
 		onClose?: NubeComponentVideoCloseHandler;
+		/**
+		 * Fired when the video is muted or unmuted, from a `Video.MuteButton` or
+		 * the player's own controls. Not fired for the initial state.
+		 */
+		onMuteChange?: NubeComponentVideoMuteChangeHandler;
 		children: NubeComponentChildren;
 	}
 >;
@@ -990,6 +1030,87 @@ export type NubeComponentVideoYouTube = Prettify<
 	NubeComponentBase &
 		NubeComponentVideoYouTubeProps & {
 			type: "videoYouTube";
+		}
+>;
+
+/**
+ * Props shared by the custom playback buttons (`Video.PlayButton`,
+ * `Video.MuteButton`).
+ */
+export type NubeComponentVideoButtonProps = Prettify<
+	NubeComponentBase & {
+		/**
+		 * Button content. Defaults to an icon that follows the state. Use
+		 * `Video.Indicator` children to swap the content per state.
+		 */
+		children?: NubeComponentChildren;
+		disabled?: boolean;
+		style?: NubeComponentStyle;
+		/** Accessible label. Defaults to a localized "Play" / "Mute". */
+		ariaLabel?: string;
+	}
+>;
+
+/**
+ * Props for the `Video.PlayButton` component.
+ */
+export type NubeComponentVideoPlayButtonProps = NubeComponentVideoButtonProps;
+
+/**
+ * Represents a `Video.PlayButton` component: toggles play/pause on the player
+ * of the surrounding `Video.Root`. Exposes `aria-pressed` and
+ * `data-state="playing" | "paused"` (plus `data-paused`) for styling.
+ */
+export type NubeComponentVideoPlayButton = Prettify<
+	NubeComponentBase &
+		NubeComponentVideoPlayButtonProps & {
+			type: "videoPlayButton";
+		}
+>;
+
+/**
+ * Props for the `Video.MuteButton` component.
+ */
+export type NubeComponentVideoMuteButtonProps = NubeComponentVideoButtonProps;
+
+/**
+ * Represents a `Video.MuteButton` component: toggles mute on the player of the
+ * surrounding `Video.Root`. Exposes `aria-pressed` and
+ * `data-state="muted" | "unmuted"` (plus `data-muted`) for styling.
+ */
+export type NubeComponentVideoMuteButton = Prettify<
+	NubeComponentBase &
+		NubeComponentVideoMuteButtonProps & {
+			type: "videoMuteButton";
+		}
+>;
+
+/** Playback state in which a `Video.Indicator` shows its children. */
+export type NubeComponentVideoIndicatorState =
+	| "playing"
+	| "paused"
+	| "muted"
+	| "unmuted";
+
+/**
+ * Props for the `Video.Indicator` component.
+ */
+export type NubeComponentVideoIndicatorProps = Prettify<
+	NubeComponentBase & {
+		/** The playback state in which the children are shown. */
+		state: NubeComponentVideoIndicatorState;
+		children?: NubeComponentChildren;
+	}
+>;
+
+/**
+ * Represents a `Video.Indicator` component: renders its children only while
+ * the player of the surrounding `Video.Root` is in `state`.
+ */
+export type NubeComponentVideoIndicator = Prettify<
+	NubeComponentBase &
+		NubeComponentVideoIndicatorProps & {
+			type: "videoIndicator";
 		}
 >;
 
@@ -3100,6 +3221,9 @@ export type NubeComponent =
 	| NubeComponentVideoRoot
 	| NubeComponentVideoPlayer
 	| NubeComponentVideoYouTube
+	| NubeComponentVideoPlayButton
+	| NubeComponentVideoMuteButton
+	| NubeComponentVideoIndicator
 	| NubeComponentVideoStories
 	| NubeComponentText
 	| NubeComponentCheckbox

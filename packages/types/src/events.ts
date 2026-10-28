@@ -25,8 +25,10 @@ export type NubeSDKCustomEvent = `custom:${string}:${string}`;
  * @property {"coupon:add"} COUPON_ADD - Used to add a coupon to the cart.
  * @property {"coupon:remove"} COUPON_REMOVE - Used to remove a coupon from the cart.
  * @property {"shipping:select"} SHIPPING_SELECT - Used to select shipping option.
+ * @property {"shipping:recalculate"} SHIPPING_RECALCULATE - Used to recalculate the product page shipping rates with the zipcode already entered (e.g. after a variant change). No-op outside the product page or before the shopper calculated shipping.
  * @property {"order:add:extra"} ORDER_ADD_EXTRA - Used to add additional metadata to an order.
  * @property {"account:register"} ACCOUNT_REGISTER - Used to autocomplete the signup form in the storefront.
+ * @property {"product:select_variant"} PRODUCT_SELECT_VARIANT - Used to select a variant of the product page's product, as if the shopper picked it: the gallery, price and stock follow. `eventPayload` is `{ variant_id: number }`. Confirmed by the `product:variant_selected` that follows; requests sent in quick succession (e.g. on hover) are collapsed into the last one.
  */
 export const SENDABLE_EVENT = {
 	CART_VALIDATE: "cart:validate",
@@ -42,7 +44,9 @@ export const SENDABLE_EVENT = {
 	COUPON_ADD: "coupon:add",
 	COUPON_REMOVE: "coupon:remove",
 	SHIPPING_SELECT: "shipping:select",
+	SHIPPING_RECALCULATE: "shipping:recalculate",
 	ACCOUNT_REGISTER: "account:register",
+	PRODUCT_SELECT_VARIANT: "product:select_variant",
 } as const;
 
 /**
@@ -86,11 +90,15 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"quickbuy:open"} QUICKBUY_OPEN - Fired when the quickbuy modal is opened.
  * @property {"quickbuy:close"} QUICKBUY_CLOSE - Fired when the quickbuy modal is closed.
  * @property {"product:variant_selected"} PRODUCT_VARIANT_SELECTED - Fired when a product variant is selected.
+ * @property {"product:select_variant:fail"} PRODUCT_SELECT_VARIANT_FAIL - Fired when a `product:select_variant` request could not be applied. `eventPayload` is `{ variant_id: number | null, reason: "not_product_page" | "variant_not_found" | "options_not_found" }`.
  * @property {"product:quantity_changed"} PRODUCT_QUANTITY_CHANGED - Fired when the quantity selector of the product page or the quickbuy modal changes, before the item is added to the cart.
  * @property {"page:scroll"} PAGE_SCROLL - Fired when the page scroll position changes.
  * @property {"page:exit_intent"} PAGE_EXIT_INTENT - Fired when the cursor leaves through the top edge of the viewport (desktop exit intent).
  * @property {"page:visibility_change"} PAGE_VISIBILITY_CHANGE - Fired when the store becomes hidden/backgrounded or the user switches tabs (mobile/touch).
+ * @property {"device:updated"} DEVICE_UPDATED - Fired when the viewport changes (window resize, orientation change, mobile URL bar collapsing/expanding), debounced. `state.device` is already updated when the listener runs.
  * @property {"storefront:search"} STOREFRONT_SEARCH - Fired when the user interacts with the storefront search. `eventPayload` is `{ term: string, source: "autocomplete" | "submit" }`: `autocomplete` while typing (debounced), `submit` when the search is run.
+ * @property {"storefront:search_focus"} STOREFRONT_SEARCH_FOCUS - Fired when the storefront search input gains focus. `eventPayload` is `{ term: string }`, the term currently in the input (possibly empty).
+ * @property {"storefront:search_blur"} STOREFRONT_SEARCH_BLUR - Fired when the storefront search input loses focus. `eventPayload` is `{ term: string }`, the term currently in the input (possibly empty).
  * @property {...typeof SENDABLE_EVENT} - Includes all sendable events.
  */
 export const EVENT = {
@@ -119,11 +127,15 @@ export const EVENT = {
 	QUICKBUY_OPEN: "quickbuy:open",
 	QUICKBUY_CLOSE: "quickbuy:close",
 	PRODUCT_VARIANT_SELECTED: "product:variant_selected",
+	PRODUCT_SELECT_VARIANT_FAIL: "product:select_variant:fail",
 	PRODUCT_QUANTITY_CHANGED: "product:quantity_changed",
 	PAGE_SCROLL: "page:scroll",
 	PAGE_EXIT_INTENT: "page:exit_intent",
 	PAGE_VISIBILITY_CHANGE: "page:visibility_change",
+	DEVICE_UPDATED: "device:updated",
 	STOREFRONT_SEARCH: "storefront:search",
+	STOREFRONT_SEARCH_FOCUS: "storefront:search_focus",
+	STOREFRONT_SEARCH_BLUR: "storefront:search_blur",
 	...SENDABLE_EVENT,
 } as const;
 
