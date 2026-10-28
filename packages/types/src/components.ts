@@ -634,6 +634,12 @@ export type NubeComponentImageProps = Prettify<
 		sources?: ImageSource[];
 		width?: Size;
 		height?: Size;
+		/**
+		 * Native browser loading strategy for the image.
+		 * `"lazy"` defers loading until the image is near the viewport;
+		 * `"eager"` loads it immediately. Defaults to the browser behavior (`"eager"`).
+		 */
+		loading?: "eager" | "lazy";
 		style?: NubeComponentStyle;
 	}
 >;
