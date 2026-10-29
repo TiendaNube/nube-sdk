@@ -3,6 +3,7 @@ import type {
 	NubeComponentButtonProps,
 } from "@tiendanube/nube-sdk-types";
 import { generateInternalId } from "./generateInternalId";
+import { scopedClassNameProp } from "./scopedClassNameProp";
 
 /**
  * Creates a `button` component.
@@ -18,5 +19,6 @@ export const button = (
 ): NubeComponentButton => ({
 	type: "button",
 	...props,
+	...scopedClassNameProp(props.className),
 	__internalId: generateInternalId("button", props),
 });

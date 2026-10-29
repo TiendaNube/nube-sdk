@@ -125,6 +125,43 @@ type EnhancedCSSProperties = {
 export type NubeComponentStyle = Partial<EnhancedCSSProperties>;
 
 /* -------------------------------------------------------------------------- */
+/*                         Accessibility Props                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Values accepted by `ariaCurrent`, mirroring the `aria-current` attribute.
+ */
+export type AriaCurrent =
+	| boolean
+	| "page"
+	| "step"
+	| "location"
+	| "date"
+	| "time";
+
+/**
+ * Accessibility properties rendered as the matching attributes on the host
+ * element (`ariaLabel` becomes `aria-label`, and so on).
+ */
+export type NubeComponentAriaProps = Partial<{
+	/** WAI-ARIA role of the element, e.g. `"region"`, `"group"` or `"img"`. */
+	role: string;
+	/** Accessible name, rendered as `aria-label`. */
+	ariaLabel: string;
+	/** Human-readable role description, rendered as `aria-roledescription`. */
+	ariaRoleDescription: string;
+	/** Hides the element from assistive technology, rendered as `aria-hidden`. */
+	ariaHidden: boolean;
+	/** Marks the current item of a set, rendered as `aria-current`. */
+	ariaCurrent: AriaCurrent;
+	/**
+	 * `0` adds the element to the tab order and `-1` makes it focusable only
+	 * programmatically. Positive values are not supported.
+	 */
+	tabIndex: 0 | -1;
+}>;
+
+/* -------------------------------------------------------------------------- */
 /*                            Box Component                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -133,7 +170,9 @@ export type NubeComponentStyle = Partial<EnhancedCSSProperties>;
  */
 export type NubeComponentBoxProps = Prettify<
 	NubeComponentProps &
+		ClassNameProps &
 		ChildrenProps &
+		NubeComponentAriaProps &
 		Partial<{
 			width: Size;
 			height: Size;
@@ -336,6 +375,7 @@ export type NubeComponentNumberField = Prettify<
  */
 export type NubeComponentAccordionRootProps = Prettify<
 	NubeComponentBase &
+		ClassNameProps &
 		ChildrenProps &
 		Partial<{
 			defaultValue: string;
@@ -360,6 +400,7 @@ export type NubeComponentAccordionRoot = Prettify<
  */
 export type NubeComponentAccordionHeaderProps = Prettify<
 	NubeComponentBase &
+		ClassNameProps &
 		ChildrenProps & {
 			style?: NubeComponentStyle;
 			showIcon?: boolean;
@@ -475,6 +516,8 @@ export type NubeComponentButtonEventHandler = NubeComponentEventHandler<
  */
 export type NubeComponentButtonProps = Prettify<
 	NubeComponentBase &
+		ClassNameProps &
+		NubeComponentAriaProps &
 		Partial<{
 			children: NubeComponentChildren;
 			disabled: boolean;
@@ -483,7 +526,6 @@ export type NubeComponentButtonProps = Prettify<
 			height: Size;
 			style?: NubeComponentStyle;
 			onClick: NubeComponentButtonEventHandler;
-			ariaLabel: string;
 		}>
 >;
 
@@ -511,6 +553,7 @@ export type NubeComponentLinkEventHandler = NubeComponentEventHandler<
  */
 export type NubeComponentLinkProps = Prettify<
 	NubeComponentBase &
+		ClassNameProps &
 		Partial<{
 			children: NubeComponentChildren;
 			href: string;
@@ -628,20 +671,21 @@ export type ImageSource = {
  * Represents the properties available for an `image` component.
  */
 export type NubeComponentImageProps = Prettify<
-	NubeComponentBase & {
-		src: string;
-		alt: string;
-		sources?: ImageSource[];
-		width?: Size;
-		height?: Size;
-		/**
-		 * Native browser loading strategy for the image.
-		 * `"lazy"` defers loading until the image is near the viewport;
-		 * `"eager"` loads it immediately. Defaults to the browser behavior (`"eager"`).
-		 */
-		loading?: "eager" | "lazy";
-		style?: NubeComponentStyle;
-	}
+	NubeComponentBase &
+		ClassNameProps & {
+			src: string;
+			alt: string;
+			sources?: ImageSource[];
+			width?: Size;
+			height?: Size;
+			/**
+			 * Native browser loading strategy for the image.
+			 * `"lazy"` defers loading until the image is near the viewport;
+			 * `"eager"` loads it immediately. Defaults to the browser behavior (`"eager"`).
+			 */
+			loading?: "eager" | "lazy";
+			style?: NubeComponentStyle;
+		}
 >;
 
 /**
@@ -1253,20 +1297,21 @@ export type TxtModifier =
  * Represents the properties available for a `text` component.
  */
 export type NubeComponentTextProps = Prettify<
-	NubeComponentBase & {
-		color?: string;
-		background?: string;
-		heading?: 1 | 2 | 3 | 4 | 5 | 6;
-		modifiers?: TxtModifier[];
-		inline?: boolean;
-		style?: NubeComponentStyle;
-		children?: NubeComponentChildren;
-		/**
-		 * When `true`, renders a copy button that copies the text content to the
-		 * clipboard.
-		 */
-		showCopyButton?: boolean;
-	}
+	NubeComponentBase &
+		ClassNameProps & {
+			color?: string;
+			background?: string;
+			heading?: 1 | 2 | 3 | 4 | 5 | 6;
+			modifiers?: TxtModifier[];
+			inline?: boolean;
+			style?: NubeComponentStyle;
+			children?: NubeComponentChildren;
+			/**
+			 * When `true`, renders a copy button that copies the text content to the
+			 * clipboard.
+			 */
+			showCopyButton?: boolean;
+		}
 >;
 
 /**
@@ -1825,6 +1870,7 @@ export type NubeComponentFormSubmitter = Prettify<
  */
 export type NubeComponentPopoverRootProps = Prettify<
 	NubeComponentBase &
+		ClassNameProps &
 		ChildrenProps &
 		Partial<{
 			defaultOpen: boolean;
@@ -2887,6 +2933,7 @@ export type NubeComponentFeMergeNode = Prettify<
  */
 export type NubeComponentSideScrollProps = Prettify<
 	NubeComponentBase &
+		ClassNameProps &
 		ChildrenProps &
 		Partial<{
 			gap?: Size;
@@ -3202,6 +3249,20 @@ export type NubeComponentBase = {
  */
 export type ChildrenProps = {
 	children?: NubeComponentChildren;
+};
+
+/**
+ * Props for components that accept CSS classes.
+ */
+export type ClassNameProps = {
+	/**
+	 * CSS classes applied to the component, separated by spaces.
+	 *
+	 * Each class is scoped to the app by prefixing it with the app id
+	 * (`app-{appId}_{class}`), so `className: "card"` is rendered as
+	 * `class="app-{appId}_card"`. Target the prefixed name in your CSS.
+	 */
+	className?: string;
 };
 
 /**

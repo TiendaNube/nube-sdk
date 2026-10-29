@@ -17,6 +17,7 @@ export type * from "./internal";
 export type * from "./main";
 export type * from "./slots";
 export type * from "./storage";
+export type * from "./structured-data";
 export type * from "./utility";
 
 // Value exports

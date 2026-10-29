@@ -3,6 +3,7 @@ import type {
 	NubeComponentRowProps,
 } from "@tiendanube/nube-sdk-types";
 import { generateInternalId } from "./generateInternalId";
+import { scopedClassNameProp } from "./scopedClassNameProp";
 
 /**
  * Creates a `row` component.
@@ -16,5 +17,6 @@ import { generateInternalId } from "./generateInternalId";
 export const row = (props: NubeComponentRowProps): NubeComponentRow => ({
 	type: "row",
 	...props,
+	...scopedClassNameProp(props.className),
 	__internalId: generateInternalId("row", props),
 });

@@ -3,6 +3,7 @@ import type {
 	NubeComponentBoxProps,
 } from "@tiendanube/nube-sdk-types";
 import { generateInternalId } from "./generateInternalId";
+import { scopedClassNameProp } from "./scopedClassNameProp";
 
 /**
  * Creates a `box` component.
@@ -16,5 +17,6 @@ import { generateInternalId } from "./generateInternalId";
 export const box = (props: NubeComponentBoxProps): NubeComponentBox => ({
 	type: "box",
 	...props,
+	...scopedClassNameProp(props.className),
 	__internalId: generateInternalId("box", props),
 });
