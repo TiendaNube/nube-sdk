@@ -17,6 +17,15 @@ export type NubeStorageEvent =
 
 export type NubeStorageId = "local-storage" | "session-storage";
 
+/**
+ * Who a stored value belongs to.
+ *
+ * - `"script"`: only the script that wrote it (the default).
+ * - `"app"`: every script of the same app. An app with a single script has
+ *   one scope only, so both values read and write the same data.
+ */
+export type NubeStorageScope = "script" | "app";
+
 export type NubeStorageEventDataBase = {
 	requestId: number;
 	storageId: NubeStorageId;
@@ -24,6 +33,7 @@ export type NubeStorageEventDataBase = {
 
 export type NubeStorageGetEventData = NubeStorageEventDataBase & {
 	key: string;
+	scope?: NubeStorageScope;
 };
 
 export type NubeStorageGetResponseEventData = NubeStorageEventDataBase & {
@@ -35,12 +45,14 @@ export type NubeStorageSetEventData = NubeStorageEventDataBase & {
 	key: string;
 	value: string;
 	ttl?: number;
+	scope?: NubeStorageScope;
 };
 
 export type NubeStorageSetResponseEventData = NubeStorageEventDataBase;
 
 export type NubeStorageRemoveEventData = NubeStorageEventDataBase & {
 	key: string;
+	scope?: NubeStorageScope;
 };
 
 export type NubeStorageRemoveResponseEventData = NubeStorageEventDataBase;
@@ -123,8 +135,9 @@ export interface AsyncNubeStorage {
 	/**
 	 * Returns the value associated with the given key, or null if the key does not exist in the storage.
 	 * @param key Key to retrieve the value for.
+	 * @param scope `"script"` (default) reads this script's own value; `"app"` reads the value shared by every script of the app.
 	 */
-	getItem(key: string): Promise<string | null>;
+	getItem(key: string, scope?: NubeStorageScope): Promise<string | null>;
 
 	/**
 	 * Sets the value associated with the given key, with an optional expiration date.
@@ -132,12 +145,19 @@ export interface AsyncNubeStorage {
 	 * @param key Key to store the value for.
 	 * @param value Value to store.
 	 * @param ttl Time-to-live (TTL) in seconds, specifying how long the value should be stored.
+	 * @param scope `"script"` (default) stores the value for this script only; `"app"` shares it with every script of the app.
 	 */
-	setItem(key: string, value: string, ttl?: number): Promise<void>;
+	setItem(
+		key: string,
+		value: string,
+		ttl?: number,
+		scope?: NubeStorageScope,
+	): Promise<void>;
 
 	/**
 	 * Removes the value associated with the given key from the storage.
 	 * @param key Key to remove the value for.
+	 * @param scope `"script"` (default) removes this script's own value; `"app"` removes the value shared by every script of the app.
 	 */
-	removeItem(key: string): Promise<void>;
+	removeItem(key: string, scope?: NubeStorageScope): Promise<void>;
 }
