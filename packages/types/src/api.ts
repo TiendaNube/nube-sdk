@@ -2,6 +2,7 @@ import type { AnalyticsCommands } from "./analytics";
 import type { AvailableSlotsCommands } from "./available-slots";
 import type { CheckoutCommands } from "./checkout";
 import type { CustomizationCommands } from "./customization";
+import type { ObserverCommands } from "./observer";
 import type { StructuredDataCommands } from "./structured-data";
 
 /**
@@ -40,6 +41,14 @@ export type NubeAPI = {
 	 */
 	getCustomization(): CustomizationCommands;
 
+	/**
+	 * Returns the observer adapter, used to follow targets on the page —
+	 * whether they are there, whether the shopper can see them and where they
+	 * are. Subsequent calls return the same instance — identity comparisons
+	 * (`===`) hold.
+	 */
+	getObserver(): ObserverCommands;
+  
 	/**
 	 * Returns the structured-data adapter, used to contribute properties to
 	 * the Schema.org JSON-LD the platform renders on the page. Subsequent
