@@ -2,6 +2,7 @@ import type { AnalyticsCommands } from "./analytics";
 import type { AvailableSlotsCommands } from "./available-slots";
 import type { CheckoutCommands } from "./checkout";
 import type { CustomizationCommands } from "./customization";
+import type { StructuredDataCommands } from "./structured-data";
 
 /**
  * Host-API namespace exposed on `NubeSDK` as `nube.api`.
@@ -38,4 +39,11 @@ export type NubeAPI = {
 	 * store's interface. Subsequent calls return the same instance
 	 */
 	getCustomization(): CustomizationCommands;
+
+	/**
+	 * Returns the structured-data adapter, used to contribute properties to
+	 * the Schema.org JSON-LD the platform renders on the page. Subsequent
+	 * calls return the same instance — identity comparisons (`===`) hold.
+	 */
+	getStructuredData(): StructuredDataCommands;
 };
