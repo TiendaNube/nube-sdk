@@ -12,6 +12,9 @@ export type DeviceScreenOrientation = "portrait" | "landscape";
 
 /**
  * Represents the screen state of the device.
+ *
+ * Kept current for the whole session: when the viewport changes the state is
+ * updated and `device:updated` is dispatched.
  */
 export type DeviceScreen = {
 	/** The width of the screen in pixels. */
@@ -457,6 +460,14 @@ export type Store = {
 
 	/** Language code of the store (e.g., "en", "es"). */
 	language: LanguageKey;
+
+	/**
+	 * ISO 3166-1 alpha-2 code of the country the shopper is currently browsing (e.g., "AR", "VE").
+	 *
+	 * In multi-country stores this is the country selected in the storefront, which may differ
+	 * from the store's registered country.
+	 */
+	country?: string;
 
 	/** The store's theme template (e.g., "recife", "morelia", "rio"). */
 	theme: string;

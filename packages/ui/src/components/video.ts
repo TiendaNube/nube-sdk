@@ -1,4 +1,10 @@
 import type {
+	NubeComponentVideoIndicator,
+	NubeComponentVideoIndicatorProps,
+	NubeComponentVideoMuteButton,
+	NubeComponentVideoMuteButtonProps,
+	NubeComponentVideoPlayButton,
+	NubeComponentVideoPlayButtonProps,
 	NubeComponentVideoPlayer,
 	NubeComponentVideoPlayerProps,
 	NubeComponentVideoRoot,
@@ -64,4 +70,60 @@ export const videoYouTube = (
 	type: "videoYouTube",
 	...props,
 	__internalId: generateInternalId("videoYouTube", props),
+});
+
+/**
+ * Creates a `videoPlayButton` component.
+ *
+ * `Video.PlayButton` toggles play/pause on the player of the surrounding
+ * `Video.Root`. The click acts on the player directly, so playback can start
+ * with sound without the native controls. It must be a child of `Video.Root`.
+ *
+ * @param props - The properties for configuring the play button component.
+ * @returns A `NubeComponentVideoPlayButton` object representing the play button component.
+ */
+export const videoPlayButton = (
+	props: NubeComponentVideoPlayButtonProps,
+): NubeComponentVideoPlayButton => ({
+	type: "videoPlayButton",
+	...props,
+	__internalId: generateInternalId("videoPlayButton", props),
+});
+
+/**
+ * Creates a `videoMuteButton` component.
+ *
+ * `Video.MuteButton` toggles mute on the player of the surrounding
+ * `Video.Root`. The click acts on the player directly, so an autoplaying
+ * (always muted) video can be unmuted without pausing. It must be a child of
+ * `Video.Root`.
+ *
+ * @param props - The properties for configuring the mute button component.
+ * @returns A `NubeComponentVideoMuteButton` object representing the mute button component.
+ */
+export const videoMuteButton = (
+	props: NubeComponentVideoMuteButtonProps,
+): NubeComponentVideoMuteButton => ({
+	type: "videoMuteButton",
+	...props,
+	__internalId: generateInternalId("videoMuteButton", props),
+});
+
+/**
+ * Creates a `videoIndicator` component.
+ *
+ * `Video.Indicator` renders its children only while the player of the
+ * surrounding `Video.Root` is in `state` (`"playing"`, `"paused"`, `"muted"`
+ * or `"unmuted"`). Inside a `Video.PlayButton` or `Video.MuteButton`, it swaps
+ * the button's content per state.
+ *
+ * @param props - The properties for configuring the indicator component.
+ * @returns A `NubeComponentVideoIndicator` object representing the indicator component.
+ */
+export const videoIndicator = (
+	props: NubeComponentVideoIndicatorProps,
+): NubeComponentVideoIndicator => ({
+	type: "videoIndicator",
+	...props,
+	__internalId: generateInternalId("videoIndicator", props),
 });

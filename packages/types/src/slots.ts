@@ -25,6 +25,10 @@ import type {
  * @property {"edge_bottom_center"} EDGE_BOTTOM_CENTER - Bottom edge, horizontally centered.
  * @property {"edge_left_center"} EDGE_LEFT_CENTER - Left edge, vertically centered.
  * @property {"edge_right_center"} EDGE_RIGHT_CENTER - Right edge, vertically centered.
+ * @property {"bar_top"} BAR_TOP - Full-width bar fixed to the top of the viewport.
+ * @property {"bar_bottom"} BAR_BOTTOM - Full-width bar fixed to the bottom of the viewport.
+ * @property {"bar_top_sticky"} BAR_TOP_STICKY - Full-width bar at the top of the viewport that pushes the page content down instead of covering it.
+ * @property {"bar_bottom_sticky"} BAR_BOTTOM_STICKY - Full-width bar at the bottom of the viewport that pushes the page content up instead of covering it.
  * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
  * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  * @property {"after_header"} AFTER_HEADER - After the header.
@@ -44,6 +48,10 @@ export const COMMON_UI_SLOT = {
 	EDGE_BOTTOM_CENTER: "edge_bottom_center",
 	EDGE_LEFT_CENTER: "edge_left_center",
 	EDGE_RIGHT_CENTER: "edge_right_center",
+	BAR_TOP: "bar_top",
+	BAR_BOTTOM: "bar_bottom",
+	BAR_TOP_STICKY: "bar_top_sticky",
+	BAR_BOTTOM_STICKY: "bar_bottom_sticky",
 	BEFORE_LINE_ITEMS: "before_line_items",
 	AFTER_LINE_ITEMS: "after_line_items",
 	AFTER_HEADER: "after_header",
@@ -204,10 +212,13 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"before_account_order_item"} BEFORE_ACCOUNT_ORDER_ITEM - Before each order card in the account order list. Repeatable; `pick` is the order id.
  * @property {"after_account_order_item"} AFTER_ACCOUNT_ORDER_ITEM - After each order card in the account order list. Repeatable; `pick` is the order id.
  * @property {"before_account_order_detail"} BEFORE_ACCOUNT_ORDER_DETAIL - Before the order detail block on the account order detail page.
+ * @property {"after_account_order_detail"} AFTER_ACCOUNT_ORDER_DETAIL - After the order detail block on the account order detail page.
  * @property {"before_account_order_header"} BEFORE_ACCOUNT_ORDER_HEADER - Before the order title/number on the account order detail page.
  * @property {"after_account_order_header"} AFTER_ACCOUNT_ORDER_HEADER - After the order title/number on the account order detail page.
  * @property {"before_account_order_items"} BEFORE_ACCOUNT_ORDER_ITEMS - Before the item list on the account order detail page.
  * @property {"after_account_order_items"} AFTER_ACCOUNT_ORDER_ITEMS - After the item list on the account order detail page.
+ * @property {"before_account_content"} BEFORE_ACCOUNT_CONTENT - At the start of the content area on the account pages, below the page title.
+ * @property {"after_account_content"} AFTER_ACCOUNT_CONTENT - At the end of the content area on the account pages.
  * @property {...typeof COMMON_UI_SLOT} - Includes all common UI slots.
  */
 export const STOREFRONT_UI_SLOT = {
@@ -320,10 +331,13 @@ export const STOREFRONT_UI_SLOT = {
 	BEFORE_ACCOUNT_ORDER_ITEM: "before_account_order_item",
 	AFTER_ACCOUNT_ORDER_ITEM: "after_account_order_item",
 	BEFORE_ACCOUNT_ORDER_DETAIL: "before_account_order_detail",
+	AFTER_ACCOUNT_ORDER_DETAIL: "after_account_order_detail",
 	BEFORE_ACCOUNT_ORDER_HEADER: "before_account_order_header",
 	AFTER_ACCOUNT_ORDER_HEADER: "after_account_order_header",
 	BEFORE_ACCOUNT_ORDER_ITEMS: "before_account_order_items",
 	AFTER_ACCOUNT_ORDER_ITEMS: "after_account_order_items",
+	BEFORE_ACCOUNT_CONTENT: "before_account_content",
+	AFTER_ACCOUNT_CONTENT: "after_account_content",
 } as const;
 
 /**
