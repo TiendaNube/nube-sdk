@@ -3,6 +3,7 @@ import type {
 	NubeComponentPopoverRootProps,
 } from "@tiendanube/nube-sdk-types";
 import { generateInternalId } from "./generateInternalId";
+import { scopedClassNameProp } from "./scopedClassNameProp";
 
 /**
  * Creates a `popover` root component.
@@ -17,5 +18,6 @@ export const popoverRoot = (
 ): NubeComponentPopoverRoot => ({
 	type: "popoverRoot",
 	...props,
+	...scopedClassNameProp(props.className),
 	__internalId: generateInternalId("popoverRoot", props),
 });

@@ -3,6 +3,7 @@ import type {
 	NubeComponentPopoverContentProps,
 } from "@tiendanube/nube-sdk-types";
 import { generateInternalId } from "./generateInternalId";
+import { scopedClassNameProp } from "./scopedClassNameProp";
 
 /**
  * Creates a `popover` content component.
@@ -17,5 +18,6 @@ export const popoverContent = (
 ): NubeComponentPopoverContent => ({
 	type: "popoverContent",
 	...props,
+	...scopedClassNameProp(props.className),
 	__internalId: generateInternalId("popoverContent", props),
 });

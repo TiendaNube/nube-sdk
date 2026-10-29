@@ -3,6 +3,7 @@ import type {
 	NubeComponentAccordionRootProps,
 } from "@tiendanube/nube-sdk-types";
 import { generateInternalId } from "./generateInternalId";
+import { scopedClassNameProp } from "./scopedClassNameProp";
 
 /**
  * Creates an `accordion` component.
@@ -15,5 +16,6 @@ export const accordionRoot = (
 ): NubeComponentAccordionRoot => ({
 	type: "accordionRoot",
 	...props,
+	...scopedClassNameProp(props.className),
 	__internalId: generateInternalId("accordionRoot", props),
 });
