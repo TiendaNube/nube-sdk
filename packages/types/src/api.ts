@@ -48,7 +48,7 @@ export type NubeAPI = {
 	 * (`===`) hold.
 	 */
 	getObserver(): ObserverCommands;
-  
+
 	/**
 	 * Returns the structured-data adapter, used to contribute properties to
 	 * the Schema.org JSON-LD the platform renders on the page. Subsequent
