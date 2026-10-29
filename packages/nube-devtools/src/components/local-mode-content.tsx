@@ -26,6 +26,7 @@ const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
 const MAX_POLL_ATTEMPTS = 10;
 const POLL_INTERVAL_MS = 2000;
 const MAX_APPS_FETCH_ATTEMPTS = 5;
+const DEFAULT_APP_URL = "http://localhost:8080/main.min.js";
 
 type StoredApplicationServerData = {
 	script?: string;
@@ -293,18 +294,20 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 	};
 
 	const handleStart = async () => {
-		const trimmedUrl = appUrl.trim();
-		if (!trimmedUrl || isConnecting) return;
+		if (isConnecting) return;
 
 		const resolvedAppId = resolveAppId();
 		if (!resolvedAppId) return;
+
+		const scriptUrl = appUrl.trim() || DEFAULT_APP_URL;
+		setAppUrl(scriptUrl);
 
 		setIsConnecting(true);
 		setAppId(resolvedAppId);
 		setStatus("connecting");
 
 		await persistConnectionData({
-			script: trimmedUrl,
+			script: scriptUrl,
 			connected: true,
 			appId: resolvedAppId,
 			type: selectedTab,
@@ -316,8 +319,8 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 		setStatus("connected");
 		notifyConnectionStatus(true);
 
-		if (isValidUrl(trimmedUrl)) {
-			checkScriptAvailability(trimmedUrl);
+		if (isValidUrl(scriptUrl)) {
+			checkScriptAvailability(scriptUrl);
 		} else {
 			setScriptAvailability("unavailable");
 		}
@@ -390,7 +393,7 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 								<Input
 									id="app-server-url"
 									type="url"
-									placeholder="http://localhost:8081/main.min.js"
+									placeholder={DEFAULT_APP_URL}
 									value={appUrl}
 									onChange={(e) => handleUrlChange(e.target.value)}
 									className="bg-input border-border text-foreground placeholder:text-muted-foreground h-9 font-mono text-xs"
@@ -439,7 +442,7 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 									<Input
 										id="app-server-url"
 										type="url"
-										placeholder="http://localhost:8081/main.min.js"
+										placeholder={DEFAULT_APP_URL}
 										value={appUrl}
 										onChange={(e) => handleUrlChange(e.target.value)}
 										className="bg-input border-border text-foreground placeholder:text-muted-foreground h-9 font-mono text-xs"
@@ -471,7 +474,6 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 						<Button
 							onClick={handleStart}
 							disabled={
-								!appUrl.trim() ||
 								isConnecting ||
 								(selectedTab === "existing" && !existingAppId.trim())
 							}
@@ -498,7 +500,7 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 				</CardContent>
 			</Card>
 
-			<LocalModeQuickTips />
+			<LocalModeQuickTips defaultUrl={DEFAULT_APP_URL} />
 		</div>
 	);
 }
