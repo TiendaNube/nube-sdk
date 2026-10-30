@@ -91,7 +91,9 @@ The platform renders it as a view bound to the signal, starting from
 `__internalId`:
 
 - `internal:signals:sync` (app → platform): new values of signals changed, in
-  one message per microtask;
+  one message per microtask. Only signals that were rendered in a tree are
+  sent: a signal used only inside the app, such as a store behind a computed
+  label, never leaves the worker;
 - `internal:signals:update` (platform → app): values the platform sets on the
   signals of the app. They are applied in one batch and not sent back.
 

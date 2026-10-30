@@ -8,7 +8,9 @@
  * travel on two internal events:
  *
  * - `internal:signals:sync` (worker → main): new values of signals changed,
- *   batched in one message per microtask;
+ *   batched in one message per microtask. Only signals that already reached a
+ *   tree are sent: a signal used only inside the app (a store, a counter
+ *   behind a computed label) never leaves the worker;
  * - `internal:signals:update` (main → worker): new values the platform sets on
  *   signals of the app, for example the value of a bound field. They are
  *   applied in a single batch and are not sent back.
@@ -50,6 +52,8 @@ let listening = false;
 let scheduled = false;
 const live = new Map<string, SignalNode<unknown>>();
 const pending = new Set<SignalNode<unknown>>();
+/** Signals serialized into a tree at least once: the only ones the page shows. */
+const rendered = new Set<SignalNode<unknown>>();
 
 function scope(): WorkerScope | undefined {
 	return typeof self !== "undefined"
@@ -62,7 +66,7 @@ function appId(): string | undefined {
 }
 
 function queue(node: SignalNode<unknown>): void {
-	if (!instance) return;
+	if (!instance || !rendered.has(node)) return;
 	pending.add(node);
 	if (scheduled) return;
 	scheduled = true;
@@ -140,10 +144,15 @@ setCoreHooks({
 		// Not sent: the tree carries the value of the signal when it is rendered.
 		live.set(node.__internalId, node);
 	},
+	onRender(node) {
+		// Changes before this point need no message: the tree carries the value.
+		rendered.add(node);
+	},
 	onChange: queue,
 	onDispose(node) {
 		live.delete(node.__internalId);
 		pending.delete(node);
+		rendered.delete(node);
 	},
 });
 

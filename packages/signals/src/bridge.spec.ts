@@ -27,6 +27,11 @@ function update(entries: { id: string; value: unknown }[]) {
 
 const tick = () => new Promise<void>((resolve) => queueMicrotask(resolve));
 
+/** Serializes signals as `nube.render` does with a component tree. */
+function render(...nodes: unknown[]) {
+	JSON.stringify({ children: nodes });
+}
+
 beforeEach(async () => {
 	postMessage = vi.fn();
 	listeners = [];
@@ -49,6 +54,7 @@ afterEach(() => {
 describe("useSignals", () => {
 	it("sends nothing before it is called", async () => {
 		const count = signals.signal(0);
+		render(count);
 		count.value = 1;
 		await tick();
 		expect(postMessage).not.toHaveBeenCalled();
@@ -56,6 +62,7 @@ describe("useSignals", () => {
 
 	it("does not send the changes made before the call", async () => {
 		const count = signals.signal(0);
+		render(count);
 		count.value = 1;
 		signals.useSignals(nube);
 		await tick();
@@ -91,6 +98,7 @@ describe("internal:signals:sync", () => {
 
 	it("batches the writes of a microtask, with the last value", async () => {
 		const count = signals.signal(0);
+		render(count);
 		count.value = 1;
 		count.value = 2;
 		await tick();
@@ -113,6 +121,7 @@ describe("internal:signals:sync", () => {
 	it("includes computed signals", async () => {
 		const count = signals.signal(1);
 		const doubled = signals.computed(() => count.value * 2, [count]);
+		render(count, doubled);
 
 		count.value = 2;
 		await tick();
@@ -126,6 +135,7 @@ describe("internal:signals:sync", () => {
 	it("stops sharing a disposed computed signal", async () => {
 		const count = signals.signal(1);
 		const doubled = signals.computed(() => count.value * 2, [count]);
+		render(count, doubled);
 		doubled.dispose();
 		count.value = 5;
 		await tick();
@@ -138,6 +148,8 @@ describe("internal:signals:sync", () => {
 	it("reports a value that cannot be serialized", async () => {
 		const error = vi.spyOn(console, "error").mockImplementation(() => {});
 		const big = signals.signal(10n);
+		// A BigInt cannot be serialized, so read the node as a copy would.
+		void big.initialValue;
 		big.value = 11n;
 		await tick();
 		expect(postMessage).not.toHaveBeenCalled();
@@ -148,6 +160,8 @@ describe("internal:signals:sync", () => {
 		vi.spyOn(console, "error").mockImplementation(() => {});
 		const big = signals.signal(10n);
 		const count = signals.signal(0);
+		void big.initialValue; // see above
+		render(count);
 		big.value = 11n;
 		count.value = 1;
 		await tick();
@@ -158,9 +172,60 @@ describe("internal:signals:sync", () => {
 
 	it("omits the value of a signal set to undefined", async () => {
 		const name = signals.signal<string | undefined>("Ana");
+		render(name);
 		name.value = undefined;
 		await tick();
 		expect(sent()[0].data.entries).toEqual([{ id: name.__internalId }]);
+	});
+});
+
+describe("only signals that reached a tree", () => {
+	beforeEach(() => {
+		signals.useSignals(nube);
+	});
+
+	it("does not send a signal that was never rendered", async () => {
+		const cart = signals.signal<Record<string, number>>({});
+		const count = signals.computed(
+			() => Object.values(cart.value).reduce((a, b) => a + b, 0),
+			[cart],
+		);
+		const label = signals.computed(() => `${count.value} items`, [count]);
+		render(label);
+
+		cart.value = { tshirt: 2 };
+		await tick();
+
+		expect(sent()[0].data.entries).toEqual([
+			{ id: label.__internalId, value: "2 items" },
+		]);
+	});
+
+	it("starts sending a signal once it is rendered", async () => {
+		const count = signals.signal(0);
+		count.value = 1;
+		await tick();
+		expect(postMessage).not.toHaveBeenCalled();
+
+		render(count);
+		count.value = 2;
+		await tick();
+		expect(sent()[0].data.entries).toEqual([
+			{ id: count.__internalId, value: 2 },
+		]);
+	});
+
+	it.each([
+		["spread", (node: object) => ({ ...node })],
+		["structuredClone", (node: object) => structuredClone(node)],
+	])("counts a signal copied with %s as rendered", async (_, copy) => {
+		const count = signals.signal(0);
+		copy(count);
+		count.value = 1;
+		await tick();
+		expect(sent()[0].data.entries).toEqual([
+			{ id: count.__internalId, value: 1 },
+		]);
 	});
 });
 
@@ -171,6 +236,7 @@ describe("internal:signals:update", () => {
 
 	it("applies the values of the platform without sending them back", async () => {
 		const name = signals.signal("Ana");
+		render(name);
 		await tick();
 		postMessage.mockClear();
 
@@ -190,6 +256,7 @@ describe("internal:signals:update", () => {
 		);
 		const fn = vi.fn();
 		signals.effect(fn, [first, last]);
+		render(first, last, full);
 		await tick();
 		postMessage.mockClear();
 

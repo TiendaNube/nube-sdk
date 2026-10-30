@@ -72,6 +72,8 @@ type Node = {
 /** Hooks the core calls so the bridge can share values with the platform. */
 export type CoreHooks = {
 	onCreate(node: SignalNode<unknown>): void;
+	/** The node was serialized or copied into a component tree. */
+	onRender(node: SignalNode<unknown>): void;
 	onChange(node: SignalNode<unknown>): void;
 	onDispose(node: SignalNode<unknown>): void;
 };
@@ -148,7 +150,8 @@ function createSignalId(seq: number): string {
  * `initialValue`, the last one a getter of the current value. So copying or
  * serializing the node — as the SDK does with the component tree — yields the
  * plain `{ type: "signal", __internalId, initialValue }` node the platform
- * renders as a view bound to the signal.
+ * renders as a view bound to the signal. Reading `initialValue` is also how
+ * the bridge learns that the signal reached a tree.
  */
 export class SignalNode<T> implements Signal<T> {
 	declare readonly type: "signal";
@@ -167,7 +170,13 @@ export class SignalNode<T> implements Signal<T> {
 		Object.defineProperties(this, {
 			type: { value: "signal", enumerable: true },
 			__internalId: { value: createSignalId(this.#seq), enumerable: true },
-			initialValue: { get: () => this.#value, enumerable: true },
+			initialValue: {
+				get: () => {
+					hooks?.onRender(this as SignalNode<unknown>);
+					return this.#value;
+				},
+				enumerable: true,
+			},
 		});
 		hooks?.onCreate(this as SignalNode<unknown>);
 	}
