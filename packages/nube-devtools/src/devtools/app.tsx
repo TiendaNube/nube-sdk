@@ -41,8 +41,8 @@ const AppContent = () => {
 	const nubeStatus = useNubeStatus();
 	const { currentPage } = useNavigation();
 
-	if (!nubeStatus) {
-		return <Unavailable />;
+	if (nubeStatus !== "available") {
+		return <Unavailable status={nubeStatus} />;
 	}
 
 	const PageComponent = PAGE_COMPONENTS[currentPage] || Apps;

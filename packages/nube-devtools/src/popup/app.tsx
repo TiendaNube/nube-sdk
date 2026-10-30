@@ -7,8 +7,8 @@ import { Popup } from "./popup";
 const AppContent = () => {
 	const nubeStatus = useNubeStatus();
 
-	if (!nubeStatus) {
-		return <Unavailable />;
+	if (nubeStatus !== "available") {
+		return <Unavailable status={nubeStatus} />;
 	}
 
 	return <Popup />;
