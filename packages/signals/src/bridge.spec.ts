@@ -143,6 +143,25 @@ describe("internal:signals:sync", () => {
 		expect(postMessage).not.toHaveBeenCalled();
 		expect(error).toHaveBeenCalled();
 	});
+
+	it("still sends the other signals of the batch when one cannot be serialized", async () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		const big = signals.signal(10n);
+		const count = signals.signal(0);
+		big.value = 11n;
+		count.value = 1;
+		await tick();
+		expect(sent()[0].data.entries).toEqual([
+			{ id: count.__internalId, value: 1 },
+		]);
+	});
+
+	it("omits the value of a signal set to undefined", async () => {
+		const name = signals.signal<string | undefined>("Ana");
+		name.value = undefined;
+		await tick();
+		expect(sent()[0].data.entries).toEqual([{ id: name.__internalId }]);
+	});
 });
 
 describe("internal:signals:update", () => {

@@ -69,7 +69,11 @@ export type NubeSignalsEvent =
 export type NubeSignalEntry = {
 	/** The `__internalId` of the signal. */
 	id: string;
-	value: NubeSignalValue;
+	/**
+	 * The new value. Omitted when the value is `undefined`, since the event
+	 * travels as JSON; a missing `value` means `undefined`.
+	 */
+	value?: NubeSignalValue;
 };
 
 /**

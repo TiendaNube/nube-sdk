@@ -73,11 +73,21 @@ function flushPending(): void {
 	scheduled = false;
 	const entries: NubeSignalEntry[] = [];
 	for (const node of pending) {
-		if (live.has(node.__internalId)) {
-			entries.push({
-				id: node.__internalId,
-				value: node.value as NubeSignalEntry["value"],
-			});
+		if (!live.has(node.__internalId)) continue;
+		const entry: NubeSignalEntry = {
+			id: node.__internalId,
+			value: node.value as NubeSignalEntry["value"],
+		};
+		// Checked one by one, so a value that cannot be serialized only drops
+		// its own signal, not the others changed in the same microtask.
+		try {
+			JSON.stringify(entry);
+			entries.push(entry);
+		} catch (error) {
+			console.error(
+				`[nube-sdk-signals] The value of signal "${entry.id}" cannot be serialized:`,
+				error,
+			);
 		}
 	}
 	pending.clear();
