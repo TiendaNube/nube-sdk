@@ -12,6 +12,7 @@ import {
 } from "../contexts/navigation-context";
 import { useNubeStatus } from "../hooks/use-nube-status";
 
+import { LocalModeAutoReload } from "./components/local-mode-auto-reload";
 import { ApiCalls } from "./pages/api-calls";
 import { Apps } from "./pages/apps";
 import { Components } from "./pages/components";
@@ -59,6 +60,7 @@ export const App = () => {
 							<NubeSDKPerformanceProvider>
 								<NubeSDKAppsProvider>
 									<AppContent />
+									<LocalModeAutoReload />
 									<Toaster />
 								</NubeSDKAppsProvider>
 							</NubeSDKPerformanceProvider>

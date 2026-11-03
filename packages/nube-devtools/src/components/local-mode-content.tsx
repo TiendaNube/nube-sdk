@@ -13,41 +13,39 @@ import {
 	NativeSelectOption,
 } from "@/components/ui/native-select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLocalModeAutoReloadSetting } from "@/hooks/use-local-mode-auto-reload-setting";
 import { getPageSessionStorage, setPageSessionStorage } from "@/utils";
+import { reloadInspectedTab } from "@/utils/inspected-tab";
+import {
+	DEFAULT_APP_URL,
+	LOCAL_MODE_PAGE_STORAGE_KEY,
+	type LocalModeStoredData,
+	isValidUrl,
+} from "@/utils/local-mode";
 import { Globe, Hash, Loader2, Play, Square } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	type ReactNode,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
 const LOCAL_STORAGE_KEY_DEVTOOLS_LOCAL_MODE_SELECTED_TAB =
 	"nube-devtools-local-mode-selected-tab";
 const LOCAL_STORAGE_KEY_DEVTOOLS_APP_SERVER_URL =
 	"nube-devtools-app-server-url";
-const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
-	"nube-devtools-application-server";
+const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION = LOCAL_MODE_PAGE_STORAGE_KEY;
 const MAX_POLL_ATTEMPTS = 10;
 const POLL_INTERVAL_MS = 2000;
 const MAX_APPS_FETCH_ATTEMPTS = 5;
-const DEFAULT_APP_URL = "http://localhost:8080/main.min.js";
 
-type StoredApplicationServerData = {
-	script?: string;
-	connected?: boolean;
-	appId?: string;
-	type?: "new" | "existing";
-};
+type StoredApplicationServerData = LocalModeStoredData;
 
 async function fetchScriptAvailable(url: string): Promise<boolean> {
 	try {
 		const response = await fetch(url, { method: "GET", mode: "cors" });
 		return response.status === 200;
-	} catch {
-		return false;
-	}
-}
-
-function isValidUrl(url: string): boolean {
-	try {
-		new URL(url);
-		return true;
 	} catch {
 		return false;
 	}
@@ -67,9 +65,18 @@ type LocalModeContentProps = {
 	 * without it the page is read directly.
 	 */
 	apps?: NubeSDKApp[];
+	/**
+	 * Shortcuts shown once connected, for the app that was just injected.
+	 * Only the panel has pages to point at.
+	 */
+	renderConnectedActions?: (appId: string) => ReactNode;
 };
 
-export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
+export function LocalModeContent({
+	apps: appsProp,
+	renderConnectedActions,
+}: LocalModeContentProps) {
+	const [autoReload, setAutoReload] = useLocalModeAutoReloadSetting();
 	const [pageApps, setPageApps] = useState<NubeSDKApp[]>([]);
 	const apps = appsProp ?? pageApps;
 	const shouldFetchApps = appsProp === undefined;
@@ -166,7 +173,7 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 
 			if (available) {
 				setScriptAvailability("available");
-				await reloadCurrentTab();
+				await reloadInspectedTab();
 				return;
 			}
 
@@ -259,14 +266,6 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 		loadStoredServer();
 	}, [checkScriptAvailabilityOnce]);
 
-	const reloadCurrentTab = async () => {
-		const [tab] = await chrome.tabs.query({
-			active: true,
-			currentWindow: true,
-		});
-		if (tab?.id) chrome.tabs.reload(tab.id);
-	};
-
 	const notifyConnectionStatus = (connected: boolean) => {
 		chrome.runtime.sendMessage({
 			action: "nube-devtools-app-server-status",
@@ -351,7 +350,7 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 		setStatus("idle");
 		notifyConnectionStatus(false);
 
-		await reloadCurrentTab();
+		await reloadInspectedTab();
 	};
 
 	return (
@@ -457,6 +456,13 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 						status={status}
 						scriptAvailability={scriptAvailability}
 						appId={appId}
+						autoReload={autoReload}
+						onAutoReloadChange={setAutoReload}
+						actions={
+							appId && renderConnectedActions
+								? renderConnectedActions(appId)
+								: undefined
+						}
 					/>
 
 					{/* Start/Stop Button */}

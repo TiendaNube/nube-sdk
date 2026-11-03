@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/context-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-events-context";
+import { LocalModeBadge } from "@/devtools/components/local-mode-badge";
 import { Copy, ListFilterPlus, Repeat } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -15,6 +16,8 @@ export type EventCellField = "sender" | "target" | "event";
 type EventTableRowProps = {
 	event: NubeSDKEvent;
 	isSelected: boolean;
+	/** Whether the sender is the app Local Mode injected. */
+	isLocalMode?: boolean;
 	onSelect: (event: NubeSDKEvent) => void;
 	onResend: (event: NubeSDKEvent) => void;
 	onAddToFilter: (field: EventCellField, value: string) => void;
@@ -63,6 +66,7 @@ function EventContextMenuContent({
 export function EventTableRow({
 	event,
 	isSelected,
+	isLocalMode = false,
 	onSelect,
 	onResend,
 	onAddToFilter,
@@ -88,8 +92,11 @@ export function EventTableRow({
 		>
 			<ContextMenu>
 				<ContextMenuTrigger asChild>
-					<TableCell className="px-3 py-2 truncate border-r" title={sender}>
-						{sender}
+					<TableCell className="px-3 py-2 border-r" title={sender}>
+						<span className="flex items-center gap-1.5 min-w-0">
+							<span className="truncate">{sender}</span>
+							{isLocalMode && <LocalModeBadge />}
+						</span>
 					</TableCell>
 				</ContextMenuTrigger>
 				<EventContextMenuContent

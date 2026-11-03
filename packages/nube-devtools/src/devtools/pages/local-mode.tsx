@@ -1,14 +1,63 @@
 import { LocalModeContent } from "@/components/local-mode-content";
+import { Button } from "@/components/ui/button";
 import { Divider } from "@/components/ui/divider";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { PAGES, useNavigation } from "@/contexts/navigation-context";
 import Layout from "@/devtools/components/layout";
 import { useApps } from "@/devtools/hooks";
-import { ServerIcon } from "lucide-react";
+import { LOGS_SEARCH_STORAGE_KEY } from "@/devtools/pages/logs";
+import {
+	ComponentIcon,
+	PackageIcon,
+	ScrollTextIcon,
+	ServerIcon,
+} from "lucide-react";
 import { useMemo } from "react";
 
 export function LocalModePage() {
 	const { apps } = useApps();
+	const { navigate } = useNavigation();
 	const localModeApps = useMemo(() => apps.map((app) => app.data), [apps]);
+
+	/**
+	 * Where a developer goes right after connecting: the app's own logs are
+	 * the first thing to check, then what it rendered. The Logs page reads its
+	 * filter from storage on mount, so seeding it is what scopes the list.
+	 */
+	const renderConnectedActions = (appId: string) => (
+		<>
+			<Button
+				variant="outline"
+				size="sm"
+				className="h-6 px-2 text-[11px]"
+				onClick={() => navigate(PAGES.APPS)}
+			>
+				<PackageIcon className="size-3" />
+				Apps
+			</Button>
+			<Button
+				variant="outline"
+				size="sm"
+				className="h-6 px-2 text-[11px]"
+				onClick={() => {
+					localStorage.setItem(LOGS_SEARCH_STORAGE_KEY, appId);
+					navigate(PAGES.LOGS);
+				}}
+			>
+				<ScrollTextIcon className="size-3" />
+				Logs of this app
+			</Button>
+			<Button
+				variant="outline"
+				size="sm"
+				className="h-6 px-2 text-[11px]"
+				onClick={() => navigate(PAGES.COMPONENTS)}
+			>
+				<ComponentIcon className="size-3" />
+				Components
+			</Button>
+		</>
+	);
 
 	return (
 		<Layout>
@@ -25,7 +74,10 @@ export function LocalModePage() {
 					</div>
 				</nav>
 				<div className="flex-1 overflow-y-auto p-4 flex justify-center">
-					<LocalModeContent apps={localModeApps} />
+					<LocalModeContent
+						apps={localModeApps}
+						renderConnectedActions={renderConnectedActions}
+					/>
 				</div>
 			</div>
 		</Layout>

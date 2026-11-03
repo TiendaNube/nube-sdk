@@ -1,5 +1,13 @@
 import { CopyableValue } from "@/components/copyable-value";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import {
+	AlertCircle,
+	CheckCircle2,
+	InfoIcon,
+	Loader2,
+	RefreshCwIcon,
+} from "lucide-react";
+import type { ReactNode } from "react";
 
 export type ScriptAvailability =
 	| "checking"
@@ -11,12 +19,22 @@ type LocalModeStatusMessagesProps = {
 	status: "idle" | "connecting" | "connected";
 	scriptAvailability: ScriptAvailability;
 	appId: string;
+	autoReload: boolean;
+	onAutoReloadChange: (enabled: boolean) => void;
+	/**
+	 * Where to go next once connected. Only the panel has somewhere to go;
+	 * the popup leaves it out.
+	 */
+	actions?: ReactNode;
 };
 
 export function LocalModeStatusMessages({
 	status,
 	scriptAvailability,
 	appId,
+	autoReload,
+	onAutoReloadChange,
+	actions,
 }: LocalModeStatusMessagesProps) {
 	if (status !== "connected") {
 		return null;
@@ -54,8 +72,42 @@ export function LocalModeStatusMessages({
 						<p className="text-[10px] text-muted-foreground mb-0.5">App ID</p>
 						<CopyableValue value={appId} fontSize="text-[10px]" />
 					</div>
+					{actions && (
+						<div className="flex flex-wrap items-center gap-1 pt-0.5">
+							{actions}
+						</div>
+					)}
 				</div>
 			)}
+
+			<label
+				htmlFor="local-mode-auto-reload"
+				className="flex items-center gap-2 p-2 rounded-md border border-border cursor-pointer"
+			>
+				<RefreshCwIcon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+				<span className="flex-1 min-w-0">
+					<span className="block text-[11px] font-medium">
+						Reload on change
+					</span>
+					<span className="block text-[10px] text-muted-foreground">
+						Reloads the page when the script at the URL changes. Needs the
+						NubeSDK panel open.
+					</span>
+				</span>
+				<Switch
+					id="local-mode-auto-reload"
+					checked={autoReload}
+					onCheckedChange={onAutoReloadChange}
+				/>
+			</label>
+
+			<div className="flex items-start gap-1.5 px-0.5">
+				<InfoIcon className="w-3 h-3 text-muted-foreground shrink-0 mt-0.5" />
+				<p className="text-[10px] text-muted-foreground">
+					Local Mode applies to this tab only. The store opened in another tab
+					loads without it.
+				</p>
+			</div>
 		</>
 	);
 }

@@ -1,22 +1,18 @@
-import { getPageSessionStorage } from "@/utils";
+import { type LocalModeType, readLocalModeData } from "@/utils/local-mode";
 import { useEffect, useState } from "react";
-
-const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
-	"nube-devtools-application-server";
 
 export type LocalModeApp = {
 	appId: string;
-	type: "new" | "existing";
-};
-
-type LocalModeStoredData = {
-	appId?: string;
-	type?: "new" | "existing";
-	connected?: boolean;
+	type: LocalModeType;
+	/** The local bundle the page loads for this app. */
+	script: string;
 };
 
 /**
  * Returns the app currently being served by DevTools local mode, if any.
+ *
+ * Read once per mount: starting or stopping Local Mode reloads the page, and
+ * the panel is reloaded with every new document.
  */
 export function useLocalModeApp(): LocalModeApp | null {
 	const [localModeApp, setLocalModeApp] = useState<LocalModeApp | null>(null);
@@ -24,25 +20,18 @@ export function useLocalModeApp(): LocalModeApp | null {
 	useEffect(() => {
 		let cancelled = false;
 
-		getPageSessionStorage(PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION).then(
-			(stored) => {
-				if (cancelled) return;
-				if (!stored) {
-					setLocalModeApp(null);
-					return;
-				}
-				try {
-					const data = JSON.parse(stored) as LocalModeStoredData;
-					if (data.connected === true && data.appId && data.type) {
-						setLocalModeApp({ appId: data.appId, type: data.type });
-					} else {
-						setLocalModeApp(null);
-					}
-				} catch {
-					setLocalModeApp(null);
-				}
-			},
-		);
+		readLocalModeData().then((data) => {
+			if (cancelled) return;
+			if (data?.connected === true && data.appId && data.type && data.script) {
+				setLocalModeApp({
+					appId: data.appId,
+					type: data.type,
+					script: data.script,
+				});
+			} else {
+				setLocalModeApp(null);
+			}
+		});
 
 		return () => {
 			cancelled = true;

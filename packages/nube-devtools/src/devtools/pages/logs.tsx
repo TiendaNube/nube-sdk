@@ -20,9 +20,11 @@ import {
 	useNubeSDKLogs,
 } from "@/contexts/nube-sdk-logs-context";
 import Layout from "@/devtools/components/layout";
+import { LocalModeBadge } from "@/devtools/components/local-mode-badge";
 import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import { formatAbsoluteDateTime } from "@/devtools/components/relative-time";
 import { SearchInput } from "@/devtools/components/search-input";
+import { useLocalModeApp } from "@/devtools/hooks/use-local-mode-app";
 import { usePanelDirection } from "@/hooks/use-panel-direction";
 import { copyToClipboard, downloadFile } from "@/utils/file-utils";
 import {
@@ -37,7 +39,9 @@ import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const PANEL_WIDTH_KEY = "nube-devtools-logs-page-width";
-const SEARCH_STORAGE_KEY = "nube-devtools-logs-filter-search";
+/** Exported so Local Mode can seed the filter before navigating here. */
+export const LOGS_SEARCH_STORAGE_KEY = "nube-devtools-logs-filter-search";
+const SEARCH_STORAGE_KEY = LOGS_SEARCH_STORAGE_KEY;
 
 const FILTER_SELECT_CLASS =
 	"h-5 shrink-0 rounded border bg-transparent px-1.5 text-[12px] outline-none";
@@ -129,6 +133,7 @@ export function Logs() {
 	const { direction, toggleDirection, autoSaveId } =
 		usePanelDirection(PANEL_WIDTH_KEY);
 	const { logs, isLoading, clearLogs } = useNubeSDKLogs();
+	const localModeAppId = useLocalModeApp()?.appId ?? null;
 
 	const [selectedSeq, setSelectedSeq] = useState<number | null>(null);
 	const [search, setSearch] = useState(
@@ -343,6 +348,7 @@ export function Logs() {
 								total={logs.length}
 								isLoading={isLoading}
 								selectedSeq={selectedLog?.seq ?? null}
+								localModeAppId={localModeAppId}
 								onSelect={(log) => setSelectedSeq(log.seq)}
 							/>
 						</ResizablePanel>
@@ -492,6 +498,8 @@ type LogListProps = {
 	total: number;
 	isLoading: boolean;
 	selectedSeq: number | null;
+	/** App served by Local Mode, whose logs are tagged as such. */
+	localModeAppId: string | null;
 	onSelect: (log: LogEntry) => void;
 };
 
@@ -500,6 +508,7 @@ function LogList({
 	total,
 	isLoading,
 	selectedSeq,
+	localModeAppId,
 	onSelect,
 }: LogListProps) {
 	const listRef = useRef<HTMLUListElement>(null);
@@ -584,6 +593,7 @@ function LogList({
 						key={log.seq}
 						log={log}
 						isSelected={log.seq === selectedSeq}
+						isLocalMode={log.app === localModeAppId}
 						onSelect={onSelect}
 					/>
 				))}
@@ -595,10 +605,11 @@ function LogList({
 type LogRowProps = {
 	log: LogEntry;
 	isSelected: boolean;
+	isLocalMode: boolean;
 	onSelect: (log: LogEntry) => void;
 };
 
-function LogRow({ log, isSelected, onSelect }: LogRowProps) {
+function LogRow({ log, isSelected, isLocalMode, onSelect }: LogRowProps) {
 	const details = [sourceLabel(log.source), log.app, log.event]
 		.filter(Boolean)
 		.join(" · ");
@@ -635,6 +646,7 @@ function LogRow({ log, isSelected, onSelect }: LogRowProps) {
 						{details}
 					</div>
 				</div>
+				{isLocalMode && <LocalModeBadge />}
 				<span className="shrink-0 text-right text-[11px] tabular-nums text-muted-foreground">
 					{formatTime(log.timestamp)}
 				</span>

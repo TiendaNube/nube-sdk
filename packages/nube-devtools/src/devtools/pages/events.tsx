@@ -29,6 +29,7 @@ import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
 import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import { SearchInput } from "@/devtools/components/search-input";
+import { useLocalModeApp } from "@/devtools/hooks/use-local-mode-app";
 import { usePanelDirection } from "@/hooks/use-panel-direction";
 import { getModifiedPaths } from "@/utils/json-diff";
 import { ChartNoAxesGanttIcon, InfoIcon, TrashIcon } from "lucide-react";
@@ -114,6 +115,7 @@ export function Events() {
 		usePanelDirection(STORAGE_KEY);
 	const [selectedEvent, setSelectedEvent] = useState<NubeSDKEvent | null>(null);
 	const { events, clearEvents } = useNubeSDKEventsContext();
+	const localModeAppId = useLocalModeApp()?.appId ?? null;
 	const [filteredEvents, setFilteredEvents] = useState<NubeSDKEvent[]>([]);
 	const [search, setSearch] = useState(() => {
 		return localStorage.getItem(SEARCH_STORAGE_KEY) || "";
@@ -405,6 +407,10 @@ export function Events() {
 													key={event.id}
 													event={event}
 													isSelected={event.id === selectedEvent?.id}
+													isLocalMode={
+														localModeAppId !== null &&
+														event.record.sender === localModeAppId
+													}
 													onSelect={setSelectedEvent}
 													onResend={(e) => handleReplayEvent(e.record)}
 													onAddToFilter={handleAddToFilter}
