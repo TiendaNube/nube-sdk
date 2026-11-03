@@ -5,12 +5,12 @@ import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
 import { NubeSDKLogsProvider } from "@/contexts/nube-sdk-logs-context";
 import { NubeSDKPerformanceProvider } from "@/contexts/nube-sdk-performance-context";
 import { NubeSDKStorageProvider } from "@/contexts/nube-sdk-storage-context";
+import { NubeStatusProvider } from "@/contexts/nube-status-context";
 import {
 	NavigationProvider,
 	PAGES,
 	useNavigation,
 } from "../contexts/navigation-context";
-import { useNubeStatus } from "../hooks/use-nube-status";
 
 import { ApiCalls } from "./pages/api-calls";
 import { Apps } from "./pages/apps";
@@ -19,10 +19,10 @@ import { Events } from "./pages/events";
 import { LocalModePage } from "./pages/local-mode";
 import { Logs } from "./pages/logs";
 import { Performance } from "./pages/performance";
+import { SettingsPage } from "./pages/settings";
 import { State } from "./pages/state";
 import { Storages } from "./pages/storages";
 import { SvgConverter } from "./pages/svg-converter";
-import { Unavailable } from "./pages/unavailable";
 
 const PAGE_COMPONENTS = {
 	[PAGES.APPS]: Apps,
@@ -35,16 +35,11 @@ const PAGE_COMPONENTS = {
 	[PAGES.PERFORMANCE]: Performance,
 	[PAGES.SVG_CONVERT]: SvgConverter,
 	[PAGES.STATE]: State,
+	[PAGES.SETTINGS]: SettingsPage,
 } as const;
 
 const AppContent = () => {
-	const nubeStatus = useNubeStatus();
 	const { currentPage } = useNavigation();
-
-	if (!nubeStatus) {
-		return <Unavailable />;
-	}
-
 	const PageComponent = PAGE_COMPONENTS[currentPage] || Apps;
 	return <PageComponent />;
 };
@@ -52,20 +47,22 @@ const AppContent = () => {
 export const App = () => {
 	return (
 		<NavigationProvider>
-			<NubeSDKLogsProvider>
-				<NubeSDKEventsProvider>
-					<NubeSDKStorageProvider>
-						<NubeSDKCommandsProvider>
-							<NubeSDKPerformanceProvider>
-								<NubeSDKAppsProvider>
-									<AppContent />
-									<Toaster />
-								</NubeSDKAppsProvider>
-							</NubeSDKPerformanceProvider>
-						</NubeSDKCommandsProvider>
-					</NubeSDKStorageProvider>
-				</NubeSDKEventsProvider>
-			</NubeSDKLogsProvider>
+			<NubeStatusProvider>
+				<NubeSDKLogsProvider>
+					<NubeSDKEventsProvider>
+						<NubeSDKStorageProvider>
+							<NubeSDKCommandsProvider>
+								<NubeSDKPerformanceProvider>
+									<NubeSDKAppsProvider>
+										<AppContent />
+										<Toaster />
+									</NubeSDKAppsProvider>
+								</NubeSDKPerformanceProvider>
+							</NubeSDKCommandsProvider>
+						</NubeSDKStorageProvider>
+					</NubeSDKEventsProvider>
+				</NubeSDKLogsProvider>
+			</NubeStatusProvider>
 		</NavigationProvider>
 	);
 };

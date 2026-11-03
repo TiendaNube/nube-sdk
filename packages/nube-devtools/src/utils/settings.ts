@@ -1,0 +1,71 @@
+/**
+ * DevTools settings that change how pages load. They live in
+ * `chrome.storage.local`, so they apply on every website, and the service
+ * worker turns them into network rules (see `background/settings-rules.ts`).
+ */
+export type DevToolsSettings = {
+	/** Sends `X-Nube-Devtools: true`, which makes Core load the SDK. */
+	forceSdk: boolean;
+	/** Loads the vanilla-adapter from `sdkUrl` instead of the one the page requests. */
+	forceSdkFromUrl: boolean;
+	sdkUrl: string;
+};
+
+export const SETTINGS_STORAGE_KEY = "nube-devtools-settings";
+
+/** Message the panel sends the service worker to save the settings. */
+export const SAVE_SETTINGS_ACTION = "nube-devtools-save-settings";
+
+export const DEFAULT_SETTINGS: DevToolsSettings = {
+	forceSdk: false,
+	forceSdkFromUrl: false,
+	sdkUrl: "",
+};
+
+export function isValidSdkUrl(url: string): boolean {
+	try {
+		const { protocol } = new URL(url);
+		return protocol === "https:" || protocol === "http:";
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Fills in missing fields and turns off Force SDK From URL without a valid
+ * URL.
+ */
+export function normalizeSettings(value: unknown): DevToolsSettings {
+	const stored =
+		value && typeof value === "object"
+			? (value as Partial<DevToolsSettings>)
+			: {};
+	const sdkUrl = typeof stored.sdkUrl === "string" ? stored.sdkUrl.trim() : "";
+
+	return {
+		forceSdk: stored.forceSdk === true,
+		forceSdkFromUrl: stored.forceSdkFromUrl === true && isValidSdkUrl(sdkUrl),
+		sdkUrl,
+	};
+}
+
+/**
+ * Whether going from `before` to `after` changes how pages load, so the
+ * inspected page needs a reload to show it. The URL only matters while Load
+ * SDK From URL is on.
+ */
+export function changesPageLoad(
+	before: DevToolsSettings,
+	after: DevToolsSettings,
+): boolean {
+	return (
+		before.forceSdk !== after.forceSdk ||
+		before.forceSdkFromUrl !== after.forceSdkFromUrl ||
+		(after.forceSdkFromUrl && before.sdkUrl !== after.sdkUrl)
+	);
+}
+
+export async function loadSettings(): Promise<DevToolsSettings> {
+	const stored = await chrome.storage.local.get(SETTINGS_STORAGE_KEY);
+	return normalizeSettings(stored[SETTINGS_STORAGE_KEY]);
+}

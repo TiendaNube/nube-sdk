@@ -10,9 +10,11 @@ import {
 	Package,
 	ScrollText,
 	Server,
+	Settings,
 	TriangleAlert,
 } from "lucide-react";
 
+import { NubeStatusDot } from "@/components/nube-status-dot";
 import { Badge as BadgeComponent } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +33,7 @@ import { useNavigation } from "@/contexts/navigation-context";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
 import { useNubeSDKLogs } from "@/contexts/nube-sdk-logs-context";
 import { useNubeSDKPerformance } from "@/contexts/nube-sdk-performance-context";
+import { useNubeStatusContext } from "@/contexts/nube-status-context";
 import packageData from "../../../package.json";
 
 const Badge = ({
@@ -143,6 +146,11 @@ const menu: {
 		page: PAGES.STATE,
 		icon: Braces,
 	},
+	{
+		title: "Settings",
+		page: PAGES.SETTINGS,
+		icon: Settings,
+	},
 ];
 
 export function AppSidebar() {
@@ -150,6 +158,7 @@ export function AppSidebar() {
 	const { errorCount, warnCount } = useNubeSDKLogs();
 	const { poorCount } = useNubeSDKPerformance();
 	const { events } = useNubeSDKEventsContext();
+	const nubeStatus = useNubeStatusContext();
 
 	const getItemBadge = (item: (typeof menu)[number]) => {
 		if (item.page === PAGES.LOGS && (errorCount > 0 || warnCount > 0)) {
@@ -213,6 +222,7 @@ export function AppSidebar() {
 								className="w-4 h-4"
 							/>
 							NubeSDK
+							<NubeStatusDot status={nubeStatus} />
 						</div>
 					</SidebarGroupLabel>
 					<SidebarGroupContent>

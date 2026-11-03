@@ -13,21 +13,23 @@ const getTabId = (callback: (tabId: number | null) => void) => {
 	});
 };
 
+/** Whether the inspected page has the NubeSDK: null while it is being checked. */
 export const useNubeStatus = () => {
-	const [nubeStatus, setNubeStatus] = useState<boolean>(false);
+	const [nubeStatus, setNubeStatus] = useState<boolean | null>(null);
 
 	useEffect(() => {
 		getTabId((tabId) => {
-			if (tabId == null) return;
+			if (tabId == null) {
+				setNubeStatus(false);
+				return;
+			}
 			chrome.runtime.sendMessage(
 				{
 					action: "nube-devtools-check-nube-status",
 					payload: { tabId },
 				},
 				(response) => {
-					if (response?.status) {
-						setNubeStatus(() => response.status);
-					}
+					setNubeStatus(response?.status === true);
 				},
 			);
 		});
