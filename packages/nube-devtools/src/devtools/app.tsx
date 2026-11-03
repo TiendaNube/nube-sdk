@@ -1,4 +1,8 @@
 import { Toaster } from "@/components/ui/sonner";
+import {
+	AutoSlotsProvider,
+	useAutoSlotsFlag,
+} from "@/contexts/auto-slots-context";
 import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
 import { NubeSDKCommandsProvider } from "@/contexts/nube-sdk-commands-context";
 import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
@@ -14,6 +18,7 @@ import {
 
 import { ApiCalls } from "./pages/api-calls";
 import { Apps } from "./pages/apps";
+import { AutoSlotsPage } from "./pages/auto-slots";
 import { Components } from "./pages/components";
 import { Events } from "./pages/events";
 import { LocalModePage } from "./pages/local-mode";
@@ -35,11 +40,19 @@ const PAGE_COMPONENTS = {
 	[PAGES.PERFORMANCE]: Performance,
 	[PAGES.SVG_CONVERT]: SvgConverter,
 	[PAGES.STATE]: State,
+	[PAGES.AUTO_SLOTS]: AutoSlotsPage,
 	[PAGES.SETTINGS]: SettingsPage,
 } as const;
 
 const AppContent = () => {
 	const { currentPage } = useNavigation();
+	const autoSlots = useAutoSlotsFlag();
+
+	// The tab was left open on a page without the auto-slots adapter.
+	if (currentPage === PAGES.AUTO_SLOTS && autoSlots === false) {
+		return <Apps />;
+	}
+
 	const PageComponent = PAGE_COMPONENTS[currentPage] || Apps;
 	return <PageComponent />;
 };
@@ -48,20 +61,22 @@ export const App = () => {
 	return (
 		<NavigationProvider>
 			<NubeStatusProvider>
-				<NubeSDKLogsProvider>
-					<NubeSDKEventsProvider>
-						<NubeSDKStorageProvider>
-							<NubeSDKCommandsProvider>
-								<NubeSDKPerformanceProvider>
-									<NubeSDKAppsProvider>
-										<AppContent />
-										<Toaster />
-									</NubeSDKAppsProvider>
-								</NubeSDKPerformanceProvider>
-							</NubeSDKCommandsProvider>
-						</NubeSDKStorageProvider>
-					</NubeSDKEventsProvider>
-				</NubeSDKLogsProvider>
+				<AutoSlotsProvider>
+					<NubeSDKLogsProvider>
+						<NubeSDKEventsProvider>
+							<NubeSDKStorageProvider>
+								<NubeSDKCommandsProvider>
+									<NubeSDKPerformanceProvider>
+										<NubeSDKAppsProvider>
+											<AppContent />
+											<Toaster />
+										</NubeSDKAppsProvider>
+									</NubeSDKPerformanceProvider>
+								</NubeSDKCommandsProvider>
+							</NubeSDKStorageProvider>
+						</NubeSDKEventsProvider>
+					</NubeSDKLogsProvider>
+				</AutoSlotsProvider>
 			</NubeStatusProvider>
 		</NavigationProvider>
 	);

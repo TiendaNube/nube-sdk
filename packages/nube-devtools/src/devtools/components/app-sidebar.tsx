@@ -7,6 +7,7 @@ import {
 	ComponentIcon,
 	Database,
 	Gauge,
+	LayoutTemplate,
 	Package,
 	ScrollText,
 	Server,
@@ -28,6 +29,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAutoSlotsFlag } from "@/contexts/auto-slots-context";
 import { PAGES, type Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
@@ -147,6 +149,11 @@ const menu: {
 		icon: Braces,
 	},
 	{
+		title: "Auto-Slots",
+		page: PAGES.AUTO_SLOTS,
+		icon: LayoutTemplate,
+	},
+	{
 		title: "Settings",
 		page: PAGES.SETTINGS,
 		icon: Settings,
@@ -159,6 +166,11 @@ export function AppSidebar() {
 	const { poorCount } = useNubeSDKPerformance();
 	const { events } = useNubeSDKEventsContext();
 	const nubeStatus = useNubeStatusContext();
+	const autoSlots = useAutoSlotsFlag();
+	// The Auto-Slots tab only shows on pages running the auto-slots adapter.
+	const visibleMenu = menu.filter(
+		(item) => item.page !== PAGES.AUTO_SLOTS || autoSlots === true,
+	);
 
 	const getItemBadge = (item: (typeof menu)[number]) => {
 		if (item.page === PAGES.LOGS && (errorCount > 0 || warnCount > 0)) {
@@ -227,7 +239,7 @@ export function AppSidebar() {
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{menu.map((item) => (
+							{visibleMenu.map((item) => (
 								<SidebarMenuItem key={item.title}>
 									<SidebarMenuButton asChild>
 										<Button

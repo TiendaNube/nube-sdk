@@ -37,6 +37,22 @@ chrome.scripting
 		// Already registered (e.g. service worker restart) — safe to ignore.
 	});
 
+// Hands the Auto-Slots tab's overrides to the auto-slots engine; on its own
+// for the same reason as the performance monitor above.
+chrome.scripting
+	.registerContentScripts([
+		{
+			id: "nube-devtools-auto-slot-overrides",
+			matches: ["http://*/*", "https://*/*"],
+			js: ["inject-auto-slot-overrides.js"],
+			runAt: "document_start",
+			world: "MAIN",
+		},
+	])
+	.catch(() => {
+		// Already registered (e.g. service worker restart) — safe to ignore.
+	});
+
 // Wrapped: the listeners receive event details, which are not settings.
 chrome.runtime.onInstalled.addListener(() => syncSettingsRules());
 chrome.runtime.onStartup.addListener(() => syncSettingsRules());
