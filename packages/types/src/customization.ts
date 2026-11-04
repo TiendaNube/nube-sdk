@@ -63,6 +63,29 @@ export type CustomizationOptions = {
 	 */
 	borderRadius: string;
 	/**
+	 * The element's inner spacing, applied as an inline style, in the CSS
+	 * shorthand order: `"24px"` on every side, `"16px 24px"` vertical then
+	 * horizontal, up to four values. Pass `""` to hand the spacing back to the
+	 * store.
+	 *
+	 * One to four non-negative lengths in `px`, `rem`, `em` or `%`, or `0`.
+	 * Anything else is refused, `var()` and `calc()` included, for the same
+	 * reason as {@link CustomizationOptions.borderRadius}.
+	 */
+	padding: string;
+	/**
+	 * The element's shadow, applied as an inline style, e.g.
+	 * `"0 4px 12px rgba(0, 0, 0, 0.15)"`. Pass `"none"` to remove the store's
+	 * shadow, or `""` to hand the shadow back to the store.
+	 *
+	 * One shadow: two to four lengths in `px`, `rem` or `em` (or `0`) — the
+	 * horizontal and vertical offsets, then optionally the blur (not negative)
+	 * and the spread — with a hex, `rgb()`, `rgba()`, `hsl()` or `hsla()`
+	 * colour before or after them. Several shadows, `inset`, `var()` and
+	 * `calc()` are refused.
+	 */
+	boxShadow: string;
+	/**
 	 * Whether the element is hidden, and on which viewports:
 	 *
 	 * - `"always"` — hidden on every viewport;
@@ -367,6 +390,45 @@ export type Customization = {
 	 * the call resolves with `not_found`.
 	 */
 	"cart-installments": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The checkout's main column — the step indicator and the form of the
+	 * current step (contact, shipping, payment). On desktop it sits beside
+	 * {@link Customization."checkout-order-summary"}; on mobile the two stack.
+	 *
+	 * ```ts
+	 * customization.set("checkout-main-content", {
+	 *   backgroundColor: "#ffffff",
+	 *   padding: "24px",
+	 *   borderRadius: "16px",
+	 *   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+	 * });
+	 * ```
+	 *
+	 * Only the column's own surface changes; the fields and labels inside keep
+	 * the checkout's look. `backgroundColor` is refused when the column's text
+	 * would fall below 3:1 against it.
+	 *
+	 * Only present in the checkout; on the storefront the call resolves with
+	 * `not_found`.
+	 */
+	"checkout-main-content": AllowedCustomizationOptions<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
+	/**
+	 * The checkout's order summary — the line items, subtotal, shipping, total
+	 * and the coupon link. On desktop it sits beside
+	 * {@link Customization."checkout-main-content"}; on mobile the two stack.
+	 *
+	 * Takes the same options, independently: styling one leaves the other
+	 * alone, and a bulk {@link CustomizationCommands.set} styles both in one
+	 * call.
+	 *
+	 * Only present in the checkout; on the storefront the call resolves with
+	 * `not_found`.
+	 */
+	"checkout-order-summary": AllowedCustomizationOptions<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
 };
 
 /**
@@ -405,6 +467,18 @@ export type CustomizationElementValues = {
 	backgroundColor: string;
 	/** The element's corner radius, e.g. `"40px"` for a pill-shaped button. */
 	borderRadius: string;
+	/**
+	 * The element's inner spacing, always as four lengths — top, right,
+	 * bottom, left, e.g. `"16px 24px 16px 24px"` — which `set` accepts back
+	 * as is.
+	 */
+	padding: string;
+	/**
+	 * The element's shadow: `"none"`, or as the browser writes it, colour
+	 * first, e.g. `"rgba(0, 0, 0, 0.15) 0px 4px 12px 0px"`. A single shadow can
+	 * be passed back to `set` as is; a store's multi-layer shadow cannot.
+	 */
+	boxShadow: string;
 	/**
 	 * How the element is hidden by the Customization API: the mode last set
 	 * with {@link CustomizationOptions.hidden}, or `"never"`. An element the
@@ -469,6 +543,14 @@ export type CustomizableElementValues = {
 	"product-detail-variants": ReadableElementValues<"hidden">;
 	/** The instalment line under the cart's total. */
 	"cart-installments": ReadableElementValues<"hidden">;
+	/** The checkout's main column. */
+	"checkout-main-content": ReadableElementValues<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
+	/** The checkout's order summary. */
+	"checkout-order-summary": ReadableElementValues<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
 };
 
 /**
