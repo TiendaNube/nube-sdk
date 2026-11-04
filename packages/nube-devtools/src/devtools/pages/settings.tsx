@@ -116,15 +116,8 @@ export function SettingsPage() {
 							<CardContent className="px-4 divide-y">
 								<SettingRow
 									id="setting-force-sdk-auto-slots"
-									title="Force NubeSDK auto-slots"
-									description={
-										<>
-											Sends the <code>X-Nube-AutoSlots</code> header, which
-											makes stores with FTP open or on a theme without SDK slots
-											load the auto-slots adapter. Turns off Load NubeSDK From
-											URL.
-										</>
-									}
+									title="Activate NubeSDK auto-slots"
+									description="Enables auto-slots mode for Open FTP or deprecated themes without SDK support. Use this to validate your app against this mode or generate adjustment scripts for existing stores."
 									checked={settings.forceSdkAutoSlots}
 									onCheckedChange={(checked) =>
 										save(
@@ -136,8 +129,8 @@ export function SettingsPage() {
 								/>
 								<SettingRow
 									id="setting-force-sdk-from-url"
-									title="Load NubeSDK From URL"
-									description="Loads the NubeSDK from the specified location instead of the production URL. Turns off Force NubeSDK auto-slots."
+									title="Load NubeSDK from URL"
+									description="Loads the NubeSDK from the specified location instead of the production URL."
 									checked={settings.forceSdkFromUrl}
 									disabled={!urlIsValid}
 									onCheckedChange={(checked) =>
