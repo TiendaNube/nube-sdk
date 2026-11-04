@@ -50,6 +50,8 @@ export type CustomizationOptions = {
 	 * Refused when that contrast would fall below 3:1 — against the `fontColor`
 	 * sent in the same call, otherwise against the colour the label already
 	 * has. A translucent colour is judged as it shows over what is behind it.
+	 * On {@link Customization."page-background"}, the label is the page's
+	 * text.
 	 */
 	backgroundColor: string;
 	/**
@@ -367,6 +369,25 @@ export type Customization = {
 	 * the call resolves with `not_found`.
 	 */
 	"cart-installments": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The background of the store's pages — the colour the merchant chose
+	 * for the theme, painted behind the content:
+	 *
+	 * ```ts
+	 * customization.set("page-background", { backgroundColor: "#f5efe6" });
+	 * ```
+	 *
+	 * Only the page itself is painted. Themes reuse the merchant's colour on
+	 * other surfaces — the header and footer when they have no colours of
+	 * their own, modals, dropdowns — and those keep the theme's colour.
+	 * Sections a theme paints with a background of their own also cover it.
+	 *
+	 * The page's text has to stay readable on the new colour, so a colour
+	 * leaving it below 3:1 is refused with the ratio measured. `""` or
+	 * {@link CustomizationCommands.reset} hands the background back to the
+	 * theme.
+	 */
+	"page-background": AllowedCustomizationOptions<"backgroundColor">;
 };
 
 /**
@@ -469,6 +490,11 @@ export type CustomizableElementValues = {
 	"product-detail-variants": ReadableElementValues<"hidden">;
 	/** The instalment line under the cart's total. */
 	"cart-installments": ReadableElementValues<"hidden">;
+	/**
+	 * The background of the store's pages, as the shopper sees it: the
+	 * page's own, or the default white when the theme paints none.
+	 */
+	"page-background": ReadableElementValues<"backgroundColor">;
 };
 
 /**
