@@ -760,6 +760,33 @@ function EntryDetail({ entry }: { entry: PerformanceEntry | null }) {
 							<span className="font-mono break-all">{entry.url}</span>
 						</>
 					)}
+					{entry.slots && (
+						<>
+							<span className="text-muted-foreground">Slots</span>
+							<span className="font-mono break-all">
+								{entry.slots.join(", ")}
+							</span>
+						</>
+					)}
+					{entry.signals !== undefined && (
+						<>
+							<span className="text-muted-foreground">Signals</span>
+							<span>{entry.signals ? "Yes" : "No"}</span>
+						</>
+					)}
+					{entry.treeSize !== undefined && (
+						<>
+							<span
+								className="text-muted-foreground"
+								title="Length of the ui:slot:set message, which also carries a copy of the app state"
+							>
+								Render tree size
+							</span>
+							<span className="tabular-nums">
+								{entry.treeSize.toLocaleString("en-US")} chars
+							</span>
+						</>
+					)}
 					{entry.status !== undefined && (
 						<>
 							<span className="text-muted-foreground">Status</span>
