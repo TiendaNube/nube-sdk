@@ -497,6 +497,23 @@ export type Customization = {
 		| "borderRadius"
 		| "padding"
 	>;
+	/**
+	 * The checkout's breadcrumb timeline — the step indicator (contact,
+	 * shipping, payment) above the form of the current step.
+	 *
+	 * ```ts
+	 * customization.set("checkout-breadcrumb-timeline", { hidden: "always" });
+	 * ```
+	 *
+	 * An app that shows progress its own way hides it and renders its own in
+	 * a slot. If the Checkout re-renders the timeline on a step change, the
+	 * new one is not hidden, so an app re-applies it, as
+	 * {@link CustomizationCommands.set} describes.
+	 *
+	 * Only present in the checkout; on the storefront the call resolves with
+	 * `not_found`.
+	 */
+	"checkout-breadcrumb-timeline": AllowedCustomizationOptions<"hidden">;
 };
 
 /**
@@ -636,6 +653,8 @@ export type CustomizableElementValues = {
 		| "borderRadius"
 		| "padding"
 	>;
+	/** The checkout's breadcrumb timeline. */
+	"checkout-breadcrumb-timeline": ReadableElementValues<"hidden">;
 };
 
 /**
