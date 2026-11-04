@@ -115,27 +115,41 @@ export function SettingsPage() {
 						<Card className="w-full max-w-lg border-border bg-card">
 							<CardContent className="px-4 divide-y">
 								<SettingRow
-									id="setting-force-sdk"
-									title="Force NubeSDK active"
-									description="Forces NubeSDK active even in stores that don't have any apps. Warning: This will bypass caches, and should not be used when doing performance tests."
-									checked={settings.forceSdk}
-									// Turning it off also turns off Load SDK From URL.
+									id="setting-force-sdk-auto-slots"
+									title="Force NubeSDK auto-slots"
+									description={
+										<>
+											Sends the <code>X-Nube-AutoSlots</code> header, which
+											makes stores with FTP open or on a theme without SDK slots
+											load the auto-slots adapter. Turns off Load NubeSDK From
+											URL.
+										</>
+									}
+									checked={settings.forceSdkAutoSlots}
 									onCheckedChange={(checked) =>
 										save(
 											checked
-												? { forceSdk: true }
-												: { forceSdk: false, forceSdkFromUrl: false },
+												? { forceSdkAutoSlots: true, forceSdkFromUrl: false }
+												: { forceSdkAutoSlots: false },
 										)
 									}
 								/>
 								<SettingRow
 									id="setting-force-sdk-from-url"
 									title="Load NubeSDK From URL"
-									description="Loads the NubeSDK from the specified location instead of the production URL."
+									description="Loads the NubeSDK from the specified location instead of the production URL. Turns off Force NubeSDK auto-slots."
 									checked={settings.forceSdkFromUrl}
 									disabled={!urlIsValid}
 									onCheckedChange={(checked) =>
-										save({ forceSdkFromUrl: checked, sdkUrl: trimmedUrl })
+										save(
+											checked
+												? {
+														forceSdkFromUrl: true,
+														forceSdkAutoSlots: false,
+														sdkUrl: trimmedUrl,
+													}
+												: { forceSdkFromUrl: false, sdkUrl: trimmedUrl },
+										)
 									}
 								>
 									<Input

@@ -4,8 +4,12 @@
  * worker turns them into network rules (see `background/settings-rules.ts`).
  */
 export type DevToolsSettings = {
-	/** Sends `X-Nube-Devtools: true`, which makes Core load the SDK. */
-	forceSdk: boolean;
+	/**
+	 * Sends `X-Nube-AutoSlots: true`, which makes Core load the auto-slots
+	 * adapter on stores with FTP open or on a theme without slots. Never on
+	 * together with `forceSdkFromUrl`.
+	 */
+	forceSdkAutoSlots: boolean;
 	/** Loads the vanilla-adapter from `sdkUrl` instead of the one the page requests. */
 	forceSdkFromUrl: boolean;
 	sdkUrl: string;
@@ -17,7 +21,7 @@ export const SETTINGS_STORAGE_KEY = "nube-devtools-settings";
 export const SAVE_SETTINGS_ACTION = "nube-devtools-save-settings";
 
 export const DEFAULT_SETTINGS: DevToolsSettings = {
-	forceSdk: false,
+	forceSdkAutoSlots: false,
 	forceSdkFromUrl: false,
 	sdkUrl: "",
 };
@@ -33,7 +37,7 @@ export function isValidSdkUrl(url: string): boolean {
 
 /**
  * Fills in missing fields and turns off Force SDK From URL without a valid
- * URL.
+ * URL. Only one of the two adapter options stays on, Force SDK From URL first.
  */
 export function normalizeSettings(value: unknown): DevToolsSettings {
 	const stored =
@@ -41,10 +45,12 @@ export function normalizeSettings(value: unknown): DevToolsSettings {
 			? (value as Partial<DevToolsSettings>)
 			: {};
 	const sdkUrl = typeof stored.sdkUrl === "string" ? stored.sdkUrl.trim() : "";
+	const forceSdkFromUrl =
+		stored.forceSdkFromUrl === true && isValidSdkUrl(sdkUrl);
 
 	return {
-		forceSdk: stored.forceSdk === true,
-		forceSdkFromUrl: stored.forceSdkFromUrl === true && isValidSdkUrl(sdkUrl),
+		forceSdkAutoSlots: stored.forceSdkAutoSlots === true && !forceSdkFromUrl,
+		forceSdkFromUrl,
 		sdkUrl,
 	};
 }
@@ -59,7 +65,7 @@ export function changesPageLoad(
 	after: DevToolsSettings,
 ): boolean {
 	return (
-		before.forceSdk !== after.forceSdk ||
+		before.forceSdkAutoSlots !== after.forceSdkAutoSlots ||
 		before.forceSdkFromUrl !== after.forceSdkFromUrl ||
 		(after.forceSdkFromUrl && before.sdkUrl !== after.sdkUrl)
 	);

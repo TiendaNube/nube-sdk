@@ -5,6 +5,7 @@ import {
 	normalizeSettings,
 } from "../utils/settings";
 import {
+	AUTO_SLOTS_HEADER_NAME,
 	DEVTOOLS_HEADER_NAME,
 	SDK_ADAPTER_URL_REGEX,
 	buildSettingsRules,
@@ -47,6 +48,26 @@ describe("normalizeSettings", () => {
 		).toBe(false);
 	});
 
+	it("keeps only one of auto-slots and Force SDK From URL", () => {
+		expect(
+			normalizeSettings({
+				forceSdkAutoSlots: true,
+				forceSdkFromUrl: true,
+				sdkUrl: UNSTABLE_URL,
+			}),
+		).toMatchObject({ forceSdkAutoSlots: false, forceSdkFromUrl: true });
+	});
+
+	it("keeps auto-slots when the URL is not valid", () => {
+		expect(
+			normalizeSettings({
+				forceSdkAutoSlots: true,
+				forceSdkFromUrl: true,
+				sdkUrl: "not a url",
+			}),
+		).toMatchObject({ forceSdkAutoSlots: true, forceSdkFromUrl: false });
+	});
+
 	it("keeps a valid URL, trimmed", () => {
 		expect(
 			normalizeSettings({ forceSdkFromUrl: true, sdkUrl: ` ${UNSTABLE_URL} ` }),
@@ -62,13 +83,14 @@ describe("changesPageLoad", () => {
 	};
 
 	it("is true when a switch changes", () => {
+		expect(changesPageLoad(DEFAULT_SETTINGS, fromUrl)).toBe(true);
+		expect(changesPageLoad(fromUrl, DEFAULT_SETTINGS)).toBe(true);
 		expect(
 			changesPageLoad(DEFAULT_SETTINGS, {
 				...DEFAULT_SETTINGS,
-				forceSdk: true,
+				forceSdkAutoSlots: true,
 			}),
 		).toBe(true);
-		expect(changesPageLoad(DEFAULT_SETTINGS, fromUrl)).toBe(true);
 	});
 
 	it("is true when the URL changes while it is in use", () => {
@@ -91,20 +113,31 @@ describe("changesPageLoad", () => {
 });
 
 describe("buildSettingsRules", () => {
-	it("adds no rules by default", () => {
-		expect(buildSettingsRules(DEFAULT_SETTINGS)).toEqual([]);
-	});
-
-	it("sends the devtools header with Force SDK", () => {
-		const [rule] = buildSettingsRules({ ...DEFAULT_SETTINGS, forceSdk: true });
-		expect(rule.action.requestHeaders?.map((h) => h.header)).toEqual([
+	it("always sends the devtools header, and nothing else by default", () => {
+		const rules = buildSettingsRules(DEFAULT_SETTINGS);
+		expect(rules).toHaveLength(1);
+		expect(rules[0].action.requestHeaders?.map((h) => h.header)).toEqual([
 			DEVTOOLS_HEADER_NAME,
 		]);
-		expect(rule.condition.resourceTypes).toEqual(["main_frame"]);
+		expect(rules[0].condition.resourceTypes).toEqual(["main_frame"]);
+	});
+
+	it("adds the auto-slots header to the same rule", () => {
+		const rules = buildSettingsRules({
+			...DEFAULT_SETTINGS,
+			forceSdkAutoSlots: true,
+		});
+		expect(rules).toHaveLength(1);
+		expect(rules[0].action.requestHeaders).toContainEqual({
+			header: AUTO_SLOTS_HEADER_NAME,
+			operation: "set",
+			value: "true",
+		});
+		expect(rules[0].action.requestHeaders).toHaveLength(2);
 	});
 
 	it("redirects the adapter and lets the target URL through", () => {
-		const [redirect, allow] = buildSettingsRules({
+		const [, redirect, allow] = buildSettingsRules({
 			...DEFAULT_SETTINGS,
 			forceSdkFromUrl: true,
 			sdkUrl: UNSTABLE_URL,

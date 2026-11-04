@@ -7,10 +7,11 @@ import {
 } from "../utils/settings";
 
 export const DEVTOOLS_HEADER_NAME = "X-Nube-Devtools";
+export const AUTO_SLOTS_HEADER_NAME = "X-Nube-AutoSlots";
 const HEADER_VALUE = "true";
 
-// Rule 1 is the id of the always-on X-Nube-Devtools rule of earlier versions,
-// so the first sync after an update replaces it.
+// Rule 1 sends X-Nube-Devtools on every page load, whatever the settings, and
+// X-Nube-AutoSlots when that setting is on.
 const HEADERS_RULE_ID = 1;
 const SDK_URL_REDIRECT_RULE_ID = 2;
 const SDK_URL_TARGET_RULE_ID = 3;
@@ -34,30 +35,35 @@ export function buildSettingsRules(
 ): chrome.declarativeNetRequest.Rule[] {
 	const { HeaderOperation, ResourceType, RuleActionType } =
 		chrome.declarativeNetRequest;
-	const rules: chrome.declarativeNetRequest.Rule[] = [];
-
-	const headers: chrome.declarativeNetRequest.ModifyHeaderInfo[] = [];
-	if (settings.forceSdk) {
-		headers.push({
+	const requestHeaders: chrome.declarativeNetRequest.ModifyHeaderInfo[] = [
+		{
 			header: DEVTOOLS_HEADER_NAME,
+			operation: HeaderOperation.SET,
+			value: HEADER_VALUE,
+		},
+	];
+	if (settings.forceSdkAutoSlots) {
+		requestHeaders.push({
+			header: AUTO_SLOTS_HEADER_NAME,
 			operation: HeaderOperation.SET,
 			value: HEADER_VALUE,
 		});
 	}
-	if (headers.length > 0) {
-		rules.push({
+
+	const rules: chrome.declarativeNetRequest.Rule[] = [
+		{
 			id: HEADERS_RULE_ID,
 			priority: 1,
 			action: {
 				type: RuleActionType.MODIFY_HEADERS,
-				requestHeaders: headers,
+				requestHeaders,
 			},
 			condition: {
 				urlFilter: "*",
 				resourceTypes: [ResourceType.MAIN_FRAME],
 			},
-		});
-	}
+		},
+	];
 
 	if (settings.forceSdkFromUrl && isValidSdkUrl(settings.sdkUrl)) {
 		rules.push({
