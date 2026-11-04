@@ -63,6 +63,34 @@ export type CustomizationOptions = {
 	 */
 	borderRadius: string;
 	/**
+	 * The colour of the element's border, applied as an inline style. Pass
+	 * `""` to hand the border colour back to the theme.
+	 *
+	 * Accepts the same notations as {@link CustomizationOptions.fontColor}.
+	 * Only the colour changes: the border's style still comes from the store,
+	 * so an element drawn without a border shows none.
+	 */
+	borderColor: string;
+	/**
+	 * The width of the element's border, applied as an inline style, e.g.
+	 * `"2px"`, or `"0 0 1px"` for a bottom border only. Pass `""` to hand the
+	 * width back to the theme.
+	 *
+	 * One to four non-negative lengths in `px`, `rem` or `em`, or `0`.
+	 * Anything else is refused, `var()` and `calc()` included, for the reason
+	 * {@link CustomizationOptions.borderRadius} is.
+	 */
+	borderWidth: string;
+	/**
+	 * The element's inner spacing, applied as an inline style, e.g. `"12px"`
+	 * or `"8px 16px"`. Pass `""` to hand the spacing back to the theme.
+	 *
+	 * One to four non-negative lengths in `px`, `rem`, `em` or `%`, or `0`.
+	 * Anything else is refused, `var()` and `calc()` included, for the reason
+	 * {@link CustomizationOptions.borderRadius} is.
+	 */
+	padding: string;
+	/**
 	 * Whether the element is hidden, and on which viewports:
 	 *
 	 * - `"always"` — hidden on every viewport;
@@ -367,6 +395,34 @@ export type Customization = {
 	 * the call resolves with `not_found`.
 	 */
 	"cart-installments": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The text fields of the checkout's forms — contact, shipping and billing
+	 * details — as the field itself, not the group holding its label.
+	 *
+	 * Checkout only: on the storefront the call resolves with `not_found`.
+	 * Every field on the page is customized, so an app can match the inputs
+	 * to its own brand:
+	 *
+	 * ```ts
+	 * customization.set("checkout-form-input", {
+	 *   backgroundColor: "#ffffff",
+	 *   borderColor: "#d0d5dd",
+	 *   borderWidth: "1px",
+	 *   borderRadius: "8px",
+	 *   padding: "12px 16px",
+	 * });
+	 * ```
+	 *
+	 * `backgroundColor` is checked against the colour of the text the shopper
+	 * types, and refused below 3:1.
+	 */
+	"checkout-form-input": AllowedCustomizationOptions<
+		| "backgroundColor"
+		| "borderColor"
+		| "borderWidth"
+		| "borderRadius"
+		| "padding"
+	>;
 };
 
 /**
@@ -405,6 +461,12 @@ export type CustomizationElementValues = {
 	backgroundColor: string;
 	/** The element's corner radius, e.g. `"40px"` for a pill-shaped button. */
 	borderRadius: string;
+	/** The colour of the element's border, as `rgb()` or `rgba()`. */
+	borderColor: string;
+	/** The width of the element's border, e.g. `"1px"`. */
+	borderWidth: string;
+	/** The element's inner spacing, e.g. `"12px 16px"`. */
+	padding: string;
 	/**
 	 * How the element is hidden by the Customization API: the mode last set
 	 * with {@link CustomizationOptions.hidden}, or `"never"`. An element the
@@ -469,6 +531,14 @@ export type CustomizableElementValues = {
 	"product-detail-variants": ReadableElementValues<"hidden">;
 	/** The instalment line under the cart's total. */
 	"cart-installments": ReadableElementValues<"hidden">;
+	/** The first text field of the checkout's forms on screen. */
+	"checkout-form-input": ReadableElementValues<
+		| "backgroundColor"
+		| "borderColor"
+		| "borderWidth"
+		| "borderRadius"
+		| "padding"
+	>;
 };
 
 /**
