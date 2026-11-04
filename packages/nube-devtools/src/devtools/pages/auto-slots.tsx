@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Divider } from "@/components/ui/divider";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,6 +7,14 @@ import {
 } from "@/components/ui/native-select";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import Layout from "@/devtools/components/layout";
 import {
 	copyToClipboard,
@@ -38,14 +45,7 @@ import {
 	Trash2,
 	UploadIcon,
 } from "lucide-react";
-import {
-	type ChangeEvent,
-	type ReactNode,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import { type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 type PageInfo = { host: string; slots: string[] };
@@ -69,24 +69,21 @@ const readPageInfo = () =>
 		);
 	});
 
-const Field = ({
-	label,
-	className,
-	children,
-}: {
-	label: string;
-	className?: string;
-	children: ReactNode;
-}) => (
-	<label className={`space-y-1 ${className ?? ""}`}>
-		<span className="text-[11px] font-medium text-muted-foreground">
-			{label}
-		</span>
-		{children}
-	</label>
-);
+// Inputs look like plain cells until they are focused.
+const CELL_INPUT_CLASS =
+	"h-7 rounded-none border-0 bg-transparent dark:bg-transparent px-1.5 font-mono text-xs shadow-none md:text-xs";
+const CELL_SELECT_CLASS =
+	"w-full [&_select]:h-7 [&_select]:rounded-none [&_select]:border-0 [&_select]:bg-transparent [&_select]:pl-1.5 [&_select]:pr-6 [&_select]:text-xs [&_svg]:right-1 [&_svg]:size-3";
+const CELL_CLASS = "p-0 border-r last:border-r-0 align-middle";
 
-const INPUT_CLASS = "h-8 font-mono text-xs";
+const COLUMNS = [
+	{ label: "Slot", className: "w-[330px]" },
+	{ label: "Anchor (CSS selector)", className: "" },
+	{ label: "Position", className: "w-[118px]" },
+	{ label: "Pick", className: "w-[90px]", title: "Only used by slots you add" },
+	{ label: "Style", className: "" },
+	{ label: "", className: "w-8" },
+];
 
 const EntryRow = ({
 	entry,
@@ -99,82 +96,101 @@ const EntryRow = ({
 	onChange: (changes: Partial<AutoSlotEntry>) => void;
 	onRemove: () => void;
 }) => (
-	<Card className="border-border bg-card py-3">
-		<CardContent className="px-3 space-y-2">
-			<div className="flex items-end gap-2">
-				<Field label="Slot" className="flex-1 min-w-0">
-					<Input
-						list={SLOT_NAMES_LIST_ID}
-						placeholder="after_header"
-						value={entry.slot}
-						aria-invalid={!!error}
-						onChange={(event) => onChange({ slot: event.target.value })}
-						className={INPUT_CLASS}
-					/>
-				</Field>
-				<Field label="Position">
-					<NativeSelect
-						value={entry.position}
-						onChange={(event) =>
-							onChange({
-								position: event.target.value as AutoSlotEntry["position"],
-							})
-						}
-						className="h-8 text-xs"
-					>
-						<NativeSelectOption value="">Unchanged</NativeSelectOption>
-						{AUTO_SLOT_POSITIONS.map((position) => (
-							<NativeSelectOption key={position} value={position}>
-								{position}
-							</NativeSelectOption>
-						))}
-					</NativeSelect>
-				</Field>
-				<Field label="Pick (new slots)">
-					<NativeSelect
-						value={entry.pick}
-						onChange={(event) =>
-							onChange({ pick: event.target.value as AutoSlotEntry["pick"] })
-						}
-						className="h-8 text-xs"
-					>
-						<NativeSelectOption value="">Default</NativeSelectOption>
-						{AUTO_SLOT_PICKS.map((pick) => (
-							<NativeSelectOption key={pick} value={pick}>
-								{pick}
-							</NativeSelectOption>
-						))}
-					</NativeSelect>
-				</Field>
+	<>
+		<TableRow className={error ? "border-b-0" : undefined}>
+			<TableCell className={CELL_CLASS}>
+				<Input
+					aria-label="Slot"
+					aria-invalid={!!error}
+					list={SLOT_NAMES_LIST_ID}
+					placeholder="after_header"
+					title={entry.slot}
+					value={entry.slot}
+					onChange={(event) => onChange({ slot: event.target.value })}
+					className={CELL_INPUT_CLASS}
+				/>
+			</TableCell>
+			<TableCell className={CELL_CLASS}>
+				<Input
+					aria-label="Anchor"
+					placeholder="Unchanged"
+					title={entry.anchor}
+					value={entry.anchor}
+					onChange={(event) => onChange({ anchor: event.target.value })}
+					className={CELL_INPUT_CLASS}
+				/>
+			</TableCell>
+			<TableCell className={CELL_CLASS}>
+				<NativeSelect
+					aria-label="Position"
+					size="sm"
+					value={entry.position}
+					onChange={(event) =>
+						onChange({
+							position: event.target.value as AutoSlotEntry["position"],
+						})
+					}
+					className={CELL_SELECT_CLASS}
+				>
+					<NativeSelectOption value="">Unchanged</NativeSelectOption>
+					{AUTO_SLOT_POSITIONS.map((position) => (
+						<NativeSelectOption key={position} value={position}>
+							{position}
+						</NativeSelectOption>
+					))}
+				</NativeSelect>
+			</TableCell>
+			<TableCell className={CELL_CLASS}>
+				<NativeSelect
+					aria-label="Pick"
+					size="sm"
+					value={entry.pick}
+					onChange={(event) =>
+						onChange({ pick: event.target.value as AutoSlotEntry["pick"] })
+					}
+					className={CELL_SELECT_CLASS}
+				>
+					<NativeSelectOption value="">Default</NativeSelectOption>
+					{AUTO_SLOT_PICKS.map((pick) => (
+						<NativeSelectOption key={pick} value={pick}>
+							{pick}
+						</NativeSelectOption>
+					))}
+				</NativeSelect>
+			</TableCell>
+			<TableCell className={CELL_CLASS}>
+				<Input
+					aria-label="Style"
+					placeholder="Unchanged"
+					title={entry.style}
+					value={entry.style}
+					onChange={(event) => onChange({ style: event.target.value })}
+					className={CELL_INPUT_CLASS}
+				/>
+			</TableCell>
+			<TableCell className={`${CELL_CLASS} text-center`}>
 				<Button
 					variant="ghost"
 					size="icon"
-					className="h-8 w-8 shrink-0"
+					className="h-6 w-6"
 					title="Remove"
 					onClick={onRemove}
 				>
-					<Trash2 className="size-3.5" />
+					<Trash2 className="size-3" />
 				</Button>
-			</div>
-			<Field label="Anchor (CSS selector)" className="block">
-				<Input
-					placeholder='[data-store="footer"]'
-					value={entry.anchor}
-					onChange={(event) => onChange({ anchor: event.target.value })}
-					className={INPUT_CLASS}
-				/>
-			</Field>
-			<Field label="Style" className="block">
-				<Input
-					placeholder="margin-top: 16px;"
-					value={entry.style}
-					onChange={(event) => onChange({ style: event.target.value })}
-					className={INPUT_CLASS}
-				/>
-			</Field>
-			{error && <p className="text-xs text-destructive">{error}</p>}
-		</CardContent>
-	</Card>
+			</TableCell>
+		</TableRow>
+		{error && (
+			<TableRow>
+				<TableCell
+					colSpan={COLUMNS.length}
+					className="px-1.5 py-1 text-xs whitespace-normal text-destructive"
+				>
+					{error}
+				</TableCell>
+			</TableRow>
+		)}
+	</>
 );
 
 export function AutoSlotsPage() {
@@ -345,35 +361,63 @@ export function AutoSlotsPage() {
 						</div>
 					)}
 				</nav>
-				<div className="flex-1 overflow-y-auto p-4 flex justify-center">
+				<div className="flex-1 overflow-y-auto p-4">
 					{saved && (
-						<div className="w-full max-w-2xl space-y-3">
+						<div className="w-full space-y-3">
 							<p className="text-xs text-muted-foreground">
-								Each row changes one slot. Empty fields keep the slot's
-								definition, and position "disabled" removes it. A name the
-								adapter doesn't define adds a slot, which needs an anchor and a
-								position. Overrides are kept for this store in this browser, and
-								saving turns them on and reloads the page.
+								Use this to customize slots inserted with the auto-slots
+								adapter. You can modify how they are anchored, or apply a CSS to
+								tweak positioning. You can also add new slots not present in the
+								default bundle.
 							</p>
 							<datalist id={SLOT_NAMES_LIST_ID}>
 								{pageInfo.slots.map((slot) => (
 									<option key={slot} value={slot} />
 								))}
 							</datalist>
-							{entries.map((entry, index) => (
-								<EntryRow
-									// biome-ignore lint/suspicious/noArrayIndexKey: rows have no id, and are only added at the end or removed
-									key={index}
-									entry={entry}
-									error={errors.get(index)}
-									onChange={(changes) => updateEntry(index, changes)}
-									onRemove={() =>
-										setEntries((current) =>
-											current.filter((_, i) => i !== index),
-										)
-									}
-								/>
-							))}
+							<div className="rounded-md border">
+								<Table className="min-w-[880px] table-fixed">
+									<TableHeader>
+										<TableRow>
+											{COLUMNS.map((column) => (
+												<TableHead
+													key={column.label}
+													title={column.title}
+													className={`h-7 border-r px-1.5 text-xs last:border-r-0 ${column.className}`}
+												>
+													{column.label}
+												</TableHead>
+											))}
+										</TableRow>
+									</TableHeader>
+									<TableBody>
+										{entries.map((entry, index) => (
+											<EntryRow
+												// biome-ignore lint/suspicious/noArrayIndexKey: rows have no id, and are only added at the end or removed
+												key={index}
+												entry={entry}
+												error={errors.get(index)}
+												onChange={(changes) => updateEntry(index, changes)}
+												onRemove={() =>
+													setEntries((current) =>
+														current.filter((_, i) => i !== index),
+													)
+												}
+											/>
+										))}
+										{entries.length === 0 && (
+											<TableRow>
+												<TableCell
+													colSpan={COLUMNS.length}
+													className="py-6 text-center text-xs text-muted-foreground"
+												>
+													No overrides yet. Add a slot, or import a script.
+												</TableCell>
+											</TableRow>
+										)}
+									</TableBody>
+								</Table>
+							</div>
 							<div className="flex items-center justify-between gap-2">
 								<Button
 									variant="outline"
@@ -404,11 +448,6 @@ export function AutoSlotsPage() {
 									</Button>
 								</div>
 							</div>
-							{!saved.enabled && (
-								<p className="text-xs text-muted-foreground">
-									"Apply overrides" is off, so the page ignores them.
-								</p>
-							)}
 						</div>
 					)}
 				</div>
