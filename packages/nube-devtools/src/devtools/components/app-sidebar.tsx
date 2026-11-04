@@ -167,10 +167,14 @@ export function AppSidebar() {
 	const { events } = useNubeSDKEventsContext();
 	const nubeStatus = useNubeStatusContext();
 	const autoSlots = useAutoSlotsFlag();
-	// The Auto-Slots tab only shows on pages running the auto-slots adapter.
-	const visibleMenu = menu.filter(
-		(item) => item.page !== PAGES.AUTO_SLOTS || autoSlots === true,
-	);
+	// Only Settings shows until the SDK is detected, and the Auto-Slots tab only
+	// on pages running the auto-slots adapter.
+	const visibleMenu = menu.filter((item) => {
+		if (nubeStatus !== true) return item.page === PAGES.SETTINGS;
+		return item.page !== PAGES.AUTO_SLOTS || autoSlots === true;
+	});
+	// A page without the SDK shows Settings, whatever the saved tab is.
+	const activePage = nubeStatus === false ? PAGES.SETTINGS : currentPage;
 
 	const getItemBadge = (item: (typeof menu)[number]) => {
 		if (item.page === PAGES.LOGS && (errorCount > 0 || warnCount > 0)) {
@@ -243,14 +247,14 @@ export function AppSidebar() {
 								<SidebarMenuItem key={item.title}>
 									<SidebarMenuButton asChild>
 										<Button
-											className={`cursor-pointer rounded-none justify-start text-[13px] ${currentPage === item.page ? "shadow-[inset_2px_0_0_0_rgb(180,83,9)]" : ""}`}
+											className={`cursor-pointer rounded-none justify-start text-[13px] ${activePage === item.page ? "shadow-[inset_2px_0_0_0_rgb(180,83,9)]" : ""}`}
 											variant="ghost"
 											onClick={() => {
 												navigate(item.page);
 											}}
 										>
 											<item.icon />
-											{currentPage === item.page ? (
+											{activePage === item.page ? (
 												<div className="flex items-center justify-between w-full">
 													<span className="font-bold text-primary">
 														{item.title}

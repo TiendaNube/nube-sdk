@@ -9,13 +9,17 @@ import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
 import { NubeSDKLogsProvider } from "@/contexts/nube-sdk-logs-context";
 import { NubeSDKPerformanceProvider } from "@/contexts/nube-sdk-performance-context";
 import { NubeSDKStorageProvider } from "@/contexts/nube-sdk-storage-context";
-import { NubeStatusProvider } from "@/contexts/nube-status-context";
+import {
+	NubeStatusProvider,
+	useNubeStatusContext,
+} from "@/contexts/nube-status-context";
 import {
 	NavigationProvider,
 	PAGES,
 	useNavigation,
 } from "../contexts/navigation-context";
 
+import Layout from "./components/layout";
 import { ApiCalls } from "./pages/api-calls";
 import { Apps } from "./pages/apps";
 import { AutoSlotsPage } from "./pages/auto-slots";
@@ -47,6 +51,13 @@ const PAGE_COMPONENTS = {
 const AppContent = () => {
 	const { currentPage } = useNavigation();
 	const autoSlots = useAutoSlotsFlag();
+	const nubeStatus = useNubeStatusContext();
+
+	// Without the SDK only Settings is available, and it is what can make a page
+	// load the SDK. The saved tab is kept for the next page that has it.
+	if (nubeStatus !== true && currentPage !== PAGES.SETTINGS) {
+		return nubeStatus === false ? <SettingsPage /> : <Layout>{null}</Layout>;
+	}
 
 	// The tab was left open on a page without the auto-slots adapter.
 	if (currentPage === PAGES.AUTO_SLOTS && autoSlots === false) {
