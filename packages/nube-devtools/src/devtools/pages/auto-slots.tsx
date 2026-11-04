@@ -9,7 +9,12 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import Layout from "@/devtools/components/layout";
-import { downloadFile, getPageStorage, setPageStorage } from "@/utils";
+import {
+	copyToClipboard,
+	downloadFile,
+	getPageStorage,
+	setPageStorage,
+} from "@/utils";
 import {
 	AUTO_SLOTS_STORAGE_KEY,
 	AUTO_SLOT_PICKS,
@@ -21,11 +26,26 @@ import {
 	entriesToOverrides,
 	overridesScriptFilename,
 	overridesToEntries,
+	parseOverridesScript,
 	parseStoredAutoSlots,
 	validateEntries,
 } from "@/utils/auto-slots";
-import { Download, LayoutTemplate, Plus, Trash2 } from "lucide-react";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import {
+	CopyIcon,
+	DownloadIcon,
+	LayoutTemplate,
+	Plus,
+	Trash2,
+	UploadIcon,
+} from "lucide-react";
+import {
+	type ChangeEvent,
+	type ReactNode,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { toast } from "sonner";
 
 type PageInfo = { host: string; slots: string[] };
@@ -162,6 +182,7 @@ export function AutoSlotsPage() {
 	const [entries, setEntries] = useState<AutoSlotEntry[]>([]);
 	const [pageInfo, setPageInfo] = useState<PageInfo>({ host: "", slots: [] });
 	const [saving, setSaving] = useState(false);
+	const importInput = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		getPageStorage("localStorage", AUTO_SLOTS_STORAGE_KEY).then((raw) => {
@@ -212,17 +233,53 @@ export function AutoSlotsPage() {
 		chrome.devtools.inspectedWindow.reload();
 	};
 
-	const exportScript = () => {
-		const overrides = entriesToOverrides(entries);
-		const host = pageInfo.host || "store";
+	const overridesScript = () =>
+		buildOverridesScript(entriesToOverrides(entries), {
+			host: pageInfo.host || "store",
+			date: new Date(),
+		});
+
+	const handleExport = () => {
 		downloadFile(
-			buildOverridesScript(overrides, { host, date: new Date() }),
-			overridesScriptFilename(host),
-			(message) => toast.success(message),
+			overridesScript(),
+			overridesScriptFilename(pageInfo.host),
+			(message) => toast.success("Download started", { description: message }),
 		);
 	};
 
+	const handleCopy = async () => {
+		try {
+			await copyToClipboard(
+				overridesScript(),
+				(message) => toast.success("Copied!", { description: message }),
+				(error) => toast.error("Error", { description: error }),
+			);
+		} catch (error) {
+			console.error("Copy failed:", error);
+		}
+	};
+
+	// Replaces the rows without saving: "Save and reload" applies them, and
+	// "Discard" brings the saved ones back.
+	const handleImport = async (event: ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0];
+		// So choosing the same file again fires a change event.
+		event.target.value = "";
+		if (!file) return;
+
+		const overrides = parseOverridesScript(await file.text());
+		if (!overrides) {
+			toast.error("Import Error", {
+				description: "The file isn't an exported overrides script or JSON",
+			});
+			return;
+		}
+		setEntries(overridesToEntries(overrides));
+		toast.success("Imported", { description: `${file.name} is ready to save` });
+	};
+
 	const hasOverrides = Object.keys(entriesToOverrides(entries)).length > 0;
+	const canExport = hasOverrides && errors.size === 0;
 
 	return (
 		<Layout>
@@ -230,6 +287,44 @@ export function AutoSlotsPage() {
 				<nav className="flex items-center justify-between px-1.5 py-1 border-b h-[33px] shrink-0">
 					<div className="flex items-center min-w-0">
 						<SidebarTrigger />
+						<Divider />
+						<Button
+							disabled={!saved}
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6"
+							title="Import an overrides script"
+							onClick={() => importInput.current?.click()}
+						>
+							<UploadIcon className="size-3" />
+						</Button>
+						<input
+							ref={importInput}
+							type="file"
+							accept=".js,.json,text/javascript,application/json"
+							className="hidden"
+							onChange={handleImport}
+						/>
+						<Button
+							disabled={!canExport}
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6"
+							title="Download the overrides script"
+							onClick={handleExport}
+						>
+							<DownloadIcon className="size-3" />
+						</Button>
+						<Button
+							disabled={!canExport}
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6"
+							title="Copy the overrides script"
+							onClick={handleCopy}
+						>
+							<CopyIcon className="size-3" />
+						</Button>
 						<Divider />
 						<LayoutTemplate className="size-3 shrink-0" />
 						<span className="ml-1.5 text-xs font-medium">Auto-Slots</span>
@@ -247,16 +342,6 @@ export function AutoSlotsPage() {
 								/>
 								Apply overrides
 							</label>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="h-6 text-xs"
-								disabled={!hasOverrides || errors.size > 0}
-								onClick={exportScript}
-							>
-								<Download className="size-3" />
-								Export
-							</Button>
 						</div>
 					)}
 				</nav>

@@ -6,6 +6,7 @@ import {
 	entriesToOverrides,
 	overridesScriptFilename,
 	overridesToEntries,
+	parseOverridesScript,
 	parseStoredAutoSlots,
 	validateEntries,
 } from "./auto-slots";
@@ -102,6 +103,54 @@ describe("buildOverridesScript", () => {
 		expect(page[AUTO_SLOT_OVERRIDES_GLOBAL]).toEqual({
 			a: { anchor: "</script><b>" },
 		});
+	});
+});
+
+describe("parseOverridesScript", () => {
+	const script = buildOverridesScript(OVERRIDES, {
+		host: "www.example.com",
+		date: new Date("2026-11-03T12:00:00Z"),
+	});
+
+	it("reads back an exported script", () => {
+		expect(parseOverridesScript(script)).toEqual(OVERRIDES);
+	});
+
+	it("reads back escaped values", () => {
+		const escaped = buildOverridesScript(
+			{ a: { anchor: "</script><b>" } },
+			{ host: "x", date: new Date() },
+		);
+		expect(parseOverridesScript(escaped)).toEqual({
+			a: { anchor: "</script><b>" },
+		});
+	});
+
+	it("reads plain JSON", () => {
+		expect(parseOverridesScript(JSON.stringify(OVERRIDES))).toEqual(OVERRIDES);
+	});
+
+	it("drops values the engine would ignore", () => {
+		expect(
+			parseOverridesScript('{"a":{"position":"sideways","anchor":"x"}}'),
+		).toEqual({ a: { anchor: "x" } });
+	});
+
+	it("rejects anything that isn't data, without running it", () => {
+		const page: Record<string, unknown> = {};
+		Object.assign(globalThis, { __autoSlotsImportRan: page });
+		for (const text of [
+			"globalThis.__autoSlotsImportRan.ran = true;",
+			`window.${AUTO_SLOT_OVERRIDES_GLOBAL} = (globalThis.__autoSlotsImportRan.ran = true, {});`,
+			`window.${AUTO_SLOT_OVERRIDES_GLOBAL} = { a: { anchor: 'x' } };`,
+			`window.${AUTO_SLOT_OVERRIDES_GLOBAL} = {"a":{}}; fetch("https://example.com");`,
+			"not json",
+			"[1]",
+			"{}",
+		]) {
+			expect(parseOverridesScript(text)).toBeNull();
+		}
+		expect(page.ran).toBeUndefined();
 	});
 });
 

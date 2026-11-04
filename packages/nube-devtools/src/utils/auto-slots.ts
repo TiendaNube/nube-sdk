@@ -157,6 +157,34 @@ export function buildOverridesScript(
 	].join("\n");
 }
 
+/**
+ * Reads overrides from a script made by `buildOverridesScript`, or from plain
+ * JSON. The text is only ever parsed as JSON, never run: a file could hold any
+ * code, and the DevTools panel can reach the inspected page. Null when it
+ * holds neither form, or no slot.
+ */
+export function parseOverridesScript(text: string): AutoSlotOverrides | null {
+	const assignment = text.match(
+		new RegExp(`${AUTO_SLOT_OVERRIDES_GLOBAL}\\s*=`),
+	);
+	const json =
+		assignment?.index === undefined
+			? text
+			: text.slice(assignment.index + assignment[0].length);
+
+	let value: unknown;
+	try {
+		value = JSON.parse(json.trim().replace(/;$/, ""));
+	} catch {
+		return null;
+	}
+	if (Array.isArray(value)) {
+		return null;
+	}
+	const overrides = entriesToOverrides(overridesToEntries(value));
+	return Object.keys(overrides).length > 0 ? overrides : null;
+}
+
 export function overridesScriptFilename(host: string): string {
 	const safeHost = host.replace(/[^a-z0-9.-]/gi, "_") || "store";
 	return `nubesdk-auto-slot-overrides-${safeHost}.js`;
