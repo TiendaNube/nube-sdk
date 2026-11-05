@@ -44,8 +44,8 @@ export type NubeSDKPerformanceRecord = {
 	/** For the first render: whether a rendered tree carries a signal. */
 	signals?: boolean;
 	/**
-	 * For the first render: length of the `ui:slot:set` message, which also
-	 * carries a copy of the app's state.
+	 * For the first render: serialized length of the rendered slot trees,
+	 * without the copy of the app state the message also carries.
 	 */
 	treeSize?: number;
 };

@@ -77,12 +77,11 @@ describe("inject-performance-monitor first render", () => {
 
 	it("reports the slots, signals and size of the first render", () => {
 		const worker = startApp();
-		const raw = worker.post(
-			slotSet("app-1", {
-				before_main_content: text("Hello"),
-				after_line_items: text(["Items: ", signalNode]),
-			}),
-		);
+		const trees = {
+			before_main_content: text("Hello"),
+			after_line_items: text(["Items: ", signalNode]),
+		};
+		worker.post(slotSet("app-1", trees));
 
 		const [record] = firstRenders();
 		expect(record).toMatchObject({
@@ -90,8 +89,24 @@ describe("inject-performance-monitor first render", () => {
 			kind: "lifecycle",
 			slots: ["after_line_items", "before_main_content"],
 			signals: true,
-			treeSize: raw.length,
+			treeSize:
+				JSON.stringify(trees.after_line_items).length +
+				JSON.stringify(trees.before_main_content).length,
 		});
+	});
+
+	it("leaves the app state out of the tree size", () => {
+		const tree = text("Hello");
+		const worker = startApp();
+		worker.post({
+			...slotSet("app-1", { before_main_content: tree }),
+			changes: {
+				cart: { items: Array.from({ length: 50 }, (_, id) => ({ id })) },
+				ui: { slots: { before_main_content: tree } },
+			},
+		});
+
+		expect(firstRenders()[0].treeSize).toBe(JSON.stringify(tree).length);
 	});
 
 	it("reports no signals for plain trees", () => {
