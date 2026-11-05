@@ -1,6 +1,17 @@
 import { CopyableValue } from "@/components/copyable-value";
+import { Button } from "@/components/ui/button";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
-import { Globe, Plug, ShieldCheck, TerminalSquare } from "lucide-react";
+import type { AppRendering } from "@/utils/app-rendering";
+import { stopLocalModeApp } from "@/utils/local-mode";
+import {
+	Globe,
+	LayoutGrid,
+	Plug,
+	ShieldCheck,
+	Square,
+	TerminalSquare,
+	Zap,
+} from "lucide-react";
 import {
 	BlockedBadge,
 	HostedAppBadge,
@@ -20,6 +31,8 @@ type AppDetailPanelProps = {
 	isReplacedScript: boolean;
 	isBlocked: boolean;
 	onBlockedChange: (blocked: boolean) => void;
+	/** What the app renders right now; undefined until the page is read. */
+	rendering?: AppRendering;
 };
 
 export function AppDetailPanel({
@@ -29,6 +42,7 @@ export function AppDetailPanel({
 	isReplacedScript,
 	isBlocked,
 	onBlockedChange,
+	rendering,
 }: AppDetailPanelProps) {
 	const { id, registered, script } = app.data;
 	const effectiveStatus = isBlocked ? "offline" : scriptStatus;
@@ -86,6 +100,35 @@ export function AppDetailPanel({
 					/>
 				</AppDetailSection>
 
+				<AppDetailSection title="Rendering">
+					<AppDetailRow
+						label="Slots in use"
+						icon={LayoutGrid}
+						value={rendering?.slots.length ? rendering.slots.length : "none"}
+						tone={rendering?.slots.length ? "neutral" : "muted"}
+					/>
+					{rendering && rendering.slots.length > 0 && (
+						<div className="flex flex-wrap gap-1 px-3 py-2">
+							{rendering.slots.map((slot) => (
+								<span
+									key={slot}
+									className="rounded border bg-muted/40 px-1.5 py-0.5 font-mono text-[11px]"
+								>
+									{slot}
+								</span>
+							))}
+						</div>
+					)}
+					<AppDetailRow
+						label="Signals"
+						icon={Zap}
+						value={
+							rendering?.signals ? `yes · ${rendering.signals} rendered` : "no"
+						}
+						tone={rendering?.signals ? "info" : "muted"}
+					/>
+				</AppDetailSection>
+
 				<AppDetailSection title="Script">
 					<div className="p-0.5">
 						<CopyableValue value={script} />
@@ -94,19 +137,16 @@ export function AppDetailPanel({
 
 				<AppDetailSection title="Controls">
 					{isLocalMode ? (
-						<div className="flex items-center gap-3 p-3">
-							<div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted/60 text-muted-foreground">
-								<TerminalSquare className="size-3.5" />
-							</div>
-							<div className="flex flex-col gap-0.5">
-								<span className="text-xs font-medium">
-									Temporary block unavailable
-								</span>
-								<span className="text-[11px] text-muted-foreground">
-									Local mode apps can't be blocked. Stop your local dev server
-									to disable this app.
-								</span>
-							</div>
+						<div className="p-3">
+							<Button
+								onClick={() => void stopLocalModeApp()}
+								variant="destructive"
+								className="w-full text-xs font-medium cursor-pointer"
+								size="sm"
+							>
+								<Square />
+								Stop App
+							</Button>
 						</div>
 					) : (
 						<TemporaryBlockCard
