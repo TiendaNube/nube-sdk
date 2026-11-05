@@ -147,6 +147,29 @@ describe("inject-performance-monitor first render", () => {
 		expect(firstRenders()[0]?.slots).toEqual(["after_line_items"]);
 	});
 
+	it("skips a message whose slots have nothing to render", () => {
+		const worker = startApp();
+		worker.post(
+			slotSet("app-1", {
+				before_main_content: [],
+				product_grid_item_name: {},
+				product_grid_item_price: { "1": null },
+			}),
+		);
+
+		expect(firstRenders()).toHaveLength(0);
+
+		worker.post(
+			slotSet("app-1", {
+				before_main_content: [text("Hello")],
+				product_grid_item_name: {},
+			}),
+		);
+
+		expect(firstRenders()).toHaveLength(1);
+		expect(firstRenders()[0]?.slots).toEqual(["before_main_content"]);
+	});
+
 	it("reports only the first render", () => {
 		const worker = startApp();
 		worker.post(slotSet("app-1", { before_main_content: text("Hello") }));
