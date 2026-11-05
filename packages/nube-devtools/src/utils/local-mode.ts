@@ -31,6 +31,12 @@ export async function stopLocalModeApp(): Promise<void> {
 		action: "nube-devtools-app-server-status",
 		payload: { connected: false },
 	});
+	// The inspected tab, not the active one: they differ with detached devtools.
+	const inspected = chrome.devtools?.inspectedWindow?.tabId;
+	if (typeof inspected === "number") {
+		chrome.tabs.reload(inspected);
+		return;
+	}
 	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 	if (tab?.id) chrome.tabs.reload(tab.id);
 }

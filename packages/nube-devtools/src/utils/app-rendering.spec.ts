@@ -18,6 +18,17 @@ describe("summarizeAppRendering", () => {
 		).toEqual(["before_main_content", "corner_top_right"]);
 	});
 
+	it("leaves out slots with nothing to render", () => {
+		expect(
+			summarizeAppRendering({
+				before_main_content: [],
+				product_grid_item_name: {},
+				product_grid_item_price: { "1": null },
+				after_line_items: [{ type: "txt", children: "Hi" }],
+			}).slots,
+		).toEqual(["after_line_items"]);
+	});
+
 	it("counts distinct signals across slots", () => {
 		const shared = signal("signal-app-1-1");
 		expect(

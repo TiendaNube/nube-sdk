@@ -4,7 +4,7 @@ import {
 	summarizeAppRendering,
 } from "@/utils/app-rendering";
 import { readPageComponents } from "@/utils/page-components";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const REFRESH_DEBOUNCE = 150;
 
@@ -16,9 +16,13 @@ export function useAppRendering(): Record<string, AppRendering> {
 	const { events } = useNubeSDKEventsContext();
 	const [rendering, setRendering] = useState<Record<string, AppRendering>>({});
 
+	// Bumped on each read and on unmount: only the latest read may set state.
+	const readSeq = useRef(0);
+
 	const refresh = useCallback(async () => {
+		const seq = ++readSeq.current;
 		const snapshot = await readPageComponents();
-		if (!snapshot) return;
+		if (seq !== readSeq.current || !snapshot) return;
 		const next: Record<string, AppRendering> = {};
 		for (const [appId, slots] of Object.entries(snapshot.apps)) {
 			next[appId] = summarizeAppRendering(slots);
@@ -32,6 +36,13 @@ export function useAppRendering(): Record<string, AppRendering> {
 		const timeout = setTimeout(refresh, REFRESH_DEBOUNCE);
 		return () => clearTimeout(timeout);
 	}, [refresh, lastSeq]);
+
+	useEffect(
+		() => () => {
+			readSeq.current++;
+		},
+		[],
+	);
 
 	return rendering;
 }
