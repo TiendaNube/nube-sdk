@@ -101,12 +101,25 @@
 		}
 	};
 
-	// A `clearSlot` sends its slot as null: only the others were rendered.
+	// Whether a slot value renders anything: a component, text, or a list or
+	// keyed record holding one. Same rule as `hasContent` in
+	// `src/utils/app-rendering.ts`; keep both in sync.
+	const hasContent = (value) => {
+		if (value === null || value === undefined) return false;
+		if (Array.isArray(value)) return value.some(hasContent);
+		if (typeof value !== "object") return true;
+		if (typeof value.type === "string") return true;
+		// A repeatable slot's content: `Record<entryKey, component>`.
+		return Object.values(value).some(hasContent);
+	};
+
+	// A `clearSlot` sends its slot as null, and `[]` or an empty repeatable
+	// record shows nothing: only the other slots were rendered.
 	const renderedSlots = (message) => {
 		const slots = message.changes?.ui?.slots;
 		if (!slots || typeof slots !== "object") return [];
 		return Object.keys(slots)
-			.filter((slot) => slots[slot] !== null && slots[slot] !== undefined)
+			.filter((slot) => hasContent(slots[slot]))
 			.sort();
 	};
 
