@@ -18,8 +18,9 @@
  * - `telemetry:traces`: every `fetch` an app makes. Posted by all SDK builds.
  * - `telemetry:metrics`: app init and slow handlers. Posted only by the
  *   telemetry-enabled SDK builds.
- * - the first `ui:slot:set`: time from worker creation to the app's first
- *   render.
+ * - the first `ui:slot:set` that renders something: time from worker creation
+ *   to the app's first render, the slots it filled, whether its trees carry
+ *   signals, and the serialized size of those trees.
  *
  * The record shape is `NubeSDKPerformanceRecord`
  * (`src/background/scripts/page-performance.ts`). This file is served as is,
@@ -100,6 +101,38 @@
 		}
 	};
 
+	// Whether a slot value renders anything: a component, text, or a list or
+	// keyed record holding one. Same rule as `hasContent` in
+	// `src/utils/app-rendering.ts`; keep both in sync.
+	const hasContent = (value) => {
+		if (value === null || value === undefined) return false;
+		if (Array.isArray(value)) return value.some(hasContent);
+		if (typeof value !== "object") return true;
+		if (typeof value.type === "string") return true;
+		// A repeatable slot's content: `Record<entryKey, component>`.
+		return Object.values(value).some(hasContent);
+	};
+
+	// A `clearSlot` sends its slot as null, and `[]` or an empty repeatable
+	// record shows nothing: only the other slots were rendered.
+	const renderedSlots = (message) => {
+		const slots = message.changes?.ui?.slots;
+		if (!slots || typeof slots !== "object") return [];
+		return Object.keys(slots)
+			.filter((slot) => hasContent(slots[slot]))
+			.sort();
+	};
+
+	// A signal is serialized in the tree as `{ type: "signal", __internalId }`.
+	const hasSignal = (node) => {
+		if (!node || typeof node !== "object") return false;
+		if (Array.isArray(node)) return node.some(hasSignal);
+		if (node.type === "signal" && typeof node.__internalId === "string") {
+			return true;
+		}
+		return Object.values(node).some(hasSignal);
+	};
+
 	/**
 	 * @param entry `{ id, worker }` as the register bundle pushes it.
 	 * @param createdAt When the worker was created, or null when it already
@@ -132,7 +165,11 @@
 			if (!message || String(message.app) !== appId) return;
 
 			if (!rendered && message.type === "ui:slot:set") {
+				const slots = renderedSlots(message);
+				if (slots.length === 0) return;
+
 				rendered = true;
+				const trees = slots.map((slot) => message.changes.ui.slots[slot]);
 				report({
 					appId,
 					kind: "lifecycle",
@@ -140,6 +177,14 @@
 					name: "First render",
 					startedAt: createdAt,
 					duration: Date.now() - createdAt,
+					slots,
+					signals:
+						raw.indexOf('"type":"signal"') !== -1 && trees.some(hasSignal),
+					// The trees only: the message also carries a copy of the app state.
+					treeSize: trees.reduce(
+						(total, tree) => total + JSON.stringify(tree).length,
+						0,
+					),
 				});
 				return;
 			}
