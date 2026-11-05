@@ -778,7 +778,7 @@ function EntryDetail({ entry }: { entry: PerformanceEntry | null }) {
 						<>
 							<span
 								className="text-muted-foreground"
-								title="Length of the ui:slot:set message, which also carries a copy of the app state"
+								title="Serialized length of the rendered slot trees, without the app state"
 							>
 								Render tree size
 							</span>

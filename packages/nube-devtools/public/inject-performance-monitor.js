@@ -20,7 +20,7 @@
  *   telemetry-enabled SDK builds.
  * - the first `ui:slot:set` that renders something: time from worker creation
  *   to the app's first render, the slots it filled, whether its trees carry
- *   signals, and the size of the message.
+ *   signals, and the serialized size of those trees.
  *
  * The record shape is `NubeSDKPerformanceRecord`
  * (`src/background/scripts/page-performance.ts`). This file is served as is,
@@ -167,7 +167,11 @@
 					slots,
 					signals:
 						raw.indexOf('"type":"signal"') !== -1 && trees.some(hasSignal),
-					treeSize: raw.length,
+					// The trees only: the message also carries a copy of the app state.
+					treeSize: trees.reduce(
+						(total, tree) => total + JSON.stringify(tree).length,
+						0,
+					),
 				});
 				return;
 			}
