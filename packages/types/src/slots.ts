@@ -181,6 +181,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_banner_promotional"} AFTER_SECTION_BANNER_PROMOTIONAL - After the promotional banner section on the home page.
  * @property {"before_section_banner_news"} BEFORE_SECTION_BANNER_NEWS - Before the news banner section on the home page.
  * @property {"after_section_banner_news"} AFTER_SECTION_BANNER_NEWS - After the news banner section on the home page.
+ * @property {"before_section_image_text_module"} BEFORE_SECTION_IMAGE_TEXT_MODULE - Before the image and text module section on the home page.
+ * @property {"after_section_image_text_module"} AFTER_SECTION_IMAGE_TEXT_MODULE - After the image and text module section on the home page.
  * @property {"before_section_testimonials"} BEFORE_SECTION_TESTIMONIALS - Before the testimonials section on the home page.
  * @property {"after_section_testimonials"} AFTER_SECTION_TESTIMONIALS - After the testimonials section on the home page.
  * @property {"before_section_welcome"} BEFORE_SECTION_WELCOME - Before the welcome message section on the home page.
@@ -295,6 +297,8 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_BANNER_PROMOTIONAL: "after_section_banner_promotional",
 	BEFORE_SECTION_BANNER_NEWS: "before_section_banner_news",
 	AFTER_SECTION_BANNER_NEWS: "after_section_banner_news",
+	BEFORE_SECTION_IMAGE_TEXT_MODULE: "before_section_image_text_module",
+	AFTER_SECTION_IMAGE_TEXT_MODULE: "after_section_image_text_module",
 	BEFORE_SECTION_TESTIMONIALS: "before_section_testimonials",
 	AFTER_SECTION_TESTIMONIALS: "after_section_testimonials",
 	BEFORE_SECTION_WELCOME: "before_section_welcome",
