@@ -384,6 +384,10 @@ export type Customization = {
 	 * Selecting a variant does not undo it. Hiding the lines does not change the
 	 * discount the shopper gets at checkout. Refused when `hidden` is not one of
 	 * its modes.
+	 *
+	 * The line under the price is only on the page when the theme is set to show
+	 * the price with the payment discount. The panel's line does not depend on
+	 * that setting, so `applied` can count one line or both.
 	 */
 	"product-detail-payment-promotions": AllowedCustomizationOptions<"hidden">;
 	/**
@@ -411,7 +415,8 @@ export type Customization = {
 	 * Cards that appear later — pagination, infinite scroll — need another
 	 * {@link CustomizationCommands.set}. A few home page blocks of older themes
 	 * are not product cards and keep their line. Refused when `hidden` is not one
-	 * of its modes.
+	 * of its modes. Resolves with `not_found` when the theme is not set to show
+	 * the price with the payment discount, since no card has the line then.
 	 */
 	"product-grid-payment-promotions": AllowedCustomizationOptions<"hidden">;
 	/**
@@ -429,7 +434,8 @@ export type Customization = {
 	 * The store updates the line whenever the cart changes, which does not undo
 	 * `hidden`. Hiding the line does not change the discount the shopper gets at
 	 * checkout. Refused when `hidden` is not one of its modes. Resolves with
-	 * `not_found` when the store does not show payment promotions.
+	 * `not_found` when the theme is not set to show the price with the payment
+	 * discount, since the cart has no line then.
 	 */
 	"cart-payment-promotions": AllowedCustomizationOptions<"hidden">;
 };
