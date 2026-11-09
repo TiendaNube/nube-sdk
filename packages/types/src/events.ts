@@ -86,6 +86,7 @@ export type NubeSDKSendableEvent = Prettify<
  * @property {"coupon:add:fail"} COUPON_ADD_FAIL - Fired when a coupon is added unsuccessfully.
  * @property {"coupon:remove:success"} COUPON_REMOVE_SUCCESS - Fired when a coupon is removed successfully.
  * @property {"coupon:remove:fail"} COUPON_REMOVE_FAIL - Fired when a coupon is removed unsuccessfully.
+ * @property {"coupon:removed"} COUPON_REMOVED - Fired by the checkout when the coupon applied to the cart is removed by the customer or is no longer valid. `eventPayload` is `{ reason: string }`: `"removed_by_customer"`, `"coupon_no_longer_valid"`, or a reason sent by the backend. Not fired when the removal was requested with `coupon:remove`, which is answered with `coupon:remove:success`.
  * @property {"location:updated"} LOCATION_UPDATED - Fired when the location is updated.
  * @property {"quickbuy:open"} QUICKBUY_OPEN - Fired when the quickbuy modal is opened.
  * @property {"quickbuy:close"} QUICKBUY_CLOSE - Fired when the quickbuy modal is closed.
@@ -123,6 +124,7 @@ export const EVENT = {
 	COUPON_REMOVE_SUCCESS: "coupon:remove:success",
 	COUPON_ADD_FAIL: "coupon:add:fail",
 	COUPON_REMOVE_FAIL: "coupon:remove:fail",
+	COUPON_REMOVED: "coupon:removed",
 	LOCATION_UPDATED: "location:updated",
 	QUICKBUY_OPEN: "quickbuy:open",
 	QUICKBUY_CLOSE: "quickbuy:close",
