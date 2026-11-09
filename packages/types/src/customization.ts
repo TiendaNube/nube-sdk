@@ -367,6 +367,77 @@ export type Customization = {
 	 * the call resolves with `not_found`.
 	 */
 	"cart-installments": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The payment promotions of the product page: the "$90 with Bank transfer"
+	 * line under the price, and the "10% off paying with Bank transfer" line of
+	 * the payments panel. Both are hidden together.
+	 *
+	 * Different from {@link Customization."product-detail-installments"}, which
+	 * hides the whole payments panel and leaves the line under the price. An app
+	 * that replaces this copy with its own hides this target and renders its text
+	 * in a slot such as `after_product_detail_price`:
+	 *
+	 * ```ts
+	 * customization.set("product-detail-payment-promotions", { hidden: "always" });
+	 * ```
+	 *
+	 * Selecting a variant does not undo it. Hiding the lines does not change the
+	 * discount the shopper gets at checkout. Refused when `hidden` is not one of
+	 * its modes.
+	 *
+	 * The line under the price is only on the page when the theme is set to show
+	 * the price with the payment discount. The panel's line does not depend on
+	 * that setting, so `applied` can count one line or both.
+	 */
+	"product-detail-payment-promotions": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The payment promotion line of product cards — the "$90 with Bank transfer"
+	 * under the price — wherever they appear: grids, carousels and the related
+	 * products of a product page. Independent of
+	 * {@link Customization."product-detail-payment-promotions"}.
+	 *
+	 * Static options also reach the quick shop opened from a card:
+	 *
+	 * ```ts
+	 * customization.set("product-grid-payment-promotions", { hidden: "always" });
+	 * ```
+	 *
+	 * A resolver receives each card's product, so the line can be hidden on some
+	 * products only. It does not reach the quick shop, which keeps showing the
+	 * line of the products the resolver hides:
+	 *
+	 * ```ts
+	 * customization.set("product-grid-payment-promotions", (product) =>
+	 *   product.id % 2 === 1 ? { hidden: "always" } : undefined,
+	 * );
+	 * ```
+	 *
+	 * Cards that appear later — pagination, infinite scroll — need another
+	 * {@link CustomizationCommands.set}. A few home page blocks of older themes
+	 * are not product cards and keep their line. Refused when `hidden` is not one
+	 * of its modes. Resolves with `not_found` when the theme is not set to show
+	 * the price with the payment discount, since no card has the line then.
+	 */
+	"product-grid-payment-promotions": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The payment promotion line under the cart's total — the "or $90 with Bank
+	 * transfer" shown in the cart drawer and on the cart page.
+	 *
+	 * Independent of {@link Customization."cart-installments"}. An app that
+	 * replaces this copy with its own hides this line and renders its text in a
+	 * slot such as `after_cart_summary`:
+	 *
+	 * ```ts
+	 * customization.set("cart-payment-promotions", { hidden: "always" });
+	 * ```
+	 *
+	 * The store updates the line whenever the cart changes, which does not undo
+	 * `hidden`. Hiding the line does not change the discount the shopper gets at
+	 * checkout. Refused when `hidden` is not one of its modes. Resolves with
+	 * `not_found` when the theme is not set to show the price with the payment
+	 * discount, since the cart has no line then.
+	 */
+	"cart-payment-promotions": AllowedCustomizationOptions<"hidden">;
 };
 
 /**
@@ -469,6 +540,12 @@ export type CustomizableElementValues = {
 	"product-detail-variants": ReadableElementValues<"hidden">;
 	/** The instalment line under the cart's total. */
 	"cart-installments": ReadableElementValues<"hidden">;
+	/** The payment promotion lines of the product page. */
+	"product-detail-payment-promotions": ReadableElementValues<"hidden">;
+	/** The payment promotion line of the first product card on screen. */
+	"product-grid-payment-promotions": ReadableElementValues<"hidden">;
+	/** The payment promotion line under the cart's total. */
+	"cart-payment-promotions": ReadableElementValues<"hidden">;
 };
 
 /**
@@ -504,6 +581,8 @@ export type CustomizationContext = {
 	/** Each card's product. */
 	"product-grid-item-compare-at-price": CustomizationProduct;
 	"product-grid-installments": CustomizationProduct;
+	/** Each card's product. */
+	"product-grid-payment-promotions": CustomizationProduct;
 	/** Each line item, as the cart state carries it. */
 	"cart-item-quantity": CartItem;
 };
