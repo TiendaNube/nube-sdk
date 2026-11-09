@@ -185,6 +185,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_testimonials"} AFTER_SECTION_TESTIMONIALS - After the testimonials section on the home page.
  * @property {"before_section_welcome"} BEFORE_SECTION_WELCOME - Before the welcome message section on the home page.
  * @property {"after_section_welcome"} AFTER_SECTION_WELCOME - After the welcome message section on the home page.
+ * @property {"before_section_video"} BEFORE_SECTION_VIDEO - Before the video section on the home page.
+ * @property {"after_section_video"} AFTER_SECTION_VIDEO - After the video section on the home page.
  * @property {"before_section_institutional"} BEFORE_SECTION_INSTITUTIONAL - Before the institutional message section on the home page.
  * @property {"after_section_institutional"} AFTER_SECTION_INSTITUTIONAL - After the institutional message section on the home page.
  * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
@@ -299,6 +301,8 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_TESTIMONIALS: "after_section_testimonials",
 	BEFORE_SECTION_WELCOME: "before_section_welcome",
 	AFTER_SECTION_WELCOME: "after_section_welcome",
+	BEFORE_SECTION_VIDEO: "before_section_video",
+	AFTER_SECTION_VIDEO: "after_section_video",
 	BEFORE_SECTION_INSTITUTIONAL: "before_section_institutional",
 	AFTER_SECTION_INSTITUTIONAL: "after_section_institutional",
 	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
