@@ -187,6 +187,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_welcome"} AFTER_SECTION_WELCOME - After the welcome message section on the home page.
  * @property {"before_section_institutional"} BEFORE_SECTION_INSTITUTIONAL - Before the institutional message section on the home page.
  * @property {"after_section_institutional"} AFTER_SECTION_INSTITUTIONAL - After the institutional message section on the home page.
+ * @property {"before_section_categories_featured"} BEFORE_SECTION_CATEGORIES_FEATURED - Before the featured categories section on the home page.
+ * @property {"after_section_categories_featured"} AFTER_SECTION_CATEGORIES_FEATURED - After the featured categories section on the home page.
  * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
  * @property {"after_product_detail_related_products"} AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS - After the related products section on the product detail page.
  * @property {"before_product_detail_complementary_products"} BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - Before the complementary products section on the product detail page.
@@ -301,6 +303,8 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_WELCOME: "after_section_welcome",
 	BEFORE_SECTION_INSTITUTIONAL: "before_section_institutional",
 	AFTER_SECTION_INSTITUTIONAL: "after_section_institutional",
+	BEFORE_SECTION_CATEGORIES_FEATURED: "before_section_categories_featured",
+	AFTER_SECTION_CATEGORIES_FEATURED: "after_section_categories_featured",
 	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
 		"before_product_detail_related_products",
 	AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS:
