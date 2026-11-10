@@ -1,6 +1,7 @@
 import {
 	type PageStorageEntry,
 	type PageStorageType,
+	type StorageKeyScope,
 	parseStorageKey,
 	readPageStorage,
 	removePageStorage,
@@ -43,9 +44,13 @@ export type NubeSDKStorageRecord = {
 	 */
 	id: string;
 	type: PageStorageType;
-	/** The app that owns the entry, as namespaced in the key. */
+	/** The app the entry belongs to, without the script suffix. */
 	appId: string;
-	/** The key the app passed, without the `app-<appId>-` prefix. */
+	/** The script that keeps the entry for itself (`"script"` scope of a multi-script app). */
+	scriptId?: string;
+	/** `"app"` for entries under the app id, `"script"` for `<appId>_<scriptId>` ones. */
+	scope: StorageKeyScope;
+	/** The key the app passed, without the `app-<owner>-` prefix. */
 	key: string;
 	storageKey: string;
 	value: string;
@@ -109,6 +114,8 @@ function toRecord(
 		id: recordId(type, storageKey),
 		type,
 		appId: parsed.appId,
+		scriptId: parsed.scriptId,
+		scope: parsed.scope,
 		key: parsed.key,
 		storageKey,
 		value,
