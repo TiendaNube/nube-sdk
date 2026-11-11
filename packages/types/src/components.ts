@@ -1,5 +1,6 @@
 import type * as CSS from "csstype";
 import type { NubeSDKState } from "./main";
+import type { NubeSignalTextReference } from "./signals";
 import type { UISlot } from "./slots";
 import type { Prettify } from "./utility";
 
@@ -3356,11 +3357,15 @@ export type NubeComponent =
 
 /**
  * Represents the children of a UI component.
+ *
+ * A signal is rendered as text and kept in sync with its value; see
+ * {@link NubeSignalTextReference}.
  */
 export type NubeComponentChildren =
 	| string
 	| NubeComponent
-	| (string | NubeComponent)[];
+	| NubeSignalTextReference
+	| (string | NubeComponent | NubeSignalTextReference)[];
 
 /**
  * Represents components that can contain other components as children.

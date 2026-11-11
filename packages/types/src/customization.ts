@@ -50,6 +50,8 @@ export type CustomizationOptions = {
 	 * Refused when that contrast would fall below 3:1 — against the `fontColor`
 	 * sent in the same call, otherwise against the colour the label already
 	 * has. A translucent colour is judged as it shows over what is behind it.
+	 * On {@link Customization."checkout-background"}, the label is the page's
+	 * text.
 	 */
 	backgroundColor: string;
 	/**
@@ -62,6 +64,48 @@ export type CustomizationOptions = {
 	 * browser would silently drop never reports a success.
 	 */
 	borderRadius: string;
+	/**
+	 * The element's inner spacing, applied as an inline style, in the CSS
+	 * shorthand order: `"24px"` on every side, `"16px 24px"` vertical then
+	 * horizontal, up to four values. Pass `""` to hand the spacing back to the
+	 * store.
+	 *
+	 * One to four non-negative lengths in `px`, `rem`, `em` or `%`, or `0`.
+	 * Anything else is refused, `var()` and `calc()` included, for the same
+	 * reason as {@link CustomizationOptions.borderRadius}.
+	 */
+	padding: string;
+	/**
+	 * The element's shadow, applied as an inline style, e.g.
+	 * `"0 4px 12px rgba(0, 0, 0, 0.15)"`. Pass `"none"` to remove the store's
+	 * shadow, or `""` to hand the shadow back to the store.
+	 *
+	 * One shadow: two to four lengths in `px`, `rem` or `em` (or `0`) — the
+	 * horizontal and vertical offsets, then optionally the blur (not negative)
+	 * and the spread — with a hex, `rgb()`, `rgba()`, `hsl()` or `hsla()`
+	 * colour before or after them. Several shadows, `inset`, `var()` and
+	 * `calc()` are refused.
+	 */
+	boxShadow: string;
+	/**
+	 * The colour of the element's border, applied as an inline style. Pass
+	 * `""` to hand the border colour back to the theme.
+	 *
+	 * Accepts the same notations as {@link CustomizationOptions.fontColor}.
+	 * Only the colour changes: the border's style still comes from the store,
+	 * so an element drawn without a border shows none.
+	 */
+	borderColor: string;
+	/**
+	 * The width of the element's border, applied as an inline style, e.g.
+	 * `"2px"`, or `"0 0 1px"` for a bottom border only. Pass `""` to hand the
+	 * width back to the theme.
+	 *
+	 * One to four non-negative lengths in `px`, `rem` or `em`, or `0`.
+	 * Anything else is refused, `var()` and `calc()` included, for the reason
+	 * {@link CustomizationOptions.borderRadius} is.
+	 */
+	borderWidth: string;
 	/**
 	 * Whether the element is hidden, and on which viewports:
 	 *
@@ -413,6 +457,109 @@ export type Customization = {
 	 * Checkout only; on the storefront the call resolves with `not_found`.
 	 */
 	"checkout-shipping-method-description": AllowedCustomizationOptions<"textDecoration">;
+	/**
+	 * The background of the checkout page, painted behind its content:
+	 *
+	 * ```ts
+	 * customization.set("checkout-background", { backgroundColor: "#f5efe6" });
+	 * ```
+	 *
+	 * Only the page itself is painted. Surfaces that paint a background of
+	 * their own on top of it — the panels, the header, modals — keep the
+	 * Checkout's colour; the panels have targets of their own
+	 * ({@link Customization."checkout-main-content"} and
+	 * {@link Customization."checkout-order-summary"}).
+	 *
+	 * The page's text has to stay readable on the new colour, so a colour
+	 * leaving it below 3:1 is refused with the ratio measured. `""` or
+	 * {@link CustomizationCommands.reset} hands the background back to the
+	 * Checkout.
+	 */
+	"checkout-background": AllowedCustomizationOptions<"backgroundColor">;
+	/**
+	 * The checkout's main column — the step indicator and the form of the
+	 * current step (contact, shipping, payment). On desktop it sits beside
+	 * {@link Customization."checkout-order-summary"}; on mobile the two stack.
+	 *
+	 * ```ts
+	 * customization.set("checkout-main-content", {
+	 *   backgroundColor: "#ffffff",
+	 *   padding: "24px",
+	 *   borderRadius: "16px",
+	 *   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+	 * });
+	 * ```
+	 *
+	 * Only the column's own surface changes; the fields and labels inside keep
+	 * the checkout's look. `backgroundColor` is refused when the column's text
+	 * would fall below 3:1 against it.
+	 *
+	 * Only present in the checkout; on the storefront the call resolves with
+	 * `not_found`.
+	 */
+	"checkout-main-content": AllowedCustomizationOptions<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
+	/**
+	 * The checkout's order summary — the line items, subtotal, shipping, total
+	 * and the coupon link. On desktop it sits beside
+	 * {@link Customization."checkout-main-content"}; on mobile the two stack.
+	 *
+	 * Takes the same options, independently: styling one leaves the other
+	 * alone, and a bulk {@link CustomizationCommands.set} styles both in one
+	 * call.
+	 *
+	 * Only present in the checkout; on the storefront the call resolves with
+	 * `not_found`.
+	 */
+	"checkout-order-summary": AllowedCustomizationOptions<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
+	/**
+	 * The text fields of the checkout's forms — contact, shipping and billing
+	 * details — as the field itself, not the group holding its label.
+	 *
+	 * Checkout only: on the storefront the call resolves with `not_found`.
+	 * Every field on the page is customized, so an app can match the inputs
+	 * to its own brand:
+	 *
+	 * ```ts
+	 * customization.set("checkout-form-input", {
+	 *   backgroundColor: "#ffffff",
+	 *   borderColor: "#d0d5dd",
+	 *   borderWidth: "1px",
+	 *   borderRadius: "8px",
+	 *   padding: "12px 16px",
+	 * });
+	 * ```
+	 *
+	 * `backgroundColor` is checked against the colour of the text the shopper
+	 * types, and refused below 3:1.
+	 */
+	"checkout-form-input": AllowedCustomizationOptions<
+		| "backgroundColor"
+		| "borderColor"
+		| "borderWidth"
+		| "borderRadius"
+		| "padding"
+	>;
+	/**
+	 * The checkout's breadcrumb timeline — the step indicator (contact,
+	 * shipping, payment) above the form of the current step.
+	 *
+	 * ```ts
+	 * customization.set("checkout-breadcrumb-timeline", { hidden: "always" });
+	 * ```
+	 *
+	 * An app that shows progress its own way hides it and renders its own in
+	 * a slot. If the Checkout re-renders the timeline on a step change, the
+	 * new one is not hidden, so an app re-applies it, as
+	 * {@link CustomizationCommands.set} describes.
+	 *
+	 * Only present in the checkout; on the storefront the call resolves with
+	 * `not_found`.
+	 */
+	"checkout-breadcrumb-timeline": AllowedCustomizationOptions<"hidden">;
 };
 
 /**
@@ -451,6 +598,22 @@ export type CustomizationElementValues = {
 	backgroundColor: string;
 	/** The element's corner radius, e.g. `"40px"` for a pill-shaped button. */
 	borderRadius: string;
+	/** The colour of the element's border, as `rgb()` or `rgba()`. */
+	borderColor: string;
+	/** The width of the element's border, e.g. `"1px"`. */
+	borderWidth: string;
+	/**
+	 * The element's inner spacing, always as four lengths — top, right,
+	 * bottom, left, e.g. `"16px 24px 16px 24px"` — which `set` accepts back
+	 * as is.
+	 */
+	padding: string;
+	/**
+	 * The element's shadow: `"none"`, or as the browser writes it, colour
+	 * first, e.g. `"rgba(0, 0, 0, 0.15) 0px 4px 12px 0px"`. A single shadow can
+	 * be passed back to `set` as is; a store's multi-layer shadow cannot.
+	 */
+	boxShadow: string;
 	/**
 	 * How the element is hidden by the Customization API: the mode last set
 	 * with {@link CustomizationOptions.hidden}, or `"never"`. An element the
@@ -524,6 +687,29 @@ export type CustomizableElementValues = {
 	"cart-installments": ReadableElementValues<"hidden">;
 	/** The description of the first shipping method on screen, in the checkout. */
 	"checkout-shipping-method-description": ReadableElementValues<"textDecoration">;
+	/**
+	 * The background of the checkout page, as the shopper sees it: the
+	 * page's own, or the default white when the Checkout paints none.
+	 */
+	"checkout-background": ReadableElementValues<"backgroundColor">;
+	/** The checkout's main column. */
+	"checkout-main-content": ReadableElementValues<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
+	/** The checkout's order summary. */
+	"checkout-order-summary": ReadableElementValues<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
+	/** The first text field of the checkout's forms on screen. */
+	"checkout-form-input": ReadableElementValues<
+		| "backgroundColor"
+		| "borderColor"
+		| "borderWidth"
+		| "borderRadius"
+		| "padding"
+	>;
+	/** The checkout's breadcrumb timeline. */
+	"checkout-breadcrumb-timeline": ReadableElementValues<"hidden">;
 };
 
 /**

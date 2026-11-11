@@ -1,3 +1,4 @@
+import type { NubeSignalsEvent, NubeSignalsEventData } from "./signals";
 import type {
 	NubeFormActionEventData,
 	NubeFormFileGetEventData,
@@ -9,7 +10,7 @@ import type {
 	NubeStorageEventData,
 } from "./storage";
 
-export type NubeSdkInternalEvent = NubeStorageEvent;
+export type NubeSdkInternalEvent = NubeStorageEvent | NubeSignalsEvent;
 
 export type NubeSdkInternalEventData =
 	| NubeStorageEventData
@@ -18,7 +19,8 @@ export type NubeSdkInternalEventData =
 	| NubeFormActionEventData
 	| NubeFormFileGetEventData
 	| NubeFormFileGetResponseEventData
-	| NubeScrollToEventData;
+	| NubeScrollToEventData
+	| NubeSignalsEventData;
 
 export const NubeSdkInternalEventPrefix = "internal:";
 
