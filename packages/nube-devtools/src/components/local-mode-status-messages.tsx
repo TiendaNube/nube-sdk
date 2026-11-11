@@ -11,12 +11,15 @@ type LocalModeStatusMessagesProps = {
 	status: "idle" | "connecting" | "connected";
 	scriptAvailability: ScriptAvailability;
 	appId: string;
+	/** Ids the runtime gives the scripts: `appId`, or `<appId>_<scriptId>` each. */
+	entryIds?: string[];
 };
 
 export function LocalModeStatusMessages({
 	status,
 	scriptAvailability,
 	appId,
+	entryIds = [],
 }: LocalModeStatusMessagesProps) {
 	if (status !== "connected") {
 		return null;
@@ -54,6 +57,20 @@ export function LocalModeStatusMessages({
 						<p className="text-[10px] text-muted-foreground mb-0.5">App ID</p>
 						<CopyableValue value={appId} fontSize="text-[10px]" />
 					</div>
+					{entryIds.length > 1 && (
+						<div>
+							<p className="text-[10px] text-muted-foreground mb-0.5">
+								Script entries
+							</p>
+							{entryIds.map((entryId) => (
+								<CopyableValue
+									key={entryId}
+									value={entryId}
+									fontSize="text-[10px]"
+								/>
+							))}
+						</div>
+					)}
 				</div>
 			)}
 		</>

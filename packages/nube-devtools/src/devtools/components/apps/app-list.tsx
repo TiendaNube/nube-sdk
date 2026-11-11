@@ -6,7 +6,8 @@ import type { ScriptStatus } from "./app-status";
 type AppListProps = {
 	apps: NubeSDKEvent[];
 	selectedAppId?: string;
-	localModeAppId?: string;
+	/** Ids of the entries served by Local Mode. */
+	localModeAppIds?: string[];
 	isReplacedScript: boolean;
 	isAppBlocked: (appId: string) => boolean;
 	scriptStatuses: Record<string, ScriptStatus>;
@@ -16,7 +17,7 @@ type AppListProps = {
 export function AppList({
 	apps,
 	selectedAppId,
-	localModeAppId,
+	localModeAppIds = [],
 	isReplacedScript,
 	isAppBlocked,
 	scriptStatuses,
@@ -32,21 +33,22 @@ export function AppList({
 				) : (
 					<Table className="table-fixed">
 						<TableBody className="[&_tr:last-child]:border-b">
-							{apps.map((app) => (
-								<TableRow key={app.id} className="border-border/60">
-									<AppListItem
-										app={app}
-										isSelected={app.id === selectedAppId}
-										isLocalMode={localModeAppId === app.data.id}
-										isReplacedScript={
-											localModeAppId === app.data.id && isReplacedScript
-										}
-										isBlocked={isAppBlocked(app.data.id)}
-										scriptStatus={scriptStatuses[app.data.script]}
-										onSelect={onSelect}
-									/>
-								</TableRow>
-							))}
+							{apps.map((app) => {
+								const isLocalMode = localModeAppIds.includes(app.data.id);
+								return (
+									<TableRow key={app.id} className="border-border/60">
+										<AppListItem
+											app={app}
+											isSelected={app.id === selectedAppId}
+											isLocalMode={isLocalMode}
+											isReplacedScript={isLocalMode && isReplacedScript}
+											isBlocked={isAppBlocked(app.data.id)}
+											scriptStatus={scriptStatuses[app.data.script]}
+											onSelect={onSelect}
+										/>
+									</TableRow>
+								);
+							})}
 						</TableBody>
 					</Table>
 				)}

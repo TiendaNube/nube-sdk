@@ -1,4 +1,9 @@
 import { getPageSessionStorage } from "@/utils";
+import {
+	type StoredApplicationServerData,
+	getLocalModeEntryIds,
+	readScriptUrls,
+} from "@/utils/local-mode-scripts";
 import { useEffect, useState } from "react";
 
 const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
@@ -7,12 +12,8 @@ const PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION =
 export type LocalModeApp = {
 	appId: string;
 	type: "new" | "existing";
-};
-
-type LocalModeStoredData = {
-	appId?: string;
-	type?: "new" | "existing";
-	connected?: boolean;
+	/** Ids of the entries it runs as: `appId`, or `<appId>_<scriptId>` each. */
+	entryIds: string[];
 };
 
 /**
@@ -32,9 +33,16 @@ export function useLocalModeApp(): LocalModeApp | null {
 					return;
 				}
 				try {
-					const data = JSON.parse(stored) as LocalModeStoredData;
+					const data = JSON.parse(stored) as StoredApplicationServerData;
 					if (data.connected === true && data.appId && data.type) {
-						setLocalModeApp({ appId: data.appId, type: data.type });
+						setLocalModeApp({
+							appId: data.appId,
+							type: data.type,
+							entryIds: getLocalModeEntryIds(
+								data.appId,
+								readScriptUrls(data).length,
+							),
+						});
 					} else {
 						setLocalModeApp(null);
 					}
