@@ -101,6 +101,7 @@ describe("componentName", () => {
 		expect(componentName("accordionRoot")).toBe("Accordion.Root");
 		expect(componentName("svgFeGaussianBlur")).toBe("Svg.FeGaussianBlur");
 		expect(componentName("videoYouTube")).toBe("Video.YouTube");
+		expect(componentName("carouselItemGroup")).toBe("Carousel.ItemGroup");
 	});
 
 	it("capitalizes anything else, including types it does not know", () => {

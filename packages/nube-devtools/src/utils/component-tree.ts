@@ -89,6 +89,7 @@ const COMPONENT_NAMES: Record<string, string> = {
 /** `<namespace><Part>` types, rendered as `Namespace.Part` like in JSX. */
 const NAMESPACES = [
 	"accordion",
+	"carousel",
 	"clipboard",
 	"form",
 	"popover",
