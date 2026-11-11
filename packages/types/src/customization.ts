@@ -146,6 +146,23 @@ export type CustomizationOptions = {
 	 * `product:variant_selected`.
 	 */
 	disabled: boolean;
+	/**
+	 * The line drawn through, under or nowhere on the element's text, applied
+	 * as an inline style:
+	 *
+	 * - `"line-through"` — struck through, e.g. to show a delivery estimate
+	 *   that no longer applies;
+	 * - `"underline"` — underlined;
+	 * - `"none"` — no line, even where the store draws one.
+	 *
+	 * Pass `""` to drop the inline value and hand the element back to the
+	 * store.
+	 *
+	 * Only those keywords are accepted. Colours, styles and thicknesses
+	 * (`"line-through red wavy"`) are refused, so the line always matches the
+	 * text it decorates.
+	 */
+	textDecoration: CustomizationTextDecoration | "";
 };
 
 /**
@@ -154,6 +171,12 @@ export type CustomizationOptions = {
  * union.
  */
 export type CustomizationHiddenMode = "always" | "mobile" | "desktop" | "never";
+
+/**
+ * The lines {@link CustomizationOptions.textDecoration} accepts, named so an
+ * app can type one it computes without repeating the union.
+ */
+export type CustomizationTextDecoration = "line-through" | "underline" | "none";
 
 /**
  * Requires at least one of `T`'s members while leaving the others optional.
@@ -412,6 +435,29 @@ export type Customization = {
 	 */
 	"cart-installments": AllowedCustomizationOptions<"hidden">;
 	/**
+	 * The description of every shipping method in the checkout — the line
+	 * under each method's name, such as the delivery estimate
+	 * ("Arrives Friday 13/11").
+	 *
+	 * With options, every method listed is customized alike:
+	 *
+	 * ```ts
+	 * customization.set("checkout-shipping-method-description", {
+	 *   textDecoration: "line-through",
+	 * });
+	 * ```
+	 *
+	 * The checkout renders the list again when the shipping options change —
+	 * a new zipcode, a recalculation — and the new elements come without the
+	 * customization, so an app re-applies it on `shipping:update`, as
+	 * {@link CustomizationCommands.set} describes. Before the shopper has
+	 * calculated shipping there is no list, and the call resolves with
+	 * `not_found`.
+	 *
+	 * Checkout only; on the storefront the call resolves with `not_found`.
+	 */
+	"checkout-shipping-method-description": AllowedCustomizationOptions<"textDecoration">;
+	/**
 	 * The background of the checkout page, painted behind its content:
 	 *
 	 * ```ts
@@ -581,6 +627,13 @@ export type CustomizationElementValues = {
 	 * button the store itself disables — out of stock — reads `false` too.
 	 */
 	disabled: boolean;
+	/**
+	 * The lines drawn on the element's own text, e.g. `"line-through"`, or
+	 * `"none"`. A string rather than {@link CustomizationTextDecoration}:
+	 * the store may combine several (`"underline line-through"`), which the
+	 * option cannot send but the element can show.
+	 */
+	textDecoration: string;
 };
 
 /**
@@ -632,6 +685,8 @@ export type CustomizableElementValues = {
 	"product-detail-variants": ReadableElementValues<"hidden">;
 	/** The instalment line under the cart's total. */
 	"cart-installments": ReadableElementValues<"hidden">;
+	/** The description of the first shipping method on screen, in the checkout. */
+	"checkout-shipping-method-description": ReadableElementValues<"textDecoration">;
 	/**
 	 * The background of the checkout page, as the shopper sees it: the
 	 * page's own, or the default white when the Checkout paints none.
