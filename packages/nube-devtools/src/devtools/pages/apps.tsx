@@ -15,6 +15,7 @@ import Layout from "@/devtools/components/layout";
 import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import { SearchInput } from "@/devtools/components/search-input";
 import {
+	useAppRendering,
 	useApps,
 	useBlockedApps,
 	useLocalModeApp,
@@ -56,6 +57,7 @@ export function Apps() {
 	}, [apps, blockedApps]);
 
 	const scriptStatuses = useScriptStatuses(allApps);
+	const rendering = useAppRendering();
 
 	const isAppOnline = (app: NubeSDKEvent) =>
 		scriptStatuses[app.data.script] === "online" && !isBlocked(app.data.id);
@@ -141,6 +143,7 @@ export function Apps() {
 											localModeApp?.type === "existing"
 										}
 										isBlocked={isBlocked(selectedApp.data.id)}
+										rendering={rendering[selectedApp.data.id]}
 										onBlockedChange={(blocked) =>
 											setBlocked(selectedApp.data, blocked)
 										}

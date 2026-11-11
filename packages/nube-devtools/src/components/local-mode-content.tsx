@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/native-select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getPageSessionStorage, setPageSessionStorage } from "@/utils";
+import { markStoredAsDisconnected } from "@/utils/local-mode";
 import { Globe, Hash, Loader2, Play, Square } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -324,22 +325,6 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 		} else {
 			setScriptAvailability("unavailable");
 		}
-	};
-
-	const markStoredAsDisconnected = async () => {
-		const stored = await getPageSessionStorage(
-			PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION,
-		);
-		if (!stored) return;
-
-		const data = JSON.parse(stored) as StoredApplicationServerData;
-		if (!data.connected) return;
-
-		data.connected = false;
-		await setPageSessionStorage(
-			PAGE_STORAGE_KEY_DEVTOOLS_APPLICATION,
-			JSON.stringify(data),
-		);
 	};
 
 	const handleStop = async () => {
