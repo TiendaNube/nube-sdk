@@ -3,11 +3,12 @@ type Props = Record<string, unknown>;
 const memo = new WeakMap<object, string>();
 
 /**
- * Id of a signal node (`{ type: "signal", __internalId }`) passed as a child.
+ * Id of a signal node (`{ type: "signal", __internalId }`) passed as a child
+ * or as a prop.
  */
-function signalId(child: unknown): string | undefined {
-	if (typeof child !== "object" || child === null) return undefined;
-	const { type, __internalId } = child as Record<string, unknown>;
+function signalId(value: unknown): string | undefined {
+	if (typeof value !== "object" || value === null) return undefined;
+	const { type, __internalId } = value as Record<string, unknown>;
 	return type === "signal" && typeof __internalId === "string"
 		? __internalId
 		: undefined;
@@ -26,11 +27,15 @@ function childrenKey(children: unknown): string {
 }
 
 /**
- * Serialize the props in a stable way, ignoring functions.
+ * Serialize the props in a stable way, ignoring functions. A signal enters by
+ * id, without reading `initialValue`: the id must not change with the value,
+ * and that read marks the signal as rendered.
  */
 function stableStringify(value: unknown): string {
 	return JSON.stringify(value, (key, val) => {
 		if (key === "children" && typeof val !== "string") return childrenKey(val);
+		const id = signalId(val);
+		if (id) return `[signal:${id}]`;
 		if (typeof val === "function") {
 			if (memo.has(val)) return memo.get(val);
 

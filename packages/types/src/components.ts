@@ -1,6 +1,14 @@
 import type * as CSS from "csstype";
+import type {
+	NubeCondition,
+	NubeConditionOperators,
+	NubeConditionOperatorsFor,
+	NubeConditionValue,
+	NubeExactlyOne,
+	NubeNoneOf,
+} from "./conditions";
 import type { NubeSDKState } from "./main";
-import type { NubeSignalTextReference } from "./signals";
+import type { NubeSignalReference, NubeSignalTextReference } from "./signals";
 import type { UISlot } from "./slots";
 import type { Prettify } from "./utility";
 
@@ -2186,6 +2194,129 @@ export type NubeComponentFragment = Prettify<
 >;
 
 /* -------------------------------------------------------------------------- */
+/*                         Control Flow Components                            */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The props of a `show` component that do not depend on `when`.
+ */
+type NubeComponentShowBaseProps = NubeComponentBase &
+	ChildrenProps & {
+		/** Rendered while the condition is not true. Nothing by default. */
+		fallback?: NubeComponentChildren;
+	};
+
+/**
+ * Represents the properties available for a `show` component.
+ *
+ * Without an operator, `when` is a boolean signal and `children` render while
+ * it is `true`. With one operator (`gte={90}`, `oneOf={["a", "b"]}`,
+ * `condition={and(...)}`…), `when` is a signal of any primitive and
+ * `children` render while the operator matches its value. The operators are
+ * checked against the type of the signal: `startsWith` only takes a signal of
+ * a string, `gt` only a signal of a number.
+ *
+ * Not wrapped in `Prettify`, so TypeScript can infer `T` from `when`.
+ */
+export type NubeComponentShowProps<T extends NubeConditionValue = boolean> =
+	NubeComponentShowBaseProps &
+		(
+			| ({
+					/**
+					 * Signal that picks what is rendered: `children` while its value
+					 * is `true`, `fallback` otherwise. Use `computed` to derive it
+					 * from other signals.
+					 */
+					when: NubeSignalReference<boolean>;
+			  } & NubeNoneOf<NubeConditionOperators>)
+			| ({
+					/** Signal whose value the operator is checked against. */
+					when: NubeSignalReference<T>;
+			  } & NubeExactlyOne<NubeConditionOperatorsFor<T>>)
+		);
+
+/**
+ * Represents a `show` component, which renders its children or a fallback
+ * depending on the value of a signal.
+ *
+ * Both branches travel in the tree and the platform mounts only the one that
+ * matches the current value. A change of the signal swaps the branch without
+ * rendering the slot again. Without `condition`, `children` render while the
+ * value is `true`.
+ */
+export type NubeComponentShow = Prettify<
+	NubeComponentShowBaseProps & {
+		type: "show";
+		when: NubeSignalReference<NubeConditionValue>;
+		condition?: NubeCondition;
+	}
+>;
+
+/**
+ * Represents the properties available for a `matchValue` component.
+ */
+export type NubeComponentMatchValueProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			/**
+			 * Signal whose value each `matchWhen` child checks with its operator.
+			 */
+			of: NubeSignalReference<NubeConditionValue>;
+		}
+>;
+
+/**
+ * Represents a `matchValue` component. It renders the children of the first
+ * `matchWhen` whose condition matches the value of its signal, or the
+ * children of `matchDefault` when none does.
+ */
+export type NubeComponentMatchValue = Prettify<
+	NubeComponentMatchValueProps & {
+		type: "matchValue";
+	}
+>;
+
+/**
+ * Represents the properties available for a `matchWhen` component: exactly
+ * one operator, such as `is="idle"`, `oneOf={["error", "timeout"]}`,
+ * `gte={90}`, `startsWith="01"` or `condition={and(gte(90), lte(100))}`.
+ *
+ * The operator is not checked against the type of the `matchValue` signal.
+ */
+export type NubeComponentMatchWhenProps = Prettify<
+	NubeComponentBase & ChildrenProps & NubeExactlyOne<NubeConditionOperators>
+>;
+
+/**
+ * Represents a `matchWhen` component, a branch of `matchValue`. Whatever
+ * operator it was written with, it is sent as a `condition`.
+ */
+export type NubeComponentMatchWhen = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			type: "matchWhen";
+			condition: NubeCondition;
+		}
+>;
+
+/**
+ * Represents the properties available for a `matchDefault` component.
+ */
+export type NubeComponentMatchDefaultProps = Prettify<
+	NubeComponentBase & ChildrenProps
+>;
+
+/**
+ * Represents a `matchDefault` component, the branch of `matchValue` rendered
+ * when no `matchWhen` matches.
+ */
+export type NubeComponentMatchDefault = Prettify<
+	NubeComponentMatchDefaultProps & {
+		type: "matchDefault";
+	}
+>;
+
+/* -------------------------------------------------------------------------- */
 /*                           Icon Component                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -3507,6 +3638,10 @@ export type NubeComponent =
 	| NubeComponentField
 	| NubeComponentNumberField
 	| NubeComponentFragment
+	| NubeComponentShow
+	| NubeComponentMatchValue
+	| NubeComponentMatchWhen
+	| NubeComponentMatchDefault
 	| NubeComponentImage
 	| NubeComponentProgress
 	| NubeComponentIframe

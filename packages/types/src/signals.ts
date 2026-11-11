@@ -30,6 +30,12 @@ export type NubeSignalReference<T = unknown> = {
 };
 
 /**
+/**
+ * Values `Match` compares, with `Object.is`: JSON primitives.
+ */
+export type NubeSignalPrimitive = string | number | boolean | null;
+
+/**
  * A value a signal can hold and share with the platform: anything that
  * survives `JSON.stringify`.
  */
