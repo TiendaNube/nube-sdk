@@ -1586,6 +1586,13 @@ export type NubeComponentFormFieldProps = Prettify<
 			max?: string | number;
 			/** Accepted file types, only for `inputType: "file"`. */
 			accept?: string;
+			/**
+			 * Asks the device to open its camera directly instead of the file picker,
+			 * only for `inputType: "file"`. `"user"` prefers the front camera and
+			 * `"environment"` the rear one. It is a hint: browsers without a camera
+			 * capture flow, such as desktop ones, ignore it and show the file picker.
+			 */
+			capture?: boolean | "user" | "environment";
 			/** Maximum file size in bytes, only for `inputType: "file"`. */
 			maxSize?: number;
 			/** Current value of the field. */
