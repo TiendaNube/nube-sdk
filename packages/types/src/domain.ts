@@ -135,9 +135,10 @@ export type CartItem = {
 	sub_items: CartSubItem[];
 
 	/**
-	 * Categories the product belongs to, as `{ id, name }` with the name in the storefront
-	 * language. The root category is left out. Provided on storefront pages; absent where the
-	 * host does not resolve categories (e.g. checkout).
+	 * Categories the product belongs to, as `{ id, name }` with the name in the store
+	 * language. The root category is left out. Provided on storefront pages and in checkout;
+	 * `[]` when the host could not resolve them. In checkout, the lines of a kit carry the
+	 * kit product's categories.
 	 */
 	categories?: Category[];
 };
