@@ -14,14 +14,20 @@
 	"author": "Nuvemshop / Tiendanube",
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
-		"@tiendanube/nube-sdk-ui": "^0.23.0",
-		"@tiendanube/nube-sdk-types": "^0.106.0",
-		"@tiendanube/nube-sdk-helper": "^0.4.0",
-		"@vitest/coverage-v8": "^3.0.9",
+		"@tiendanube/nube-sdk-ui": "^0.24.0",
+		"@tiendanube/nube-sdk-types": "^0.111.0",
+		"@tiendanube/nube-sdk-helper": "^0.5.0",
+		"@vitest/coverage-v8": "^4.1.12",
 		"concurrently": "^9.1.2",
 		"serve": "^14.2.4",
 		"tsup": "^8.3.0",
 		"typescript": "^5.6.2",
-		"vitest": "^3.2.4"
+		"vitest": "^4.1.12"
+	},
+	"overrides": {
+		"compression": "^1.8.2"
+	},
+	"resolutions": {
+		"compression": "^1.8.2"
 	}
 }
