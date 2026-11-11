@@ -160,6 +160,20 @@ jobs:
             export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
             npx npm@11 publish --workspace packages/helper --access public
 
+  publish-signals:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Publish @tiendanube/nube-sdk-signals using OIDC
+          command: |
+            npm run build --workspace packages/signals
+            export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
+            npx npm@11 publish --workspace packages/signals --access public
+
   # --- CHROME WEB STORE (extensión NubeSDK DevTools) ---
 
   upload-devtools-draft:
@@ -377,6 +391,27 @@ jobs:
             export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
             npx npm@11 publish --workspace packages/helper --access public --tag unstable
 
+  publish-signals-unstable:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Build @tiendanube/nube-sdk-signals
+          command: npm run build --workspace packages/signals
+      - run:
+          name: Set unstable version
+          command: |
+            COMMIT_HASH=${CIRCLE_SHA1:0:7}
+            npm version prerelease --preid=unstable.${COMMIT_HASH} --no-git-tag-version --workspace packages/signals
+      - run:
+          name: Publish @tiendanube/nube-sdk-signals (unstable) using OIDC
+          command: |
+            export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
+            npx npm@11 publish --workspace packages/signals --access public --tag unstable
+
 ##### Workflows
 workflows:
   version: 2
@@ -442,6 +477,14 @@ workflows:
       - publish-helper:
           context: [npm_trusted]
           requires: [approval-publish-helper]
+
+      - approval-publish-signals:
+          type: approval
+          requires: [build]
+          filters: { <<: *filter-prd }
+      - publish-signals:
+          context: [npm_trusted]
+          requires: [approval-publish-signals]
 
       # --- CHROME WEB STORE (DevTools) ---
       # Se dispara al crear una tag nube-sdk-* (no por branch).
@@ -519,3 +562,11 @@ workflows:
       - publish-helper-unstable:
           context: [npm_trusted]
           requires: [approval-publish-helper-unstable]
+
+      - approval-publish-signals-unstable:
+          type: approval
+          requires: [build]
+          filters: { <<: *filter-unstable }
+      - publish-signals-unstable:
+          context: [npm_trusted]
+          requires: [approval-publish-signals-unstable]
