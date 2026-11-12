@@ -476,7 +476,31 @@ export type NubeComponentSelectEventHandler = NubeComponentEventHandler<
 >;
 
 /**
+ * Dropdown indicator of a `select` / `formSelect`.
+ *
+ * - an icon name swaps the glyph and keeps the theme's size and color;
+ * - an object can also set `size` and `color` (omit `name` to keep the
+ *   default chevron);
+ * - `false` hides the indicator.
+ *
+ * Without it, the indicator follows the store theme.
+ */
+export type NubeComponentSelectIcon =
+	| NubeComponentIconName
+	| {
+			name?: NubeComponentIconName;
+			size?: Size;
+			color?: string;
+	  }
+	| false;
+
+/**
  * Represents the properties available for a `select` component.
+ *
+ * Styling hooks for `styled()`: the indicator wrapper carries
+ * `data-part="indicator"`; the native `select` and `label` elements can be
+ * targeted directly. State comes from native pseudo-classes, e.g.
+ * `& select:disabled ~ [data-part="indicator"] { opacity: .4; }`.
  */
 export type NubeComponentSelectProps = Prettify<
 	NubeComponentBase & {
@@ -484,9 +508,14 @@ export type NubeComponentSelectProps = Prettify<
 		label: string;
 		value?: string;
 		disabled?: boolean;
+		/** Dropdown indicator; see {@link NubeComponentSelectIcon}. */
+		icon?: NubeComponentSelectIcon;
 		style?: {
+			container?: NubeComponentStyle;
 			label?: NubeComponentStyle;
 			select?: NubeComponentStyle;
+			/** Applied to the indicator wrapper (`data-part="indicator"`). */
+			icon?: NubeComponentStyle;
 		};
 		options: { label: string; value: string; disabled?: boolean }[];
 		onChange?: NubeComponentSelectEventHandler;
@@ -1647,16 +1676,19 @@ export type NubeComponentFormSelectProps = Prettify<
 			/** Floating label rendered next to the select. */
 			label: string;
 			/** Selectable options (mirrors `select.options`). */
-			options: { label: string; value: string }[];
+			options: { label: string; value: string; disabled?: boolean }[];
 			/** Default selected value. */
 			value?: string;
 			required?: boolean;
 			disabled?: boolean;
+			/** Dropdown indicator, same as `select.icon`. */
+			icon?: NubeComponentSelectIcon;
 			/** Style slots, same shape as `select.style`. */
 			style?: {
 				container?: NubeComponentStyle;
 				label?: NubeComponentStyle;
 				select?: NubeComponentStyle;
+				icon?: NubeComponentStyle;
 			};
 		}
 >;
