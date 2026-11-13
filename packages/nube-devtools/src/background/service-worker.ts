@@ -1,9 +1,10 @@
-import { syncDevToolsHeaderRule } from "./devtools-header";
+import { SAVE_SETTINGS_ACTION } from "../utils/settings";
 import {
 	handleDevToolsEvents,
 	handleDevToolsResendEvent,
 	handleDevToolsVerifyNubeSdkStatus,
 } from "./nube-dev-tools";
+import { saveSettings, syncSettingsRules } from "./settings-rules";
 
 chrome.scripting
 	.registerContentScripts([
@@ -36,9 +37,26 @@ chrome.scripting
 		// Already registered (e.g. service worker restart) — safe to ignore.
 	});
 
-chrome.runtime.onInstalled.addListener(syncDevToolsHeaderRule);
-chrome.runtime.onStartup.addListener(syncDevToolsHeaderRule);
-syncDevToolsHeaderRule();
+// Hands the Auto-Slots tab's overrides to the auto-slots engine; on its own
+// for the same reason as the performance monitor above.
+chrome.scripting
+	.registerContentScripts([
+		{
+			id: "nube-devtools-auto-slot-overrides",
+			matches: ["http://*/*", "https://*/*"],
+			js: ["inject-auto-slot-overrides.js"],
+			runAt: "document_start",
+			world: "MAIN",
+		},
+	])
+	.catch(() => {
+		// Already registered (e.g. service worker restart) — safe to ignore.
+	});
+
+// Wrapped: the listeners receive event details, which are not settings.
+chrome.runtime.onInstalled.addListener(() => syncSettingsRules());
+chrome.runtime.onStartup.addListener(() => syncSettingsRules());
+syncSettingsRules();
 
 function updateExtensionBadge(connected: boolean) {
 	if (connected) {
@@ -70,6 +88,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 				tabId: sender.tab.id,
 			});
 		}
+		return true;
+	}
+
+	if (message.action === SAVE_SETTINGS_ACTION) {
+		saveSettings(message.payload).then(
+			(settings) => sendResponse({ settings }),
+			(error) => sendResponse({ error: String(error) }),
+		);
 		return true;
 	}
 

@@ -1,9 +1,13 @@
 import { LocalModeContent } from "@/components/local-mode-content";
+import { NubeStatusDot } from "@/components/nube-status-dot";
 import { Badge } from "@/components/ui/badge";
+import { useNubeStatus } from "@/hooks/use-nube-status";
 import { Terminal } from "lucide-react";
 import { PopupFooter } from "./components/popup-footer";
 
 export function Popup() {
+	const nubeStatus = useNubeStatus();
+
 	return (
 		<div className="h-full min-h-0 bg-background flex flex-col">
 			{/* Header */}
@@ -13,6 +17,7 @@ export function Popup() {
 						<Terminal className="w-3.5 h-3.5 text-accent-foreground" />
 					</div>
 					<span className="font-semibold text-sm text-foreground">NubeSDK</span>
+					<NubeStatusDot status={nubeStatus} />
 					<Badge variant="secondary" className="text-[10px] px-1.5 py-0">
 						DevTools
 					</Badge>
