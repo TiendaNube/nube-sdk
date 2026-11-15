@@ -300,3 +300,150 @@ describe("internal:signals:update", () => {
 		expect(() => update([{ id: "missing", value: 1 }])).not.toThrow();
 	});
 });
+
+describe("DevTools inspection", () => {
+	const inspect = () =>
+		receive(JSON.stringify({ type: "internal:signals:inspect", data: {} }));
+
+	const graphs = () =>
+		sent()
+			.filter((message) => message.type === "internal:signals:graph")
+			.map((message) => message.data);
+
+	it("describes nothing until the DevTools asks", async () => {
+		signals.useSignals(nube);
+		const count = signals.signal(0);
+		signals.effect(() => {}, [count]);
+		render(count);
+		await tick();
+
+		expect(graphs()).toEqual([]);
+	});
+
+	it("describes signals, computed signals and effects, without values", async () => {
+		signals.useSignals(nube);
+		const price = signals.signal(10);
+		const quantity = signals.signal(2);
+		const total = signals.computed(
+			() => price.value * quantity.value,
+			[price, quantity],
+		);
+		signals.effect(() => {}, [total]);
+		render(total);
+
+		inspect();
+		await tick();
+
+		expect(sent().at(-1)).toMatchObject({
+			app: "123",
+			type: "internal:signals:graph",
+		});
+		expect(graphs()).toEqual([
+			{
+				connected: true,
+				signals: [
+					{ id: price.__internalId, kind: "signal", rendered: false },
+					{ id: quantity.__internalId, kind: "signal", rendered: false },
+					{
+						id: total.__internalId,
+						kind: "computed",
+						rendered: true,
+						deps: [price.__internalId, quantity.__internalId],
+					},
+				],
+				effects: [
+					{
+						id: expect.stringMatching(/^effect-/),
+						deps: [total.__internalId],
+					},
+				],
+				unsynced: [],
+				unserializable: [],
+			},
+		]);
+		expect(JSON.stringify(graphs())).not.toContain("20");
+	});
+
+	it("answers even when the app never called useSignals", async () => {
+		const count = signals.signal(0);
+		render(count);
+		count.value = 1;
+
+		inspect();
+		await tick();
+
+		expect(graphs()).toMatchObject([
+			{ connected: false, unsynced: [count.__internalId] },
+		]);
+	});
+
+	it("sends the graph again when it changes, once per microtask", async () => {
+		signals.useSignals(nube);
+		inspect();
+		await tick();
+
+		const a = signals.signal(1);
+		const stop = signals.effect(() => {}, [a]);
+		render(a);
+		await tick();
+		expect(graphs()).toHaveLength(2);
+		expect(graphs()[1]).toMatchObject({
+			signals: [{ id: a.__internalId, rendered: true }],
+			effects: [{ deps: [a.__internalId] }],
+		});
+
+		stop();
+		await tick();
+		expect(graphs()[2].effects).toEqual([]);
+
+		// A value change is not a change of the graph.
+		a.value = 2;
+		await tick();
+		expect(graphs()).toHaveLength(3);
+	});
+
+	it("forgets a disposed computed signal", async () => {
+		signals.useSignals(nube);
+		const a = signals.signal(1);
+		const double = signals.computed(() => a.value * 2, [a]);
+		inspect();
+		await tick();
+
+		double.dispose();
+		await tick();
+
+		expect(
+			graphs()
+				.at(-1)
+				.signals.map((s: { id: string }) => s.id),
+		).toEqual([a.__internalId]);
+	});
+
+	it("reports a signal whose value cannot be serialized", async () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		signals.useSignals(nube);
+		const data = signals.signal<unknown>(null);
+		render(data);
+		inspect();
+		await tick();
+
+		const cyclic: Record<string, unknown> = {};
+		cyclic.self = cyclic;
+		data.value = cyclic;
+		await tick();
+		await tick();
+
+		expect(graphs().at(-1).unserializable).toEqual([data.__internalId]);
+
+		data.value = "fine";
+		await tick();
+		await tick();
+		expect(graphs().at(-1).unserializable).toEqual([]);
+	});
+
+	it("does not apply platform values before useSignals", () => {
+		const count = signals.signal(0);
+		update([{ id: count.__internalId, value: 5 }]);
+		expect(count.value).toBe(0);
+	});
+});

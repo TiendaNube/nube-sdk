@@ -71,6 +71,15 @@ page.
 Dependencies are explicit: `computed` and `effect` receive the signals they
 read, and throw if the list is empty. Changes are compared with `Object.is`.
 
+### Debugging
+
+The NubeSDK DevTools has a **Signals** page: the signals the page renders,
+their values and history, where each one is used and, per app, the graph of
+signals, computed signals and effects.
+
+The graph is only sent while the DevTools is open, and never includes values:
+the page only ever gets the value of a signal passed to a component.
+
 ### Values
 
 Signal values are shared with the platform, so they should survive
@@ -96,6 +105,10 @@ The platform renders it as a view bound to the signal, starting from
   label, never leaves the worker;
 - `internal:signals:update` (platform → app): values the platform sets on the
   signals of the app. They are applied in one batch and not sent back.
+
+Two more events exist only for the DevTools: `internal:signals:inspect`
+(platform → app) asks the app to describe its signals, and
+`internal:signals:graph` (app → platform) answers with their kinds and dependencies.
 
 ## Official Documentation
 

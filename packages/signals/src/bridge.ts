@@ -15,6 +15,14 @@
  *   signals of the app, for example the value of a bound field. They are
  *   applied in a single batch and are not sent back.
  *
+ * Two more exist only for the NubeSDK DevTools:
+ *
+ * - `internal:signals:inspect` (main → worker): sent when the DevTools is
+ *   open. Until it arrives, nothing below is ever sent;
+ * - `internal:signals:graph` (worker → main): the signals, computed signals
+ *   and effects of the app, their dependencies, and what is keeping
+ *   a signal from reaching the page. It carries no values.
+ *
  * Messages are JSON strings with the app id, like every other internal
  * message of the SDK: the platform drops any message whose `app` is not the
  * one of the worker it came from, and only applies values to signals whose
@@ -24,10 +32,14 @@
 import type {
 	NubeSDK,
 	NubeSignalEntry,
+	NubeSignalGraphEffect,
+	NubeSignalGraphNode,
 	NubeSignalsEvent,
 	NubeSignalsEventData,
+	NubeSignalsGraphEventData,
 } from "@tiendanube/nube-sdk-types";
 import {
+	type EffectInfo,
 	type SignalNode,
 	batch,
 	computed,
@@ -38,6 +50,11 @@ import {
 
 const SYNC_EVENT: NubeSignalsEvent = "internal:signals:sync";
 const UPDATE_EVENT: NubeSignalsEvent = "internal:signals:update";
+const INSPECT_EVENT: NubeSignalsEvent = "internal:signals:inspect";
+const GRAPH_EVENT: NubeSignalsEvent = "internal:signals:graph";
+
+/** Most signals and effects described in one graph message. */
+const MAX_GRAPH_NODES = 500;
 
 type WorkerScope = {
 	postMessage(message: string): void;
@@ -55,6 +72,16 @@ const pending = new Set<SignalNode<unknown>>();
 /** Signals serialized into a tree at least once: the only ones the page shows. */
 const rendered = new Set<SignalNode<unknown>>();
 
+/** Effects alive, for the DevTools. */
+const effects = new Set<EffectInfo>();
+/** Whether the DevTools asked for the graph. Nothing is sent before that. */
+let inspected = false;
+let graphScheduled = false;
+/** Rendered signals changed while `useSignals` had not been called. */
+const unsynced = new Set<string>();
+/** Signals whose last value could not be serialized. */
+const unserializable = new Set<string>();
+
 function scope(): WorkerScope | undefined {
 	return typeof self !== "undefined"
 		? (self as unknown as WorkerScope)
@@ -65,8 +92,70 @@ function appId(): string | undefined {
 	return typeof self !== "undefined" ? self.__APP_DATA__?.id : undefined;
 }
 
+/**
+ * Describes the signals of the app to the DevTools: structure only, never
+ * values. Batched per microtask, like value changes.
+ */
+function scheduleGraph(): void {
+	if (!inspected || graphScheduled) return;
+	graphScheduled = true;
+	queueMicrotask(sendGraph);
+}
+
+function sendGraph(): void {
+	graphScheduled = false;
+
+	const signals: NubeSignalGraphNode[] = [];
+	for (const node of live.values()) {
+		if (signals.length >= MAX_GRAPH_NODES) break;
+		const entry: NubeSignalGraphNode = {
+			id: node.__internalId,
+			kind: node.readonly ? "computed" : "signal",
+			rendered: rendered.has(node),
+		};
+		if (node.readonly) entry.deps = [...node.sources];
+		signals.push(entry);
+	}
+
+	const effectList: NubeSignalGraphEffect[] = [];
+	for (const info of effects) {
+		if (effectList.length >= MAX_GRAPH_NODES) break;
+		effectList.push({
+			id: `effect-${info.seq.toString(36)}`,
+			deps: [...info.deps],
+		});
+	}
+
+	const data: NubeSignalsGraphEventData = {
+		connected: instance !== undefined,
+		signals,
+		effects: effectList,
+		unsynced: [...unsynced],
+		unserializable: [...unserializable],
+	};
+	if (live.size > signals.length || effects.size > effectList.length) {
+		data.truncated = true;
+	}
+
+	try {
+		scope()?.postMessage(
+			JSON.stringify({ app: appId(), type: GRAPH_EVENT, data }),
+		);
+	} catch {
+		// Debugging aid only: never let it break the app.
+	}
+}
+
 function queue(node: SignalNode<unknown>): void {
-	if (!instance || !rendered.has(node)) return;
+	if (!instance) {
+		// The page shows this signal, and will never hear about this change.
+		if (rendered.has(node) && !unsynced.has(node.__internalId)) {
+			unsynced.add(node.__internalId);
+			scheduleGraph();
+		}
+		return;
+	}
+	if (!rendered.has(node)) return;
 	pending.add(node);
 	if (scheduled) return;
 	scheduled = true;
@@ -87,7 +176,12 @@ function flushPending(): void {
 		try {
 			JSON.stringify(entry);
 			entries.push(entry);
+			if (unserializable.delete(entry.id)) scheduleGraph();
 		} catch (error) {
+			if (!unserializable.has(entry.id)) {
+				unserializable.add(entry.id);
+				scheduleGraph();
+			}
 			console.error(
 				`[nube-sdk-signals] The value of signal "${entry.id}" cannot be serialized:`,
 				error,
@@ -120,6 +214,14 @@ function isUpdate(message: unknown): message is { data: NubeSignalsEventData } {
 	return type === UPDATE_EVENT && Array.isArray(data?.entries);
 }
 
+function isInspect(message: unknown): boolean {
+	return (
+		typeof message === "object" &&
+		message !== null &&
+		(message as { type?: unknown }).type === INSPECT_EVENT
+	);
+}
+
 function handleMessage(event: MessageEvent): void {
 	if (typeof event.data !== "string") return;
 	let message: unknown;
@@ -128,7 +230,15 @@ function handleMessage(event: MessageEvent): void {
 	} catch {
 		return;
 	}
-	if (!isUpdate(message)) return;
+
+	if (isInspect(message)) {
+		inspected = true;
+		scheduleGraph();
+		return;
+	}
+
+	// Values from the platform only apply once the app connected its signals.
+	if (!instance || !isUpdate(message)) return;
 
 	batch(() => {
 		for (const entry of message.data.entries) {
@@ -143,18 +253,46 @@ setCoreHooks({
 	onCreate(node) {
 		// Not sent: the tree carries the value of the signal when it is rendered.
 		live.set(node.__internalId, node);
+		scheduleGraph();
 	},
 	onRender(node) {
 		// Changes before this point need no message: the tree carries the value.
+		if (rendered.has(node)) return;
 		rendered.add(node);
+		scheduleGraph();
 	},
 	onChange: queue,
 	onDispose(node) {
 		live.delete(node.__internalId);
 		pending.delete(node);
 		rendered.delete(node);
+		unsynced.delete(node.__internalId);
+		unserializable.delete(node.__internalId);
+		scheduleGraph();
+	},
+	onEffectCreate(info) {
+		effects.add(info);
+		scheduleGraph();
+	},
+	onEffectDispose(info) {
+		effects.delete(info);
+		scheduleGraph();
 	},
 });
+
+/**
+ * Listens to the platform. Done when the package loads, not in `useSignals`,
+ * so the DevTools can describe the signals of an app that forgot to call it,
+ * which is the first thing worth finding out.
+ */
+function listen(): void {
+	const target = scope();
+	if (listening || typeof target?.addEventListener !== "function") return;
+	target.addEventListener("message", handleMessage);
+	listening = true;
+}
+
+listen();
 
 /**
  * Connects the signals of the app to the platform, so signals passed to
@@ -190,11 +328,7 @@ export function useSignals(nube: Readonly<NubeSDK>) {
 		);
 	}
 	instance = nube;
-
-	const target = scope();
-	if (!listening && target) {
-		target.addEventListener("message", handleMessage);
-		listening = true;
-	}
+	listen();
+	scheduleGraph();
 	return { signal, computed, effect, batch };
 }

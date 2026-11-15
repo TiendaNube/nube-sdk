@@ -61,6 +61,14 @@ export type AnySignal = ReadonlySignal<unknown>;
  */
 export type EffectCallback = () => unknown;
 
+/** An effect, as the DevTools sees it. */
+export type EffectInfo = {
+	/** Creation order, shared with signals. */
+	readonly seq: number;
+	/** Ids of the signals it depends on. */
+	readonly deps: readonly string[];
+};
+
 /** Limit of runs in a single flush, to stop effects that feed each other. */
 const MAX_RUNS_PER_FLUSH = 10_000;
 
@@ -76,6 +84,8 @@ export type CoreHooks = {
 	onRender(node: SignalNode<unknown>): void;
 	onChange(node: SignalNode<unknown>): void;
 	onDispose(node: SignalNode<unknown>): void;
+	onEffectCreate(effect: EffectInfo): void;
+	onEffectDispose(effect: EffectInfo): void;
 };
 
 let hooks: CoreHooks | undefined;
@@ -159,14 +169,16 @@ export class SignalNode<T> implements Signal<T> {
 	declare readonly initialValue: T;
 	readonly #seq: number;
 	readonly #readonly: boolean;
+	readonly #sources: readonly string[];
 	#value: T;
 	readonly #subscribers = new Set<Subscriber<T>>();
 	readonly #dependents = new Set<Node>();
 
-	constructor(value: T, readonly = false) {
+	constructor(value: T, readonly = false, sources: readonly string[] = []) {
 		this.#seq = ++sequence;
 		this.#value = value;
 		this.#readonly = readonly;
+		this.#sources = sources;
 		Object.defineProperties(this, {
 			type: { value: "signal", enumerable: true },
 			__internalId: { value: createSignalId(this.#seq), enumerable: true },
@@ -187,6 +199,11 @@ export class SignalNode<T> implements Signal<T> {
 
 	get readonly(): boolean {
 		return this.#readonly;
+	}
+
+	/** Ids of the signals a computed signal derives from. */
+	get sources(): readonly string[] {
+		return this.#sources;
 	}
 
 	get value(): T {
@@ -306,7 +323,11 @@ export function computed<T>(
 	deps: readonly AnySignal[],
 ): Computed<T> {
 	const sources = readDeps(deps, "computed()");
-	const result = new SignalNode<T>(fn(), true);
+	const result = new SignalNode<T>(
+		fn(),
+		true,
+		sources.map((source) => source.__internalId),
+	);
 	const node: Node = {
 		seq: result.seq,
 		run() {
@@ -374,13 +395,20 @@ export function effect(
 		},
 	};
 
+	const info: EffectInfo = {
+		seq: node.seq,
+		deps: sources.map((source) => source.__internalId),
+	};
+
 	for (const source of sources) source.addDependent(node);
+	hooks?.onEffectCreate(info);
 	node.run();
 
 	return () => {
 		if (disposed) return;
 		disposed = true;
 		for (const source of sources) source.removeDependent(node);
+		hooks?.onEffectDispose(info);
 		runCleanup();
 	};
 }

@@ -53,7 +53,12 @@ export type NubeSignalText = string | number | boolean | null | undefined;
  * - `internal:signals:sync` — from the app: new values of signals changed
  *   after they were sent in a tree, batched per microtask;
  * - `internal:signals:update` — from the platform: new values for signals
- *   the app created, such as the value of a bound field.
+ *   the app created, such as the value of a bound field;
+ * - `internal:signals:inspect` — from the platform, only when the NubeSDK
+ *   DevTools is open: asks the app to describe its signals;
+ * - `internal:signals:graph` — from the app, only after being asked: the
+ *   signals, computed signals and effects of the app and how they depend on
+ *   each other (see {@link NubeSignalsGraphEventData}). It carries no values.
  *
  * Messages keep their order, and a tree carries the values of the moment it
  * was sent. So the platform takes `initialValue` from each tree it receives
@@ -61,7 +66,9 @@ export type NubeSignalText = string | number | boolean | null | undefined;
  */
 export type NubeSignalsEvent =
 	| "internal:signals:sync"
-	| "internal:signals:update";
+	| "internal:signals:update"
+	| "internal:signals:inspect"
+	| "internal:signals:graph";
 
 /**
  * One signal value in a sync or update event.
@@ -85,4 +92,49 @@ export type NubeSignalEntry = {
  */
 export type NubeSignalsEventData = {
 	entries: NubeSignalEntry[];
+};
+
+/**
+ * A signal or computed signal of an app, as described to the NubeSDK
+ * DevTools.
+ */
+export type NubeSignalGraphNode = {
+	/** The `__internalId` of the signal. */
+	id: string;
+	kind: "signal" | "computed";
+	/** Whether the signal was ever passed to a component. */
+	rendered: boolean;
+	/** `computed` only: ids of the signals it derives from. */
+	deps?: string[];
+};
+
+/**
+ * An effect of an app, as described to the NubeSDK DevTools.
+ */
+export type NubeSignalGraphEffect = {
+	/** `effect-<n>`, unique within the app. */
+	id: string;
+	/** Ids of the signals it depends on. */
+	deps: string[];
+};
+
+/**
+ * Data of the `internal:signals:graph` event: the reactive graph of an app,
+ * without any value. Values only reach the page for signals passed to a
+ * component, through the tree and `internal:signals:sync`.
+ */
+export type NubeSignalsGraphEventData = {
+	/** Whether the app called `useSignals(nube)`. */
+	connected: boolean;
+	signals: NubeSignalGraphNode[];
+	effects: NubeSignalGraphEffect[];
+	/**
+	 * Signals passed to a component and changed afterwards while the app was
+	 * not connected, so the page never got the new value.
+	 */
+	unsynced: string[];
+	/** Signals whose value could not be sent because it is not serializable. */
+	unserializable: string[];
+	/** The app has more signals or effects than a message carries. */
+	truncated?: boolean;
 };
