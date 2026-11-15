@@ -23,6 +23,13 @@ export type NubeSDKComponentsSnapshot = {
 	 * not render that slot on this page.
 	 */
 	mounted: Record<string, number>;
+	/**
+	 * What the page's signal store holds for each signal found in the trees,
+	 * keyed by the signal's `__internalId`. A signal without an entry is still
+	 * showing the `initialValue` of its tree; an entry without `value` holds
+	 * `undefined`. Absent on SDK versions without signals.
+	 */
+	signals?: Record<string, { value?: unknown }>;
 };
 
 /**
@@ -49,12 +56,40 @@ export const readComponents = (): NubeSDKComponentsSnapshot | null => {
 			if (slot) mounted[slot] = (mounted[slot] ?? 0) + 1;
 		}
 
+		// The store has no way to list its signals, and needs none: the only
+		// signals the page shows are the ones in the trees.
+		const store = sdk.signals;
+		let signals: Record<string, { value?: unknown }> | undefined;
+		if (typeof store?.get === "function") {
+			signals = {};
+			const found = signals;
+			const seen = new Set<unknown>();
+			const visit = (value: unknown, depth: number) => {
+				if (typeof value !== "object" || value === null) return;
+				if (depth > 64 || seen.has(value)) return;
+				seen.add(value);
+				if (Array.isArray(value)) {
+					for (const item of value) visit(item, depth + 1);
+					return;
+				}
+				const node = value as Record<string, unknown>;
+				if (node.type === "signal" && typeof node.__internalId === "string") {
+					const entry = store.get(node.__internalId);
+					if (entry) found[node.__internalId] = { value: entry.value };
+					return;
+				}
+				for (const item of Object.values(node)) visit(item, depth + 1);
+			};
+			visit(state?.ui?.slots, 0);
+		}
+
 		return JSON.parse(
 			JSON.stringify({
 				page: state?.ui?.slots ?? {},
 				apps,
 				values: state?.ui?.values ?? {},
 				mounted,
+				signals,
 			}),
 		);
 	} catch {

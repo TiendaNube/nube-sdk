@@ -69,6 +69,74 @@ declare global {
 		timestamp: number;
 	};
 
+	/** One signal whose value an app changed. */
+	type NubeSDKDevtoolsSignalChange = {
+		/** The `__internalId` of the signal (`signal-<appId>-<n>`). */
+		id: string;
+		/** The new value. Missing when it is `undefined`. */
+		value?: unknown;
+		/** The value the page had before. Missing when it is `undefined`. */
+		prev?: unknown;
+		/**
+		 * Whether the page had a value before this change. Without one, the
+		 * signal was still showing the `initialValue` of its tree.
+		 */
+		hadPrev: boolean;
+	};
+
+	/**
+	 * One `internal:signals:sync` message as the register applied it: the
+	 * signals an app changed together.
+	 */
+	type NubeSDKDevtoolsSignalsRecord = {
+		/** Monotonic position among signal records. */
+		seq: number;
+		/** App that sent the values. */
+		app: string;
+		changes: NubeSDKDevtoolsSignalChange[];
+		/** Ids the register refused because they belong to another app. */
+		rejected: string[];
+		/** Epoch milliseconds. */
+		timestamp: number;
+	};
+
+	/** A signal or computed signal of an app, as the app described it. */
+	type NubeSDKSignalGraphNode = {
+		id: string;
+		kind: "signal" | "computed";
+		/** Whether the signal was ever passed to a component. */
+		rendered: boolean;
+		/** `computed` only: ids of the signals it derives from. */
+		deps?: string[];
+	};
+
+	/** An effect of an app, as the app described it. */
+	type NubeSDKSignalGraphEffect = {
+		/** `effect-<n>`, unique within the app. */
+		id: string;
+		deps: string[];
+	};
+
+	/**
+	 * The signals, computed signals and effects of one app and how they
+	 * depend on each other. Structure only, never values.
+	 */
+	type NubeSDKDevtoolsSignalGraph = {
+		app: string;
+		/** Whether the app called `useSignals(nube)`. */
+		connected: boolean;
+		signals: NubeSDKSignalGraphNode[];
+		effects: NubeSDKSignalGraphEffect[];
+		/** Rendered signals changed while the app was not connected. */
+		unsynced: string[];
+		/** Signals whose value could not be serialized. */
+		unserializable: string[];
+		/** The app has more signals or effects than the graph carries. */
+		truncated?: boolean;
+		/** Epoch milliseconds. */
+		timestamp: number;
+	};
+
 	/**
 	 * Instrumentation channel exposed by the runtime when
 	 * `__NUBE_DEVTOOLS_EXTENSION__` is set (see `inject-extension-flag.js`).
@@ -97,6 +165,29 @@ declare global {
 		subscribeLogs?(
 			subscriber: (record: NubeSDKDevtoolsLogRecord) => void,
 		): () => void;
+		/**
+		 * The signals channel. Missing on SDK versions that predate it, so
+		 * every caller feature-detects it.
+		 */
+		emitSignals?(signals: Omit<NubeSDKDevtoolsSignalsRecord, "seq">): void;
+		/** Buffered signal records, oldest first. */
+		signals?(): NubeSDKDevtoolsSignalsRecord[];
+		/** Subscribes to signal records, replaying the buffered ones first. */
+		subscribeSignals?(
+			subscriber: (record: NubeSDKDevtoolsSignalsRecord) => void,
+		): () => void;
+		/**
+		 * The signal graph channel. Its presence is what makes the SDK ask the
+		 * apps to describe their signals. Only the latest graph of each app is
+		 * kept.
+		 */
+		emitSignalGraph?(graph: NubeSDKDevtoolsSignalGraph): void;
+		/** The latest graph of each app. */
+		signalGraphs?(): NubeSDKDevtoolsSignalGraph[];
+		/** Subscribes to graphs, replaying the latest of each app first. */
+		subscribeSignalGraphs?(
+			subscriber: (graph: NubeSDKDevtoolsSignalGraph) => void,
+		): () => void;
 	};
 
 	interface Window {
@@ -107,6 +198,8 @@ declare global {
 		__NUBE_DEVTOOLS_EVENTS_CLEARED_SEQ__?: number;
 		/** Last log `seq` the panel cleared; `readLogs` skips it and older. */
 		__NUBE_DEVTOOLS_LOGS_CLEARED_SEQ__?: number;
+		/** Last signals `seq` the panel cleared; `readSignals` skips it and older. */
+		__NUBE_DEVTOOLS_SIGNALS_CLEARED_SEQ__?: number;
 		/** Command bridge calls recorded by `handleCommands`, oldest first. */
 		__NUBE_DEVTOOLS_COMMANDS__?: NubeSDKCommandRecord[];
 		/** Measurements recorded by `inject-performance-monitor.js`, oldest first. */

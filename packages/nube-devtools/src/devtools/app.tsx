@@ -4,6 +4,7 @@ import { NubeSDKCommandsProvider } from "@/contexts/nube-sdk-commands-context";
 import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
 import { NubeSDKLogsProvider } from "@/contexts/nube-sdk-logs-context";
 import { NubeSDKPerformanceProvider } from "@/contexts/nube-sdk-performance-context";
+import { NubeSDKSignalsProvider } from "@/contexts/nube-sdk-signals-context";
 import { NubeSDKStorageProvider } from "@/contexts/nube-sdk-storage-context";
 import {
 	NavigationProvider,
@@ -19,6 +20,7 @@ import { Events } from "./pages/events";
 import { LocalModePage } from "./pages/local-mode";
 import { Logs } from "./pages/logs";
 import { Performance } from "./pages/performance";
+import { Signals } from "./pages/signals";
 import { State } from "./pages/state";
 import { Storages } from "./pages/storages";
 import { SvgConverter } from "./pages/svg-converter";
@@ -28,6 +30,7 @@ const PAGE_COMPONENTS = {
 	[PAGES.APPS]: Apps,
 	[PAGES.LOCAL_MODE]: LocalModePage,
 	[PAGES.COMPONENTS]: Components,
+	[PAGES.SIGNALS]: Signals,
 	[PAGES.LOGS]: Logs,
 	[PAGES.EVENTS]: Events,
 	[PAGES.STORAGES]: Storages,
@@ -58,8 +61,10 @@ export const App = () => {
 						<NubeSDKCommandsProvider>
 							<NubeSDKPerformanceProvider>
 								<NubeSDKAppsProvider>
-									<AppContent />
-									<Toaster />
+									<NubeSDKSignalsProvider>
+										<AppContent />
+										<Toaster />
+									</NubeSDKSignalsProvider>
 								</NubeSDKAppsProvider>
 							</NubeSDKPerformanceProvider>
 						</NubeSDKCommandsProvider>

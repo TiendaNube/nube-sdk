@@ -1,6 +1,7 @@
 import { MAX_COMMAND_RECORDS } from "../utils/page-commands";
 import { MAX_EVENT_RECORDS } from "../utils/page-events";
 import { MAX_LOG_RECORDS } from "../utils/page-logs";
+import { MAX_SIGNAL_RECORDS } from "../utils/page-signals";
 import { STORAGE_KEY_PATTERN_SOURCE } from "../utils/storage-key";
 import { handleCommands, handleEvents, resendEvent } from "./scripts";
 import type { NubeSDKState } from "./types";
@@ -45,7 +46,12 @@ export const handleDevToolsEvents = async ({ tabId }: { tabId: number }) => {
 		func: handleEvents,
 		// The injected function is serialized without its scope, so the key
 		// format and the history bounds have to be handed over explicitly.
-		args: [STORAGE_KEY_PATTERN_SOURCE, MAX_EVENT_RECORDS, MAX_LOG_RECORDS],
+		args: [
+			STORAGE_KEY_PATTERN_SOURCE,
+			MAX_EVENT_RECORDS,
+			MAX_LOG_RECORDS,
+			MAX_SIGNAL_RECORDS,
+		],
 	});
 	await chrome.scripting.executeScript({
 		target: { tabId },

@@ -9,11 +9,67 @@
  * merge wrappers look like one tree.
  */
 import type { NubeSDKComponentsSnapshot } from "../background/scripts/page-components";
+import {
+	type ConditionOutcome,
+	IS_TRUE,
+	explainCondition,
+	formatValue,
+} from "./conditions";
 
 /** `"page"` is the merged tree the slots render; anything else is an app id. */
 export const PAGE_VIEW = "page";
 
-export type ComponentNodeKind = "slot" | "component" | "text";
+/**
+ * - `signal`: a signal of the app used as a child, shown by its live value;
+ * - `branch`: the `then` or `fallback` content of a `Show`, which has no node
+ *   of its own in the app's tree.
+ */
+export type ComponentNodeKind =
+	| "slot"
+	| "component"
+	| "text"
+	| "signal"
+	| "branch";
+
+/** A signal as the page sees it right now. */
+export type SignalState = {
+	/** `signal-<appId>-<n>`. */
+	id: string;
+	/** What the page shows: the store's value, or `initialValue` without one. */
+	value: unknown;
+	/** The value the signal had when the tree was sent. */
+	initialValue: unknown;
+	/**
+	 * Whether the page's store holds a value for it, i.e. the app changed it
+	 * after rendering. Otherwise `value` is `initialValue`.
+	 */
+	synced: boolean;
+};
+
+/** A signal bound to a prop of a component. */
+export type SignalProp = SignalState & { prop: string };
+
+/** What a `Show` or a `Match.Value` decided for the current value. */
+export type ControlFlowState = {
+	kind: "show" | "match";
+	/** The `when` / `of` signal. Missing when the app passed something else. */
+	signal?: SignalState;
+	/** `Show` only: its condition against the value. */
+	outcome?: ConditionOutcome;
+	/**
+	 * Name of the branch the page mounts (`then`, `fallback`, `Match.When`,
+	 * `Match.Default`), or `null` when it mounts nothing.
+	 */
+	active: string | null;
+};
+
+/** The state of one branch of a `Show` or of a `Match.Value`. */
+export type BranchState = {
+	/** Whether the page mounts this branch for the current value. */
+	active: boolean;
+	/** `Match.When` only: its condition against the value. */
+	outcome?: ConditionOutcome;
+};
 
 export type ComponentNode = {
 	/** Unique within the tree: the node's path. React key and selection id. */
@@ -45,6 +101,19 @@ export type ComponentNode = {
 	repeatable?: boolean;
 	/** Slot only: apps contributing to it. */
 	apps?: string[];
+	/** `signal` nodes: the signal behind the text. */
+	signal?: SignalState;
+	/** Signals bound to props of the component. */
+	signalProps?: SignalProp[];
+	/** `Show` and `Match.Value`: what they decided. */
+	controlFlow?: ControlFlowState;
+	/** `Show` branches, `Match.When` and `Match.Default`. */
+	branch?: BranchState;
+	/**
+	 * The node sits in a branch the page does not mount: it is in the app's
+	 * tree, but not on the page.
+	 */
+	inactive?: boolean;
 };
 
 type RawComponent = {
@@ -54,6 +123,22 @@ type RawComponent = {
 	key?: unknown;
 	[prop: string]: unknown;
 };
+
+type RawSignal = {
+	type: "signal";
+	__internalId: string;
+	initialValue?: unknown;
+};
+
+/** A signal of an app, as it travels in a tree. */
+function isSignal(value: unknown): value is RawSignal {
+	return (
+		typeof value === "object" &&
+		value !== null &&
+		(value as RawSignal).type === "signal" &&
+		typeof (value as RawSignal).__internalId === "string"
+	);
+}
 
 function isComponent(value: unknown): value is RawComponent {
 	return (
@@ -84,6 +169,9 @@ const COMPONENT_NAMES: Record<string, string> = {
 	numberfield: "NumberField",
 	sidescroll: "SideScroll",
 	videoStories: "VideoStories",
+	matchValue: "Match.Value",
+	matchWhen: "Match.When",
+	matchDefault: "Match.Default",
 };
 
 /** `<namespace><Part>` types, rendered as `Namespace.Part` like in JSX. */
@@ -131,6 +219,8 @@ function walkComponents(value: unknown, visit: (node: RawComponent) => void) {
 	if (isComponent(value)) {
 		visit(value);
 		walkComponents(value.children, visit);
+		// The other side of a `Show` travels in a prop.
+		if (value.type === "show") walkComponents(value.fallback, visit);
 		return;
 	}
 	if (isRecord(value)) {
@@ -163,7 +253,104 @@ type BuildContext = {
 	app?: string;
 	/** Whether merge wrappers are flattened (page view only). */
 	flattenMerges: boolean;
+	/** What the page's signal store holds (see `readComponents`). */
+	signals: NonNullable<NubeSDKComponentsSnapshot["signals"]>;
 };
+
+/** Same rule as the platform: the store wins over `initialValue`. */
+function signalState(raw: RawSignal, context: BuildContext): SignalState {
+	const entry = Object.prototype.hasOwnProperty.call(
+		context.signals,
+		raw.__internalId,
+	)
+		? context.signals[raw.__internalId]
+		: undefined;
+	return {
+		id: raw.__internalId,
+		value: entry ? entry.value : raw.initialValue,
+		initialValue: raw.initialValue,
+		synced: entry !== undefined,
+	};
+}
+
+/** Marks everything under a branch the page does not mount. */
+function markInactive(nodes: ComponentNode[]) {
+	for (const node of nodes) {
+		node.inactive = true;
+		markInactive(node.children);
+	}
+}
+
+function branchNode(
+	name: string,
+	path: string,
+	active: boolean,
+	children: ComponentNode[],
+	context: BuildContext,
+	app: string | undefined,
+): ComponentNode {
+	if (!active) markInactive(children);
+	return {
+		key: path,
+		kind: "branch",
+		name,
+		slot: context.slot,
+		app,
+		props: {},
+		children,
+		branch: { active },
+	};
+}
+
+/**
+ * The children of a `Match.Value`, with the case the page mounts marked:
+ * the first `Match.When` whose condition matches, otherwise the first
+ * `Match.Default`, wherever it is.
+ */
+function buildMatchChildren(
+	children: unknown,
+	path: string,
+	context: BuildContext,
+	inherited: { app?: string; entryKey?: string },
+	signal: SignalState | undefined,
+): { nodes: ComponentNode[]; active: string | null } {
+	const nodes = buildNodes(children, path, context, inherited);
+
+	let winner: ComponentNode | undefined;
+	let fallback: ComponentNode | undefined;
+	for (const node of nodes) {
+		if (node.type === "matchWhen") {
+			const outcome = explainCondition(node.props.condition, signal?.value);
+			node.branch = { active: false, outcome };
+			const { condition: _condition, ...props } = node.props;
+			node.props = props;
+			if (!winner && signal && outcome.matches) winner = node;
+		} else if (node.type === "matchDefault") {
+			node.branch = { active: false };
+			fallback ??= node;
+		}
+	}
+
+	const active = signal ? winner ?? fallback : undefined;
+	for (const node of nodes) {
+		if (node === active) (node.branch as BranchState).active = true;
+		// Anything else is never rendered, a stray child included.
+		else {
+			node.inactive = true;
+			markInactive(node.children);
+		}
+	}
+
+	const outcome = active?.branch?.outcome;
+	return {
+		nodes,
+		active: active
+			? outcome
+				? `${active.name} ${outcome.text}`
+				: active.name
+			: null,
+	};
+}
 
 function textNode(
 	value: string | number,
@@ -198,6 +385,22 @@ function buildNodes(
 		);
 	}
 
+	if (isSignal(value)) {
+		const signal = signalState(value, context);
+		return [
+			{
+				key: path,
+				kind: "signal",
+				name: formatValue(signal.value, 80),
+				slot: context.slot,
+				app: inherited.app,
+				props: {},
+				children: [],
+				signal,
+			},
+		];
+	}
+
 	if (!isComponent(value)) return [];
 
 	const { type, children, __internalId, key, ...props } = value;
@@ -213,26 +416,100 @@ function buildNodes(
 
 	const app = context.app ?? (id && context.owners.get(id)) ?? inherited.app;
 
-	return [
-		{
-			key: path,
-			kind: "component",
-			name: componentName(type),
-			type,
-			id,
-			slot: context.slot,
-			app,
-			entryKey: inherited.entryKey,
-			componentKey:
-				typeof key === "string" || typeof key === "number"
-					? String(key)
-					: undefined,
-			props,
-			children: buildNodes(children, `${path}.c`, context, {
+	const node: ComponentNode = {
+		key: path,
+		kind: "component",
+		name: componentName(type),
+		type,
+		id,
+		slot: context.slot,
+		app,
+		entryKey: inherited.entryKey,
+		componentKey:
+			typeof key === "string" || typeof key === "number"
+				? String(key)
+				: undefined,
+		props,
+		children: [],
+	};
+
+	if (type === "show") {
+		// The app's tree has no node for the two sides of a `Show`: `children`
+		// and the `fallback` prop. They get one each here, so the one the page
+		// does not mount can be told apart.
+		const { when, condition, fallback, ...rest } = props;
+		const signal = isSignal(when) ? signalState(when, context) : undefined;
+		const outcome = explainCondition(
+			condition === undefined ? IS_TRUE : condition,
+			signal?.value,
+		);
+		const matches = signal !== undefined && outcome.matches;
+
+		node.props = rest;
+		node.children = [
+			branchNode(
+				"then",
+				`${path}.then`,
+				matches,
+				buildNodes(children, `${path}.c`, context, { app }),
+				context,
 				app,
-			}),
-		},
-	];
+			),
+		];
+		if (fallback !== undefined) {
+			node.children.push(
+				branchNode(
+					"fallback",
+					`${path}.else`,
+					signal !== undefined && !matches,
+					buildNodes(fallback, `${path}.f`, context, { app }),
+					context,
+					app,
+				),
+			);
+		}
+		node.controlFlow = {
+			kind: "show",
+			signal,
+			outcome,
+			active: !signal
+				? null
+				: matches
+					? "then"
+					: fallback !== undefined
+						? "fallback"
+						: null,
+		};
+		return [node];
+	}
+
+	if (type === "matchValue") {
+		const { of, ...rest } = props;
+		const signal = isSignal(of) ? signalState(of, context) : undefined;
+		const match = buildMatchChildren(
+			children,
+			`${path}.c`,
+			context,
+			{ app },
+			signal,
+		);
+
+		node.props = rest;
+		node.children = match.nodes;
+		node.controlFlow = { kind: "match", signal, active: match.active };
+		return [node];
+	}
+
+	const signalProps: SignalProp[] = [];
+	for (const [prop, propValue] of Object.entries(props)) {
+		if (isSignal(propValue)) {
+			signalProps.push({ prop, ...signalState(propValue, context) });
+		}
+	}
+	if (signalProps.length > 0) node.signalProps = signalProps;
+
+	node.children = buildNodes(children, `${path}.c`, context, { app });
+	return [node];
 }
 
 function collectApps(nodes: ComponentNode[], apps: Set<string>) {
@@ -264,6 +541,7 @@ export function buildComponentTree(
 				owners,
 				app: isPage ? undefined : view,
 				flattenMerges: isPage,
+				signals: snapshot.signals ?? {},
 			};
 			const path = `${view}:${slot}`;
 
@@ -372,6 +650,9 @@ function matches(node: ComponentNode, query: string): boolean {
 		node.app,
 		node.entryKey,
 		node.componentKey,
+		node.signal?.id,
+		node.controlFlow?.signal?.id,
+		...(node.signalProps ?? []).map((signal) => signal.id),
 	]
 		.filter((value): value is string => typeof value === "string")
 		.some((value) => value.toLowerCase().includes(query));

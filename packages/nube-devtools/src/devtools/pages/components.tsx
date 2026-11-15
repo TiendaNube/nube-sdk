@@ -1,4 +1,3 @@
-import type { NubeSDKComponentsSnapshot } from "@/background/scripts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Divider } from "@/components/ui/divider";
@@ -14,16 +13,19 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
+import { PAGES, useNavigation } from "@/contexts/navigation-context";
+import { ConditionSteps } from "@/devtools/components/condition-steps";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
 import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import { SearchInput } from "@/devtools/components/search-input";
 import { UpdatedAt } from "@/devtools/components/updated-at";
+import { useComponentsSnapshot } from "@/devtools/hooks";
 import { usePanelDirection } from "@/hooks/use-panel-direction";
 import {
 	type ComponentNode,
 	PAGE_VIEW,
+	type SignalState,
 	ancestorKeys,
 	buildComponentTree,
 	countComponents,
@@ -32,12 +34,12 @@ import {
 	findNode,
 	nodeForDomIds,
 } from "@/utils/component-tree";
+import { formatValue } from "@/utils/conditions";
 import { copyToClipboard } from "@/utils/file-utils";
 import {
 	highlightPageComponents,
 	inspectPageComponent,
 	readInspectedElementIds,
-	readPageComponents,
 	scrollToPageComponent,
 } from "@/utils/page-components";
 import {
@@ -50,6 +52,7 @@ import {
 	RefreshCwIcon,
 	ScanSearchIcon,
 	TriangleAlertIcon,
+	ZapIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -58,13 +61,6 @@ const PANEL_WIDTH_KEY = "nube-devtools-components-page-width";
 
 const FILTER_SELECT_CLASS =
 	"h-5 shrink-0 rounded border bg-transparent px-1.5 text-[12px] outline-none";
-
-/**
- * Wait after the last dispatch before re-reading the page. Events like
- * `page:scroll` come in bursts, and the tree only needs the state they settle
- * on.
- */
-const REFRESH_DEBOUNCE = 150;
 
 type Row = { node: ComponentNode; depth: number };
 
@@ -88,35 +84,16 @@ function flattenRows(
 export function Components() {
 	const { direction, toggleDirection, autoSaveId } =
 		usePanelDirection(PANEL_WIDTH_KEY);
-	const { events } = useNubeSDKEventsContext();
+	// Every dispatch may have re-rendered a slot, and every signal change may
+	// have swapped a branch, so the tree follows both streams instead of
+	// waiting for a manual refresh.
+	const { snapshot, isLoading, updatedAt, refresh } = useComponentsSnapshot();
+	const { focus, clearFocus, navigate } = useNavigation();
 
-	const [snapshot, setSnapshot] = useState<NubeSDKComponentsSnapshot | null>(
-		null,
-	);
-	const [isLoading, setIsLoading] = useState(true);
-	const [updatedAt, setUpdatedAt] = useState(0);
 	const [view, setView] = useState<string>(PAGE_VIEW);
 	const [search, setSearch] = useState("");
 	const [selectedKey, setSelectedKey] = useState<string | null>(null);
 	const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
-
-	/** Re-reads the page; resolves `false` when it could not be read. */
-	const refresh = useCallback(async (): Promise<boolean> => {
-		const next = await readPageComponents();
-		setSnapshot(next);
-		setIsLoading(false);
-		setUpdatedAt(Date.now());
-		return next !== null;
-	}, []);
-
-	// Every dispatch may have re-rendered a slot, so the tree follows the
-	// event stream instead of waiting for a manual refresh.
-	const lastSeq = events.at(-1)?.record.seq ?? -1;
-	// biome-ignore lint/correctness/useExhaustiveDependencies: lastSeq is the refresh trigger, not a value the effect reads
-	useEffect(() => {
-		const timeout = setTimeout(refresh, REFRESH_DEBOUNCE);
-		return () => clearTimeout(timeout);
-	}, [refresh, lastSeq]);
 
 	// Never leave an outline on the page once the panel moves elsewhere.
 	useEffect(() => () => void highlightPageComponents([]), []);
@@ -169,6 +146,28 @@ export function Components() {
 				?.scrollIntoView({ block: "nearest" });
 		});
 	}, []);
+
+	// Another page (Signals) asked for a node of the page view.
+	useEffect(() => {
+		if (focus?.page !== PAGES.COMPONENTS) return;
+		if (view !== PAGE_VIEW) {
+			setView(PAGE_VIEW);
+			return;
+		}
+		if (!findNode(tree, focus.target)) {
+			// Still loading; a tree without the node will never have it.
+			if (snapshot) clearFocus();
+			return;
+		}
+		setSearch("");
+		reveal(focus.target);
+		clearFocus();
+	}, [focus, view, tree, snapshot, reveal, clearFocus]);
+
+	const openSignal = useCallback(
+		(id: string) => navigate(PAGES.SIGNALS, id),
+		[navigate],
+	);
 
 	// Selecting an element in the Elements panel selects the component that
 	// rendered it, the way framework devtools sync with the inspector.
@@ -305,6 +304,7 @@ export function Components() {
 							<ComponentDetail
 								node={selectedNode}
 								values={snapshot?.values ?? {}}
+								onOpenSignal={openSignal}
 							/>
 						</ResizablePanel>
 					</ResizablePanelGroup>
@@ -409,6 +409,15 @@ function ComponentRow({
 			<span className="truncate italic text-muted-foreground">
 				"{node.name}"
 			</span>
+		) : node.kind === "signal" ? (
+			<span className="flex min-w-0 items-center gap-1">
+				<span className="truncate text-emerald-700 dark:text-emerald-300">
+					{node.name}
+				</span>
+				<SignalTag id={node.signal?.id ?? ""} />
+			</span>
+		) : node.kind === "branch" ? (
+			<span className="truncate italic text-muted-foreground">{node.name}</span>
 		) : (
 			<span
 				className={`truncate ${
@@ -423,6 +432,8 @@ function ComponentRow({
 		<li
 			data-node-key={node.key}
 			className={`flex items-center h-6 pr-2 text-[12px] font-mono ${
+				node.inactive || node.branch?.active === false ? "opacity-50 " : ""
+			}${
 				isSelected
 					? "bg-accent"
 					: isSlot
@@ -475,9 +486,152 @@ function ComponentRow({
 						app {node.app}
 					</span>
 				)}
+				{node.controlFlow && <ControlFlowSummary node={node} />}
+				{node.branch && <BranchBadge node={node} />}
+				{node.signalProps?.map((signal) => (
+					<span
+						key={signal.prop}
+						className="flex shrink-0 items-center gap-1 text-muted-foreground"
+					>
+						{signal.prop}=
+						<span className="text-emerald-700 dark:text-emerald-300">
+							{formatValue(signal.value, 24)}
+						</span>
+						<SignalTag id={signal.id} />
+					</span>
+				))}
 				{isSlot && <SlotBadges node={node} />}
 			</button>
 		</li>
+	);
+}
+
+/** The short name of a signal: what comes after `signal-<appId>-`. */
+function SignalTag({ id }: { id: string }) {
+	return (
+		<span
+			className="inline-flex shrink-0 items-center gap-0.5 rounded bg-amber-500/10 px-1 text-[10px] text-amber-700 dark:text-amber-300"
+			title={`Live value of ${id}`}
+		>
+			<ZapIcon className="size-2.5" />
+			{id.slice(id.lastIndexOf("-") + 1)}
+		</span>
+	);
+}
+
+/** `Show` and `Match.Value`: the signal they follow and its value. */
+function ControlFlowSummary({ node }: { node: ComponentNode }) {
+	const signal = node.controlFlow?.signal;
+	const prop = node.controlFlow?.kind === "show" ? "when" : "of";
+
+	if (!signal) {
+		return (
+			<Badge
+				variant="outline"
+				className="shrink-0 font-sans text-[10px] px-1 py-0 border-red-500/40 bg-red-500/10 text-red-700 dark:text-red-300"
+				title={`\`${prop}\` is not a signal of the app, so nothing is rendered`}
+			>
+				{prop} is not a signal
+			</Badge>
+		);
+	}
+
+	return (
+		<span className="flex min-w-0 shrink items-center gap-1 text-muted-foreground">
+			{prop}=
+			<span className="truncate text-emerald-700 dark:text-emerald-300">
+				{formatValue(signal.value, 24)}
+			</span>
+			<SignalTag id={signal.id} />
+		</span>
+	);
+}
+
+/** A branch of a `Show` or of a `Match.Value`: its condition and state. */
+function BranchBadge({ node }: { node: ComponentNode }) {
+	const outcome = node.branch?.outcome;
+
+	return (
+		<span className="flex min-w-0 shrink items-center gap-1.5">
+			{outcome && (
+				<span
+					className={`truncate ${
+						outcome.valid
+							? "text-muted-foreground"
+							: "text-red-700 dark:text-red-300"
+					}`}
+				>
+					{outcome.text}
+				</span>
+			)}
+			{outcome && !outcome.valid ? (
+				<Badge
+					variant="outline"
+					className="shrink-0 font-sans text-[10px] px-1 py-0 border-red-500/40 bg-red-500/10 text-red-700 dark:text-red-300"
+					title="The platform cannot read this condition, so it never matches"
+				>
+					invalid
+				</Badge>
+			) : node.branch?.active ? (
+				<Badge
+					variant="outline"
+					className="shrink-0 font-sans text-[10px] px-1 py-0 border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+				>
+					mounted
+				</Badge>
+			) : (
+				<span className="shrink-0 font-sans text-[10px] text-muted-foreground">
+					not mounted
+				</span>
+			)}
+		</span>
+	);
+}
+
+/** A signal in the detail pane: its value and the way to the Signals page. */
+function SignalDetail({
+	label,
+	signal,
+	onOpenSignal,
+}: {
+	label: string;
+	signal: SignalState;
+	onOpenSignal: (id: string) => void;
+}) {
+	return (
+		<div className="space-y-1">
+			<div className="flex items-center justify-between gap-2">
+				<span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+					{label}
+				</span>
+				<button
+					type="button"
+					className="flex items-center gap-1 text-[11px] font-mono text-amber-700 hover:underline dark:text-amber-300"
+					title="Open in the Signals page"
+					onClick={() => onOpenSignal(signal.id)}
+				>
+					<ZapIcon className="size-3" />
+					{signal.id}
+				</button>
+			</div>
+			<div className="rounded border px-2 py-1.5 text-xs">
+				<JsonViewer
+					data={
+						signal.synced
+							? { value: signal.value, initialValue: signal.initialValue }
+							: { value: signal.value }
+					}
+					name={false}
+					collapsed={2}
+				/>
+			</div>
+			{!signal.synced && (
+				<p className="text-[11px] text-muted-foreground">
+					Still the value it was rendered with: the app has not changed it
+					since.
+				</p>
+			)}
+		</div>
 	);
 }
 
@@ -533,9 +687,11 @@ function DetailRow({
 function ComponentDetail({
 	node,
 	values,
+	onOpenSignal,
 }: {
 	node: ComponentNode | null;
 	values: Record<string, unknown>;
+	onOpenSignal: (id: string) => void;
 }) {
 	if (!node) {
 		return (
@@ -567,7 +723,15 @@ function ComponentDetail({
 			<div className="flex items-center justify-between gap-2 px-3 py-1.5 border-b shrink-0">
 				<div className="min-w-0">
 					<span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-						{isSlot ? "Slot" : node.kind === "text" ? "Text" : "Component"}
+						{isSlot
+							? "Slot"
+							: node.kind === "text"
+								? "Text"
+								: node.kind === "signal"
+									? "Signal (text)"
+									: node.kind === "branch"
+										? "Branch"
+										: "Component"}
 					</span>
 					<div
 						className="truncate text-xs font-medium font-mono"
@@ -594,7 +758,7 @@ function ComponentDetail({
 							<CopyIcon className="size-3" />
 						</Button>
 					)}
-					{node.kind !== "text" && (
+					{(isSlot || node.kind === "component") && (
 						<Button
 							variant="ghost"
 							size="icon"
@@ -605,7 +769,7 @@ function ComponentDetail({
 							<LocateFixedIcon className="size-3" />
 						</Button>
 					)}
-					{node.kind !== "text" && (
+					{(isSlot || node.kind === "component") && (
 						<Button
 							variant="ghost"
 							size="icon"
@@ -669,10 +833,73 @@ function ComponentDetail({
 							</DetailRow>
 						</>
 					)}
-					{node.kind !== "text" && (
+					{node.kind !== "text" && node.kind !== "signal" && (
 						<DetailRow label="Children">{node.children.length}</DetailRow>
 					)}
+					{node.controlFlow?.signal && (
+						<DetailRow label="Mounts">
+							{node.controlFlow.active ?? "nothing"}
+						</DetailRow>
+					)}
+					{node.branch && (
+						<DetailRow label="Mounted">
+							{node.branch.active ? "yes" : "no"}
+						</DetailRow>
+					)}
 				</div>
+
+				{node.inactive && (
+					<div className="flex gap-2 rounded border px-2 py-1.5 text-[11px] text-muted-foreground">
+						<InfoIcon className="size-3.5 shrink-0 mt-0.5" />
+						<span>
+							It is in the app's tree, but inside a branch the page does not
+							mount right now, so it is not on the page.
+						</span>
+					</div>
+				)}
+
+				{node.controlFlow && !node.controlFlow.signal && (
+					<div className="flex gap-2 rounded border border-red-500/40 bg-red-500/10 px-2 py-1.5 text-[11px] text-red-700 dark:text-red-300">
+						<TriangleAlertIcon className="size-3.5 shrink-0 mt-0.5" />
+						<span>
+							<code>{node.controlFlow.kind === "show" ? "when" : "of"}</code> is
+							not a signal of this app, so the page renders nothing here.
+						</span>
+					</div>
+				)}
+
+				{node.signal && (
+					<SignalDetail
+						label="Signal"
+						signal={node.signal}
+						onOpenSignal={onOpenSignal}
+					/>
+				)}
+
+				{node.controlFlow?.signal && (
+					<SignalDetail
+						label={node.controlFlow.kind === "show" ? "When" : "Of"}
+						signal={node.controlFlow.signal}
+						onOpenSignal={onOpenSignal}
+					/>
+				)}
+
+				{node.controlFlow?.outcome && node.controlFlow.signal && (
+					<ConditionSteps outcome={node.controlFlow.outcome} />
+				)}
+
+				{node.branch?.outcome && (
+					<ConditionSteps outcome={node.branch.outcome} />
+				)}
+
+				{node.signalProps?.map((signal) => (
+					<SignalDetail
+						key={signal.prop}
+						label={`Signal in "${signal.prop}"`}
+						signal={signal}
+						onOpenSignal={onOpenSignal}
+					/>
+				))}
 
 				{hasValue && (
 					<div className="space-y-1">

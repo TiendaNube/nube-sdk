@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 import type { ReactNode } from "react";
 
 export const PAGES = {
@@ -8,6 +14,7 @@ export const PAGES = {
 	APPS: "apps",
 	LOCAL_MODE: "local-mode",
 	COMPONENTS: "components",
+	SIGNALS: "signals",
 	SVG_CONVERT: "svg-convert",
 	STATE: "state",
 	API_CALLS: "api-calls",
@@ -16,9 +23,19 @@ export const PAGES = {
 
 export type Page = (typeof PAGES)[keyof typeof PAGES];
 
+/**
+ * Something a page asks another to select when it opens: a component (by the
+ * key of its node in the page view) or a signal (by its id).
+ */
+export type NavigationFocus = { page: Page; target: string };
+
 type NavigationContextType = {
 	currentPage: Page;
-	navigate: (page: Page) => void;
+	/** Opens `page`, optionally asking it to select `target`. */
+	navigate: (page: Page, target?: string) => void;
+	/** What the current page was asked to select, until it takes it. */
+	focus: NavigationFocus | null;
+	clearFocus: () => void;
 };
 
 const NavigationContext = createContext<NavigationContextType | undefined>(
@@ -39,12 +56,19 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
 		localStorage.setItem("currentPage", currentPage);
 	}, [currentPage]);
 
-	const navigate = (page: Page) => {
+	const [focus, setFocus] = useState<NavigationFocus | null>(null);
+
+	const navigate = useCallback((page: Page, target?: string) => {
+		setFocus(target === undefined ? null : { page, target });
 		setCurrentPage(page);
-	};
+	}, []);
+
+	const clearFocus = useCallback(() => setFocus(null), []);
 
 	return (
-		<NavigationContext.Provider value={{ currentPage, navigate }}>
+		<NavigationContext.Provider
+			value={{ currentPage, navigate, focus, clearFocus }}
+		>
 			{children}
 		</NavigationContext.Provider>
 	);

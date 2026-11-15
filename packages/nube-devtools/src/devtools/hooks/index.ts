@@ -10,3 +10,4 @@ export {
 	PANEL_VISIBILITY_EVENT,
 	usePanelVisibility,
 } from "./use-panel-visibility";
+export { useComponentsSnapshot } from "./use-components-snapshot";

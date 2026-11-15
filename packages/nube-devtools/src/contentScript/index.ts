@@ -116,6 +116,44 @@ window.addEventListener("NubeSDKLogEvents", ((event: Event) => {
 }) as EventListener);
 
 /**
+ * Signal changes, batched per microtask by `handleEvents` and forwarded like
+ * logs: one port per batch, so a panel that opens later starts receiving at
+ * once, and the snapshot it takes on open brings in what came before.
+ */
+window.addEventListener("NubeSDKSignalEvents", ((event: Event) => {
+	const records = (event as CustomEvent<NubeSDKDevtoolsSignalsRecord[]>).detail;
+	if (!Array.isArray(records) || records.length === 0) {
+		return;
+	}
+
+	try {
+		const port = chrome.runtime.connect({
+			name: "nube-devtools-signal-events",
+		});
+		port.postMessage({ payload: records });
+	} catch (error) {
+		console.warn("[nube-devtools] failed to forward signal batch", error);
+	}
+}) as EventListener);
+
+/** The signal graph of each app, forwarded the same way as signal changes. */
+window.addEventListener("NubeSDKSignalGraphEvents", ((event: Event) => {
+	const graphs = (event as CustomEvent<NubeSDKDevtoolsSignalGraph[]>).detail;
+	if (!Array.isArray(graphs) || graphs.length === 0) {
+		return;
+	}
+
+	try {
+		const port = chrome.runtime.connect({
+			name: "nube-devtools-signal-graph-events",
+		});
+		port.postMessage({ payload: graphs });
+	} catch (error) {
+		console.warn("[nube-devtools] failed to forward signal graphs", error);
+	}
+}) as EventListener);
+
+/**
  * Storage mutations are grouped per microtask and each group is sent over a new
  * port, which the panel closes after reading it.
  *

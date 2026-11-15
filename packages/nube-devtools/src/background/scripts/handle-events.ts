@@ -3,16 +3,18 @@
  * runtime's devtools records and app logs, and instruments the storages
  * NubeSDK apps write to.
  *
- * `storageKeyPatternSource`, `maxRecords` and `maxLogs` are passed in rather
+ * `storageKeyPatternSource` and the history bounds are passed in rather
  * than declared here because `chrome.scripting.executeScript` serializes this
  * function without its scope: receiving them through `args` keeps one
  * definition of each (`src/utils/storage-key.ts`, `src/utils/page-events.ts`,
- * `src/utils/page-logs.ts`) shared with the panel.
+ * `src/utils/page-logs.ts`, `src/utils/page-signals.ts`) shared with the
+ * panel.
  */
 export const handleEvents = (
 	storageKeyPatternSource: string,
 	maxRecords: number,
 	maxLogs: number,
+	maxSignals: number,
 ) => {
 	if (window.__NUBE_DEVTOOLS_EXTENSION_CUSTOM_EVENTS__) {
 		return;
@@ -74,6 +76,56 @@ export const handleEvents = (
 		queueMicrotask(flushLogs);
 	};
 
+	// Signal changes, batched like logs into `NubeSDKSignalEvents`: a signal
+	// bound to a field changes on every keystroke.
+	const pendingSignals: NubeSDKDevtoolsSignalsRecord[] = [];
+	let signalsFlushScheduled = false;
+
+	const flushSignals = () => {
+		signalsFlushScheduled = false;
+		if (pendingSignals.length === 0) {
+			return;
+		}
+
+		window.dispatchEvent(
+			new CustomEvent("NubeSDKSignalEvents", {
+				detail: pendingSignals.splice(0, pendingSignals.length),
+			}),
+		);
+	};
+
+	const collectSignals = (record: NubeSDKDevtoolsSignalsRecord) => {
+		pendingSignals.push(record);
+		if (signalsFlushScheduled) return;
+		signalsFlushScheduled = true;
+		queueMicrotask(flushSignals);
+	};
+
+	// The graph of each app. Only the latest of an app matters, so a burst
+	// (an app creating its signals one by one) collapses into one per app.
+	const pendingGraphs = new Map<string, NubeSDKDevtoolsSignalGraph>();
+	let graphsFlushScheduled = false;
+
+	const flushGraphs = () => {
+		graphsFlushScheduled = false;
+		if (pendingGraphs.size === 0) {
+			return;
+		}
+
+		const batch = [...pendingGraphs.values()];
+		pendingGraphs.clear();
+		window.dispatchEvent(
+			new CustomEvent("NubeSDKSignalGraphEvents", { detail: batch }),
+		);
+	};
+
+	const collectGraph = (graph: NubeSDKDevtoolsSignalGraph) => {
+		pendingGraphs.set(String(graph.app), graph);
+		if (graphsFlushScheduled) return;
+		graphsFlushScheduled = true;
+		queueMicrotask(flushGraphs);
+	};
+
 	const hook = window.__NUBE_SDK_DEVTOOLS_HOOK__;
 
 	if (hook) {
@@ -83,6 +135,9 @@ export const handleEvents = (
 		hook.subscribe(collect);
 		// SDK versions that predate the log channel simply have no logs.
 		hook.subscribeLogs?.(collectLog);
+		// Nor do the ones that predate signals.
+		hook.subscribeSignals?.(collectSignals);
+		hook.subscribeSignalGraphs?.(collectGraph);
 	} else {
 		// The runtime bundle has not run yet. It honors a hook that is already
 		// on the window, so installing a forwarding one here removes the race
@@ -96,6 +151,9 @@ export const handleEvents = (
 		const buffer: NubeSDKDevtoolsRecord[] = [];
 		let logSeq = 0;
 		const logBuffer: NubeSDKDevtoolsLogRecord[] = [];
+		let signalsSeq = 0;
+		const signalsBuffer: NubeSDKDevtoolsSignalsRecord[] = [];
+		const graphs = new Map<string, NubeSDKDevtoolsSignalGraph>();
 		window.__NUBE_SDK_DEVTOOLS_HOOK__ = {
 			emit: (event) => {
 				const record = { ...event, seq: seq++ };
@@ -115,6 +173,23 @@ export const handleEvents = (
 			},
 			logs: () => logBuffer.slice(),
 			subscribeLogs: () => () => {},
+			// And the signals channel, which the register feature-detects.
+			emitSignals: (signals) => {
+				const record = { ...signals, seq: signalsSeq++ };
+				signalsBuffer.push(record);
+				if (signalsBuffer.length > maxSignals) signalsBuffer.shift();
+				collectSignals(record);
+			},
+			signals: () => signalsBuffer.slice(),
+			subscribeSignals: () => () => {},
+			// Having this method is what makes the SDK ask the apps for their
+			// signal graph.
+			emitSignalGraph: (graph) => {
+				graphs.set(String(graph.app), graph);
+				collectGraph(graph);
+			},
+			signalGraphs: () => [...graphs.values()],
+			subscribeSignalGraphs: () => () => {},
 		};
 	}
 

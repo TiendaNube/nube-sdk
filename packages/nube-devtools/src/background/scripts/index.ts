@@ -16,6 +16,11 @@ export {
 } from "./page-components";
 export { clearLogs, readLogs } from "./page-logs";
 export {
+	clearSignals,
+	type NubeSDKSignalsSnapshot,
+	readSignals,
+} from "./page-signals";
+export {
 	clearPerformance,
 	type NubeSDKPerformanceKind,
 	type NubeSDKPerformanceRecord,

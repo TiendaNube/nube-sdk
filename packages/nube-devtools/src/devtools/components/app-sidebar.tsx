@@ -11,6 +11,7 @@ import {
 	ScrollText,
 	Server,
 	TriangleAlert,
+	Zap,
 } from "lucide-react";
 
 import { Badge as BadgeComponent } from "@/components/ui/badge";
@@ -107,6 +108,11 @@ const menu: {
 		title: "Components",
 		page: PAGES.COMPONENTS,
 		icon: ComponentIcon,
+	},
+	{
+		title: "Signals",
+		page: PAGES.SIGNALS,
+		icon: Zap,
 	},
 	{
 		title: "Logs",
