@@ -1,6 +1,21 @@
 import { CopyableValue } from "@/components/copyable-value";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
-import { Globe, Plug, ShieldCheck, TerminalSquare } from "lucide-react";
+import { useOptionalNubeSDKAppsMetadata } from "@/contexts/nube-sdk-apps-metadata-context";
+import { formatAppLabel } from "@/utils/apps-metadata";
+import {
+	Building2,
+	CalendarClock,
+	CalendarPlus,
+	Download,
+	GitCommitVertical,
+	Globe,
+	Hash,
+	MapPin,
+	Plug,
+	ShieldCheck,
+	Tag,
+	TerminalSquare,
+} from "lucide-react";
 import {
 	BlockedBadge,
 	HostedAppBadge,
@@ -32,6 +47,13 @@ export function AppDetailPanel({
 }: AppDetailPanelProps) {
 	const { id, registered, script } = app.data;
 	const effectiveStatus = isBlocked ? "offline" : scriptStatus;
+	const metadata = useOptionalNubeSDKAppsMetadata()?.getAppMetadata(id);
+	const label = formatAppLabel(metadata);
+	// The store lists the script it serves; local mode or a stale page can
+	// load another one under the same app id.
+	const isOtherScriptThanStore = metadata
+		? metadata.script.src !== script
+		: false;
 
 	return (
 		<div className="flex h-full flex-col overflow-hidden">
@@ -42,7 +64,18 @@ export function AppDetailPanel({
 						{isLocalMode ? "Local app" : "Installed app"}
 					</span>
 				</div>
-				<CopyableValue value={id} fontSize="text-[13px]" />
+				{label && (
+					<div
+						className="truncate px-1.5 pt-1 text-[13px] font-medium"
+						title={label}
+					>
+						{label}
+					</div>
+				)}
+				<CopyableValue
+					value={id}
+					fontSize={label ? "text-[11px]" : "text-[13px]"}
+				/>
 				<div className="mt-0.5 flex flex-wrap items-center gap-1 px-1.5">
 					{isLocalMode ? <LocalModeBadge /> : <HostedAppBadge />}
 					{isReplacedScript && <ReplacedScriptBadge />}
@@ -86,10 +119,99 @@ export function AppDetailPanel({
 					/>
 				</AppDetailSection>
 
+				{metadata && (
+					<AppDetailSection title="App">
+						<AppDetailRow
+							label="Name"
+							icon={Tag}
+							value={metadata.app.name ?? "—"}
+							tone={metadata.app.name ? "neutral" : "muted"}
+						/>
+						<AppDetailRow
+							label="Handle"
+							icon={Hash}
+							value={metadata.app.handle ?? "—"}
+							tone={metadata.app.handle ? "neutral" : "muted"}
+						/>
+						<AppDetailRow
+							label="Installed"
+							icon={Download}
+							value={<DateValue value={metadata.app.installed_at} />}
+						/>
+					</AppDetailSection>
+				)}
+
+				{metadata && (
+					<AppDetailSection title="Partner">
+						<AppDetailRow
+							label="Name"
+							icon={Building2}
+							value={metadata.partner.name ?? "—"}
+							tone={metadata.partner.name ? "neutral" : "muted"}
+						/>
+						<AppDetailRow
+							label="Id"
+							icon={Hash}
+							value={metadata.partner.id ?? "—"}
+							tone={metadata.partner.id !== null ? "neutral" : "muted"}
+						/>
+					</AppDetailSection>
+				)}
+
 				<AppDetailSection title="Script">
 					<div className="p-0.5">
 						<CopyableValue value={script} />
 					</div>
+					{metadata && (
+						<>
+							{isOtherScriptThanStore && (
+								<div className="px-3 py-2 text-[11px] text-amber-500">
+									The page loaded another script than the one the store serves
+									for this app:
+									<div className="mt-1 break-all font-mono text-muted-foreground">
+										{metadata.script.src}
+									</div>
+								</div>
+							)}
+							<AppDetailRow
+								label="Script id"
+								icon={Hash}
+								value={metadata.script.id}
+							/>
+							<AppDetailRow
+								label="Version"
+								icon={GitCommitVertical}
+								value={
+									metadata.script.version !== null
+										? `v${metadata.script.version}`
+										: "—"
+								}
+								tone={metadata.script.version !== null ? "neutral" : "muted"}
+							/>
+							<AppDetailRow
+								label="Version activated"
+								icon={CalendarClock}
+								value={
+									<DateValue value={metadata.script.version_activated_at} />
+								}
+							/>
+							<AppDetailRow
+								label="Created"
+								icon={CalendarPlus}
+								value={<DateValue value={metadata.script.created_at} />}
+							/>
+							<AppDetailRow
+								label="Updated"
+								icon={CalendarClock}
+								value={<DateValue value={metadata.script.updated_at} />}
+							/>
+							<AppDetailRow
+								label="Location"
+								icon={MapPin}
+								value={metadata.script.location}
+							/>
+						</>
+					)}
 				</AppDetailSection>
 
 				<AppDetailSection title="Controls">
@@ -118,4 +240,14 @@ export function AppDetailPanel({
 			</div>
 		</div>
 	);
+}
+
+/** A store date (ISO 8601) in the panel's locale, the raw value as tooltip. */
+function DateValue({ value }: { value: string | null }) {
+	if (!value) return <span className="text-muted-foreground">—</span>;
+
+	const date = new Date(value);
+	if (Number.isNaN(date.getTime())) return <span>{value}</span>;
+
+	return <span title={value}>{date.toLocaleString()}</span>;
 }

@@ -1,5 +1,6 @@
 import { TableCell } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
+import { useOptionalNubeSDKAppsMetadata } from "@/contexts/nube-sdk-apps-metadata-context";
 import {
 	BlockedBadge,
 	HostedAppBadge,
@@ -28,6 +29,8 @@ export function AppListItem({
 	scriptStatus,
 	onSelect,
 }: AppListItemProps) {
+	const label = useOptionalNubeSDKAppsMetadata()?.getAppLabel(app.data.id);
+
 	return (
 		<TableCell
 			onClick={() => onSelect(app)}
@@ -40,13 +43,27 @@ export function AppListItem({
 			<div className="flex min-w-0 flex-col gap-1.5 px-3 py-2">
 				<div className="flex min-w-0 items-center gap-2">
 					<StatusDot status={isBlocked ? "offline" : scriptStatus} />
-					<span
-						className={`min-w-0 flex-1 truncate font-mono text-xs ${
-							isBlocked ? "text-muted-foreground line-through" : ""
-						}`}
-					>
-						{app.data.id}
-					</span>
+					{label ? (
+						<span
+							className={`flex min-w-0 flex-1 items-baseline gap-1.5 ${
+								isBlocked ? "text-muted-foreground line-through" : ""
+							}`}
+							title={`App ${app.data.id}`}
+						>
+							<span className="truncate text-xs">{label}</span>
+							<span className="shrink-0 font-mono text-[10px] text-muted-foreground">
+								{app.data.id}
+							</span>
+						</span>
+					) : (
+						<span
+							className={`min-w-0 flex-1 truncate font-mono text-xs ${
+								isBlocked ? "text-muted-foreground line-through" : ""
+							}`}
+						>
+							{app.data.id}
+						</span>
+					)}
 				</div>
 				<div className="flex flex-wrap items-center gap-1">
 					{isLocalMode ? <LocalModeBadge /> : <HostedAppBadge />}

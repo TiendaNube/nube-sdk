@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/context-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-events-context";
+import { AppLabel } from "@/devtools/components/app-label";
 import { Copy, ListFilterPlus, Repeat } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -89,7 +90,7 @@ export function EventTableRow({
 			<ContextMenu>
 				<ContextMenuTrigger asChild>
 					<TableCell className="px-3 py-2 truncate border-r" title={sender}>
-						{sender}
+						<AppLabel appId={sender} />
 					</TableCell>
 				</ContextMenuTrigger>
 				<EventContextMenuContent
@@ -104,7 +105,7 @@ export function EventTableRow({
 			<ContextMenu>
 				<ContextMenuTrigger asChild>
 					<TableCell className="px-3 py-2 truncate border-r" title={target}>
-						{target}
+						<AppLabel appId={target} />
 					</TableCell>
 				</ContextMenuTrigger>
 				<EventContextMenuContent

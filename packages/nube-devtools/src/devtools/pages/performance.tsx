@@ -13,11 +13,13 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAppLabel } from "@/contexts/nube-sdk-apps-metadata-context";
 import {
 	type PerformanceEntry,
 	type PerformanceEntryKind,
 	useNubeSDKPerformance,
 } from "@/contexts/nube-sdk-performance-context";
+import { AppLabel } from "@/devtools/components/app-label";
 import Layout from "@/devtools/components/layout";
 import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import { formatAbsoluteDateTime } from "@/devtools/components/relative-time";
@@ -116,6 +118,8 @@ export function Performance() {
 		localStorage.setItem(SEARCH_STORAGE_KEY, search);
 	}, [search]);
 
+	const appLabel = useAppLabel();
+
 	const appIds = useMemo(
 		() => [...new Set(entries.map((entry) => entry.appId))].sort(),
 		[entries],
@@ -131,7 +135,8 @@ export function Performance() {
 			if (!term) return true;
 			return (
 				entry.name.toLowerCase().includes(term) ||
-				entry.appId.toLowerCase().includes(term)
+				entry.appId.toLowerCase().includes(term) ||
+				appLabel(entry.appId).toLowerCase().includes(term)
 			);
 		});
 
@@ -140,7 +145,15 @@ export function Performance() {
 		return sortOrder === "duration"
 			? [...filtered].sort((a, b) => b.duration - a.duration)
 			: filtered;
-	}, [entries, search, kindFilter, ratingFilter, appFilter, sortOrder]);
+	}, [
+		entries,
+		search,
+		kindFilter,
+		ratingFilter,
+		appFilter,
+		sortOrder,
+		appLabel,
+	]);
 
 	const selectedEntry = useMemo(
 		() => entries.find((entry) => entry.id === selectedId) ?? null,
@@ -309,7 +322,7 @@ export function Performance() {
 						<option value={ALL}>All apps</option>
 						{appIds.map((appId) => (
 							<option key={appId} value={appId}>
-								{appId}
+								{appLabel(appId)}
 							</option>
 						))}
 					</select>
@@ -463,7 +476,7 @@ function AppSummary({ entries, selectedAppId, onSelectApp }: AppSummaryProps) {
 									className="block w-full truncate text-left cursor-pointer hover:underline"
 									title={`Filter the list by ${app.appId}`}
 								>
-									{app.appId}
+									<AppLabel appId={app.appId} />
 								</button>
 							</td>
 							<MetricCell value={app.firstRender} budget={ASYNC_BUDGET} />
@@ -663,9 +676,9 @@ function EntryRow({ entry, range, isSelected, onSelect }: EntryRowProps) {
 					</div>
 					<div
 						className="truncate text-[11px] text-muted-foreground"
-						title={entry.appId}
+						title={`App ${entry.appId}`}
 					>
-						{KIND_LABEL[entry.kind]} · {entry.appId}
+						{KIND_LABEL[entry.kind]} · <AppLabel appId={entry.appId} />
 					</div>
 				</div>
 				<span
@@ -727,7 +740,7 @@ function EntryDetail({ entry }: { entry: PerformanceEntry | null }) {
 			<div className="flex-1 overflow-y-auto p-3 space-y-3">
 				<div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-[11px]">
 					<span className="text-muted-foreground">App</span>
-					<span className="break-all">{entry.appId}</span>
+					<AppLabel appId={entry.appId} className="break-all" />
 					<span className="text-muted-foreground">Duration</span>
 					<span className={`tabular-nums ${RATING_TEXT_CLASS[entry.rating]}`}>
 						{formatMs(entry.duration)}

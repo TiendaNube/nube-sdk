@@ -13,8 +13,10 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAppLabel } from "@/contexts/nube-sdk-apps-metadata-context";
 import type { NubeSDKStorageRecord } from "@/contexts/nube-sdk-storage-context";
 import { useNubeSDKStorage } from "@/contexts/nube-sdk-storage-context";
+import { AppLabel } from "@/devtools/components/app-label";
 import Layout from "@/devtools/components/layout";
 import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import {
@@ -122,6 +124,8 @@ export function Storages() {
 		return () => clearInterval(interval);
 	}, [refresh, isPanelVisible]);
 
+	const appLabel = useAppLabel();
+
 	const appIds = useMemo(
 		() => [...new Set(records.map((record) => record.appId))].sort(),
 		[records],
@@ -141,11 +145,12 @@ export function Storages() {
 				if (!term) return true;
 				return (
 					record.key.toLowerCase().includes(term) ||
-					record.appId.toLowerCase().includes(term)
+					record.appId.toLowerCase().includes(term) ||
+					appLabel(record.appId).toLowerCase().includes(term)
 				);
 			})
 			.sort(compareRecords);
-	}, [records, search, typeFilter, appFilter]);
+	}, [records, search, typeFilter, appFilter, appLabel]);
 
 	// Selection follows the entry, not the row: the list reorders as writes
 	// come in, and the selected key can also be deleted by the page itself.
@@ -226,7 +231,7 @@ export function Storages() {
 						<option value={APP_FILTER_ALL}>All apps</option>
 						{appIds.map((appId) => (
 							<option key={appId} value={appId}>
-								{appId}
+								{appLabel(appId)}
 							</option>
 						))}
 					</select>
@@ -394,9 +399,9 @@ function RecordRow({ record, isSelected, onSelect }: RecordRowProps) {
 					</div>
 					<div
 						className="truncate text-[11px] text-muted-foreground"
-						title={record.appId}
+						title={`App ${record.appId}`}
 					>
-						{record.appId}
+						<AppLabel appId={record.appId} />
 					</div>
 				</div>
 				{record.expiresAt !== null &&
@@ -541,7 +546,7 @@ function RecordDetail({ record, onSave, onRemove }: RecordDetailProps) {
 					<span className="text-[10px] uppercase tracking-wide text-muted-foreground">
 						App
 					</span>
-					<span className="text-foreground">{record.appId}</span>
+					<AppLabel appId={record.appId} className="text-foreground" />
 				</div>
 
 				<div className="flex items-center justify-between gap-2">

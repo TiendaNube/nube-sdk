@@ -4,6 +4,7 @@ import {
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
+import { useAppLabel } from "@/contexts/nube-sdk-apps-metadata-context";
 import {
 	AppDetailEmpty,
 	AppDetailPanel,
@@ -60,15 +61,18 @@ export function Apps() {
 	const isAppOnline = (app: NubeSDKEvent) =>
 		scriptStatuses[app.data.script] === "online" && !isBlocked(app.data.id);
 
+	const appLabel = useAppLabel();
+
 	const filteredApps = useMemo(() => {
 		const query = filter.trim().toLowerCase();
 		if (!query) return allApps;
 		return allApps.filter(
 			(app) =>
 				app.data.id.toLowerCase().includes(query) ||
+				appLabel(app.data.id).toLowerCase().includes(query) ||
 				app.data.script.toLowerCase().includes(query),
 		);
-	}, [allApps, filter]);
+	}, [allApps, filter, appLabel]);
 
 	const onlineCount = allApps.filter(isAppOnline).length;
 	const selectedApp =

@@ -13,12 +13,14 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAppLabel } from "@/contexts/nube-sdk-apps-metadata-context";
 import {
 	ERROR_LEVELS,
 	type LogEntry,
 	type LogLevel,
 	useNubeSDKLogs,
 } from "@/contexts/nube-sdk-logs-context";
+import { AppLabel } from "@/devtools/components/app-label";
 import Layout from "@/devtools/components/layout";
 import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
 import { formatAbsoluteDateTime } from "@/devtools/components/relative-time";
@@ -142,6 +144,8 @@ export function Logs() {
 		localStorage.setItem(SEARCH_STORAGE_KEY, search);
 	}, [search]);
 
+	const appLabel = useAppLabel();
+
 	const appIds = useMemo(
 		() => [...new Set(logs.map((log) => log.app))].sort(),
 		[logs],
@@ -174,10 +178,11 @@ export function Logs() {
 			return (
 				log.message.toLowerCase().includes(term) ||
 				log.app.toLowerCase().includes(term) ||
+				appLabel(log.app).toLowerCase().includes(term) ||
 				(log.event?.toLowerCase().includes(term) ?? false)
 			);
 		});
-	}, [logs, search, levelFilter, appFilter, sourceFilter]);
+	}, [logs, search, levelFilter, appFilter, sourceFilter, appLabel]);
 
 	const selectedLog = useMemo(
 		() => logs.find((log) => log.seq === selectedSeq) ?? null,
@@ -316,7 +321,7 @@ export function Logs() {
 						<option value={ALL}>All apps</option>
 						{appIds.map((appId) => (
 							<option key={appId} value={appId}>
-								{appId}
+								{appLabel(appId)}
 							</option>
 						))}
 					</select>
@@ -429,7 +434,7 @@ function AppSummary({ logs, selectedAppId, onSelectApp }: AppSummaryProps) {
 									className="block w-full truncate text-left cursor-pointer hover:underline"
 									title={`Filter the list by ${app.appId}`}
 								>
-									{app.appId}
+									<AppLabel appId={app.appId} />
 								</button>
 							</td>
 							<CountCell
@@ -599,7 +604,12 @@ type LogRowProps = {
 };
 
 function LogRow({ log, isSelected, onSelect }: LogRowProps) {
-	const details = [sourceLabel(log.source), log.app, log.event]
+	const appLabel = useAppLabel();
+	const details = [
+		sourceLabel(log.source),
+		log.app && appLabel(log.app),
+		log.event,
+	]
 		.filter(Boolean)
 		.join(" · ");
 
@@ -698,7 +708,7 @@ function LogDetail({ log }: { log: LogEntry | null }) {
 			<div className="flex-1 overflow-y-auto p-3 space-y-3">
 				<div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-[11px]">
 					<span className="text-muted-foreground">App</span>
-					<span className="break-all">{log.app}</span>
+					<AppLabel appId={log.app} className="break-all" />
 					<span className="text-muted-foreground">Level</span>
 					<span className={LEVEL_TEXT_CLASS[log.level]}>
 						{LEVEL_LABEL[log.level]}

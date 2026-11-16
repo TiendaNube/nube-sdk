@@ -16,6 +16,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAppLabel } from "@/contexts/nube-sdk-apps-metadata-context";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
 import type {
 	NubeSDKEvent,
@@ -154,6 +155,8 @@ export function Events() {
 		document.body.style.userSelect = "none";
 	};
 
+	const appLabel = useAppLabel();
+
 	useEffect(() => {
 		const query = parseQuery(search);
 		if (query) {
@@ -188,11 +191,17 @@ export function Events() {
 				return (
 					eventName.includes(term) ||
 					sender.includes(term) ||
-					target.includes(term)
+					target.includes(term) ||
+					appLabel(record.sender ?? "")
+						.toLowerCase()
+						.includes(term) ||
+					appLabel(record.target ?? "")
+						.toLowerCase()
+						.includes(term)
 				);
 			}),
 		);
-	}, [events, search]);
+	}, [events, search, appLabel]);
 
 	useEffect(() => {
 		localStorage.setItem(SEARCH_STORAGE_KEY, search);

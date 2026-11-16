@@ -14,10 +14,12 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAppLabel } from "@/contexts/nube-sdk-apps-metadata-context";
 import {
 	type NubeSDKCommandRecord,
 	useNubeSDKCommands,
 } from "@/contexts/nube-sdk-commands-context";
+import { AppLabel } from "@/devtools/components/app-label";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
 import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
@@ -135,6 +137,8 @@ export function ApiCalls() {
 		localStorage.setItem(SEARCH_STORAGE_KEY, search);
 	}, [search]);
 
+	const appLabel = useAppLabel();
+
 	const appIds = useMemo(
 		() => [...new Set(records.map((record) => record.appId))].sort(),
 		[records],
@@ -159,11 +163,12 @@ export function ApiCalls() {
 				if (!term) return true;
 				return (
 					commandName(record).toLowerCase().includes(term) ||
-					record.appId.toLowerCase().includes(term)
+					record.appId.toLowerCase().includes(term) ||
+					appLabel(record.appId).toLowerCase().includes(term)
 				);
 			})
 			.reverse();
-	}, [records, search, statusFilter, appFilter]);
+	}, [records, search, statusFilter, appFilter, appLabel]);
 
 	// Selection follows the call, not the row: a pending call is replaced by
 	// its settled record under the same id.
@@ -255,7 +260,7 @@ export function ApiCalls() {
 						<option value={APP_FILTER_ALL}>All apps</option>
 						{appIds.map((appId) => (
 							<option key={appId} value={appId}>
-								{appId}
+								{appLabel(appId)}
 							</option>
 						))}
 					</select>
@@ -401,9 +406,9 @@ function CallRow({ record, isSelected, onSelect }: CallRowProps) {
 					</div>
 					<div
 						className="truncate text-[11px] text-muted-foreground"
-						title={record.appId}
+						title={`App ${record.appId}`}
 					>
-						{record.appId}
+						<AppLabel appId={record.appId} />
 					</div>
 				</div>
 				<Badge
@@ -458,7 +463,7 @@ function CallDetail({ record }: { record: NubeSDKCommandRecord | null }) {
 			<div className="flex-1 overflow-y-auto p-3 space-y-3">
 				<div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-[11px]">
 					<span className="text-muted-foreground">App</span>
-					<span className="break-all">{record.appId}</span>
+					<AppLabel appId={record.appId} className="break-all" />
 					<span className="text-muted-foreground">Scope</span>
 					<span className="font-mono">{record.scope}</span>
 					<span className="text-muted-foreground">Command</span>

@@ -14,7 +14,9 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAppLabel } from "@/contexts/nube-sdk-apps-metadata-context";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
+import { AppLabel } from "@/devtools/components/app-label";
 import { JsonViewer } from "@/devtools/components/json-viewer";
 import Layout from "@/devtools/components/layout";
 import { PanelDirectionToggle } from "@/devtools/components/panel-direction-toggle";
@@ -89,6 +91,7 @@ export function Components() {
 	const { direction, toggleDirection, autoSaveId } =
 		usePanelDirection(PANEL_WIDTH_KEY);
 	const { events } = useNubeSDKEventsContext();
+	const appLabel = useAppLabel();
 
 	const [snapshot, setSnapshot] = useState<NubeSDKComponentsSnapshot | null>(
 		null,
@@ -270,7 +273,7 @@ export function Components() {
 						<option value={PAGE_VIEW}>Page (all apps)</option>
 						{apps.map((appId) => (
 							<option key={appId} value={appId}>
-								App {appId}
+								{appLabel(appId) === appId ? `App ${appId}` : appLabel(appId)}
 							</option>
 						))}
 					</select>
@@ -665,7 +668,14 @@ function ComponentDetail({
 								{node.repeatable ? "yes" : "no"}
 							</DetailRow>
 							<DetailRow label="Apps">
-								{node.apps?.length ? node.apps.join(", ") : "—"}
+								{node.apps?.length
+									? node.apps.map((appId, index) => (
+											<span key={appId}>
+												{index > 0 && ", "}
+												<AppLabel appId={appId} />
+											</span>
+										))
+									: "—"}
 							</DetailRow>
 						</>
 					)}

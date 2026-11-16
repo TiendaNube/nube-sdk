@@ -13,6 +13,7 @@ import {
 	NativeSelectOption,
 } from "@/components/ui/native-select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAppLabel } from "@/contexts/nube-sdk-apps-metadata-context";
 import { getPageSessionStorage, setPageSessionStorage } from "@/utils";
 import { Globe, Hash, Loader2, Play, Square } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -72,6 +73,7 @@ type LocalModeContentProps = {
 export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 	const [pageApps, setPageApps] = useState<NubeSDKApp[]>([]);
 	const apps = appsProp ?? pageApps;
+	const appLabel = useAppLabel();
 	const shouldFetchApps = appsProp === undefined;
 	const [selectedTab, setSelectedTab] = useState<"new" | "existing">(
 		(localStorage.getItem(LOCAL_STORAGE_KEY_DEVTOOLS_LOCAL_MODE_SELECTED_TAB) as
@@ -426,7 +428,9 @@ export function LocalModeContent({ apps: appsProp }: LocalModeContentProps) {
 										</NativeSelectOption>
 										{apps.map((app) => (
 											<NativeSelectOption key={app.id} value={app.id}>
-												{app.id}
+												{appLabel(app.id) === app.id
+													? app.id
+													: `${appLabel(app.id)} (${app.id})`}
 											</NativeSelectOption>
 										))}
 									</NativeSelect>

@@ -1,4 +1,11 @@
 export { handleEvents } from "./handle-events";
+export {
+	type NubeSDKAppMetadata,
+	type NubeSDKAppsMetadataEntry,
+	type NubeSDKAppsMetadataResult,
+	type NubeSDKAppsMetadataStatus,
+	syncAppsMetadata,
+} from "./page-apps-metadata";
 export { clearEvents, readEvents } from "./page-events";
 export {
 	clearCommands,

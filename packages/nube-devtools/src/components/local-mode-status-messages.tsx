@@ -1,4 +1,5 @@
 import { CopyableValue } from "@/components/copyable-value";
+import { AppLabel } from "@/devtools/components/app-label";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 
 export type ScriptAvailability =
@@ -52,6 +53,11 @@ export function LocalModeStatusMessages({
 				<div className="space-y-1.5 p-2 rounded-md bg-secondary">
 					<div>
 						<p className="text-[10px] text-muted-foreground mb-0.5">App ID</p>
+						<AppLabel
+							appId={appId}
+							className="block px-1.5 text-[11px] font-medium"
+							hideIfUnknown
+						/>
 						<CopyableValue value={appId} fontSize="text-[10px]" />
 					</div>
 				</div>

@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { NubeSDKAppsProvider } from "@/contexts/nube-sdk-apps-context";
+import { NubeSDKAppsMetadataProvider } from "@/contexts/nube-sdk-apps-metadata-context";
 import { NubeSDKCommandsProvider } from "@/contexts/nube-sdk-commands-context";
 import { NubeSDKEventsProvider } from "@/contexts/nube-sdk-events-context";
 import { NubeSDKLogsProvider } from "@/contexts/nube-sdk-logs-context";
@@ -58,8 +59,10 @@ export const App = () => {
 						<NubeSDKCommandsProvider>
 							<NubeSDKPerformanceProvider>
 								<NubeSDKAppsProvider>
-									<AppContent />
-									<Toaster />
+									<NubeSDKAppsMetadataProvider>
+										<AppContent />
+										<Toaster />
+									</NubeSDKAppsMetadataProvider>
 								</NubeSDKAppsProvider>
 							</NubeSDKPerformanceProvider>
 						</NubeSDKCommandsProvider>
