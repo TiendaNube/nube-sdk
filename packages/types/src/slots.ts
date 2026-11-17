@@ -25,10 +25,11 @@ import type {
  * @property {"edge_bottom_center"} EDGE_BOTTOM_CENTER - Bottom edge, horizontally centered.
  * @property {"edge_left_center"} EDGE_LEFT_CENTER - Left edge, vertically centered.
  * @property {"edge_right_center"} EDGE_RIGHT_CENTER - Right edge, vertically centered.
- * @property {"bar_top"} BAR_TOP - Full-width bar at the top of the viewport, with lower priority than BAR_TOP_STICKY. It pushes the page content down and starts right below the sticky bar; as the page scrolls it slides behind it and stays there. At most 15vh tall; taller content is cut off.
+ * @property {"bar_top"} BAR_TOP - Full-width bar fixed to the top of the viewport, right below BAR_TOP_STICKY. It floats over the page content instead of pushing it. At most 15vh tall; taller content is cut off.
  * @property {"bar_bottom"} BAR_BOTTOM - Full-width bar fixed to the bottom of the viewport, right above BAR_BOTTOM_STICKY. At most 15vh tall; taller content is cut off.
  * @property {"bar_top_sticky"} BAR_TOP_STICKY - Full-width bar that stays at the top of the viewport and pushes the page content down instead of covering it. At most 15vh tall; taller content is cut off.
  * @property {"bar_bottom_sticky"} BAR_BOTTOM_STICKY - Full-width bar that stays at the bottom of the viewport and pushes the page content up instead of covering it. At most 15vh tall; taller content is cut off.
+ * @property {"bar_top_stacked"} BAR_TOP_STACKED - Full-width bar at the top of the viewport, with lower priority than BAR_TOP_STICKY. It pushes the page content down and starts right below the sticky bar; as the page scrolls it slides behind it and stays there. At most 15vh tall; taller content is cut off.
  * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
  * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  * @property {"after_header"} AFTER_HEADER - After the header.
@@ -52,6 +53,7 @@ export const COMMON_UI_SLOT = {
 	BAR_BOTTOM: "bar_bottom",
 	BAR_TOP_STICKY: "bar_top_sticky",
 	BAR_BOTTOM_STICKY: "bar_bottom_sticky",
+	BAR_TOP_STACKED: "bar_top_stacked",
 	BEFORE_LINE_ITEMS: "before_line_items",
 	AFTER_LINE_ITEMS: "after_line_items",
 	AFTER_HEADER: "after_header",
