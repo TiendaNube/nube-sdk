@@ -215,6 +215,8 @@ jobs:
           name: Generate GitHub App installation token
           command: |
             # Requiere env vars: GH_APP_ID, GH_APP_INSTALLATION_ID, GH_APP_PRIVATE_KEY (PEM en base64).
+            umask 077
+            trap 'rm -f app-key.pem app-token.json' EXIT
             echo "${GH_APP_PRIVATE_KEY}" | base64 -d > app-key.pem
             NOW=$(date +%s)
             b64() { openssl base64 -A | tr '+/' '-_' | tr -d '='; }
@@ -225,10 +227,15 @@ jobs:
             curl -sS -f -X POST \
               -H "Authorization: Bearer ${HEADER}.${PAYLOAD}.${SIG}" \
               -H "Accept: application/vnd.github+json" \
+              -d "{\"repositories\":[\"${CIRCLE_PROJECT_REPONAME}\"],\"permissions\":{\"contents\":\"write\"}}" \
               "https://api.github.com/app/installations/${GH_APP_INSTALLATION_ID}/access_tokens" \
               -o app-token.json
-            echo "export GITHUB_TOKEN=$(node -p "require('./app-token.json').token")" >> "$BASH_ENV"
-            rm -f app-token.json
+            TOKEN=$(node -p "require('./app-token.json').token")
+            if [ -z "${TOKEN}" ] || [ "${TOKEN}" = "undefined" ]; then
+              echo "No se obtuvo el installation token" >&2
+              exit 1
+            fi
+            echo "export GITHUB_TOKEN=${TOKEN}" >> "$BASH_ENV"
       - run:
           name: Create GitHub release with zip asset
           command: |
