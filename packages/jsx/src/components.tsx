@@ -625,7 +625,8 @@ export const Video = {
  *
  * `VideoStories` is a vertical, stories-style player for a sequence of
  * self-hosted videos (Instagram/WhatsApp-style). It renders inline as a compact
- * 9:16 card; and can be expanded to a fullscreen overlay. Events (`onOpen`,
+ * 9:16 card that can be expanded to a fullscreen overlay via its expand
+ * button. Events (`onOpen`,
  * `onClose`, `onChange`, `onComplete`, `onError`) are observe-only.
  *
  * @param props - The properties for configuring the video stories component.
