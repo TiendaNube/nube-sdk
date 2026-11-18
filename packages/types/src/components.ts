@@ -1,6 +1,6 @@
 import type * as CSS from "csstype";
 import type { NubeSDKState } from "./main";
-import type { NubeSignalTextReference } from "./signals";
+import type { NubeSignalReference, NubeSignalTextReference } from "./signals";
 import type { UISlot } from "./slots";
 import type { Prettify } from "./utility";
 
@@ -1376,8 +1376,23 @@ export type NubeComponentCarouselRootProps = Prettify<
 			 * Active item controlled by the app. Changing the value scrolls there
 			 * without emitting `onIndexChange`; the user can still swipe, and
 			 * re-rendering with the same value does not pull the carousel back.
+			 *
+			 * Takes a signal of `@tiendanube/nube-sdk-signals` too, bound both
+			 * ways without rendering the slot again: setting the signal scrolls
+			 * to that item (still without `onIndexChange`), and the item the
+			 * user moves to is written back to the signal. A value past the last
+			 * item scrolls to the last one and writes its index back. A computed
+			 * signal only drives the carousel: the app keeps deriving its value.
+			 *
+			 * ```tsx
+			 * const active = signal(0);
+			 *
+			 * <Carousel.Root index={active}>…</Carousel.Root>;
+			 *
+			 * active.value = 2; // scrolls to the third item
+			 * ```
 			 */
-			index?: number;
+			index?: number | NubeSignalReference<number>;
 			/** Accessible label. Defaults to a localized "Carousel". */
 			ariaLabel?: string;
 			style?: NubeComponentStyle;

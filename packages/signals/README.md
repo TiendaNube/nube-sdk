@@ -56,6 +56,24 @@ export function App(nube: NubeSDK) {
 Pass the signal itself (`{label}`), not its value (`{label.value}`): the value
 is read once, while the signal stays bound to the page.
 
+### Two-way binding: `Carousel.Root` `index`
+
+`Carousel.Root` takes a signal in `index`. Setting the signal scrolls to that
+item, and the item the user swipes to is written back to the signal, with no
+`onIndexChange` handler to mirror it by hand:
+
+```tsx
+const active = signal(0);
+
+nube.render(
+  "fullscreen_content",
+  <Carousel.Root index={active}>…</Carousel.Root>,
+);
+
+active.value = 2; // scrolls to the third item
+active.subscribe((index) => console.log("now on", index)); // follows swipes too
+```
+
 Without `useSignals(nube)`, signals still work inside the app and a rendered
 signal shows the value it had when rendered, but later changes never reach the
 page.
