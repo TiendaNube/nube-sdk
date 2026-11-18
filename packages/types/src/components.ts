@@ -1226,7 +1226,9 @@ export type NubeComponentVideoStoriesErrorHandler = NubeComponentEventHandler<
 /**
  * Properties for `VideoStories` — a vertical, stories-style player for a
  * sequence of self-hosted videos (Instagram/WhatsApp-style). Plays inline as
- * a compact card; tapping the card expands to a fullscreen overlay.
+ * a compact card; the expand button in the card's corner opens a fullscreen
+ * overlay. Tapping the video itself does not expand it — side taps are
+ * reserved for navigation (`tapToNavigate`).
  */
 export type NubeComponentVideoStoriesProps = Prettify<
 	NubeComponentBase & {
