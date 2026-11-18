@@ -1,5 +1,6 @@
 import type * as CSS from "csstype";
 import type { NubeSDKState } from "./main";
+import type { NubeSignalTextReference } from "./signals";
 import type { UISlot } from "./slots";
 import type { Prettify } from "./utility";
 
@@ -1225,7 +1226,9 @@ export type NubeComponentVideoStoriesErrorHandler = NubeComponentEventHandler<
 /**
  * Properties for `VideoStories` — a vertical, stories-style player for a
  * sequence of self-hosted videos (Instagram/WhatsApp-style). Plays inline as
- * a compact card; tapping the card expands to a fullscreen overlay.
+ * a compact card; the expand button in the card's corner opens a fullscreen
+ * overlay. Tapping the video itself does not expand it — side taps are
+ * reserved for navigation (`tapToNavigate`).
  */
 export type NubeComponentVideoStoriesProps = Prettify<
 	NubeComponentBase & {
@@ -1274,6 +1277,229 @@ export type NubeComponentVideoStories = Prettify<
 	NubeComponentBase &
 		NubeComponentVideoStoriesProps & {
 			type: "videoStories";
+		}
+>;
+
+/* -------------------------------------------------------------------------- */
+/*                           Carousel Component                               */
+/* -------------------------------------------------------------------------- */
+
+/** Scroll axis of a `Carousel.Root`. */
+export type NubeComponentCarouselOrientation = "horizontal" | "vertical";
+
+/** Where an item rests after a swipe. `"none"` disables snapping. */
+export type NubeComponentCarouselSnap = "start" | "center" | "end" | "none";
+
+/**
+ * What moved the active item. A change of the controlled `index` prop is not
+ * reported, since the app made it.
+ */
+export type NubeComponentCarouselIndexChangeReason =
+	| "drag"
+	| "scroll"
+	| "trigger"
+	| "indicator"
+	| "keyboard";
+
+/** Payload emitted with the `indexchange` Carousel event. */
+export type NubeComponentCarouselIndexChangePayload = {
+	index: number;
+	previousIndex: number;
+	total: number;
+	reason: NubeComponentCarouselIndexChangeReason;
+};
+
+/** Payload emitted with the `dragstart` and `dragend` Carousel events. */
+export type NubeComponentCarouselDragPayload = {
+	/** Active item when the gesture started (`dragstart`) or settled (`dragend`). */
+	index: number;
+};
+
+/** Payload emitted with the `progress` Carousel event. */
+export type NubeComponentCarouselProgressPayload = {
+	/** Scroll position along the axis, from `0` (start) to `1` (end). */
+	progress: number;
+	index: number;
+};
+
+export type NubeComponentCarouselIndexChangeHandler = NubeComponentEventHandler<
+	"indexchange",
+	NubeComponentCarouselIndexChangePayload
+>;
+export type NubeComponentCarouselDragStartHandler = NubeComponentEventHandler<
+	"dragstart",
+	NubeComponentCarouselDragPayload
+>;
+export type NubeComponentCarouselDragEndHandler = NubeComponentEventHandler<
+	"dragend",
+	NubeComponentCarouselDragPayload
+>;
+export type NubeComponentCarouselProgressHandler = NubeComponentEventHandler<
+	"progress",
+	NubeComponentCarouselProgressPayload
+>;
+
+/**
+ * Properties for `Carousel.Root` — a collection the app lays out and the SDK
+ * moves. Swipe, inertia and snap use native CSS scroll-snap on the main
+ * thread; the app styles items against `data-state` and the CSS variables
+ * below in `styled()`, with no worker round-trip:
+ *
+ * - Root: `--nube-carousel-progress` (`0`–`1`), `data-orientation`, `data-dragging`.
+ * - Item: `data-state="active" | "inactive"`, `data-index`,
+ *   `--nube-carousel-item-visibility` (`0`–`1`, share of the item on screen) and
+ *   `--nube-carousel-item-offset` (`-1`–`1`, `0` at the snap point).
+ *
+ * Events are observe-only: they never gate movement.
+ */
+export type NubeComponentCarouselRootProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			/** Scroll axis. Defaults to `"horizontal"`. */
+			orientation?: NubeComponentCarouselOrientation;
+			/**
+			 * How many items fit in the viewport. Fractions show a peek of the next
+			 * item (e.g. `1.2`). `"auto"` lets each item's own size decide.
+			 * Defaults to `1`.
+			 */
+			slidesPerView?: number | "auto";
+			/** Space between items. Defaults to `0`. */
+			gap?: Size;
+			/** Where an item rests after a swipe. Defaults to `"start"`. */
+			snap?: NubeComponentCarouselSnap;
+			/**
+			 * Going past the last item returns to the first position (and before
+			 * the first, to the last). Defaults to `false`.
+			 */
+			loop?: boolean;
+			/** Initial active item when `index` is not set. Defaults to `0`. */
+			defaultIndex?: number;
+			/**
+			 * Active item controlled by the app. Changing the value scrolls there
+			 * without emitting `onIndexChange`; the user can still swipe, and
+			 * re-rendering with the same value does not pull the carousel back.
+			 */
+			index?: number;
+			/** Accessible label. Defaults to a localized "Carousel". */
+			ariaLabel?: string;
+			style?: NubeComponentStyle;
+			/** Emitted when the active item changes (except for `index` changes). */
+			onIndexChange?: NubeComponentCarouselIndexChangeHandler;
+			/** Emitted once when the user starts dragging or swiping. */
+			onDragStart?: NubeComponentCarouselDragStartHandler;
+			/** Emitted once when the gesture and its snap settle. */
+			onDragEnd?: NubeComponentCarouselDragEndHandler;
+			/**
+			 * Emitted while scrolling, at most every 250ms, plus once when the
+			 * scroll settles. Meant for logic (analytics, preloading); animate with
+			 * the CSS variables instead.
+			 */
+			onProgress?: NubeComponentCarouselProgressHandler;
+		}
+>;
+
+/** Represents a `carouselRoot` component. */
+export type NubeComponentCarouselRoot = Prettify<
+	NubeComponentBase &
+		NubeComponentCarouselRootProps & {
+			type: "carouselRoot";
+		}
+>;
+
+/**
+ * Properties shared by the Carousel parts (`ItemGroup`, `Item`,
+ * `IndicatorGroup`). Must be rendered inside a `Carousel.Root`.
+ */
+export type NubeComponentCarouselPartProps = Prettify<
+	NubeComponentBase &
+		ChildrenProps & {
+			style?: NubeComponentStyle;
+		}
+>;
+
+/**
+ * Represents a `carouselItemGroup` component: the scroll container holding the
+ * items. Takes keyboard focus (arrow keys of the axis, `Home`, `End`).
+ */
+export type NubeComponentCarouselItemGroup = Prettify<
+	NubeComponentBase &
+		NubeComponentCarouselPartProps & {
+			type: "carouselItemGroup";
+		}
+>;
+
+/**
+ * Represents a `carouselItem` component: one slide. Its position is its order
+ * inside `Carousel.ItemGroup`.
+ */
+export type NubeComponentCarouselItem = Prettify<
+	NubeComponentBase &
+		NubeComponentCarouselPartProps & {
+			type: "carouselItem";
+		}
+>;
+
+/** Properties for `Carousel.PrevTrigger` and `Carousel.NextTrigger`. */
+export type NubeComponentCarouselTriggerProps = Prettify<
+	NubeComponentCarouselPartProps & {
+		/** Accessible label. Defaults to a localized "Previous" / "Next". */
+		ariaLabel?: string;
+	}
+>;
+
+/**
+ * Represents a `carouselPrevTrigger` component: moves to the previous item.
+ * Disabled at the first item unless `loop` is on. Shows a chevron without
+ * children.
+ */
+export type NubeComponentCarouselPrevTrigger = Prettify<
+	NubeComponentBase &
+		NubeComponentCarouselTriggerProps & {
+			type: "carouselPrevTrigger";
+		}
+>;
+
+/**
+ * Represents a `carouselNextTrigger` component: moves to the next item.
+ * Disabled at the last reachable item unless `loop` is on.
+ */
+export type NubeComponentCarouselNextTrigger = Prettify<
+	NubeComponentBase &
+		NubeComponentCarouselTriggerProps & {
+			type: "carouselNextTrigger";
+		}
+>;
+
+/**
+ * Represents a `carouselIndicatorGroup` component. Without children it renders
+ * one indicator per reachable item.
+ */
+export type NubeComponentCarouselIndicatorGroup = Prettify<
+	NubeComponentBase &
+		NubeComponentCarouselPartProps & {
+			type: "carouselIndicatorGroup";
+		}
+>;
+
+/** Properties for `Carousel.Indicator`. */
+export type NubeComponentCarouselIndicatorProps = Prettify<
+	NubeComponentCarouselPartProps & {
+		/** The item this indicator activates. */
+		index: number;
+		/** Accessible label. Defaults to a localized "Go to item N". */
+		ariaLabel?: string;
+	}
+>;
+
+/**
+ * Represents a `carouselIndicator` component: jumps to its `index`. Exposes
+ * `data-state="active" | "inactive"` and `aria-current`; renders a dot without
+ * children.
+ */
+export type NubeComponentCarouselIndicator = Prettify<
+	NubeComponentBase &
+		NubeComponentCarouselIndicatorProps & {
+			type: "carouselIndicator";
 		}
 >;
 
@@ -1586,6 +1812,13 @@ export type NubeComponentFormFieldProps = Prettify<
 			max?: string | number;
 			/** Accepted file types, only for `inputType: "file"`. */
 			accept?: string;
+			/**
+			 * Asks the device to open its camera directly instead of the file picker,
+			 * only for `inputType: "file"`. `"user"` prefers the front camera and
+			 * `"environment"` the rear one. It is a hint: browsers without a camera
+			 * capture flow, such as desktop ones, ignore it and show the file picker.
+			 */
+			capture?: boolean | "user" | "environment";
 			/** Maximum file size in bytes, only for `inputType: "file"`. */
 			maxSize?: number;
 			/** Current value of the field. */
@@ -3286,6 +3519,13 @@ export type NubeComponent =
 	| NubeComponentVideoMuteButton
 	| NubeComponentVideoIndicator
 	| NubeComponentVideoStories
+	| NubeComponentCarouselRoot
+	| NubeComponentCarouselItemGroup
+	| NubeComponentCarouselItem
+	| NubeComponentCarouselPrevTrigger
+	| NubeComponentCarouselNextTrigger
+	| NubeComponentCarouselIndicatorGroup
+	| NubeComponentCarouselIndicator
 	| NubeComponentText
 	| NubeComponentCheckbox
 	| NubeComponentTextarea
@@ -3356,11 +3596,15 @@ export type NubeComponent =
 
 /**
  * Represents the children of a UI component.
+ *
+ * A signal is rendered as text and kept in sync with its value; see
+ * {@link NubeSignalTextReference}.
  */
 export type NubeComponentChildren =
 	| string
 	| NubeComponent
-	| (string | NubeComponent)[];
+	| NubeSignalTextReference
+	| (string | NubeComponent | NubeSignalTextReference)[];
 
 /**
  * Represents components that can contain other components as children.
@@ -3371,6 +3615,13 @@ export type NubeComponentWithChildren =
 	| NubeComponentRow
 	| NubeComponentLink
 	| NubeComponentSideScroll
+	| NubeComponentCarouselRoot
+	| NubeComponentCarouselItemGroup
+	| NubeComponentCarouselItem
+	| NubeComponentCarouselPrevTrigger
+	| NubeComponentCarouselNextTrigger
+	| NubeComponentCarouselIndicatorGroup
+	| NubeComponentCarouselIndicator
 	| NubeComponentPopoverRoot
 	| NubeComponentPopoverContent
 	| NubeComponentSvg
