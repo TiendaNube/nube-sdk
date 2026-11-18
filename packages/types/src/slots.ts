@@ -183,6 +183,8 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_banner_news"} AFTER_SECTION_BANNER_NEWS - After the news banner section on the home page.
  * @property {"before_section_testimonials"} BEFORE_SECTION_TESTIMONIALS - Before the testimonials section on the home page.
  * @property {"after_section_testimonials"} AFTER_SECTION_TESTIMONIALS - After the testimonials section on the home page.
+ * @property {"before_section_instagram_feed"} BEFORE_SECTION_INSTAGRAM_FEED - Before the Instagram feed section on the home page.
+ * @property {"after_section_instagram_feed"} AFTER_SECTION_INSTAGRAM_FEED - After the Instagram feed section on the home page.
  * @property {"before_section_welcome"} BEFORE_SECTION_WELCOME - Before the welcome message section on the home page.
  * @property {"after_section_welcome"} AFTER_SECTION_WELCOME - After the welcome message section on the home page.
  * @property {"before_section_video"} BEFORE_SECTION_VIDEO - Before the video section on the home page.
@@ -301,6 +303,8 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_BANNER_NEWS: "after_section_banner_news",
 	BEFORE_SECTION_TESTIMONIALS: "before_section_testimonials",
 	AFTER_SECTION_TESTIMONIALS: "after_section_testimonials",
+	BEFORE_SECTION_INSTAGRAM_FEED: "before_section_instagram_feed",
+	AFTER_SECTION_INSTAGRAM_FEED: "after_section_instagram_feed",
 	BEFORE_SECTION_WELCOME: "before_section_welcome",
 	AFTER_SECTION_WELCOME: "after_section_welcome",
 	BEFORE_SECTION_VIDEO: "before_section_video",
