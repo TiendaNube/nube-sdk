@@ -11,6 +11,17 @@ import type {
 	NubeComponentBoxProps,
 	NubeComponentButton,
 	NubeComponentButtonProps,
+	NubeComponentCarouselIndicator,
+	NubeComponentCarouselIndicatorGroup,
+	NubeComponentCarouselIndicatorProps,
+	NubeComponentCarouselItem,
+	NubeComponentCarouselItemGroup,
+	NubeComponentCarouselNextTrigger,
+	NubeComponentCarouselPartProps,
+	NubeComponentCarouselPrevTrigger,
+	NubeComponentCarouselRoot,
+	NubeComponentCarouselRootProps,
+	NubeComponentCarouselTriggerProps,
 	NubeComponentCheckbox,
 	NubeComponentCheckboxProps,
 	NubeComponentCircle,
@@ -164,6 +175,13 @@ import {
 	accordionRoot,
 	box,
 	button,
+	carouselIndicator,
+	carouselIndicatorGroup,
+	carouselItem,
+	carouselItemGroup,
+	carouselNextTrigger,
+	carouselPrevTrigger,
+	carouselRoot,
 	checkbox,
 	column,
 	field,
@@ -720,6 +738,113 @@ export const Accordion = {
 	Item: AccordionItem,
 	Content: AccordionContent,
 	Header: AccordionHeader,
+};
+
+/**
+ * Creates a `Carousel.Root` component.
+ *
+ * A collection the app lays out and the SDK moves: native CSS scroll-snap
+ * handles swipe, inertia and snap, and the active item is exposed through
+ * `data-state` and CSS variables for `styled()`.
+ *
+ * @param props - The properties for configuring the carousel root component.
+ * @returns A `NubeComponentCarouselRoot` object.
+ */
+function CarouselRoot(
+	props: NubeComponentCarouselRootProps,
+): NubeComponentCarouselRoot {
+	return carouselRoot(props);
+}
+
+/**
+ * Creates a `Carousel.ItemGroup` component: the scroll container of the items.
+ *
+ * @param props - The properties for configuring the item group component.
+ * @returns A `NubeComponentCarouselItemGroup` object.
+ */
+function CarouselItemGroup(
+	props: NubeComponentCarouselPartProps,
+): NubeComponentCarouselItemGroup {
+	return carouselItemGroup(props);
+}
+
+/**
+ * Creates a `Carousel.Item` component: one slide.
+ *
+ * @param props - The properties for configuring the item component.
+ * @returns A `NubeComponentCarouselItem` object.
+ */
+function CarouselItem(
+	props: NubeComponentCarouselPartProps,
+): NubeComponentCarouselItem {
+	return carouselItem(props);
+}
+
+/**
+ * Creates a `Carousel.PrevTrigger` component: moves to the previous item.
+ *
+ * @param props - The properties for configuring the trigger component.
+ * @returns A `NubeComponentCarouselPrevTrigger` object.
+ */
+function CarouselPrevTrigger(
+	props: NubeComponentCarouselTriggerProps,
+): NubeComponentCarouselPrevTrigger {
+	return carouselPrevTrigger(props);
+}
+
+/**
+ * Creates a `Carousel.NextTrigger` component: moves to the next item.
+ *
+ * @param props - The properties for configuring the trigger component.
+ * @returns A `NubeComponentCarouselNextTrigger` object.
+ */
+function CarouselNextTrigger(
+	props: NubeComponentCarouselTriggerProps,
+): NubeComponentCarouselNextTrigger {
+	return carouselNextTrigger(props);
+}
+
+/**
+ * Creates a `Carousel.IndicatorGroup` component.
+ *
+ * @param props - The properties for configuring the indicator group component.
+ * @returns A `NubeComponentCarouselIndicatorGroup` object.
+ */
+function CarouselIndicatorGroup(
+	props: NubeComponentCarouselPartProps,
+): NubeComponentCarouselIndicatorGroup {
+	return carouselIndicatorGroup(props);
+}
+
+/**
+ * Creates a `Carousel.Indicator` component: jumps to item `index`.
+ *
+ * @param props - The properties for configuring the indicator component.
+ * @returns A `NubeComponentCarouselIndicator` object.
+ */
+function CarouselIndicator(
+	props: NubeComponentCarouselIndicatorProps,
+): NubeComponentCarouselIndicator {
+	return carouselIndicator(props);
+}
+
+/**
+ * Compound `Carousel` component (anatomy of Chakra UI / Ark UI).
+ *
+ * - `Carousel.Root` — owns orientation, layout knobs, snap, loop, index and events.
+ * - `Carousel.ItemGroup` — the scroll container.
+ * - `Carousel.Item` — one slide.
+ * - `Carousel.PrevTrigger` / `Carousel.NextTrigger` — step one item.
+ * - `Carousel.IndicatorGroup` / `Carousel.Indicator` — jump to an item.
+ */
+export const Carousel = {
+	Root: CarouselRoot,
+	ItemGroup: CarouselItemGroup,
+	Item: CarouselItem,
+	PrevTrigger: CarouselPrevTrigger,
+	NextTrigger: CarouselNextTrigger,
+	IndicatorGroup: CarouselIndicatorGroup,
+	Indicator: CarouselIndicator,
 };
 
 /**
