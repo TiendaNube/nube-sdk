@@ -27,7 +27,11 @@ function collectSignals(node: unknown, ids: Set<string>): void {
 	for (const value of Object.values(record)) collectSignals(value, ids);
 }
 
-/** Whether a slot value renders anything: a component, text, or a list or keyed record holding one. */
+/**
+ * Whether a slot value renders anything: a component, text, or a list or keyed
+ * record holding one. `public/inject-performance-monitor.js` repeats this rule;
+ * keep both in sync.
+ */
 function hasContent(value: unknown): boolean {
 	if (value === null || value === undefined) return false;
 	if (Array.isArray(value)) return value.some(hasContent);
