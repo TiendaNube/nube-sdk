@@ -91,6 +91,62 @@ describe("generateInternalId", () => {
 		expect(id1).toContain("box-test-app-id-");
 	});
 
+	describe("with signal children", () => {
+		const signal = (id: string) => ({
+			type: "signal",
+			__internalId: id,
+			initialValue: 0,
+		});
+
+		it("separates components that render different signals", () => {
+			const a = generateInternalId("txt", {
+				children: signal("signal-test-app-id-1"),
+			});
+			const b = generateInternalId("txt", {
+				children: signal("signal-test-app-id-2"),
+			});
+			expect(a).not.toBe(b);
+		});
+
+		it("considers signals inside an array of children", () => {
+			const a = generateInternalId("txt", {
+				children: ["Count: ", signal("signal-test-app-id-1")],
+			});
+			const b = generateInternalId("txt", {
+				children: ["Count: ", signal("signal-test-app-id-2")],
+			});
+			expect(a).not.toBe(b);
+		});
+
+		it("keeps the id stable for the same signal", () => {
+			const a = generateInternalId("txt", {
+				children: signal("signal-test-app-id-1"),
+			});
+			const b = generateInternalId("txt", {
+				children: signal("signal-test-app-id-1"),
+			});
+			expect(a).toBe(b);
+		});
+
+		it("does not depend on the value of the signal", () => {
+			const a = generateInternalId("txt", {
+				children: { ...signal("signal-test-app-id-1"), initialValue: 1 },
+			});
+			const b = generateInternalId("txt", {
+				children: { ...signal("signal-test-app-id-1"), initialValue: 2 },
+			});
+			expect(a).toBe(b);
+		});
+
+		it("keeps components without signals as before", () => {
+			const a = generateInternalId("box", {
+				children: { type: "txt", __internalId: "txt-test-app-id-1" },
+			});
+			const b = generateInternalId("box", { children: ["a", "b"] });
+			expect(a).toBe(b);
+		});
+	});
+
 	describe("should reuse valid internal IDs", () => {
 		it("should return the same ID when a valid __internalId is provided", () => {
 			const validId = "box-test-app-id-abc123";

@@ -79,6 +79,17 @@ const TYPE_BADGE_CLASS: Record<PageStorageType, string> = {
  * happened surfaces at the top. Entries of unknown age sink below the observed
  * ones and are ordered by key, which at least makes them predictable to scan.
  */
+/**
+ * The app, plus the scope the entry was written with: `app` when it is shared
+ * by the app's scripts (a single-script app stores both scopes there), or the
+ * script that keeps it for itself.
+ */
+function ownerLabel(record: NubeSDKStorageRecord) {
+	return record.scope === "script"
+		? `${record.appId} · script ${record.scriptId}`
+		: `${record.appId} · app`;
+}
+
 function compareRecords(a: NubeSDKStorageRecord, b: NubeSDKStorageRecord) {
 	if (a.updatedAt !== null && b.updatedAt !== null) {
 		return b.updatedAt - a.updatedAt;
@@ -141,7 +152,7 @@ export function Storages() {
 				if (!term) return true;
 				return (
 					record.key.toLowerCase().includes(term) ||
-					record.appId.toLowerCase().includes(term)
+					ownerLabel(record).toLowerCase().includes(term)
 				);
 			})
 			.sort(compareRecords);
@@ -189,7 +200,10 @@ export function Storages() {
 								<TooltipContent className="max-w-xs">
 									Entries are grouped by key: a write replaces the existing
 									value instead of adding a row. Only keys namespaced by NubeSDK
-									(<code>app-&lt;appId&gt;-&lt;key&gt;</code>) are listed.
+									(<code>app-&lt;appId&gt;-&lt;key&gt;</code>, or{" "}
+									<code>app-&lt;appId&gt;_&lt;scriptId&gt;-&lt;key&gt;</code>{" "}
+									for a script of a multi-script app) are listed. Each entry
+									shows whether it is shared by the app or kept by one script.
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>
@@ -394,9 +408,9 @@ function RecordRow({ record, isSelected, onSelect }: RecordRowProps) {
 					</div>
 					<div
 						className="truncate text-[11px] text-muted-foreground"
-						title={record.appId}
+						title={record.storageKey}
 					>
-						{record.appId}
+						{ownerLabel(record)}
 					</div>
 				</div>
 				{record.expiresAt !== null &&
@@ -542,6 +556,47 @@ function RecordDetail({ record, onSave, onRemove }: RecordDetailProps) {
 						App
 					</span>
 					<span className="text-foreground">{record.appId}</span>
+				</div>
+
+				<div className="flex flex-col">
+					<span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+						Scope
+					</span>
+					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<span
+									// biome-ignore lint/a11y/noNoninteractiveTabindex: focusable so keyboard users can open the hint too
+									tabIndex={0}
+									className="w-fit text-foreground underline decoration-dotted decoration-muted-foreground underline-offset-2 cursor-help"
+								>
+									{record.scope}
+								</span>
+							</TooltipTrigger>
+							<TooltipContent className="max-w-xs">
+								{record.scope === "script" ? (
+									<p>
+										Default scope: only script {record.scriptId} can read and
+										write this value. Used when no scope is passed.
+									</p>
+								) : (
+									<p>
+										Every script of the app reads and writes this value. An app
+										with a single script keeps all its values here.
+									</p>
+								)}
+							</TooltipContent>
+						</Tooltip>
+					</TooltipProvider>
+				</div>
+
+				<div className="flex flex-col">
+					<span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+						Storage key
+					</span>
+					<span className="text-foreground font-mono text-[11px] break-all">
+						{record.storageKey}
+					</span>
 				</div>
 
 				<div className="flex items-center justify-between gap-2">

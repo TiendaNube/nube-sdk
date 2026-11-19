@@ -13,7 +13,8 @@
     "packages/snippet",
     "packages/create-nube-app",
     "packages/nube-devtools",
-    "packages/helper"
+    "packages/helper",
+    "packages/signals"
   ],
   "author": "Nuvemshop / Tiendanube",
   "license": "MIT",
