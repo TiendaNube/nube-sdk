@@ -7,12 +7,15 @@ import {
 	ComponentIcon,
 	Database,
 	Gauge,
+	LayoutTemplate,
 	Package,
 	ScrollText,
 	Server,
+	Settings,
 	TriangleAlert,
 } from "lucide-react";
 
+import { NubeStatusDot } from "@/components/nube-status-dot";
 import { Badge as BadgeComponent } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,11 +29,13 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAutoSlotsFlag } from "@/contexts/auto-slots-context";
 import { PAGES, type Page } from "@/contexts/navigation-context";
 import { useNavigation } from "@/contexts/navigation-context";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
 import { useNubeSDKLogs } from "@/contexts/nube-sdk-logs-context";
 import { useNubeSDKPerformance } from "@/contexts/nube-sdk-performance-context";
+import { useNubeStatusContext } from "@/contexts/nube-status-context";
 import packageData from "../../../package.json";
 
 const Badge = ({
@@ -143,6 +148,16 @@ const menu: {
 		page: PAGES.STATE,
 		icon: Braces,
 	},
+	{
+		title: "Auto-Slots",
+		page: PAGES.AUTO_SLOTS,
+		icon: LayoutTemplate,
+	},
+	{
+		title: "Settings",
+		page: PAGES.SETTINGS,
+		icon: Settings,
+	},
 ];
 
 export function AppSidebar() {
@@ -150,6 +165,16 @@ export function AppSidebar() {
 	const { errorCount, warnCount } = useNubeSDKLogs();
 	const { poorCount } = useNubeSDKPerformance();
 	const { events } = useNubeSDKEventsContext();
+	const nubeStatus = useNubeStatusContext();
+	const autoSlots = useAutoSlotsFlag();
+	// Only Settings shows until the SDK is detected, and the Auto-Slots tab only
+	// on pages running the auto-slots adapter.
+	const visibleMenu = menu.filter((item) => {
+		if (nubeStatus !== true) return item.page === PAGES.SETTINGS;
+		return item.page !== PAGES.AUTO_SLOTS || autoSlots === true;
+	});
+	// A page without the SDK shows Settings, whatever the saved tab is.
+	const activePage = nubeStatus === false ? PAGES.SETTINGS : currentPage;
 
 	const getItemBadge = (item: (typeof menu)[number]) => {
 		if (item.page === PAGES.LOGS && (errorCount > 0 || warnCount > 0)) {
@@ -213,22 +238,23 @@ export function AppSidebar() {
 								className="w-4 h-4"
 							/>
 							NubeSDK
+							<NubeStatusDot status={nubeStatus} />
 						</div>
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{menu.map((item) => (
+							{visibleMenu.map((item) => (
 								<SidebarMenuItem key={item.title}>
 									<SidebarMenuButton asChild>
 										<Button
-											className={`cursor-pointer rounded-none justify-start text-[13px] ${currentPage === item.page ? "shadow-[inset_2px_0_0_0_rgb(180,83,9)]" : ""}`}
+											className={`cursor-pointer rounded-none justify-start text-[13px] ${activePage === item.page ? "shadow-[inset_2px_0_0_0_rgb(180,83,9)]" : ""}`}
 											variant="ghost"
 											onClick={() => {
 												navigate(item.page);
 											}}
 										>
 											<item.icon />
-											{currentPage === item.page ? (
+											{activePage === item.page ? (
 												<div className="flex items-center justify-between w-full">
 													<span className="font-bold text-primary">
 														{item.title}

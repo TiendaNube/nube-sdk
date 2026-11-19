@@ -12,6 +12,8 @@ export const PAGES = {
 	STATE: "state",
 	API_CALLS: "api-calls",
 	PERFORMANCE: "performance",
+	AUTO_SLOTS: "auto-slots",
+	SETTINGS: "settings",
 } as const;
 
 export type Page = (typeof PAGES)[keyof typeof PAGES];

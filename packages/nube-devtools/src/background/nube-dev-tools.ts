@@ -1,3 +1,4 @@
+import type { NubeStatusCheck } from "../utils/nube-status";
 import { MAX_COMMAND_RECORDS } from "../utils/page-commands";
 import { MAX_EVENT_RECORDS } from "../utils/page-events";
 import { MAX_LOG_RECORDS } from "../utils/page-logs";
@@ -16,24 +17,22 @@ export const handleDevToolsVerifyNubeSdkStatus = ({
 	sendResponse,
 	tabId,
 }: {
-	sendResponse: (response: { status: boolean }) => void;
+	sendResponse: (response: NubeStatusCheck) => void;
 	tabId: number;
 }) => {
 	chrome.scripting.executeScript(
 		{
 			target: { tabId },
 			world: "MAIN",
-			func: () => {
-				return !!window.nubeSDK;
-			},
+			func: () => ({
+				status: !!window.nubeSDK,
+				loaded: document.readyState === "complete",
+			}),
 		},
 		(results) => {
-			try {
-				const status = results?.[0]?.result;
-				sendResponse({ status });
-			} catch (error) {
-				sendResponse({ status: false });
-			}
+			// No result: a page scripts can't run on (e.g. chrome://), so there is
+			// nothing to wait for.
+			sendResponse(results?.[0]?.result ?? { status: false, loaded: true });
 		},
 	);
 };
