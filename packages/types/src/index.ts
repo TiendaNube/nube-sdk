@@ -11,6 +11,7 @@ export type * from "./observer";
 export type * from "./domain";
 export type * from "./utility";
 export type * from "./components";
+export type * from "./conditions";
 export type * from "./domain";
 export type * from "./events";
 export type * from "./internal";

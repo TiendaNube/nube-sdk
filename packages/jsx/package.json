@@ -1,6 +1,6 @@
 {
   "name": "@tiendanube/nube-sdk-jsx",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "description": "Library for building JSX interfaces for NubeSDK",
   "type": "module",
   "main": "./dist/index.js",
@@ -12,6 +12,13 @@
         "default": "./dist/index.js"
       },
       "require": "./dist/index.cjs"
+    },
+    "./predicates": {
+      "import": {
+        "types": "./dist/predicates.d.ts",
+        "default": "./dist/predicates.js"
+      },
+      "require": "./dist/predicates.cjs"
     },
     "./jsx-runtime": {
       "import": "./dist/jsx-runtime.ts"
@@ -47,8 +54,14 @@
     "@tiendanube/nube-sdk-types": "*",
     "@tiendanube/nube-sdk-ui": "*"
   },
+  "typesVersions": {
+    "*": {
+      "predicates": ["./dist/predicates.d.ts"]
+    }
+  },
   "files": [
     "./dist",
+    "./predicates",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"

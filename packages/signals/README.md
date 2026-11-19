@@ -60,6 +60,78 @@ Without `useSignals(nube)`, signals still work inside the app and a rendered
 signal shows the value it had when rendered, but later changes never reach the
 page.
 
+### Conditional rendering
+
+`Show` and `Match` pick what is rendered from the value of a signal. Every
+branch is sent with the tree; the platform mounts only the one that matches and
+swaps it when the signal changes, without sending the slot again.
+
+```tsx
+const isLoggedIn = signal(false);
+
+<Show when={isLoggedIn} fallback={<LoginButton />}>
+  <Dashboard />
+</Show>;
+```
+
+```tsx
+const status = signal<"idle" | "loading" | "error" | "timeout">("idle");
+
+<Match.Value of={status}>
+  <Match.When is="idle"><Idle /></Match.When>
+  <Match.When is="loading"><Spinner /></Match.When>
+  <Match.When oneOf={["error", "timeout"]}><ErrorView /></Match.When>
+  <Match.Default><Unknown /></Match.Default>
+</Match.Value>;
+```
+
+`Match.When` takes exactly one operator, and `Show` takes one optionally:
+
+| Operator | Matches |
+|---|---|
+| `is={v}` | the value `v` (`Object.is`) |
+| `oneOf={[a, b]}` | any of the values |
+| `gt`, `gte`, `lt`, `lte` | numbers; any other value does not match |
+| `startsWith`, `endsWith`, `includes` | strings; any other value does not match |
+| `condition={…}` | a condition built with predicates |
+
+For ranges and combinations, build a `condition` with the predicates of
+`@tiendanube/nube-sdk-jsx/predicates`: `is`, `oneOf`, `gt`, `gte`, `lt`,
+`lte`, `startsWith`, `endsWith`, `includes`, `and`, `or` and `not`.
+
+```tsx
+import { and, gt, gte, lt, lte, or, startsWith } from "@tiendanube/nube-sdk-jsx/predicates";
+
+const score = signal(0);
+const cep = signal("");
+
+<Match.Value of={score}>
+  <Match.When condition={and(gte(90), lte(100))}><Excellent /></Match.When>
+  <Match.When condition={or(lt(0), gt(100))}><Invalid /></Match.When>
+  <Match.When gte={60}><Pass /></Match.When>
+  <Match.Default><Fail /></Match.Default>
+</Match.Value>;
+
+<Show when={cep} condition={or(startsWith("01"), startsWith("02"))}>
+  <SameDayShipping />
+</Show>;
+```
+
+- Predicates only build JSON; the platform evaluates it on the page. No code of
+  the app runs there.
+- Values are never converted: `"10"` is not greater than `5`. A condition the
+  platform cannot read is `false`.
+- `when` and `of` only take signals. Without an operator, `Show` renders
+  `children` only while the value is `true`; with one, `when` can hold any
+  primitive and the operator is checked against its type.
+- `Match.Value` renders the first `Match.When` that matches, or
+  `Match.Default`. Values are strings, numbers, booleans or `null`.
+- `computed` still works for anything the operators do not cover:
+  `<Show when={computed(() => cart.value.length > 0, [cart])}>`.
+- Switching branches unmounts the previous one, so its state is lost. Changing
+  the value inside the same branch (`"error"` → `"timeout"` above) keeps it.
+- A tree can only use signals of its own app.
+
 ## Public API
 
 - `signal<T>(value)` → `Signal<T>`: a value you can read and assign through `.value`, with `.subscribe(fn)`.
