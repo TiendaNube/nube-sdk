@@ -15,6 +15,7 @@ export type * from "./domain";
 export type * from "./events";
 export type * from "./internal";
 export type * from "./main";
+export type * from "./signals";
 export type * from "./slots";
 export type * from "./storage";
 export type * from "./structured-data";

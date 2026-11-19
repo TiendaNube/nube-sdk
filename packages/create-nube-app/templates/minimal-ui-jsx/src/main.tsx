@@ -1,33 +1,55 @@
-import { Column, Text } from "@tiendanube/nube-sdk-jsx";
+import { Icon } from "@tiendanube/nube-sdk-jsx";
+import { useSignals } from "@tiendanube/nube-sdk-signals";
 import type { NubeSDK } from "@tiendanube/nube-sdk-types";
-import { styled } from "@tiendanube/nube-sdk-ui";
+import { theme } from "@tiendanube/nube-sdk-ui";
+import { Clicker } from "./components/Clicker";
 import { Logo } from "./components/Logo";
+import { Pulse } from "./components/Pulse";
+import {
+	Brand,
+	Card,
+	Demo,
+	DocsLink,
+	Hint,
+	Plus,
+	Subtitle,
+	Title,
+} from "./components/styles";
 
-const StyledColumn = styled(Column)`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding-top: 20px;
-`;
-
-const StyledText = styled(Text)`
-	font-size: 24px;
-	font-weight: 600;
-	color: #0050c3;
-	margin: 0;
-	padding: 0;
-`;
+function Welcome() {
+	return (
+		<Card>
+			<Brand>
+				<Logo />
+				<Plus>+</Plus>
+				<Title heading={1}>NubeSDK</Title>
+			</Brand>
+			<Subtitle>
+				Your app is running. Edit src/main.tsx and save to see your changes.
+			</Subtitle>
+			<Demo>
+				<Clicker />
+				<Hint>Each click updates only the button label.</Hint>
+			</Demo>
+			<DocsLink
+				href="https://nuvemshop.dev/apps/nube-sdk/overview"
+				target="_blank"
+			>
+				Read the NubeSDK docs
+				<Pulse>
+					<Icon
+						name="external-link"
+						size={16}
+						color={`${theme.color.accent}`}
+					/>
+				</Pulse>
+			</DocsLink>
+		</Card>
+	);
+}
 
 export function App(nube: NubeSDK) {
-	nube.render(
-		"before_main_content",
-		<StyledColumn>
-			<Logo />
-			<Text color="#626262">+</Text>
-			<StyledText heading={1}>NubeSDK</StyledText>
-			<Text color="#626262">
-				https://dev.nuvemshop.com.br/docs/applications/nube-sdk/overview
-			</Text>
-		</StyledColumn>,
-	);
+	useSignals(nube);
+
+	nube.render("before_main_content", <Welcome />);
 }
