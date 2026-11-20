@@ -39,6 +39,15 @@ export type NubeSDKPerformanceRecord = {
 	status?: number;
 	success?: boolean;
 	error?: string;
+	/** For the first render: the slots it filled, sorted. */
+	slots?: string[];
+	/** For the first render: whether a rendered tree carries a signal. */
+	signals?: boolean;
+	/**
+	 * For the first render: serialized length of the rendered slot trees,
+	 * without the copy of the app state the message also carries.
+	 */
+	treeSize?: number;
 };
 
 /** Snapshot of the measurements taken on this document, oldest first. */

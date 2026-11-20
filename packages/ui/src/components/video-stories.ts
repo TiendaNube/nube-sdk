@@ -9,7 +9,8 @@ import { generateInternalId } from "./generateInternalId";
  *
  * `VideoStories` is a vertical, stories-style player for a sequence of
  * self-hosted videos (MP4, HLS or DASH). It renders inline as a compact 9:16
- * card; tapping the card expands to a fullscreen overlay. Events (`onOpen`,
+ * card; the expand button in the card's corner opens a fullscreen overlay
+ * (tapping the video itself does not). Events (`onOpen`,
  * `onClose`, `onChange`, `onComplete`, `onError`) are observe-only — they
  * never gate playback.
  *
