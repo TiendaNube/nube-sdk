@@ -30,6 +30,27 @@ describe("carouselRoot", () => {
 		expect(moved.index).toBe(2);
 	});
 
+	it("leaves a signal index out of the id, and passes it on as is", () => {
+		const signal = (__internalId: string, initialValue: number) => ({
+			type: "signal" as const,
+			__internalId,
+			initialValue,
+		});
+		const numeric = carouselRoot({ ariaLabel: "Stories", index: 0 });
+		const first = carouselRoot({
+			ariaLabel: "Stories",
+			index: signal("signal-test-app-id-1", 0),
+		});
+		const moved = carouselRoot({
+			ariaLabel: "Stories",
+			index: signal("signal-test-app-id-1", 3),
+		});
+
+		expect(first.__internalId).toBe(numeric.__internalId);
+		expect(moved.__internalId).toBe(first.__internalId);
+		expect(moved.index).toEqual(signal("signal-test-app-id-1", 3));
+	});
+
 	it("still changes the id when any other prop changes", () => {
 		const base = carouselRoot({ ariaLabel: "Stories", index: 0 });
 		const other = carouselRoot({ ariaLabel: "Carousel", index: 0 });
