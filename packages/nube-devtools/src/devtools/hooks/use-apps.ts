@@ -2,6 +2,7 @@ import type { NubeSDKApp } from "@/background/types";
 import type { NubeSDKEvent } from "@/contexts/nube-sdk-apps-context";
 import { useNubeSDKAppsContext } from "@/contexts/nube-sdk-apps-context";
 import { useNubeSDKEventsContext } from "@/contexts/nube-sdk-events-context";
+import { SHOW_SLOTS_APP_ID } from "@/utils/show-slots";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const RETRY_DELAY = 2000;
@@ -30,9 +31,12 @@ const readAppsFromState = (state: unknown): AppsRecord | null => {
 	return apps && typeof apps === "object" ? (apps as AppsRecord) : null;
 };
 
-// A stable id keeps the selection across updates.
+// A stable id keeps the selection across updates. The "Show slots" labels
+// live in `state.apps` too, but they are not an app.
 const toEvents = (apps: AppsRecord): NubeSDKEvent[] =>
-	Object.entries(apps).map(([key, app]) => ({ id: app.id ?? key, data: app }));
+	Object.entries(apps)
+		.filter(([key]) => key !== SHOW_SLOTS_APP_ID)
+		.map(([key, app]) => ({ id: app.id ?? key, data: app }));
 
 const sameApps = (a: NubeSDKEvent[], b: NubeSDKEvent[]) =>
 	a.length === b.length &&
