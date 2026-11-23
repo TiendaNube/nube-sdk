@@ -560,5 +560,124 @@ describe("styled", () => {
 				`@keyframes ${animation.name}{from{opacity:0}to{opacity:1}}`,
 			);
 		});
+
+		it("should keep keyframes from the helper without a warning", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+			const spin = keyframes`to { transform: rotate(360deg); }`;
+
+			const Box = styled(box)`
+				animation: ${spin} 1s linear infinite;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe(
+				`@keyframes ${spin.name}{to{transform:rotate(360deg)}}animation:${spin.name} 1s linear infinite;`,
+			);
+			expect(warn).not.toHaveBeenCalled();
+			warn.mockRestore();
+		});
+
+		it("should remove hand-written keyframes and warn", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			const Box = styled(box)`
+				@keyframes spin { to { transform: rotate(360deg); } }
+				animation: spin 1s linear infinite;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe("animation:spin 1s linear infinite;");
+			expect(warn).toHaveBeenCalledTimes(1);
+			expect(warn.mock.calls[0]?.[0]).toContain('"spin"');
+			expect(warn.mock.calls[0]?.[0]).toContain("keyframes helper");
+			warn.mockRestore();
+		});
+
+		it("should warn only once per styled component", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			const Box = styled(box)`
+				@keyframes spin { to { opacity: 0; } }
+			`;
+
+			Box({});
+			Box({});
+
+			expect(warn).toHaveBeenCalledTimes(1);
+			warn.mockRestore();
+		});
+
+		it("should remove prefixed, upper-case and nested hand-written keyframes", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			const Box = styled(box)`
+				@-webkit-keyframes fade { from { opacity: 0; } }
+				@KEYFRAMES "pulse" { 50% { opacity: 0.5; } }
+				@media (max-width: 768px) {
+					@keyframes slide { from { left: 0; } }
+					padding: 8px;
+				}
+				color: red;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe(
+				"@media (max-width:768px){padding:8px}color:red;",
+			);
+			expect(warn.mock.calls[0]?.[0]).toContain('"fade", ""pulse"", "slide"');
+			warn.mockRestore();
+		});
+
+		it("should remove hand-written keyframes passed as a string value", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+			const css = "@keyframes spin { to { opacity: 0; } }";
+
+			const Box = styled(box)`
+				${css}
+				color: red;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe("color:red;");
+			expect(warn).toHaveBeenCalledTimes(1);
+			warn.mockRestore();
+		});
+
+		it("should keep helper keyframes and remove hand-written ones together", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+			const fade = keyframes`from { opacity: 0; }`;
+
+			const Box = styled(box)`
+				@keyframes spin { to { opacity: 0; } }
+				animation: ${fade} 1s;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe(
+				`@keyframes ${fade.name}{from{opacity:0}}animation:${fade.name} 1s;`,
+			);
+			expect(warn).toHaveBeenCalledTimes(1);
+			warn.mockRestore();
+		});
+
+		it("should ignore @keyframes inside a comment", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			const Box = styled(box)`
+				/* do not write @keyframes spin { } by hand */
+				color: red;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe("color:red;");
+			expect(warn).not.toHaveBeenCalled();
+			warn.mockRestore();
+		});
 	});
 });
