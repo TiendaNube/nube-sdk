@@ -9,6 +9,10 @@ import {
 	unwrapStorageValue,
 } from "@/utils";
 import {
+	type NubeSDKStorageEvent,
+	parseStorageEvent,
+} from "@/utils/storage-event";
+import {
 	createContext,
 	useCallback,
 	useContext,
@@ -18,14 +22,7 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 
-/** One storage mutation as reported by the injected page patch. */
-export type NubeSDKStorageEvent = {
-	method: "setItem" | "removeItem" | "clear";
-	type: PageStorageType;
-	key: string;
-	value: string | null;
-	timestamp?: number;
-};
+export type { NubeSDKStorageEvent };
 
 /**
  * One entry that currently exists in the page's storage.
@@ -253,14 +250,22 @@ export const NubeSDKStorageProvider = ({
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
 			if (port.name !== "nube-devtools-storage-events") return;
+			// Every open panel hears every tab's content script; the port belongs
+			// to the panel inspecting that tab.
+			if (port.sender?.tab?.id !== chrome.devtools.inspectedWindow.tabId) {
+				return;
+			}
 
 			port.onMessage.addListener((message) => {
 				// One message carries a batch: the content script coalesces
 				// bursts, which a page boot produces plenty of.
-				const events = message.payload as NubeSDKStorageEvent[];
+				const events: unknown = message?.payload;
 				if (Array.isArray(events)) {
-					for (const event of events) {
-						applyEvent(event);
+					for (const raw of events) {
+						// Any script on the page can dispatch these, so each
+						// event is checked before it can touch state.
+						const event = parseStorageEvent(raw);
+						if (event) applyEvent(event);
 					}
 				}
 

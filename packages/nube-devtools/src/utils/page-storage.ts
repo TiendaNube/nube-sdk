@@ -14,6 +14,7 @@ import {
 	removeStorage,
 	writeStorage,
 } from "@/background/scripts";
+import { isPageStorageType } from "./storage-event";
 import { STORAGE_KEY_PATTERN_SOURCE } from "./storage-key";
 
 export type { PageStorageEntry, PageStorageType };
@@ -72,6 +73,8 @@ export async function setPageStorage(
 	key: string,
 	value: string,
 ): Promise<boolean> {
+	// The type is passed on to `window[type]` in the page.
+	if (!isPageStorageType(type)) return false;
 	const tabId = await resolveTabId();
 	if (tabId === null) return false;
 
@@ -95,6 +98,8 @@ export async function removePageStorage(
 	type: PageStorageType,
 	key: string,
 ): Promise<boolean> {
+	// The type is passed on to `window[type]` in the page.
+	if (!isPageStorageType(type)) return false;
 	const tabId = await resolveTabId();
 	if (tabId === null) return false;
 
@@ -120,6 +125,7 @@ export async function getPageStorage(
 	type: PageStorageType,
 	key: string,
 ): Promise<string | null> {
+	if (!isPageStorageType(type)) return null;
 	const tabId = await resolveTabId();
 	if (tabId === null) return null;
 
