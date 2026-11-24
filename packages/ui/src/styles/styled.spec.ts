@@ -679,5 +679,36 @@ describe("styled", () => {
 			expect(warn).not.toHaveBeenCalled();
 			warn.mockRestore();
 		});
+
+		it("should ignore braces inside strings when finding the end of a block", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			const Box = styled(box)`
+				@keyframes spin { to { content: "{"; } }
+				@keyframes blink { to { content: '\\'}'; } }
+				color: red;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe("color:red;");
+			expect(warn.mock.calls[0]?.[0]).toContain('"spin", "blink"');
+			warn.mockRestore();
+		});
+
+		it("should ignore @keyframes inside a string", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			const Box = styled(box)`
+				content: "@keyframes spin { }";
+				color: red;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe('content:"@keyframes spin{}";color:red;');
+			expect(warn).not.toHaveBeenCalled();
+			warn.mockRestore();
+		});
 	});
 });

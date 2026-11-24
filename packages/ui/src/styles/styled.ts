@@ -17,8 +17,26 @@ type NubeComponentFunction<Props = NubeComponentProps> = (
 /**
  * Matches the start of a `@keyframes` at-rule, with or without a vendor
  * prefix (`@-webkit-keyframes`). At-rule names are case-insensitive in CSS.
+ * It is sticky: it only matches at `lastIndex`.
  */
-const KEYFRAMES_AT_RULE = /@(?:-[a-z]+-)?keyframes\b/gi;
+const KEYFRAMES_AT_RULE = /@(?:-[a-z]+-)?keyframes\b/iy;
+
+function isQuote(char: string | undefined): boolean {
+	return char === '"' || char === "'";
+}
+
+/**
+ * Returns the index just after the CSS string that starts at `start`.
+ * A backslash escapes the next character, so `"\""` is one string.
+ */
+function stringEnd(css: string, start: number): number {
+	const quote = css[start];
+	let i = start + 1;
+	while (i < css.length && css[i] !== quote) {
+		i += css[i] === "\\" ? 2 : 1;
+	}
+	return Math.min(i + 1, css.length);
+}
 
 /**
  * Removes the `@keyframes` blocks written by hand in the CSS.
@@ -27,6 +45,9 @@ const KEYFRAMES_AT_RULE = /@(?:-[a-z]+-)?keyframes\b/gi;
  * `spin` can replace an animation of the theme or of another app. The
  * `keyframes` helper creates a unique name instead. Its blocks never reach
  * this function: `styled` keeps them apart and puts only the name in the CSS.
+ *
+ * Text inside CSS strings is skipped, so `content: "@keyframes {"` neither
+ * starts a block nor changes where a block ends.
  *
  * Returns the CSS without those blocks and the names that were removed.
  */
@@ -38,30 +59,45 @@ function removeHandWrittenKeyframes(css: string): {
 	const removed: string[] = [];
 	let output = "";
 	let cursor = 0;
+	let i = 0;
 
-	for (;;) {
-		const match = atRule.exec(css);
-		if (!match) break;
-
-		const open = css.indexOf("{", atRule.lastIndex);
-		// No body: the block is broken, so drop everything from here on.
-		const nameEnd = open === -1 ? css.length : open;
-		removed.push(css.slice(atRule.lastIndex, nameEnd).trim());
-
-		let end = css.length;
-		if (open !== -1) {
-			let depth = 1;
-			end = open + 1;
-			while (end < css.length && depth > 0) {
-				if (css[end] === "{") depth++;
-				else if (css[end] === "}") depth--;
-				end++;
-			}
+	while (i < css.length) {
+		if (isQuote(css[i])) {
+			i = stringEnd(css, i);
+			continue;
 		}
 
-		output += css.slice(cursor, match.index);
+		atRule.lastIndex = i;
+		if (css[i] !== "@" || !atRule.test(css)) {
+			i++;
+			continue;
+		}
+
+		// Find the `{` that opens the body. The name can be a string.
+		let open = atRule.lastIndex;
+		while (open < css.length && css[open] !== "{") {
+			open = isQuote(css[open]) ? stringEnd(css, open) : open + 1;
+		}
+		// No body: the block is broken, so drop everything from here on.
+		removed.push(css.slice(atRule.lastIndex, open).trim());
+
+		let end = open + 1;
+		let depth = 1;
+		while (end < css.length && depth > 0) {
+			const char = css[end];
+			if (isQuote(char)) {
+				end = stringEnd(css, end);
+				continue;
+			}
+			if (char === "{") depth++;
+			else if (char === "}") depth--;
+			end++;
+		}
+		end = Math.min(end, css.length);
+
+		output += css.slice(cursor, i);
 		cursor = end;
-		atRule.lastIndex = end;
+		i = end;
 	}
 
 	output += css.slice(cursor);
