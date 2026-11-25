@@ -24,7 +24,8 @@ import { generateInternalId } from "./generateInternalId";
  * The controlled `index` is left out of the internal id: the id is the
  * component's identity on the page, so a new `index` must move the same
  * carousel (scrolling to the item) instead of mounting a new one, which would
- * restart every video and jump without animating.
+ * restart every video and jump without animating. The same holds for a signal
+ * `index`: neither its id nor its value enters the internal id.
  *
  * @param props - The properties for configuring the carousel root component.
  * @returns A `NubeComponentCarouselRoot` object representing the carousel root.
