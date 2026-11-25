@@ -73,10 +73,11 @@ export const NubeSDKCommandsProvider = ({
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
 			if (port.name !== "nube-devtools-command-events") return;
-			// Every open panel hears every tab's content script. The port is
-			// left alone rather than disconnected, since it belongs to the panel
-			// inspecting that tab.
+			// Every open panel hears every tab's content script, and each gets its
+			// own end of the port. Closing this end leaves the inspecting panel's
+			// end open; leaving it open would keep the connection alive for good.
 			if (port.sender?.tab?.id !== chrome.devtools.inspectedWindow.tabId) {
+				port.disconnect();
 				return;
 			}
 
