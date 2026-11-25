@@ -39,6 +39,17 @@ function stringEnd(css: string, start: number): number {
 }
 
 /**
+ * Returns the index just after the string or the escape that starts at
+ * `start`, or `start` when there is none. An escaped character, as in `\{`
+ * or `\@`, is part of a name: it opens no block and starts no at-rule.
+ */
+function stringOrEscapeEnd(css: string, start: number): number {
+	if (isQuote(css[start])) return stringEnd(css, start);
+	if (css[start] === "\\") return Math.min(start + 2, css.length);
+	return start;
+}
+
+/**
  * Matches the start of an unquoted `url(...)`, such as `url(/a.svg)`.
  * `url("...")` is not matched: its content is a string and is skipped as one.
  * It is sticky: it only matches at `lastIndex`.
@@ -76,7 +87,8 @@ function unquotedUrlEnd(css: string, start: number): number {
  *
  * Text inside CSS strings is skipped, so `content: "@keyframes {"` neither
  * starts a block nor changes where a block ends. Unquoted `url(...)` is
- * skipped the same way, so `url(/@keyframes.svg)` does not start a block.
+ * skipped the same way, so `url(/@keyframes.svg)` does not start a block,
+ * and so are escapes: `\{` neither opens a block nor closes one.
  *
  * Returns the CSS without those blocks and the names that were removed.
  */
@@ -91,8 +103,9 @@ function removeHandWrittenKeyframes(css: string): {
 	let i = 0;
 
 	while (i < css.length) {
-		if (isQuote(css[i])) {
-			i = stringEnd(css, i);
+		const skipEnd = stringOrEscapeEnd(css, i);
+		if (skipEnd > i) {
+			i = skipEnd;
 			continue;
 		}
 
@@ -108,10 +121,12 @@ function removeHandWrittenKeyframes(css: string): {
 			continue;
 		}
 
-		// Find the `{` that opens the body. The name can be a string.
+		// Find the `{` that opens the body. The name can be a string or
+		// have escapes.
 		let open = atRule.lastIndex;
 		while (open < css.length && css[open] !== "{") {
-			open = isQuote(css[open]) ? stringEnd(css, open) : open + 1;
+			const skipEnd = stringOrEscapeEnd(css, open);
+			open = skipEnd > open ? skipEnd : open + 1;
 		}
 		// No body: the block is broken, so drop everything from here on.
 		removed.push(css.slice(atRule.lastIndex, open).trim());
@@ -119,11 +134,12 @@ function removeHandWrittenKeyframes(css: string): {
 		let end = open + 1;
 		let depth = 1;
 		while (end < css.length && depth > 0) {
-			const char = css[end];
-			if (isQuote(char)) {
-				end = stringEnd(css, end);
+			const skipEnd = stringOrEscapeEnd(css, end);
+			if (skipEnd > end) {
+				end = skipEnd;
 				continue;
 			}
+			const char = css[end];
 			if (char === "{") depth++;
 			else if (char === "}") depth--;
 			end++;

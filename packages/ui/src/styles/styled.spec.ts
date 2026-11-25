@@ -711,6 +711,37 @@ describe("styled", () => {
 			warn.mockRestore();
 		});
 
+		it("should ignore escaped braces when finding the end of a block", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			const Box = styled(box)`
+				@keyframes spin { to { --brace: \\{; opacity: 0; } }
+				@keyframes blink\\{ { to { opacity: 0; } }
+				color: red;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe("color:red;");
+			expect(warn.mock.calls[0]?.[0]).toContain('"spin", "blink\\{"');
+			warn.mockRestore();
+		});
+
+		it("should ignore an escaped @keyframes", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			const Box = styled(box)`
+				--name: \\@keyframes;
+				color: red;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe("--name:\\@keyframes;color:red;");
+			expect(warn).not.toHaveBeenCalled();
+			warn.mockRestore();
+		});
+
 		it("should ignore @keyframes inside an unquoted url", () => {
 			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 
