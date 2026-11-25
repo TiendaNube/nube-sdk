@@ -15,6 +15,154 @@ type NubeComponentFunction<Props = NubeComponentProps> = (
 ) => NubeComponent;
 
 /**
+ * Matches the start of a `@keyframes` at-rule, with or without a vendor
+ * prefix (`@-webkit-keyframes`). At-rule names are case-insensitive in CSS.
+ * It is sticky: it only matches at `lastIndex`.
+ */
+const KEYFRAMES_AT_RULE = /@(?:-[a-z]+-)?keyframes\b/iy;
+
+function isQuote(char: string | undefined): boolean {
+	return char === '"' || char === "'";
+}
+
+/**
+ * Returns the index just after the CSS string that starts at `start`.
+ * A backslash escapes the next character, so `"\""` is one string.
+ */
+function stringEnd(css: string, start: number): number {
+	const quote = css[start];
+	let i = start + 1;
+	while (i < css.length && css[i] !== quote) {
+		i += css[i] === "\\" ? 2 : 1;
+	}
+	return Math.min(i + 1, css.length);
+}
+
+/**
+ * Returns the index just after the string or the escape that starts at
+ * `start`, or `start` when there is none. An escaped character, as in `\{`
+ * or `\@`, is part of a name: it opens no block and starts no at-rule.
+ */
+function stringOrEscapeEnd(css: string, start: number): number {
+	if (isQuote(css[start])) return stringEnd(css, start);
+	if (css[start] === "\\") return Math.min(start + 2, css.length);
+	return start;
+}
+
+/**
+ * Matches the start of an unquoted `url(...)`, such as `url(/a.svg)`.
+ * `url("...")` is not matched: its content is a string and is skipped as one.
+ * It is sticky: it only matches at `lastIndex`.
+ */
+const UNQUOTED_URL = /url\(\s*(?!["'])/iy;
+
+/**
+ * Returns the index just after the unquoted `url(...)` that starts at
+ * `start`, or `start` when there is none. Its content is one token, so an
+ * `@` inside it, as in `url(/@keyframes.svg)`, does not start an at-rule.
+ * A backslash escapes the next character, so `url(a\).svg)` is one URL.
+ */
+function unquotedUrlEnd(css: string, start: number): number {
+	// `myurl(` is another function, not a URL.
+	if (start > 0 && /[\w-]/.test(css[start - 1] ?? "")) return start;
+
+	const url = new RegExp(UNQUOTED_URL.source, UNQUOTED_URL.flags);
+	url.lastIndex = start;
+	if (!url.test(css)) return start;
+
+	let i = url.lastIndex;
+	while (i < css.length && css[i] !== ")") {
+		i += css[i] === "\\" ? 2 : 1;
+	}
+	return Math.min(i + 1, css.length);
+}
+
+/**
+ * Removes the `@keyframes` blocks written by hand in the CSS.
+ *
+ * Animation names are global on the page, so a hand-written name such as
+ * `spin` can replace an animation of the theme or of another app. The
+ * `keyframes` helper creates a unique name instead. Its blocks never reach
+ * this function: `styled` keeps them apart and puts only the name in the CSS.
+ *
+ * Text inside CSS strings is skipped, so `content: "@keyframes {"` neither
+ * starts a block nor changes where a block ends. Unquoted `url(...)` is
+ * skipped the same way, so `url(/@keyframes.svg)` does not start a block,
+ * and so are escapes: `\{` neither opens a block nor closes one.
+ *
+ * Returns the CSS without those blocks and the names that were removed.
+ */
+function removeHandWrittenKeyframes(css: string): {
+	css: string;
+	removed: string[];
+} {
+	const atRule = new RegExp(KEYFRAMES_AT_RULE.source, KEYFRAMES_AT_RULE.flags);
+	const removed: string[] = [];
+	let output = "";
+	let cursor = 0;
+	let i = 0;
+
+	while (i < css.length) {
+		const skipEnd = stringOrEscapeEnd(css, i);
+		if (skipEnd > i) {
+			i = skipEnd;
+			continue;
+		}
+
+		const urlEnd = unquotedUrlEnd(css, i);
+		if (urlEnd > i) {
+			i = urlEnd;
+			continue;
+		}
+
+		atRule.lastIndex = i;
+		if (css[i] !== "@" || !atRule.test(css)) {
+			i++;
+			continue;
+		}
+
+		// Find the `{` that opens the body. The name can be a string or
+		// have escapes.
+		let open = atRule.lastIndex;
+		while (open < css.length && css[open] !== "{") {
+			const skipEnd = stringOrEscapeEnd(css, open);
+			open = skipEnd > open ? skipEnd : open + 1;
+		}
+		// No body: the block is broken, so drop everything from here on.
+		removed.push(css.slice(atRule.lastIndex, open).trim());
+
+		let end = open + 1;
+		let depth = 1;
+		while (end < css.length && depth > 0) {
+			const skipEnd = stringOrEscapeEnd(css, end);
+			if (skipEnd > end) {
+				end = skipEnd;
+				continue;
+			}
+			const char = css[end];
+			if (char === "{") depth++;
+			else if (char === "}") depth--;
+			end++;
+		}
+		end = Math.min(end, css.length);
+
+		output += css.slice(cursor, i);
+		cursor = end;
+		i = end;
+	}
+
+	output += css.slice(cursor);
+	return { css: output, removed };
+}
+
+function warnHandWrittenKeyframes(names: string[]): void {
+	const list = names.map((name) => `"${name || "(no name)"}"`).join(", ");
+	console.warn(
+		`[nube-sdk-ui] styled: removed hand-written @keyframes ${list}. Animation names are global and can replace an animation of the store or of another app. Use the keyframes helper instead, which creates a unique name: const spin = keyframes\`to { transform: rotate(360deg); }\`; then animation: \${spin} 1s linear infinite;`,
+	);
+}
+
+/**
  * `styled` allows declarative styling with CSS-in-JS.
  * The CSS is inserted directly into the `styled` prop as a string literal.
  */
@@ -22,6 +170,9 @@ export function styled<Props extends NubeComponentProps>(
 	baseComponent: NubeComponentFunction<Props>,
 ) {
 	return (strings: TemplateStringsArray, ...exprs: unknown[]) => {
+		// Warn once per styled component, not on every render.
+		let warned = false;
+
 		const StyledComponent: NubeComponentFunction<Props> = (props) => {
 			let rawCSS = "";
 			const animation: string[] = [];
@@ -39,7 +190,19 @@ export function styled<Props extends NubeComponentProps>(
 				}
 			}
 
-			const minifiedCSS = minify(`${animation.join("")}${rawCSS}`);
+			// Blocks from the keyframes helper are in `animation`, not in
+			// `rawCSS`, so only hand-written blocks are removed here. Comments
+			// are removed first, so a `@keyframes` inside one is ignored.
+			const { css: ownCSS, removed } = removeHandWrittenKeyframes(
+				minify(rawCSS),
+			);
+
+			if (removed.length > 0 && !warned) {
+				warned = true;
+				warnHandWrittenKeyframes(removed);
+			}
+
+			const minifiedCSS = minify(`${animation.join("")}${ownCSS}`);
 
 			const componentType = baseComponent.name || "component";
 
