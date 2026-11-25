@@ -62,6 +62,8 @@ export const writeStorage = (
 	key: string,
 	value: string,
 ): boolean => {
+	// Injected functions cannot import, so the allow-list is repeated here.
+	if (type !== "localStorage" && type !== "sessionStorage") return false;
 	try {
 		window[type].setItem(key, value);
 		return true;
@@ -72,6 +74,8 @@ export const writeStorage = (
 };
 
 export const removeStorage = (type: PageStorageType, key: string): boolean => {
+	// Injected functions cannot import, so the allow-list is repeated here.
+	if (type !== "localStorage" && type !== "sessionStorage") return false;
 	try {
 		window[type].removeItem(key);
 		return true;
@@ -84,6 +88,7 @@ export const getStorageItem = (
 	type: PageStorageType,
 	key: string,
 ): string | null => {
+	if (type !== "localStorage" && type !== "sessionStorage") return null;
 	try {
 		return window[type].getItem(key);
 	} catch {
