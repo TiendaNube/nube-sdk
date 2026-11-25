@@ -39,6 +39,34 @@ function stringEnd(css: string, start: number): number {
 }
 
 /**
+ * Matches the start of an unquoted `url(...)`, such as `url(/a.svg)`.
+ * `url("...")` is not matched: its content is a string and is skipped as one.
+ * It is sticky: it only matches at `lastIndex`.
+ */
+const UNQUOTED_URL = /url\(\s*(?!["'])/iy;
+
+/**
+ * Returns the index just after the unquoted `url(...)` that starts at
+ * `start`, or `start` when there is none. Its content is one token, so an
+ * `@` inside it, as in `url(/@keyframes.svg)`, does not start an at-rule.
+ * A backslash escapes the next character, so `url(a\).svg)` is one URL.
+ */
+function unquotedUrlEnd(css: string, start: number): number {
+	// `myurl(` is another function, not a URL.
+	if (start > 0 && /[\w-]/.test(css[start - 1] ?? "")) return start;
+
+	const url = new RegExp(UNQUOTED_URL.source, UNQUOTED_URL.flags);
+	url.lastIndex = start;
+	if (!url.test(css)) return start;
+
+	let i = url.lastIndex;
+	while (i < css.length && css[i] !== ")") {
+		i += css[i] === "\\" ? 2 : 1;
+	}
+	return Math.min(i + 1, css.length);
+}
+
+/**
  * Removes the `@keyframes` blocks written by hand in the CSS.
  *
  * Animation names are global on the page, so a hand-written name such as
@@ -47,7 +75,8 @@ function stringEnd(css: string, start: number): number {
  * this function: `styled` keeps them apart and puts only the name in the CSS.
  *
  * Text inside CSS strings is skipped, so `content: "@keyframes {"` neither
- * starts a block nor changes where a block ends.
+ * starts a block nor changes where a block ends. Unquoted `url(...)` is
+ * skipped the same way, so `url(/@keyframes.svg)` does not start a block.
  *
  * Returns the CSS without those blocks and the names that were removed.
  */
@@ -64,6 +93,12 @@ function removeHandWrittenKeyframes(css: string): {
 	while (i < css.length) {
 		if (isQuote(css[i])) {
 			i = stringEnd(css, i);
+			continue;
+		}
+
+		const urlEnd = unquotedUrlEnd(css, i);
+		if (urlEnd > i) {
+			i = urlEnd;
 			continue;
 		}
 

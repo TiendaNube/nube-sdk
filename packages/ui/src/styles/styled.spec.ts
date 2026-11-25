@@ -710,5 +710,41 @@ describe("styled", () => {
 			expect(warn).not.toHaveBeenCalled();
 			warn.mockRestore();
 		});
+
+		it("should ignore @keyframes inside an unquoted url", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			const Box = styled(box)`
+				background-image: url(/@keyframes.svg);
+				color: red;
+				&:hover { color: blue; }
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe(
+				"background-image:url(/@keyframes.svg);color:red;&:hover{color:blue}",
+			);
+			expect(warn).not.toHaveBeenCalled();
+			warn.mockRestore();
+		});
+
+		it("should remove hand-written keyframes after an unquoted url", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			const Box = styled(box)`
+				background-image: URL(/@keyframes\\).svg);
+				@keyframes spin { to { opacity: 0; } }
+				color: red;
+			`;
+
+			const result = Box({}) as NubeComponentWithStyle;
+
+			expect(result.styled).toBe(
+				"background-image:URL(/@keyframes\\).svg);color:red;",
+			);
+			expect(warn.mock.calls[0]?.[0]).toContain('"spin"');
+			warn.mockRestore();
+		});
 	});
 });
