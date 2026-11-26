@@ -36,6 +36,22 @@ chrome.scripting
 		// Already registered (e.g. service worker restart) — safe to ignore.
 	});
 
+// Own call for the same reason. A no-op unless the Components page's "Show
+// slots" toggle is on.
+chrome.scripting
+	.registerContentScripts([
+		{
+			id: "nube-devtools-show-slots",
+			matches: ["http://*/*", "https://*/*"],
+			js: ["inject-show-slots.js"],
+			runAt: "document_start",
+			world: "MAIN",
+		},
+	])
+	.catch(() => {
+		// Already registered (e.g. service worker restart) — safe to ignore.
+	});
+
 chrome.runtime.onInstalled.addListener(syncDevToolsHeaderRule);
 chrome.runtime.onStartup.addListener(syncDevToolsHeaderRule);
 syncDevToolsHeaderRule();

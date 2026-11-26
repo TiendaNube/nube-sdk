@@ -8,6 +8,7 @@ import {
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Switch } from "@/components/ui/switch";
 import {
 	Tooltip,
 	TooltipContent,
@@ -40,6 +41,7 @@ import {
 	readPageComponents,
 	scrollToPageComponent,
 } from "@/utils/page-components";
+import { readShowSlots, writeShowSlots } from "@/utils/show-slots";
 import {
 	ChevronDownIcon,
 	ChevronRightIcon,
@@ -99,11 +101,17 @@ export function Components() {
 	const [search, setSearch] = useState("");
 	const [selectedKey, setSelectedKey] = useState<string | null>(null);
 	const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
+	const [showSlots, setShowSlots] = useState(false);
 
 	/** Re-reads the page; resolves `false` when it could not be read. */
 	const refresh = useCallback(async (): Promise<boolean> => {
-		const next = await readPageComponents();
+		// The flag lives in the page, so it follows navigations to other origins.
+		const [next, slotsShown] = await Promise.all([
+			readPageComponents(),
+			readShowSlots(),
+		]);
 		setSnapshot(next);
+		setShowSlots(slotsShown);
 		setIsLoading(false);
 		setUpdatedAt(Date.now());
 		return next !== null;
@@ -274,6 +282,20 @@ export function Components() {
 							</option>
 						))}
 					</select>
+					<label
+						className="flex items-center gap-1.5 shrink-0 pl-1 text-xs"
+						title="Render every slot's name inside it. Reloads the page."
+					>
+						<Switch
+							className="h-4 w-7 [&>span]:size-3 [&>span]:data-[state=checked]:translate-x-3"
+							checked={showSlots}
+							onCheckedChange={async (checked) => {
+								if (await writeShowSlots(checked)) setShowSlots(checked);
+								else toast.error("Could not change the page's slots display");
+							}}
+						/>
+						Show slots
+					</label>
 					<span className="ml-auto shrink-0 pr-1 text-xs text-muted-foreground">
 						{tree.length} {tree.length === 1 ? "slot" : "slots"} ·{" "}
 						{componentCount} {componentCount === 1 ? "component" : "components"}
