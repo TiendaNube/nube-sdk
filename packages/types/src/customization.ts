@@ -50,6 +50,8 @@ export type CustomizationOptions = {
 	 * Refused when that contrast would fall below 3:1 — against the `fontColor`
 	 * sent in the same call, otherwise against the colour the label already
 	 * has. A translucent colour is judged as it shows over what is behind it.
+	 * On {@link Customization."checkout-background"}, the label is the page's
+	 * text.
 	 */
 	backgroundColor: string;
 	/**
@@ -62,6 +64,48 @@ export type CustomizationOptions = {
 	 * browser would silently drop never reports a success.
 	 */
 	borderRadius: string;
+	/**
+	 * The element's inner spacing, applied as an inline style, in the CSS
+	 * shorthand order: `"24px"` on every side, `"16px 24px"` vertical then
+	 * horizontal, up to four values. Pass `""` to hand the spacing back to the
+	 * store.
+	 *
+	 * One to four non-negative lengths in `px`, `rem`, `em` or `%`, or `0`.
+	 * Anything else is refused, `var()` and `calc()` included, for the same
+	 * reason as {@link CustomizationOptions.borderRadius}.
+	 */
+	padding: string;
+	/**
+	 * The element's shadow, applied as an inline style, e.g.
+	 * `"0 4px 12px rgba(0, 0, 0, 0.15)"`. Pass `"none"` to remove the store's
+	 * shadow, or `""` to hand the shadow back to the store.
+	 *
+	 * One shadow: two to four lengths in `px`, `rem` or `em` (or `0`) — the
+	 * horizontal and vertical offsets, then optionally the blur (not negative)
+	 * and the spread — with a hex, `rgb()`, `rgba()`, `hsl()` or `hsla()`
+	 * colour before or after them. Several shadows, `inset`, `var()` and
+	 * `calc()` are refused.
+	 */
+	boxShadow: string;
+	/**
+	 * The colour of the element's border, applied as an inline style. Pass
+	 * `""` to hand the border colour back to the theme.
+	 *
+	 * Accepts the same notations as {@link CustomizationOptions.fontColor}.
+	 * Only the colour changes: the border's style still comes from the store,
+	 * so an element drawn without a border shows none.
+	 */
+	borderColor: string;
+	/**
+	 * The width of the element's border, applied as an inline style, e.g.
+	 * `"2px"`, or `"0 0 1px"` for a bottom border only. Pass `""` to hand the
+	 * width back to the theme.
+	 *
+	 * One to four non-negative lengths in `px`, `rem` or `em`, or `0`.
+	 * Anything else is refused, `var()` and `calc()` included, for the reason
+	 * {@link CustomizationOptions.borderRadius} is.
+	 */
+	borderWidth: string;
 	/**
 	 * Whether the element is hidden, and on which viewports:
 	 *
@@ -102,6 +146,23 @@ export type CustomizationOptions = {
 	 * `product:variant_selected`.
 	 */
 	disabled: boolean;
+	/**
+	 * The line drawn through, under or nowhere on the element's text, applied
+	 * as an inline style:
+	 *
+	 * - `"line-through"` — struck through, e.g. to show a delivery estimate
+	 *   that no longer applies;
+	 * - `"underline"` — underlined;
+	 * - `"none"` — no line, even where the store draws one.
+	 *
+	 * Pass `""` to drop the inline value and hand the element back to the
+	 * store.
+	 *
+	 * Only those keywords are accepted. Colours, styles and thicknesses
+	 * (`"line-through red wavy"`) are refused, so the line always matches the
+	 * text it decorates.
+	 */
+	textDecoration: CustomizationTextDecoration | "";
 };
 
 /**
@@ -110,6 +171,12 @@ export type CustomizationOptions = {
  * union.
  */
 export type CustomizationHiddenMode = "always" | "mobile" | "desktop" | "never";
+
+/**
+ * The lines {@link CustomizationOptions.textDecoration} accepts, named so an
+ * app can type one it computes without repeating the union.
+ */
+export type CustomizationTextDecoration = "line-through" | "underline" | "none";
 
 /**
  * Requires at least one of `T`'s members while leaving the others optional.
@@ -367,6 +434,203 @@ export type Customization = {
 	 * the call resolves with `not_found`.
 	 */
 	"cart-installments": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The payment promotions of the product page: the "$90 with Bank transfer"
+	 * line under the price, and the "10% off paying with Bank transfer" line of
+	 * the payments panel. Both are hidden together.
+	 *
+	 * Different from {@link Customization."product-detail-installments"}, which
+	 * hides the whole payments panel and leaves the line under the price. An app
+	 * that replaces this copy with its own hides this target and renders its text
+	 * in a slot such as `after_product_detail_price`:
+	 *
+	 * ```ts
+	 * customization.set("product-detail-payment-promotions", { hidden: "always" });
+	 * ```
+	 *
+	 * Selecting a variant does not undo it. Hiding the lines does not change the
+	 * discount the shopper gets at checkout. Refused when `hidden` is not one of
+	 * its modes.
+	 *
+	 * The line under the price is only on the page when the theme is set to show
+	 * the price with the payment discount. The panel's line does not depend on
+	 * that setting, so `applied` can count one line or both.
+	 */
+	"product-detail-payment-promotions": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The payment promotion line of product cards — the "$90 with Bank transfer"
+	 * under the price — wherever they appear: grids, carousels and the related
+	 * products of a product page. Independent of
+	 * {@link Customization."product-detail-payment-promotions"}.
+	 *
+	 * Static options also reach the quick shop opened from a card:
+	 *
+	 * ```ts
+	 * customization.set("product-grid-payment-promotions", { hidden: "always" });
+	 * ```
+	 *
+	 * A resolver receives each card's product, so the line can be hidden on some
+	 * products only. It does not reach the quick shop, which keeps showing the
+	 * line of the products the resolver hides:
+	 *
+	 * ```ts
+	 * customization.set("product-grid-payment-promotions", (product) =>
+	 *   product.id % 2 === 1 ? { hidden: "always" } : undefined,
+	 * );
+	 * ```
+	 *
+	 * Cards that appear later — pagination, infinite scroll — need another
+	 * {@link CustomizationCommands.set}. A few home page blocks of older themes
+	 * are not product cards and keep their line. Refused when `hidden` is not one
+	 * of its modes. Resolves with `not_found` when the theme is not set to show
+	 * the price with the payment discount, since no card has the line then.
+	 */
+	"product-grid-payment-promotions": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The payment promotion line under the cart's total — the "or $90 with Bank
+	 * transfer" shown in the cart drawer and on the cart page.
+	 *
+	 * Independent of {@link Customization."cart-installments"}. An app that
+	 * replaces this copy with its own hides this line and renders its text in a
+	 * slot such as `after_cart_summary`:
+	 *
+	 * ```ts
+	 * customization.set("cart-payment-promotions", { hidden: "always" });
+	 * ```
+	 *
+	 * The store updates the line whenever the cart changes, which does not undo
+	 * `hidden`. Hiding the line does not change the discount the shopper gets at
+	 * checkout. Refused when `hidden` is not one of its modes. Resolves with
+	 * `not_found` when the theme is not set to show the price with the payment
+	 * discount, since the cart has no line then.
+	 */
+	"cart-payment-promotions": AllowedCustomizationOptions<"hidden">;
+	/**
+	 * The description of every shipping method in the checkout — the line
+	 * under each method's name, such as the delivery estimate
+	 * ("Arrives Friday 13/11").
+	 *
+	 * With options, every method listed is customized alike:
+	 *
+	 * ```ts
+	 * customization.set("checkout-shipping-method-description", {
+	 *   textDecoration: "line-through",
+	 * });
+	 * ```
+	 *
+	 * The checkout renders the list again when the shipping options change —
+	 * a new zipcode, a recalculation — and the new elements come without the
+	 * customization, so an app re-applies it on `shipping:update`, as
+	 * {@link CustomizationCommands.set} describes. Before the shopper has
+	 * calculated shipping there is no list, and the call resolves with
+	 * `not_found`.
+	 *
+	 * Checkout only; on the storefront the call resolves with `not_found`.
+	 */
+	"checkout-shipping-method-description": AllowedCustomizationOptions<"textDecoration">;
+	/**
+	 * The background of the checkout page, painted behind its content:
+	 *
+	 * ```ts
+	 * customization.set("checkout-background", { backgroundColor: "#f5efe6" });
+	 * ```
+	 *
+	 * Only the page itself is painted. Surfaces that paint a background of
+	 * their own on top of it — the panels, the header, modals — keep the
+	 * Checkout's colour; the panels have targets of their own
+	 * ({@link Customization."checkout-main-content"} and
+	 * {@link Customization."checkout-order-summary"}).
+	 *
+	 * The page's text has to stay readable on the new colour, so a colour
+	 * leaving it below 3:1 is refused with the ratio measured. `""` or
+	 * {@link CustomizationCommands.reset} hands the background back to the
+	 * Checkout.
+	 */
+	"checkout-background": AllowedCustomizationOptions<"backgroundColor">;
+	/**
+	 * The checkout's main column — the step indicator and the form of the
+	 * current step (contact, shipping, payment). On desktop it sits beside
+	 * {@link Customization."checkout-order-summary"}; on mobile the two stack.
+	 *
+	 * ```ts
+	 * customization.set("checkout-main-content", {
+	 *   backgroundColor: "#ffffff",
+	 *   padding: "24px",
+	 *   borderRadius: "16px",
+	 *   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+	 * });
+	 * ```
+	 *
+	 * Only the column's own surface changes; the fields and labels inside keep
+	 * the checkout's look. `backgroundColor` is refused when the column's text
+	 * would fall below 3:1 against it.
+	 *
+	 * Only present in the checkout; on the storefront the call resolves with
+	 * `not_found`.
+	 */
+	"checkout-main-content": AllowedCustomizationOptions<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
+	/**
+	 * The checkout's order summary — the line items, subtotal, shipping, total
+	 * and the coupon link. On desktop it sits beside
+	 * {@link Customization."checkout-main-content"}; on mobile the two stack.
+	 *
+	 * Takes the same options, independently: styling one leaves the other
+	 * alone, and a bulk {@link CustomizationCommands.set} styles both in one
+	 * call.
+	 *
+	 * Only present in the checkout; on the storefront the call resolves with
+	 * `not_found`.
+	 */
+	"checkout-order-summary": AllowedCustomizationOptions<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
+	/**
+	 * The text fields of the checkout's forms — contact, shipping and billing
+	 * details — as the field itself, not the group holding its label.
+	 *
+	 * Checkout only: on the storefront the call resolves with `not_found`.
+	 * Every field on the page is customized, so an app can match the inputs
+	 * to its own brand:
+	 *
+	 * ```ts
+	 * customization.set("checkout-form-input", {
+	 *   backgroundColor: "#ffffff",
+	 *   borderColor: "#d0d5dd",
+	 *   borderWidth: "1px",
+	 *   borderRadius: "8px",
+	 *   padding: "12px 16px",
+	 * });
+	 * ```
+	 *
+	 * `backgroundColor` is checked against the colour of the text the shopper
+	 * types, and refused below 3:1.
+	 */
+	"checkout-form-input": AllowedCustomizationOptions<
+		| "backgroundColor"
+		| "borderColor"
+		| "borderWidth"
+		| "borderRadius"
+		| "padding"
+	>;
+	/**
+	 * The checkout's breadcrumb timeline — the step indicator (contact,
+	 * shipping, payment) above the form of the current step.
+	 *
+	 * ```ts
+	 * customization.set("checkout-breadcrumb-timeline", { hidden: "always" });
+	 * ```
+	 *
+	 * An app that shows progress its own way hides it and renders its own in
+	 * a slot. If the Checkout re-renders the timeline on a step change, the
+	 * new one is not hidden, so an app re-applies it, as
+	 * {@link CustomizationCommands.set} describes.
+	 *
+	 * Only present in the checkout; on the storefront the call resolves with
+	 * `not_found`.
+	 */
+	"checkout-breadcrumb-timeline": AllowedCustomizationOptions<"hidden">;
 };
 
 /**
@@ -405,6 +669,22 @@ export type CustomizationElementValues = {
 	backgroundColor: string;
 	/** The element's corner radius, e.g. `"40px"` for a pill-shaped button. */
 	borderRadius: string;
+	/** The colour of the element's border, as `rgb()` or `rgba()`. */
+	borderColor: string;
+	/** The width of the element's border, e.g. `"1px"`. */
+	borderWidth: string;
+	/**
+	 * The element's inner spacing, always as four lengths — top, right,
+	 * bottom, left, e.g. `"16px 24px 16px 24px"` — which `set` accepts back
+	 * as is.
+	 */
+	padding: string;
+	/**
+	 * The element's shadow: `"none"`, or as the browser writes it, colour
+	 * first, e.g. `"rgba(0, 0, 0, 0.15) 0px 4px 12px 0px"`. A single shadow can
+	 * be passed back to `set` as is; a store's multi-layer shadow cannot.
+	 */
+	boxShadow: string;
 	/**
 	 * How the element is hidden by the Customization API: the mode last set
 	 * with {@link CustomizationOptions.hidden}, or `"never"`. An element the
@@ -418,6 +698,13 @@ export type CustomizationElementValues = {
 	 * button the store itself disables — out of stock — reads `false` too.
 	 */
 	disabled: boolean;
+	/**
+	 * The lines drawn on the element's own text, e.g. `"line-through"`, or
+	 * `"none"`. A string rather than {@link CustomizationTextDecoration}:
+	 * the store may combine several (`"underline line-through"`), which the
+	 * option cannot send but the element can show.
+	 */
+	textDecoration: string;
 };
 
 /**
@@ -469,6 +756,37 @@ export type CustomizableElementValues = {
 	"product-detail-variants": ReadableElementValues<"hidden">;
 	/** The instalment line under the cart's total. */
 	"cart-installments": ReadableElementValues<"hidden">;
+	/** The payment promotion lines of the product page. */
+	"product-detail-payment-promotions": ReadableElementValues<"hidden">;
+	/** The payment promotion line of the first product card on screen. */
+	"product-grid-payment-promotions": ReadableElementValues<"hidden">;
+	/** The payment promotion line under the cart's total. */
+	"cart-payment-promotions": ReadableElementValues<"hidden">;
+	/** The description of the first shipping method on screen, in the checkout. */
+	"checkout-shipping-method-description": ReadableElementValues<"textDecoration">;
+	/**
+	 * The background of the checkout page, as the shopper sees it: the
+	 * page's own, or the default white when the Checkout paints none.
+	 */
+	"checkout-background": ReadableElementValues<"backgroundColor">;
+	/** The checkout's main column. */
+	"checkout-main-content": ReadableElementValues<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
+	/** The checkout's order summary. */
+	"checkout-order-summary": ReadableElementValues<
+		"backgroundColor" | "padding" | "borderRadius" | "boxShadow"
+	>;
+	/** The first text field of the checkout's forms on screen. */
+	"checkout-form-input": ReadableElementValues<
+		| "backgroundColor"
+		| "borderColor"
+		| "borderWidth"
+		| "borderRadius"
+		| "padding"
+	>;
+	/** The checkout's breadcrumb timeline. */
+	"checkout-breadcrumb-timeline": ReadableElementValues<"hidden">;
 };
 
 /**
@@ -504,6 +822,8 @@ export type CustomizationContext = {
 	/** Each card's product. */
 	"product-grid-item-compare-at-price": CustomizationProduct;
 	"product-grid-installments": CustomizationProduct;
+	/** Each card's product. */
+	"product-grid-payment-promotions": CustomizationProduct;
 	/** Each line item, as the cart state carries it. */
 	"cart-item-quantity": CartItem;
 };

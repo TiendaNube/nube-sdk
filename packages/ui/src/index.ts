@@ -28,6 +28,7 @@ export * from "./components/popover-content";
 export * from "./components/icon";
 export * from "./components/markdown";
 export * from "./components/side-scroll";
+export * from "./components/carousel";
 export * from "./components/table-root";
 export * from "./components/table-header";
 export * from "./components/table-body";

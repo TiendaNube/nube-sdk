@@ -135,9 +135,10 @@ export type CartItem = {
 	sub_items: CartSubItem[];
 
 	/**
-	 * Categories the product belongs to, as `{ id, name }` with the name in the storefront
-	 * language. The root category is left out. Provided on storefront pages; absent where the
-	 * host does not resolve categories (e.g. checkout).
+	 * Categories the product belongs to, as `{ id, name }` with the name in the store
+	 * language. The root category is left out. Provided on storefront pages and in checkout;
+	 * `[]` when the host could not resolve them. In checkout, the lines of a kit carry the
+	 * kit product's categories.
 	 */
 	categories?: Category[];
 };
@@ -484,6 +485,16 @@ export type Store = {
 
 	/** Whether products can be added to the cart without redirecting to the cart page. */
 	quick_cart: boolean;
+
+	/**
+	 * Whether the slots on this page are created at runtime by the auto-slots
+	 * adapter, on a store whose theme has no SDK slots (an open FTP or deprecated
+	 * theme). Their position then approximates where the theme would render them.
+	 *
+	 * `false` on every other page, including checkout. Absent with SDK versions
+	 * that predate it: treat a missing value as `false`.
+	 */
+	auto_slots?: boolean;
 
 	/**
 	 * Level of detail of the product lists exposed in {@link NubeSDKState.location}.

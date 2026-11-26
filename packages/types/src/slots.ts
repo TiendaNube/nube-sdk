@@ -25,16 +25,17 @@ import type {
  * @property {"edge_bottom_center"} EDGE_BOTTOM_CENTER - Bottom edge, horizontally centered.
  * @property {"edge_left_center"} EDGE_LEFT_CENTER - Left edge, vertically centered.
  * @property {"edge_right_center"} EDGE_RIGHT_CENTER - Right edge, vertically centered.
- * @property {"bar_top"} BAR_TOP - Full-width bar fixed to the top of the viewport.
- * @property {"bar_bottom"} BAR_BOTTOM - Full-width bar fixed to the bottom of the viewport.
- * @property {"bar_top_sticky"} BAR_TOP_STICKY - Full-width bar at the top of the viewport that pushes the page content down instead of covering it.
- * @property {"bar_bottom_sticky"} BAR_BOTTOM_STICKY - Full-width bar at the bottom of the viewport that pushes the page content up instead of covering it.
+ * @property {"bar_top"} BAR_TOP - Full-width bar fixed to the top of the viewport, right below BAR_TOP_STICKY. It floats over the page content instead of pushing it. At most 15vh tall; taller content is cut off.
+ * @property {"bar_bottom"} BAR_BOTTOM - Full-width bar fixed to the bottom of the viewport, right above BAR_BOTTOM_STICKY. At most 15vh tall; taller content is cut off.
+ * @property {"bar_top_sticky"} BAR_TOP_STICKY - Full-width bar that stays at the top of the viewport and pushes the page content down instead of covering it. At most 15vh tall; taller content is cut off.
+ * @property {"bar_bottom_sticky"} BAR_BOTTOM_STICKY - Full-width bar that stays at the bottom of the viewport and pushes the page content up instead of covering it. At most 15vh tall; taller content is cut off.
+ * @property {"bar_top_stacked"} BAR_TOP_STACKED - Full-width bar at the top of the viewport, with lower priority than BAR_TOP_STICKY. It pushes the page content down and starts right below the sticky bar; as the page scrolls it slides behind it and stays there. At most 15vh tall; taller content is cut off.
  * @property {"before_line_items"} BEFORE_LINE_ITEMS - Before the list of items in the cart.
  * @property {"after_line_items"} AFTER_LINE_ITEMS - After the list of items in the cart.
  * @property {"after_header"} AFTER_HEADER - After the header.
  * @property {"drawer_left"} DRAWER_LEFT - Left drawer.
  * @property {"drawer_right"} DRAWER_RIGHT - Right drawer.
- * @property {"fullscreen_content"} FULLSCREEN_CONTENT - Fullscreen overlay; accepts a `Video.Root` component.
+ * @property {"fullscreen_content"} FULLSCREEN_CONTENT - Fullscreen overlay; accepts a `Video.Root` or a `Carousel.Root` component.
  */
 export const COMMON_UI_SLOT = {
 	BEFORE_MAIN_CONTENT: "before_main_content",
@@ -52,6 +53,7 @@ export const COMMON_UI_SLOT = {
 	BAR_BOTTOM: "bar_bottom",
 	BAR_TOP_STICKY: "bar_top_sticky",
 	BAR_BOTTOM_STICKY: "bar_bottom_sticky",
+	BAR_TOP_STACKED: "bar_top_stacked",
 	BEFORE_LINE_ITEMS: "before_line_items",
 	AFTER_LINE_ITEMS: "after_line_items",
 	AFTER_HEADER: "after_header",
@@ -185,8 +187,12 @@ export const CHECKOUT_UI_SLOT = {
  * @property {"after_section_testimonials"} AFTER_SECTION_TESTIMONIALS - After the testimonials section on the home page.
  * @property {"before_section_welcome"} BEFORE_SECTION_WELCOME - Before the welcome message section on the home page.
  * @property {"after_section_welcome"} AFTER_SECTION_WELCOME - After the welcome message section on the home page.
+ * @property {"before_section_video"} BEFORE_SECTION_VIDEO - Before the video section on the home page.
+ * @property {"after_section_video"} AFTER_SECTION_VIDEO - After the video section on the home page.
  * @property {"before_section_institutional"} BEFORE_SECTION_INSTITUTIONAL - Before the institutional message section on the home page.
  * @property {"after_section_institutional"} AFTER_SECTION_INSTITUTIONAL - After the institutional message section on the home page.
+ * @property {"before_section_categories_featured"} BEFORE_SECTION_CATEGORIES_FEATURED - Before the featured categories section on the home page.
+ * @property {"after_section_categories_featured"} AFTER_SECTION_CATEGORIES_FEATURED - After the featured categories section on the home page.
  * @property {"before_product_detail_related_products"} BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS - Before the related products section on the product detail page.
  * @property {"after_product_detail_related_products"} AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS - After the related products section on the product detail page.
  * @property {"before_product_detail_complementary_products"} BEFORE_PRODUCT_DETAIL_COMPLEMENTARY_PRODUCTS - Before the complementary products section on the product detail page.
@@ -299,8 +305,12 @@ export const STOREFRONT_UI_SLOT = {
 	AFTER_SECTION_TESTIMONIALS: "after_section_testimonials",
 	BEFORE_SECTION_WELCOME: "before_section_welcome",
 	AFTER_SECTION_WELCOME: "after_section_welcome",
+	BEFORE_SECTION_VIDEO: "before_section_video",
+	AFTER_SECTION_VIDEO: "after_section_video",
 	BEFORE_SECTION_INSTITUTIONAL: "before_section_institutional",
 	AFTER_SECTION_INSTITUTIONAL: "after_section_institutional",
+	BEFORE_SECTION_CATEGORIES_FEATURED: "before_section_categories_featured",
+	AFTER_SECTION_CATEGORIES_FEATURED: "after_section_categories_featured",
 	BEFORE_PRODUCT_DETAIL_RELATED_PRODUCTS:
 		"before_product_detail_related_products",
 	AFTER_PRODUCT_DETAIL_RELATED_PRODUCTS:
