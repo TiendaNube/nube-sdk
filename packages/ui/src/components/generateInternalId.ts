@@ -1,3 +1,5 @@
+import type { NubeInternalId } from "@tiendanube/nube-sdk-types";
+
 type Props = Record<string, unknown>;
 
 const memo = new WeakMap<object, string>();
@@ -56,7 +58,7 @@ function djb2Hash(str: string): string {
 }
 
 function createId(type: string, hash: string) {
-	return `${type}-${self.__APP_DATA__.id}-${hash}`;
+	return `${type}-${self.__APP_DATA__.id}-${hash}` as NubeInternalId;
 }
 
 /**
@@ -81,8 +83,10 @@ function isValidInternalId(id: unknown): id is string {
 /**
  * Generate a stable ID for a component based on the type and props.
  */
-export function generateInternalId(type: string, props: Props): string {
-	if (isValidInternalId(props.__internalId)) return props.__internalId;
+export function generateInternalId(type: string, props: Props): NubeInternalId {
+	if (isValidInternalId(props.__internalId)) {
+		return props.__internalId as NubeInternalId;
+	}
 
 	const cached = memo.get(props);
 	if (cached) return createId(type, cached);
