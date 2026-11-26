@@ -16,7 +16,7 @@ export function State() {
 	const [updatedAt, setUpdatedAt] = useState<number>(0);
 	const [state, setState] = useState<NubeSDKState | null>(null);
 	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [failed, setFailed] = useState(false);
 	const [modifiedPaths, setModifiedPaths] = useState<Set<string>>(new Set());
 	const previousStateRef = useRef<NubeSDKState | null>(null);
 
@@ -29,7 +29,7 @@ export function State() {
 
 	const fetchState = useCallback(() => {
 		setLoading(true);
-		setError(null);
+		setFailed(false);
 
 		chrome.devtools.inspectedWindow.eval(
 			GET_STATE_EXPRESSION,
@@ -41,10 +41,8 @@ export function State() {
 					!result ||
 					(typeof result === "object" && Object.keys(result).length === 0)
 				) {
-					setError(
-						isException?.value ||
-							"nubeSDK.getState() not found or returned null",
-					);
+					// No SDK on the page, or no state yet.
+					setFailed(true);
 					setState(null);
 				} else {
 					const newState = result as NubeSDKState;
@@ -101,18 +99,9 @@ export function State() {
 					</div>
 				</nav>
 				<div className="flex-1 overflow-y-auto p-2">
-					{error ? (
-						<div className="text-red-500 text-sm p-4 text-center">
-							<p className="font-medium">Error:</p>
-							<p>{error}</p>
-							<Button
-								variant="outline"
-								size="sm"
-								className="mt-2"
-								onClick={fetchState}
-							>
-								Try Again
-							</Button>
+					{failed ? (
+						<div className="text-center p-4 text-sm text-foreground">
+							The state could not be loaded.
 						</div>
 					) : state ? (
 						<div className="text-sm">

@@ -43,6 +43,6 @@ export default defineManifest({
 			matches: [],
 		},
 	],
-	permissions: ["scripting", "activeTab", "declarativeNetRequest"],
+	permissions: ["scripting", "activeTab", "declarativeNetRequest", "storage"],
 	host_permissions: ["http://*/*", "https://*/*"],
 });
