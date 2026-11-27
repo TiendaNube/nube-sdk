@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { button } from "./button";
 import { generateInternalId } from "./generateInternalId";
 
 describe("generateInternalId", () => {
@@ -89,6 +90,80 @@ describe("generateInternalId", () => {
 		expect(id1).toBe(id2);
 		expect(id2).toBe(id3);
 		expect(id1).toContain("box-test-app-id-");
+	});
+
+	describe("without signals", () => {
+		it("keeps the ids generated before signal props existed", () => {
+			expect(
+				generateInternalId("button", {
+					children: "Comprar",
+					variant: "primary",
+					disabled: true,
+					width: "100%",
+				}),
+			).toBe("button-test-app-id-1ooa7lv");
+			expect(
+				generateInternalId("box", {
+					children: [
+						button({
+							children: "Comprar",
+						}),
+					],
+					width: "100%",
+				}),
+			).toBe("box-test-app-id-oxh1cr");
+		});
+	});
+
+	describe("with signal props", () => {
+		const signal = (id: string, initialValue: unknown = 0) => ({
+			type: "signal",
+			__internalId: id,
+			initialValue,
+		});
+
+		it("does not change when the value of the signal changes", () => {
+			const before = generateInternalId("button", {
+				disabled: signal("signal-test-app-id-1", true),
+			});
+			const after = generateInternalId("button", {
+				disabled: signal("signal-test-app-id-1", false),
+			});
+			expect(before).toBe(after);
+		});
+
+		it("separates components that use different signals", () => {
+			const first = generateInternalId("button", {
+				disabled: signal("signal-test-app-id-1"),
+			});
+			const second = generateInternalId("button", {
+				disabled: signal("signal-test-app-id-2"),
+			});
+			expect(first).not.toBe(second);
+		});
+
+		it("separates the same signal in different props", () => {
+			const first = generateInternalId("button", {
+				disabled: signal("signal-test-app-id-1"),
+			});
+			const second = generateInternalId("button", {
+				ariaHidden: signal("signal-test-app-id-1"),
+			});
+			expect(first).not.toBe(second);
+		});
+
+		it("does not read initialValue", () => {
+			const initialValue = vi.fn(() => 0);
+			const node = {
+				type: "signal",
+				__internalId: "signal-test-app-id-1",
+				get initialValue() {
+					return initialValue();
+				},
+			};
+			generateInternalId("button", { disabled: node });
+			expect(initialValue).not.toHaveBeenCalled();
+		});
 	});
 
 	describe("with signal children", () => {

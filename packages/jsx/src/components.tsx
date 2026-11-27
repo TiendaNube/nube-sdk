@@ -88,6 +88,12 @@ import type {
 	NubeComponentMarkdownProps,
 	NubeComponentMask,
 	NubeComponentMaskProps,
+	NubeComponentMatchDefault,
+	NubeComponentMatchDefaultProps,
+	NubeComponentMatchValue,
+	NubeComponentMatchValueProps,
+	NubeComponentMatchWhen,
+	NubeComponentMatchWhenProps,
 	NubeComponentNumberField,
 	NubeComponentNumberFieldProps,
 	NubeComponentPath,
@@ -114,6 +120,8 @@ import type {
 	NubeComponentRowProps,
 	NubeComponentSelect,
 	NubeComponentSelectProps,
+	NubeComponentShow,
+	NubeComponentShowProps,
 	NubeComponentSideScroll,
 	NubeComponentSideScrollProps,
 	NubeComponentStop,
@@ -167,6 +175,7 @@ import type {
 	NubeComponentVideoStoriesProps,
 	NubeComponentVideoYouTube,
 	NubeComponentVideoYouTubeProps,
+	NubeConditionValue,
 } from "@tiendanube/nube-sdk-types";
 import {
 	accordionContent,
@@ -202,6 +211,9 @@ import {
 	image,
 	link,
 	markdown,
+	matchDefault,
+	matchValue,
+	matchWhen,
 	numberfield,
 	popoverButton,
 	popoverContent,
@@ -209,6 +221,7 @@ import {
 	progress,
 	row,
 	select,
+	show,
 	sideScroll,
 	svgCircle,
 	svgClipPath,
@@ -1610,4 +1623,91 @@ export const Table = {
 	Cell: TableCell,
 	ColumnHeaderCell: TableColumnHeaderCell,
 	RowHeaderCell: TableRowHeaderCell,
+};
+
+/**
+ * Creates a `Show` component.
+ *
+ * Renders `children` while its condition matches the value of the `when`
+ * signal, and `fallback` otherwise. The platform swaps the branch when the
+ * signal changes, without rendering the slot again.
+ *
+ * Without an operator, `when` is a boolean signal and the condition is "the
+ * value is `true`". With one operator (`is`, `oneOf`, `gt`, `gte`, `lt`,
+ * `lte`, `startsWith`, `endsWith`, `includes` or `condition`), `when` is a
+ * signal of any primitive, and the operator is checked against its type.
+ *
+ * @example
+ * ```tsx
+ * import { or, startsWith } from "@tiendanube/nube-sdk-jsx/predicates";
+ *
+ * const isLoggedIn = signal(false);
+ * const score = signal(0);
+ * const cep = signal("");
+ *
+ * <Show when={isLoggedIn} fallback={<LoginButton />}><Dashboard /></Show>
+ * <Show when={score} gte={90}><Badge /></Show>
+ * <Show when={cep} condition={or(startsWith("01"), startsWith("02"))}>
+ *   <SameDayShipping />
+ * </Show>
+ * ```
+ *
+ * @param props - The properties for configuring the show component.
+ * @returns A `NubeComponentShow` object representing the show component.
+ */
+export function Show<T extends NubeConditionValue = boolean>(
+	props: NubeComponentShowProps<T>,
+): NubeComponentShow {
+	return show(props);
+}
+
+/**
+ * Renders the first `Match.When` whose operator matches the value of the `of`
+ * signal, or `Match.Default` when none does.
+ */
+function MatchValue(
+	props: NubeComponentMatchValueProps,
+): NubeComponentMatchValue {
+	return matchValue(props);
+}
+
+/**
+ * A branch of `Match.Value`. Takes exactly one operator: `is`, `oneOf`, `gt`,
+ * `gte`, `lt`, `lte`, `startsWith`, `endsWith`, `includes` or `condition`
+ * (built with the predicates of `@tiendanube/nube-sdk-jsx/predicates`).
+ */
+function MatchWhen(props: NubeComponentMatchWhenProps): NubeComponentMatchWhen {
+	return matchWhen(props);
+}
+
+/**
+ * The branch of `Match.Value` rendered when no `Match.When` matches.
+ */
+function MatchDefault(
+	props: NubeComponentMatchDefaultProps,
+): NubeComponentMatchDefault {
+	return matchDefault(props);
+}
+
+/**
+ * Renders one of several branches depending on the value of a signal. The
+ * platform swaps the branch when the signal changes, without rendering the
+ * slot again.
+ *
+ * @example
+ * ```tsx
+ * const status = signal<"idle" | "loading" | "error" | "timeout">("idle");
+ *
+ * <Match.Value of={status}>
+ *   <Match.When is="idle"><Idle /></Match.When>
+ *   <Match.When is="loading"><Spinner /></Match.When>
+ *   <Match.When oneOf={["error", "timeout"]}><ErrorView /></Match.When>
+ *   <Match.Default><Unknown /></Match.Default>
+ * </Match.Value>
+ * ```
+ */
+export const Match = {
+	Value: MatchValue,
+	When: MatchWhen,
+	Default: MatchDefault,
 };
