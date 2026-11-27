@@ -29,4 +29,5 @@ export {
 	STORAGE_KEY_PATTERN_SOURCE,
 	parseStorageKey,
 	type ParsedStorageKey,
+	type StorageKeyScope,
 } from "./storage-key";

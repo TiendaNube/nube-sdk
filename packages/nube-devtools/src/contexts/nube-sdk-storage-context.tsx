@@ -1,12 +1,17 @@
 import {
 	type PageStorageEntry,
 	type PageStorageType,
+	type StorageKeyScope,
 	parseStorageKey,
 	readPageStorage,
 	removePageStorage,
 	setPageStorage,
 	unwrapStorageValue,
 } from "@/utils";
+import {
+	type NubeSDKStorageEvent,
+	parseStorageEvent,
+} from "@/utils/storage-event";
 import {
 	createContext,
 	useCallback,
@@ -17,14 +22,7 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 
-/** One storage mutation as reported by the injected page patch. */
-export type NubeSDKStorageEvent = {
-	method: "setItem" | "removeItem" | "clear";
-	type: PageStorageType;
-	key: string;
-	value: string | null;
-	timestamp?: number;
-};
+export type { NubeSDKStorageEvent };
 
 /**
  * One entry that currently exists in the page's storage.
@@ -43,9 +41,13 @@ export type NubeSDKStorageRecord = {
 	 */
 	id: string;
 	type: PageStorageType;
-	/** The app that owns the entry, as namespaced in the key. */
+	/** The app the entry belongs to, without the script suffix. */
 	appId: string;
-	/** The key the app passed, without the `app-<appId>-` prefix. */
+	/** The script that keeps the entry for itself (`"script"` scope of a multi-script app). */
+	scriptId?: string;
+	/** `"app"` for entries under the app id, `"script"` for `<appId>_<scriptId>` ones. */
+	scope: StorageKeyScope;
+	/** The key the app passed, without the `app-<owner>-` prefix. */
 	key: string;
 	storageKey: string;
 	value: string;
@@ -109,6 +111,8 @@ function toRecord(
 		id: recordId(type, storageKey),
 		type,
 		appId: parsed.appId,
+		scriptId: parsed.scriptId,
+		scope: parsed.scope,
 		key: parsed.key,
 		storageKey,
 		value,
@@ -246,14 +250,24 @@ export const NubeSDKStorageProvider = ({
 	useEffect(() => {
 		const listener = (port: chrome.runtime.Port) => {
 			if (port.name !== "nube-devtools-storage-events") return;
+			// Every open panel hears every tab's content script, and each gets its
+			// own end of the port. Closing this end leaves the inspecting panel's
+			// end open; leaving it open would keep the connection alive for good.
+			if (port.sender?.tab?.id !== chrome.devtools.inspectedWindow.tabId) {
+				port.disconnect();
+				return;
+			}
 
 			port.onMessage.addListener((message) => {
 				// One message carries a batch: the content script coalesces
 				// bursts, which a page boot produces plenty of.
-				const events = message.payload as NubeSDKStorageEvent[];
+				const events: unknown = message?.payload;
 				if (Array.isArray(events)) {
-					for (const event of events) {
-						applyEvent(event);
+					for (const raw of events) {
+						// Any script on the page can dispatch these, so each
+						// event is checked before it can touch state.
+						const event = parseStorageEvent(raw);
+						if (event) applyEvent(event);
 					}
 				}
 
